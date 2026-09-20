@@ -1,0 +1,78 @@
+{
+  "contractVersion": "1.0",
+  "purpose": "Reference fixtures for the generic Notion analysis renderer. These records are test references, not runtime company data.",
+  "references": [
+    {
+      "kind": "earnings",
+      "title": "Nebius — Q2 2026",
+      "notionPageId": "3ba37ea7-af35-8171-a247-de722b62ba28",
+      "url": "https://app.notion.com/p/3ba37ea7af358171a247de722b62ba28?pvs=204",
+      "expected": {
+        "tablesMin": 2,
+        "calloutsMin": 1,
+        "requiredSections": ["TL;DR", "Résultats vs attentes", "Guidance", "KPI métier", "Risques & catalyseurs", "Décision / action"],
+        "requiredFields": ["Action", "Confidence", "Fiscal Period", "Guidance", "Key KPI Summary", "Thesis Impact", "Valuation Impact"]
+      }
+    },
+    {
+      "kind": "business",
+      "title": "Bloom Energy — Business Check v1 — Full — 2026-08-12",
+      "notionPageId": "3ba37ea7-af35-81dd-ab0c-cac134787eca",
+      "url": "https://app.notion.com/p/3ba37ea7af3581ddab0ccac134787eca?pvs=204",
+      "expected": {
+        "tablesMin": 9,
+        "calloutsMin": 1,
+        "requiredSections": ["TL;DR", "Investment Card", "Business model", "Marché et chaîne de valeur", "Concurrence", "Analyse du moat"],
+        "requiredFields": ["Agent", "Company", "Score", "Verdict", "Confidence"]
+      }
+    },
+    {
+      "kind": "valuation",
+      "title": "Bloom Energy — Valuation Check v1 — Full — 2026-08-12",
+      "notionPageId": "3ba37ea7-af35-8104-985c-dea3d5f36200",
+      "url": "https://app.notion.com/p/3ba37ea7af358104985cdea3d5f36200?pvs=204",
+      "expected": {
+        "tablesMin": 9,
+        "calloutsMin": 1,
+        "requiredSections": ["TL;DR", "Données de référence", "Scénarios 5 ans", "Growth Priced-In", "Fair value et zones de prix", "Verdict final"],
+        "requiredFields": ["Reference Price", "Currency", "Hurdle", "Confidence", "Verdict"]
+      }
+    },
+    {
+      "kind": "portfolio",
+      "title": "Bloom Energy — Portfolio Check v1 — Full — 2026-08-12",
+      "notionPageId": "3ba37ea7-af35-81cc-9f77-c1b6277ebd95",
+      "url": "https://app.notion.com/p/3ba37ea7af3581cc9f77c1b6277ebd95?pvs=204",
+      "expected": {
+        "tablesMin": 6,
+        "calloutsMin": 0,
+        "requiredSections": ["TL;DR", "Snapshot du portefeuille", "Look-through ETF", "Stress tests", "Taille et source de financement", "Décision"],
+        "requiredFields": ["Company", "Current Weight", "Maximum Weight", "Action", "Confidence"]
+      }
+    },
+    {
+      "kind": "short",
+      "title": "Booking Holdings — Short Check v1 — Skill Full — 2026-08-11",
+      "notionPageId": "3b937ea7-af35-815b-a6ba-f347578f4fdc",
+      "url": "https://app.notion.com/p/3b937ea7af35815ba6baf347578f4fdc?pvs=204",
+      "expected": {
+        "tablesMin": 3,
+        "calloutsMin": 1,
+        "requiredSections": ["TL;DR", "Variant perception baissière", "Qualité des résultats", "Cash conversion", "Short interest et squeeze", "Kill criteria", "Verdict final"],
+        "requiredFields": ["Signal", "Confidence", "Verdict", "Company"]
+      }
+    },
+    {
+      "kind": "investment_memo",
+      "title": "Ciena — Investment Memo v2 — CIO skill strict canonique — 2026-08-14",
+      "notionPageId": "3bc37ea7-af35-8129-89aa-cdbba7b31043",
+      "url": "https://app.notion.com/p/3bc37ea7af35812989aacdbba7b31043?pvs=204",
+      "expected": {
+        "tablesMin": 3,
+        "calloutsMin": 1,
+        "requiredSections": ["TL;DR", "Decision Card", "État des modules", "Contrôle de cohérence", "Résolution des contradictions", "Scénarios consolidés", "Plan d’exécution", "Décision", "Prochaine revue"],
+        "requiredFields": ["Agent", "Verdict", "Confidence", "Evidence Coverage %", "Handoff Summary"]
+      }
+    }
+  ]
+}

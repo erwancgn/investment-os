@@ -1,0 +1,11 @@
+{
+  "contractVersion": "1.0",
+  "documents": [
+    { "kind": "business", "summaryHeading": "TL;DR", "tableColumns": ["Pilier", "Évaluation"], "priorityFact": "Marges" },
+    { "kind": "valuation", "summaryHeading": "Executive Summary", "tableColumns": ["Scénario", "Valeur"], "priorityFact": "Cours de référence" },
+    { "kind": "short", "summaryHeading": "À retenir", "tableColumns": ["Risque", "Signal"], "priorityFact": "Risque principal" },
+    { "kind": "portfolio", "summaryHeading": "TL;DR", "tableColumns": ["Élément", "Verdict"], "priorityFact": "Poids cible" },
+    { "kind": "earnings", "summaryHeading": "Synthèse", "tableColumns": ["Indicateur", "Résultat"], "priorityFact": "Guidance" },
+    { "kind": "investment_memo", "summaryHeading": "TLDR", "tableColumns": ["Décision", "Condition"], "priorityFact": "Condition" }
+  ]
+}

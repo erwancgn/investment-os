@@ -1,0 +1,5 @@
+.notion-sync-panel{padding:0;overflow:hidden}
+.notion-sync-details{padding:0 21px 18px;border-top:1px solid var(--border)}
+.notion-sync-details .notion-sync-subtitle{margin:15px 0 0;color:var(--muted);font-size:11px}
+.notion-sync-details .notion-sync-copy{margin-top:9px}
+@media(max-width:560px){.notion-sync-panel{padding:0}.notion-sync-details{padding:0 16px 16px}}

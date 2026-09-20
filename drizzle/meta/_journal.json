@@ -1,0 +1,27 @@
+{
+  "version": "7",
+  "dialect": "sqlite",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "6",
+      "when": 1786616259081,
+      "tag": "0000_fat_the_spike",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1787817799645,
+      "tag": "0003_notion_import_jobs",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1787819603330,
+      "tag": "0004_damp_marrow",
+      "breakpoints": true
+    }
+  ]
+}

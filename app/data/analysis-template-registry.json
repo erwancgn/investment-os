@@ -1,0 +1,54 @@
+{
+  "contractVersion": "1.0",
+  "fallback": "universal",
+  "templates": {
+    "earnings": {
+      "label": "Earnings",
+      "sections": ["TL;DR", "Résultats vs attentes", "Guidance", "KPI métier", "Risques & catalyseurs", "Décision / action"],
+      "preferredBlocks": ["callout", "table", "heading", "paragraph"],
+      "tableFirst": true
+    },
+    "business": {
+      "label": "Business",
+      "sections": ["TL;DR", "Investment Card", "Business model", "Marché et chaîne de valeur", "Concurrence", "Analyse du moat"],
+      "preferredBlocks": ["callout", "table", "heading", "list", "paragraph"],
+      "tableFirst": true
+    },
+    "valuation": {
+      "label": "Valorisation",
+      "sections": ["TL;DR", "Données de référence", "Scénarios 5 ans", "Growth Priced-In", "Fair value et zones de prix", "Verdict final"],
+      "preferredBlocks": ["callout", "table", "heading", "paragraph"],
+      "tableFirst": true
+    },
+    "portfolio": {
+      "label": "Portfolio",
+      "sections": ["TL;DR", "Snapshot du portefeuille", "Look-through ETF", "Stress tests", "Taille et source de financement", "Décision"],
+      "preferredBlocks": ["callout", "table", "heading", "paragraph"],
+      "tableFirst": true
+    },
+    "risques": {
+      "label": "Risques / Short",
+      "sections": ["TL;DR", "Variant perception baissière", "Qualité des résultats", "Cash conversion", "Short interest et squeeze", "Kill criteria", "Verdict final"],
+      "preferredBlocks": ["callout", "table", "heading", "list", "paragraph"],
+      "tableFirst": true
+    },
+    "synthese": {
+      "label": "Investment Memo",
+      "sections": ["TL;DR", "Decision Card", "État des modules", "Contrôle de cohérence", "Résolution des contradictions", "Scénarios consolidés", "Plan d’exécution", "Décision", "Prochaine revue"],
+      "preferredBlocks": ["callout", "table", "heading", "list", "paragraph"],
+      "tableFirst": true
+    },
+    "analyses": {
+      "label": "Analyse documentaire",
+      "sections": ["TL;DR", "Verdict final", "Sources"],
+      "preferredBlocks": ["callout", "table", "heading", "list", "paragraph"],
+      "tableFirst": false
+    },
+    "universal": {
+      "label": "Document Notion",
+      "sections": [],
+      "preferredBlocks": ["heading", "callout", "table", "list", "paragraph"],
+      "tableFirst": false
+    }
+  }
+}
