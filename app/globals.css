@@ -274,9 +274,9 @@ p, li, dd { text-wrap: pretty; }
 .ui-stat-card > strong { color: var(--color-text); font-size: clamp(1.6rem, 4vw, 2.2rem); line-height: 1; }
 .ui-stat-card > small { color: var(--color-text-muted); font-size: var(--font-xs); }
 .ui-stat-card.integrity-warning > strong { color: var(--color-warning); }
-.ui-discovery-card { min-width: 0; padding: 14px; border-radius: var(--radius-lg) !important; box-shadow: 0 8px 22px rgba(0,0,0,.05) !important; }
-.ui-discovery-card--company, .ui-discovery-card--analysis, .ui-discovery-card--watchlist { transition: border-color .2s ease, box-shadow .2s ease, transform .2s ease; }
-.ui-discovery-card--company:hover, .ui-discovery-card--analysis:hover, .ui-discovery-card--watchlist:hover { border-color: color-mix(in srgb, var(--color-accent) 36%, var(--surface-stroke)) !important; box-shadow: 0 14px 34px rgba(0,0,0,.09) !important; }
+.ui-discovery-card { min-width: 0; padding: 14px; }
+.ui-discovery-card--company, .ui-discovery-card--analysis, .ui-discovery-card--watchlist { transition: border-color .2s ease; }
+.ui-discovery-card--company:hover, .ui-discovery-card--analysis:hover, .ui-discovery-card--watchlist:hover { border-color: color-mix(in srgb, var(--color-accent) 36%, var(--surface-stroke)) !important; }
 .ui-discovery-card--analysis:focus-visible, .ui-discovery-card--company:focus-visible, .ui-discovery-card--watchlist:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 3px; }
 .ui-discovery-action { display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex: 0 0 44px; padding: 0; border: 0; border-radius: 999px; background: transparent; color: var(--color-text-muted); cursor: pointer; }
 .ui-discovery-action-visual { display: inline-flex; align-items: center; justify-content: center; width: var(--ui-discovery-action-visual-size); height: var(--ui-discovery-action-visual-size); flex: 0 0 var(--ui-discovery-action-visual-size); border-radius: 999px; }

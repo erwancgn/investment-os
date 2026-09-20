@@ -522,9 +522,15 @@ test("discovery lists keep stable identities and separate interactive targets", 
   const watchlistSource = await readFile(watchlistUrl, "utf8");
   const companiesSource = await readFile(companiesUrl, "utf8");
   const analysesSource = await readFile(analysesUrl, "utf8");
+  const globalsSource = await readFile(globalsUrl, "utf8");
+  const uxSource = await readFile(uxUrl, "utf8");
 
   assert.doesNotMatch(watchlistSource, /accentFor/);
-  assert.match(watchlistSource, /watch-card-compact/);
+  assert.match(watchlistSource, /kind="watchlist"/);
+  assert.doesNotMatch(watchlistSource, /watch-card-compact/);
+  assert.doesNotMatch(uxSource, /watch-card-compact/);
+  assert.doesNotMatch(uxSource, /watch-signal-row > span:first-child/);
+  assert.doesNotMatch(globalsSource, /0 8px 22px/);
   assert.doesNotMatch(watchlistSource, /convictionScore/);
   assert.match(companiesSource, /company-identity-button/);
   assert.doesNotMatch(companiesSource, /role="button"/);

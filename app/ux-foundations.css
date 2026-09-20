@@ -498,10 +498,7 @@ summary:focus-visible {
   font-size: 10px;
   line-height: 1.35;
 }
-.watch-card-compact {
-  min-height: 0;
-}
-.watch-card-compact,
+.ui-discovery-card--watchlist,
 .company-list-row,
 .analysis-list-row {
   content-visibility: auto;
@@ -551,12 +548,6 @@ summary:focus-visible {
   flex-direction: column;
   gap: 3px;
 }
-.watch-signal-row > span:first-child {
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-}
 .watch-signal-row small {
   color: var(--color-text-muted);
   font-size: 8px;
@@ -570,7 +561,7 @@ summary:focus-visible {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.watch-card-compact .watch-thesis {
+.ui-discovery-card--watchlist .watch-thesis {
   min-height: 0;
   display: -webkit-box;
   overflow: hidden;
@@ -613,12 +604,6 @@ summary:focus-visible {
 }
 .company-identity-button .owned-dot {
   flex: 0 0 auto;
-}
-.watch-signal-row > span:not(.watch-decision) {
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
 }
 .watch-decision { margin-left: 0; }
 .analysis-list-row .analysis-verdict-cell {
@@ -1097,7 +1082,7 @@ summary:focus-visible {
     grid-template-columns: 1fr;
     gap: 10px;
   }
-  .watch-card-compact .watch-thesis {
+  .ui-discovery-card--watchlist .watch-thesis {
     -webkit-line-clamp: 2;
     font-size: 12px;
     line-height: 1.5;
