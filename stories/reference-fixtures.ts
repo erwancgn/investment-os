@@ -48,19 +48,6 @@ export const company: CompanyListItem = {
   researchReferences: [reference],
 };
 
-export const lumentumCompany: CompanyListItem = {
-  ...company,
-  id: "company-lumentum",
-  name: "Lumentum Holdings",
-  ticker: "LITE",
-  industry: "Optical components and cloud networking",
-  ownershipStatus: "Owned",
-  watchlistMembership: false,
-  monitoringStatus: "Owned",
-  themes: ["Data center", "Optical networking"],
-  researchReferences: [],
-};
-
 export const watchlist: WatchlistData = {
   themes: ["AI infrastructure", "Quality", "Data center"],
   items: [

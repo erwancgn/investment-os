@@ -26,7 +26,7 @@ import {
   Surface,
   Tabs,
 } from "../app/components/ui-primitives";
-import { analysesData, company, lumentumCompany, watchlist } from "./reference-fixtures";
+import { analysesData, company, watchlist } from "./reference-fixtures";
 import { frame } from "./reference-frame";
 
 const meta = {
@@ -148,10 +148,7 @@ export const ProductionVisualReview: Story = {
       />
       <section className="storybook-reference-section" aria-labelledby="review-companies">
         <h2 id="review-companies">Companies · production · 390px</h2>
-        <p className="storybook-caption">Long title stress case · Advanced Micro Devices</p>
         {frame(<NotionCompanies initialData={{ companies: [company] }} openCompany={() => undefined} />)}
-        <p className="storybook-caption">Standard long title · Lumentum Holdings</p>
-        {frame(<NotionCompanies initialData={{ companies: [lumentumCompany] }} openCompany={() => undefined} />)}
       </section>
       <section className="storybook-reference-section" aria-labelledby="review-radar">
         <h2 id="review-radar">Radar · production · 390px</h2>

@@ -32,9 +32,9 @@ jobs:
           mv package-lock.json /tmp/package-lock.sites
           npm install --package-lock=false --no-audit --no-fund
 
-      - run: npm run typecheck
-      - run: npm run test:css-audit
-      - run: npm run test:storybook-coverage
+      - run: npm run lint
+      - run: npm run audit:css:governance
+      - run: npm test
       - run: npm run build-storybook
 
       - name: Serve Storybook
@@ -67,10 +67,11 @@ jobs:
 
           REVIEW_ID="$(story_id "Design System" "Production Visual Review")"
           COMPANIES_ID="$(story_id "Reference screens/Companies" "Companies")"
+          COMPANIES_LONG_ID="$(story_id "Reference screens/Companies" "Long")"
           RADAR_ID="$(story_id "Reference screens/Watchlist · Radar" "Watchlist")"
           ANALYSES_ID="$(story_id "Reference screens/Analyses" "Analyses")"
 
-          for value in "$REVIEW_ID" "$COMPANIES_ID" "$RADAR_ID" "$ANALYSES_ID"; do
+          for value in "$REVIEW_ID" "$COMPANIES_ID" "$COMPANIES_LONG_ID" "$RADAR_ID" "$ANALYSES_ID"; do
             test -n "$value"
             test "$value" != "null"
           done
@@ -90,6 +91,14 @@ jobs:
             --wait-for-timeout 1500 \
             "http://127.0.0.1:6006/iframe.html?id=$COMPANIES_ID&viewMode=story" \
             visual-review/companies-390.png
+
+          npx --yes playwright@1.55.0 screenshot \
+            --browser chromium \
+            --viewport-size "390,844" \
+            --full-page \
+            --wait-for-timeout 1500 \
+            "http://127.0.0.1:6006/iframe.html?id=$COMPANIES_LONG_ID&viewMode=story" \
+            visual-review/companies-long-390.png
 
           npx --yes playwright@1.55.0 screenshot \
             --browser chromium \

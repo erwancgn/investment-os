@@ -90,19 +90,19 @@ test("the production visual review mounts real discovery screens at 390px", asyn
 
 
 test("the mobile visual contract covers long Discovery titles and explicit filter composition", async () => {
-  const [css, fixtures, story] = await Promise.all([
+  const [css, fixtures, story, companiesStory] = await Promise.all([
     read("app/globals.css"),
     read("stories/reference-fixtures.ts"),
     read("stories/DesignSystem.stories.tsx"),
+    read("stories/Companies.stories.tsx"),
   ]);
 
   assert.match(css, /--font-discovery-title:\s*15px/);
   assert.match(css, /font-size:\s*var\(--font-discovery-title\)/);
   assert.match(css, /\.watch-signal-row strong\s*\{[^}]*font-size:\s*var\(--font-sm\)/s);
   assert.match(fixtures, /Advanced Micro Devices — Long Reference Name/);
-  assert.match(fixtures, /Lumentum Holdings/);
+  assert.match(companiesStory, /Lumentum Holdings — Optical Networking and Datacenter Infrastructure/);
   assert.match(story, /companies: \[company\]/);
-  assert.match(story, /companies: \[lumentumCompany\]/);
   assert.match(story, /<DisclosureSurface[^>]*summary=/);
   assert.match(story, /Reference theme taxonomy/);
 });
