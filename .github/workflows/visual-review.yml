@@ -1,0 +1,104 @@
+name: Visual review
+
+on:
+  push:
+    branches:
+      - refactor/css-foundation-cleanup
+    paths:
+      - "app/**"
+      - "stories/**"
+      - ".storybook/**"
+      - "package.json"
+      - "package-lock.json"
+      - ".github/workflows/visual-review.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  storybook-screenshots:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+      - run: npm run build-storybook
+
+      - name: Serve Storybook
+        run: |
+          python3 -m http.server 6006 --directory storybook-static > /tmp/storybook.log 2>&1 &
+          echo $! > /tmp/storybook.pid
+          for attempt in {1..30}; do
+            if curl --fail --silent http://127.0.0.1:6006/index.json > /dev/null; then
+              exit 0
+            fi
+            sleep 1
+          done
+          cat /tmp/storybook.log
+          exit 1
+
+      - name: Install screenshot browser
+        run: npx --yes playwright@1.55.0 install --with-deps chromium
+
+      - name: Capture canonical visual review
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p visual-review
+
+          story_id() {
+            jq -r --arg title "$1" --arg name "$2" \
+              '.entries[] | select(.title == $title and .name == $name) | .id' \
+              storybook-static/index.json | head -n 1
+          }
+
+          REVIEW_ID="$(story_id "Design System" "Production Visual Review")"
+          COMPANIES_ID="$(story_id "Reference screens/Companies" "Companies")"
+          RADAR_ID="$(story_id "Reference screens/Watchlist · Radar" "Watchlist")"
+          ANALYSES_ID="$(story_id "Reference screens/Analyses" "Analyses")"
+
+          for value in "$REVIEW_ID" "$COMPANIES_ID" "$RADAR_ID" "$ANALYSES_ID"; do
+            test -n "$value"
+            test "$value" != "null"
+          done
+
+          npx --yes playwright@1.55.0 screenshot \
+            --browser chromium \
+            --viewport-size "1440,900" \
+            --full-page \
+            "http://127.0.0.1:6006/iframe.html?id=$REVIEW_ID&viewMode=story" \
+            visual-review/design-system-production-review.png
+
+          npx --yes playwright@1.55.0 screenshot \
+            --browser chromium \
+            --viewport-size "390,844" \
+            --full-page \
+            "http://127.0.0.1:6006/iframe.html?id=$COMPANIES_ID&viewMode=story" \
+            visual-review/companies-390.png
+
+          npx --yes playwright@1.55.0 screenshot \
+            --browser chromium \
+            --viewport-size "390,844" \
+            --full-page \
+            "http://127.0.0.1:6006/iframe.html?id=$RADAR_ID&viewMode=story" \
+            visual-review/radar-390.png
+
+          npx --yes playwright@1.55.0 screenshot \
+            --browser chromium \
+            --viewport-size "390,844" \
+            --full-page \
+            "http://127.0.0.1:6006/iframe.html?id=$ANALYSES_ID&viewMode=story" \
+            visual-review/analyses-390.png
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: visual-review-${{ github.sha }}
+          path: visual-review/*.png
+          if-no-files-found: error
+          retention-days: 14
