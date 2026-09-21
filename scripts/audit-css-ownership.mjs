@@ -5,6 +5,7 @@ import { appCssFiles } from "./css-file-manifest.mjs";
 
 const root = process.cwd();
 const files = appCssFiles;
+const isUxFile = file => file.startsWith("app/styles/ux/");
 
 function normalize(value) {
   return value.replace(/\s+/g, " ").trim();
@@ -108,7 +109,7 @@ const globalsRepeatedSameContext = [];
 
 for (const [selector, occurrences] of selectorOccurrences) {
   const globals = occurrences.filter(item => item.file === "app/globals.css");
-  const ux = occurrences.filter(item => item.file.startsWith("app/styles/ux/"));
+  const ux = occurrences.filter(item => isUxFile(item.file));
 
   if (globals.length && ux.length) {
     const commonContexts = [...new Set(globals.map(item => item.context))]
@@ -124,9 +125,9 @@ for (const [selector, occurrences] of selectorOccurrences) {
     }
   }
 
-  for (const [file, bucket] of [
-    ["app/globals.css", globals],
-    ["app/ux-foundations.css", ux],
+  for (const [owner, bucket] of [
+    ["globals", globals],
+    ["ux", ux],
   ]) {
     const byContext = new Map();
     for (const item of bucket) add(byContext, item.context, item);
@@ -138,8 +139,8 @@ for (const [selector, occurrences] of selectorOccurrences) {
         count: items.length,
         lines: items.map(item => item.line),
       };
-      if (file === "app/globals.css") globalsRepeatedSameContext.push(finding);
-      else if (file.startsWith("app/styles/ux/")) uxRepeatedSameContext.push(finding);
+      if (owner === "globals") globalsRepeatedSameContext.push(finding);
+      else uxRepeatedSameContext.push(finding);
     }
   }
 }
@@ -194,6 +195,14 @@ function classifyDeclarationChains() {
 }
 
 const declarationChainResult = classifyDeclarationChains();
+const globalUxDeclarationChains = declarationChainResult.crossFile.filter(item => {
+  const files = new Set(item.values.map(value => value.file));
+  return files.has("app/globals.css") && [...files].some(isUxFile);
+});
+const uxModuleDeclarationChains = declarationChainResult.crossFile.filter(item => {
+  const files = new Set(item.values.map(value => value.file));
+  return files.size > 1 && [...files].every(isUxFile);
+});
 
 function topImportant(limit = 60) {
   const grouped = new Map();
@@ -217,10 +226,12 @@ const result = {
     uxRepeatedSameContext: uxRepeatedSameContext.length,
     globalsRepeatedSameContext: globalsRepeatedSameContext.length,
     importantDeclarations: importantOccurrences.length,
-    uxImportantDeclarations: importantOccurrences.filter(item => item.file === "app/ux-foundations.css").length,
+    uxImportantDeclarations: importantOccurrences.filter(item => isUxFile(item.file)).length,
     globalsImportantDeclarations: importantOccurrences.filter(item => item.file === "app/globals.css").length,
     sameFileDeclarationChains: declarationChainResult.sameFile.length,
     crossFileDeclarationChains: declarationChainResult.crossFile.length,
+    globalUxDeclarationChains: globalUxDeclarationChains.length,
+    uxModuleDeclarationChains: uxModuleDeclarationChains.length,
     shadowedDeclarations: declarationChainResult.shadowedDeclarations,
     identicalRepeatedDeclarations: declarationChainResult.identicalDeclarations,
   },
@@ -229,6 +240,8 @@ const result = {
   globalsRepeatedSameContext: globalsRepeatedSameContext.sort((a, b) => b.count - a.count || a.selector.localeCompare(b.selector)),
   sameFileDeclarationChains: declarationChainResult.sameFile,
   crossFileDeclarationChains: declarationChainResult.crossFile,
+  globalUxDeclarationChains,
+  uxModuleDeclarationChains,
   topImportantSelectors: topImportant(),
 };
 
