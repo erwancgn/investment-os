@@ -57,6 +57,22 @@ documentée `852fd99aae56a16aeaa47163aca3b426d8784b1d`.
 - Les synthèses KPI restent compactes : jusqu'à trois `StatCard` sur une ligne, puis
   2 × 2 pour quatre et 3 × 2 pour cinq ou six avant de basculer le surplus en détail.
 
+### Clôture Lot 7C
+
+Le Lot 7C est validé le 21 septembre 2026 sur le commit `7146c7ad34ac2ef36c24b27bd8456bedd4cc069b`.
+Le workflow `Visual review` (run GitHub Actions `35609644581`) est vert sur son périmètre :
+lint, audit CSS de gouvernance, typecheck, couverture Storybook, build Storybook et captures Chromium.
+
+La revue mobile à 390 px confirme :
+- SearchField et compteur côte à côte ;
+- jusqu'à six filtres visibles sous forme de pills ;
+- les taxonomies larges représentées par `DisclosureSurface`, avec Thèmes Radar comme cas canonique ;
+- trois `StatCard` compactes sur une ligne ;
+- la hiérarchie typographique des `DiscoveryCard`, avec titre sémantique 15 px et contenus secondaires inférieurs ;
+- les cas longs `Advanced Micro Devices — Long Reference Name` et `Lumentum Holdings — Optical Networking and Datacenter Infrastructure` sans collision avec badges, métadonnées ou actions.
+
+Le compare Lovable → Storybook → production est donc fermé pour ce lot. La suite relève de la recette applicative complète du Lot 8 et de la review de merge.
+
 La source Lovable expose notamment `src/components/CompactControl.tsx`,
 `src/components/CompanyDiscoveryCard.tsx` et `src/routes/index.tsx`. Le projet
 Lovable contient une page de référence visuelle et des composants de démonstration ;
