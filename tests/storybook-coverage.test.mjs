@@ -71,3 +71,19 @@ test("the design-system page keeps the visible reference order", async () => {
     previous = position;
   }
 });
+
+
+test("the production visual review mounts real discovery screens at 390px", async () => {
+  const [source, frame] = await Promise.all([
+    read("stories/DesignSystem.stories.tsx"),
+    read("stories/reference-frame.tsx"),
+  ]);
+
+  assert.match(source, /export const ProductionVisualReview/);
+  for (const componentName of ["NotionCompanies", "NotionWatchlist", "NotionAnalyses"]) {
+    assert.match(source, new RegExp(`<${componentName}[\\s>]`), `ProductionVisualReview does not mount ${componentName}`);
+  }
+  assert.match(source, /from "\.\/reference-fixtures"/);
+  assert.match(source, /from "\.\/reference-frame"/);
+  assert.match(frame, /width: 390/);
+});
