@@ -492,17 +492,15 @@ test("Investment Memo CIO has a dedicated decision view without a numeric memo s
 test("Notion tables use one adaptive reusable component", async () => {
   const tableSource = await readFile(notionTableUrl, "utf8");
   const readerSource = await readFile(analysisReaderUrl, "utf8");
-  const uxSource = await readFile(uxUrl, "utf8");
+  const globalsSource = await readFile(globalsUrl, "utf8");
   assert.match(tableSource, /export function NotionTable/);
   assert.match(tableSource, /--notion-columns/);
   assert.match(tableSource, /Tableau défilable horizontalement/);
   assert.match(tableSource, /notion-table-wide/);
   assert.match(readerSource, /<NotionTable/);
-  assert.match(uxSource, /\.notion-table[\s\S]*table-layout: auto !important/);
-  assert.match(uxSource, /border: 1px solid var\(--color-border\)/);
-  assert.match(uxSource, /Final mobile cascade guard/);
-  assert.ok(uxSource.lastIndexOf("Final mobile cascade guard") > uxSource.lastIndexOf("Structured Notion documents"));
-  assert.match(uxSource, /min-width: max\(100%, calc\(var\(--notion-columns\) \* 148px\)\)/);
+  assert.match(globalsSource, /\.notion-table \{[\s\S]*table-layout: auto/);
+  assert.match(globalsSource, /\.notion-table-wrap \{[\s\S]*overflow-x: auto/);
+  assert.match(globalsSource, /\.notion-table-wide \{[\s\S]*min-width: max\(100%, calc\(var\(--notion-columns\) \* 148px\)\)/);
 });
 
 test("company summaries are segmented for a scannable mobile preview", async () => {
@@ -517,7 +515,8 @@ test("research copy uses the shared readable text token", async () => {
   const uxSource = await readFile(uxUrl, "utf8");
   const globalsSource = await readFile(globalsUrl, "utf8");
   assert.match(globalsSource, /--color-content-copy: #3a3a3c/);
-  assert.match(uxSource, /\.analysis-lead p,[\s\S]*\.notion-callout p,[\s\S]*color: var\(--color-content-copy\) !important/);
+  assert.match(globalsSource, /\.notion-callout p \{ margin: 0; color: var\(--color-content-copy\); \}/);
+  assert.match(uxSource, /\.analysis-lead p,[\s\S]*color: var\(--color-content-copy\) !important/);
   assert.match(uxSource, /-webkit-text-fill-color: var\(--color-content-copy\) !important/);
   assert.match(uxSource, /latest-info-summary p,[\s\S]*\.decision-template-columns p/);
 });
