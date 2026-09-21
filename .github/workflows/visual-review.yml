@@ -31,6 +31,7 @@ jobs:
         run: |
           mv package-lock.json /tmp/package-lock.sites
           npm install --package-lock=false --no-audit --no-fund
+          chmod +x scripts/*.sh
 
       - run: npm run lint
       - run: npm run audit:css:governance
