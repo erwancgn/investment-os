@@ -113,14 +113,9 @@
 @media(max-width:1100px){.company-main-grid{grid-template-columns:1fr}.company-hero{grid-template-columns:1fr 1fr}.company-hero-main{grid-column:1/-1}.company-metrics{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:760px){.analysis-stats{grid-template-columns:1fr}.analysis-list{overflow-x:auto}.analysis-list-head,.analysis-list-row{min-width:720px}.company-hero{grid-template-columns:1fr;gap:16px}.company-hero-main{align-items:flex-start}.hero-title{align-items:flex-start;flex-direction:column}.company-decision{border-left:0;border-top:1px solid var(--border);padding:13px 0 0}.company-metrics{display:flex;overflow-x:auto}.company-metrics article{min-width:150px}.company-main-grid{grid-template-columns:1fr}.hero-logo{width:45px;height:45px}.hero-title h1{font-size:20px}.theme-tags{flex-wrap:wrap}}
 
-/* In-app Notion report reader */
-.report-hero{display:grid;grid-template-columns:1fr minmax(210px,auto);gap:28px;align-items:end;padding:28px;background:linear-gradient(120deg,#152820,#0e1916);border:1px solid #315044;border-radius:14px}.report-kicker{display:flex;align-items:center;gap:10px}.report-hero h1{font-size:27px;margin:16px 0 8px}.report-hero p{font-size:9px;color:#7c8c85;margin:0}.report-verdict{display:flex;flex-direction:column;border-left:1px solid var(--border);padding-left:24px}.report-verdict small{font-size:8px;color:#6f7e78}.report-verdict strong{font-size:13px;color:var(--green);margin:8px 0}.report-verdict span{font-size:20px;font-weight:800}
-@media(max-width:760px){.report-hero{grid-template-columns:1fr;padding:21px}.report-hero h1{font-size:21px}.report-verdict{border-left:0;border-top:1px solid var(--border);padding:14px 0 0}}
-
 /* Truthful Notion snapshot renderer */
 .freshness.snapshot{color:var(--amber);border-color:#54492d}.notion-layout{display:grid;grid-template-columns:210px minmax(0,1fr);gap:24px;margin-top:18px;align-items:start}.notion-page{min-width:0;background:#111c18;border:1px solid var(--border);border-radius:13px;padding:32px 42px}.notion-page h2,.notion-page h3,.notion-page h4{scroll-margin-top:18px;color:#edf5f1}.notion-page h2{font-size:24px;margin:35px 0 16px}.notion-page h3{font-size:18px;margin:30px 0 13px}.notion-page h4{font-size:14px;margin:25px 0 11px}.notion-page p,.notion-page li,.notion-page blockquote{font-size:13px;line-height:1.8;color:#b5c2bd}.notion-page p{white-space:pre-line;margin:12px 0}.notion-page strong{color:#edf5f1}.notion-page code{font-family:var(--font-geist-mono);font-size:.9em;background:#1f3029;color:#9ff0ca;padding:2px 5px;border-radius:4px}.notion-page a{color:var(--green)}.notion-page ul,.notion-page ol{padding-left:23px;display:grid;gap:7px}.notion-page li::marker{color:var(--green)}.notion-page blockquote{margin:18px 0;padding:3px 0 3px 18px;border-left:3px solid #517063;color:#c3d0cb}.notion-callout{display:grid;grid-template-columns:30px 1fr;gap:10px;margin:19px 0;padding:15px;background:#142a21;border:1px solid #2a4b3e;border-radius:10px}.notion-callout>span{font-size:18px}.notion-callout p{margin:0}.notion-page hr{border:0;border-top:1px solid var(--border);margin:28px 0}.notion-table-wrap{overflow-x:auto;margin:18px 0;border:1px solid #2b3c35;border-radius:9px}.notion-page table{border-collapse:collapse;width:100%;min-width:620px;background:#101a17}.notion-page th,.notion-page td{padding:11px 12px;border-right:1px solid #2b3c35;border-bottom:1px solid #2b3c35;text-align:left;vertical-align:top;font-size:10px;line-height:1.55;color:#aebcb6}.notion-page th{background:#172720;color:#e3eee9;font-weight:650}.notion-page-footer{display:flex;justify-content:space-between;border-top:1px solid var(--border);padding-top:18px;margin-top:28px}.notion-page-footer span,.notion-page-footer a{font-size:9px}.notion-page-footer span{color:#6f7e78}
 @media(max-width:760px){.notion-layout{display:block}.notion-page{padding:22px 17px;border-radius:10px}.notion-page h2{font-size:22px;line-height:1.22;margin-top:32px}.notion-page h3{font-size:18px;line-height:1.3}.notion-page h4{font-size:15px}.notion-page p,.notion-page li,.notion-page blockquote{font-size:15px;line-height:1.75}.notion-callout{grid-template-columns:27px 1fr;margin-left:-5px;margin-right:-5px;padding:14px 12px}.notion-table-wrap{margin-left:-17px;margin-right:-17px;border-left:0;border-right:0;border-radius:0}.notion-page th,.notion-page td{font-size:13px;min-width:150px}.notion-page-footer{gap:10px;align-items:flex-start;flex-direction:column}}
-@media(max-width:760px){.decision-facts{grid-template-columns:repeat(2,minmax(0,1fr))}.decision-template{padding:14px}.decision-template-head{align-items:flex-start}.decision-template-badge{font-size:7px}.decision-template-columns{grid-template-columns:1fr}.decision-facts strong{font-size:11px}.decision-template-block p,.decision-template-columns p{font-size:11px!important}}
 
 /* Mobile-first interaction overrides */
 @media(max-width:760px){button,a{touch-action:manipulation}.signal{font-size:11px;padding:7px 10px}.analysis-list{overflow:visible;background:none;border:0}.analysis-list-head{display:none}.analysis-list-row{min-width:0;display:grid;grid-template-columns:1fr auto;gap:11px;margin-bottom:10px;padding:15px}.analysis-list-row .analysis-title{grid-column:1/-1}.analysis-title strong{font-size:14px;line-height:1.35}.analysis-title small,.analysis-list-row>span,.analysis-list-row>strong{font-size:11px}.report-hero h1{font-size:23px;line-height:1.2}.report-hero p,.report-verdict small{font-size:11px}}
@@ -128,7 +123,7 @@
 /* Resilient market quotes */
 
 /* Recherche documentaire réelle */
-.text-orb{display:grid;place-items:center;font-size:12px;font-weight:900;letter-spacing:.12em;color:#67e8f9}.search-results{max-width:900px;margin:22px auto 96px;display:grid;gap:12px}.search-result{width:100%;text-align:left;padding:20px;display:grid;gap:11px;cursor:pointer;color:inherit}.search-result>div{display:flex;justify-content:space-between;gap:12px;align-items:center;color:var(--muted);font-size:12px}.search-result h3{font-size:18px}.search-result p{color:var(--muted);line-height:1.65}.search-result>strong{color:#67e8f9;font-size:13px}.empty-result{padding:24px}.empty-result p{color:var(--muted);margin-top:8px}.research-reader{max-width:1160px;margin:auto;padding-bottom:96px}@media(max-width:760px){.search-results{margin-top:14px}.search-result{padding:16px}.research-reader{padding-bottom:110px}}
+.text-orb{display:grid;place-items:center;font-size:12px;font-weight:900;letter-spacing:.12em;color:#67e8f9}.search-results{max-width:900px;margin:22px auto 96px;display:grid;gap:12px}.search-result{width:100%;text-align:left;padding:20px;display:grid;gap:11px;cursor:pointer;color:inherit}.search-result>div{display:flex;justify-content:space-between;gap:12px;align-items:center;color:var(--muted);font-size:12px}.search-result h3{font-size:18px}.search-result p{color:var(--muted);line-height:1.65}.search-result>strong{color:#67e8f9;font-size:13px}.empty-result{padding:24px}.empty-result p{color:var(--muted);margin-top:8px}@media(max-width:760px){.search-results{margin-top:14px}.search-result{padding:16px}}
 
 .notion-sync-panel{margin:0 0 18px;padding:20px;overflow:hidden}.notion-sync-copy{color:var(--muted);font-size:13px;line-height:1.55;margin:8px 0 16px;max-width:850px}.notion-sync-subtitle{color:var(--muted);font-size:11px;margin:6px 0 0}.notion-sync-actions{display:flex;align-items:center;gap:10px}.notion-source-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px}.notion-source-grid button{background:rgba(255,255,255,.025);border:1px solid var(--border);border-radius:12px;color:var(--text);display:flex;flex-direction:column;gap:4px;padding:12px;text-align:left}.notion-source-grid button:not(:disabled):hover{border-color:rgba(96,165,250,.55);transform:translateY(-1px)}.notion-source-grid button:disabled{cursor:not-allowed;opacity:.62}.notion-source-grid button span{color:var(--muted);font-size:11px}.notion-source-grid button strong{font-size:15px}.notion-source-grid button small{color:var(--muted);font-size:10px}.notion-sync-message{color:var(--cyan);font-size:11px;margin:10px 0 0}@media(max-width:900px){.notion-source-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}@media(max-width:560px){[data-view="portfolio"] > .notion-sync-panel{padding:16px}.notion-sync-actions{align-items:flex-end;flex-direction:column;gap:6px}.notion-sync-actions .freshness{display:none}.notion-source-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 
@@ -143,61 +138,9 @@
 @media(max-width:760px){.company-section-block{margin-top:18px}.company-empty-section{padding:18px}.company-empty-section span{font-size:11px}.company-detail-footer{align-items:flex-start;flex-direction:column;gap:8px}.company-detail-footer span,.company-detail-footer a{font-size:10px}}.section-document-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 0;border-bottom:1px solid var(--border);text-decoration:none;color:inherit}.section-document-row:last-child{border-bottom:0}.section-document-row span{display:flex;flex-direction:column;gap:4px;min-width:0}.section-document-row strong{font-size:10px;white-space:normal;overflow-wrap:anywhere}.section-document-row small{font-size:8px;color:#71817a}.section-document-row b{font-size:10px;color:var(--green)}
 @media(max-width:760px){.section-document-row{min-height:52px}.content .section-document-row strong{font-size:11px}.section-document-row small{font-size:9px}.section-document-row b{font-size:11px}}.analysis-load-more{display:block;margin:16px auto 0}.analysis-list-row:disabled{opacity:.65;cursor:wait}
 
-/* Universal Notion analysis reader — shared by Analyses and Company pages. */
-.universal-analysis-reader{padding-bottom:70px}.universal-analysis-layout{margin-top:18px}.universal-analysis-page{min-width:0}.analysis-lead{border-left:2px solid var(--green);background:#14261f;padding:17px 19px;margin-bottom:18px}.analysis-lead>span{font-size:8px;color:var(--green);text-transform:uppercase;letter-spacing:1px;font-weight:800}.analysis-lead p{font-size:12px!important;line-height:1.75!important;color:#cbd8d2!important;margin:8px 0 0!important}.universal-analysis-page .analysis-section{display:grid;grid-template-columns:32px minmax(0,1fr);gap:10px;align-items:start;margin:28px 0 12px;padding-top:24px;border-top:1px solid var(--border);scroll-margin-top:18px}.universal-analysis-page .analysis-section h2,.universal-analysis-page .analysis-section h3,.universal-analysis-page .analysis-section h4,.universal-analysis-page .analysis-section h5,.universal-analysis-page .analysis-section h6{margin:0;color:#edf6f2;font-size:17px;line-height:1.35;letter-spacing:-.2px}.universal-analysis-page>p{font-size:10px;line-height:1.85;color:#aab8b2;margin:10px 0}.universal-analysis-page ul,.universal-analysis-page ol{margin:10px 0 16px;padding-left:22px;color:#aab8b2}.universal-analysis-page li{font-size:10px;line-height:1.75;margin:5px 0}.universal-analysis-page blockquote{margin:14px 0;padding:12px 15px;border-left:2px solid #5d8df0;background:rgba(93,141,240,.07);color:#c3d0dc;font-size:10px;line-height:1.75}.universal-analysis-page code{padding:2px 4px;border-radius:4px;background:#18251f;color:#9cf0c8;font-size:.9em}.universal-analysis-page a{color:var(--green);text-decoration-color:rgba(113,230,177,.45);text-underline-offset:2px}.universal-analysis-page hr{border:0;border-top:1px solid var(--border);margin:22px 0}.universal-analysis-page .notion-table-wrap{overflow-x:auto;margin:14px 0;border:1px solid var(--border);border-radius:9px}.universal-analysis-page table{width:100%;border-collapse:collapse;min-width:520px}.universal-analysis-page th,.universal-analysis-page td{padding:10px 11px;border-right:1px solid var(--border);border-bottom:1px solid var(--border);font-size:9px;line-height:1.5;text-align:left;vertical-align:top}.universal-analysis-page th{background:#13211c;color:#e5f0eb}.universal-analysis-page td{color:#9eada6}.universal-analysis-page tr:last-child td{border-bottom:0}.universal-analysis-page th:last-child,.universal-analysis-page td:last-child{border-right:0}.toc-empty{display:block;font-size:8px;line-height:1.5;color:var(--muted);padding:7px 0}.featured-document-open{margin-top:16px}.section-document-button{width:100%;border:0;background:none;text-align:left;cursor:pointer}.section-document-button:hover{background:#14231e}.notion-callout{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:start;margin:14px 0;padding:13px 15px;border:1px solid #315044;border-radius:8px;background:#13231e}.notion-callout>span{color:var(--green);font-size:8px;padding-top:3px}.notion-callout p{margin:0!important;color:#c5d2cc!important}.notion-page-footer{display:flex;justify-content:space-between;gap:15px;margin-top:32px;padding-top:18px;border-top:1px solid var(--border);font-size:8px;color:#718079}.notion-page-footer a{color:var(--green)}
-.decision-template{margin:0 0 24px;padding:18px;border:1px solid #315044;border-radius:10px;background:linear-gradient(145deg,#132a21,#101d18)}.decision-template-head{display:flex;align-items:flex-start;justify-content:space-between;gap:15px;margin-bottom:13px}.decision-template-head h2{font-size:19px!important;margin:4px 0 0!important}.decision-template-head .eyebrow{margin:0!important}.decision-template-badge{font-size:8px;color:var(--green);border:1px solid rgba(113,230,177,.35);border-radius:999px;padding:6px 9px;white-space:nowrap}.decision-facts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}.decision-facts>div{display:flex;flex-direction:column;gap:5px;padding:10px;background:#14241e;border:1px solid rgba(49,80,68,.45);border-radius:7px}.decision-facts small,.decision-template-block small,.decision-template-columns small{font-size:7px;text-transform:uppercase;letter-spacing:.65px;color:#789087}.decision-facts strong{font-size:10px;color:#edf6f2;line-height:1.35;overflow-wrap:anywhere}.decision-template-block{margin-top:11px;padding:12px 13px;border-left:2px solid var(--green);background:#10231b}.decision-template-block p,.decision-template-columns p{font-size:10px!important;line-height:1.7!important;color:#b8c9c0!important;margin:7px 0 0!important}.decision-template-columns{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:11px}.decision-template-columns>div{padding:11px;background:#10231b;border:1px solid rgba(49,80,68,.4);border-radius:7px}
-.decision-template-columns{grid-template-columns:1fr;gap:0;border-top:1px solid rgba(49,80,68,.45)}
-.decision-template-columns>div{padding:16px 2px;background:transparent;border:0;border-bottom:1px solid rgba(49,80,68,.45);border-radius:0}
-.decision-template-columns>div:last-child{border-bottom:0}
-.decision-template-columns small{display:block;margin-bottom:8px}
-.decision-template-columns p{max-width:76ch;margin:0!important}.relation-list{display:flex;flex-wrap:wrap;gap:8px}.relation-chip{display:flex;flex-direction:column;gap:4px;min-width:145px;max-width:100%;padding:8px 10px;border:1px solid rgba(76,112,95,.55);border-radius:7px;background:#14261f;text-decoration:none!important}.relation-chip span{font-size:7px;color:#7d968a;text-transform:uppercase;letter-spacing:.7px}.relation-chip strong{font-size:9px;color:#b9f3d5;overflow-wrap:anywhere}.relation-chip.relation-source{border-color:rgba(113,230,177,.75);background:#173026}
 .integrity-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:9px;margin:18px 0}.integrity-sections{margin-top:18px}.integrity-row{display:flex;justify-content:space-between;gap:12px;padding:11px 0;border-bottom:1px solid var(--border);text-decoration:none}.integrity-row:last-child{border-bottom:0}.integrity-row span{display:flex;flex-direction:column;gap:4px;min-width:0}.integrity-row strong{font-size:10px;color:#dce9e2;overflow-wrap:anywhere}.integrity-row small{font-size:8px;color:#718079}.integrity-row b{font-size:8px;color:var(--green);white-space:nowrap}.integrity-inline-list{display:flex;flex-wrap:wrap;gap:8px}.integrity-inline-list a{padding:8px 10px;border:1px solid var(--border);border-radius:7px;color:var(--green);font-size:9px;text-decoration:none}
 @media(max-width:760px){.universal-analysis-layout{display:block}.universal-analysis-page .analysis-section{grid-template-columns:25px minmax(0,1fr);gap:7px}.universal-analysis-page .analysis-section h2,.universal-analysis-page .analysis-section h3,.universal-analysis-page .analysis-section h4,.universal-analysis-page .analysis-section h5,.universal-analysis-page .analysis-section h6{font-size:15px}.analysis-lead{padding:14px 15px}.analysis-lead p{font-size:11px!important}.notion-page-footer{flex-direction:column}}
 @media(max-width:760px){.integrity-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.integrity-sections{display:block}.integrity-sections>article+article{margin-top:12px}}
-
-/* Analysis typography: Notion structure first, readable editorial rhythm. */
-.universal-analysis-layout{grid-template-columns:200px minmax(0,900px);justify-content:center}
-.universal-analysis-page{width:100%;max-width:900px;padding:38px 48px}
-.universal-analysis-page>p{max-width:76ch;font-size:14px;line-height:1.72;color:#bdc9c3;margin:14px 0}
-.universal-analysis-page ul,.universal-analysis-page ol{max-width:74ch;margin:12px 0 20px;padding-left:26px}
-.universal-analysis-page li{font-size:14px;line-height:1.65;margin:7px 0;color:#bdc9c3}
-.universal-analysis-page blockquote{max-width:76ch;font-size:14px;line-height:1.7;padding:15px 18px;margin:18px 0}
-.universal-analysis-page .analysis-section{grid-template-columns:34px minmax(0,1fr);margin:34px 0 16px;padding-top:28px}
-.universal-analysis-page .analysis-section h2,.universal-analysis-page .analysis-section h3,.universal-analysis-page .analysis-section h4,.universal-analysis-page .analysis-section h5,.universal-analysis-page .analysis-section h6{font-size:21px;line-height:1.3}
-.analysis-lead{max-width:76ch;padding:19px 21px;margin-bottom:22px;border-radius:0 9px 9px 0}
-.analysis-lead p{font-size:15px!important;line-height:1.65!important}
-.notion-callout{max-width:76ch;grid-template-columns:25px minmax(0,1fr);padding:16px 18px;margin:18px 0}
-.notion-callout>span{font-size:16px;line-height:1.3;padding-top:0}
-.notion-callout p{font-size:14px!important;line-height:1.65!important}
-.universal-analysis-page .notion-table-wrap{max-width:100%;margin:20px 0 24px;box-shadow:0 8px 24px rgba(0,0,0,.12)}
-.universal-analysis-reader[data-analysis-template="earnings"] .analysis-lead,.universal-analysis-reader[data-analysis-template="business"] .analysis-lead,.universal-analysis-reader[data-analysis-template="valuation"] .analysis-lead,.universal-analysis-reader[data-analysis-template="portfolio"] .analysis-lead,.universal-analysis-reader[data-analysis-template="risques"] .analysis-lead,.universal-analysis-reader[data-analysis-template="synthese"] .analysis-lead{border-left-width:3px}
-.universal-analysis-reader[data-analysis-template="earnings"] .notion-table-wrap,.universal-analysis-reader[data-analysis-template="business"] .notion-table-wrap,.universal-analysis-reader[data-analysis-template="valuation"] .notion-table-wrap,.universal-analysis-reader[data-analysis-template="portfolio"] .notion-table-wrap,.universal-analysis-reader[data-analysis-template="risques"] .notion-table-wrap,.universal-analysis-reader[data-analysis-template="synthese"] .notion-table-wrap{border-color:#315448}
-.universal-analysis-reader[data-analysis-template="risques"] .analysis-lead{background:rgba(255,143,143,.08);border-left-color:#ff8f8f}
-.universal-analysis-reader[data-analysis-template="valuation"] .analysis-lead{background:rgba(248,214,109,.08);border-left-color:#f8d66d}
-.universal-analysis-reader[data-analysis-template="earnings"] .analysis-lead{background:rgba(93,141,240,.08);border-left-color:#7aa7ff}
-.universal-analysis-page table{min-width:100%;table-layout:auto}
-.universal-analysis-page th,.universal-analysis-page td{font-size:12px;line-height:1.5;padding:12px 13px;min-width:120px;overflow-wrap:anywhere}
-.universal-analysis-page th{position:sticky;top:0;z-index:1}
-@media(max-width:760px){
-  .universal-analysis-reader{padding-bottom:105px}
-  .universal-analysis-page{max-width:none;padding:20px 16px}
-  .universal-analysis-page>p{font-size:16px;line-height:1.65;margin:13px 0}
-  .universal-analysis-page ul,.universal-analysis-page ol{padding-left:24px;margin:10px 0 18px}
-  .universal-analysis-page li{font-size:16px;line-height:1.58;margin:7px 0}
-  .universal-analysis-page blockquote{font-size:15px;line-height:1.62;padding:14px 15px}
-  .universal-analysis-page .analysis-section{grid-template-columns:24px minmax(0,1fr);gap:8px;margin:28px 0 13px;padding-top:23px}
-  .universal-analysis-page .analysis-section h2,.universal-analysis-page .analysis-section h3,.universal-analysis-page .analysis-section h4,.universal-analysis-page .analysis-section h5,.universal-analysis-page .analysis-section h6{font-size:19px;line-height:1.28}
-  .analysis-lead{padding:16px;margin:0 0 18px}
-  .analysis-lead p{font-size:16px!important;line-height:1.6!important}
-  .decision-template-columns>div{padding:15px 0}
-  .decision-template-columns small{font-size:9px}
-  .decision-template-columns p{font-size:15px!important;line-height:1.6!important}
-  .notion-callout{max-width:none;margin:16px -4px;padding:15px 13px}
-  .notion-callout p{font-size:15px!important;line-height:1.6!important}
-  .universal-analysis-page .notion-table-wrap{margin:18px -16px 22px;padding-left:0;scrollbar-width:thin}
-  .universal-analysis-page table{min-width:560px}
-  .universal-analysis-page th,.universal-analysis-page td{font-size:13px;line-height:1.45;padding:11px 12px;min-width:135px}
-}
 
 /* Five-tab mobile navigation; secondary Notion management lives in the profile menu. */
 @media(max-width:760px){}
@@ -606,7 +549,6 @@ input, select { font-size: 16px; }
 .ui-disclosure-surface[open] > summary { border-bottom: 1px solid var(--color-border); }
 .ui-disclosure-body { padding: 0 var(--space-4) var(--space-4); }
 
-.analysis-source-details .ui-disclosure-body { padding: 0; }
 .company-history-details { max-width: 940px; margin-top: var(--space-3); }
 .company-history-details .ui-disclosure-body { padding: 0 var(--space-4); }
 .company-notion-details { margin-top: var(--space-3); }
@@ -618,59 +560,8 @@ input, select { font-size: 16px; }
   font-size: var(--font-xs);
   line-height: 1.6;
 }
-
-.decision-template {
-  margin: 0 0 var(--space-6);
-  padding: 0 !important;
-  border: 0 !important;
-  border-radius: 0 !important;
-  background: transparent !important;
-  box-shadow: none !important;
-}
-
-.decision-facts { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-.decision-template-block { margin-top: var(--space-3); padding: 14px; border-left: 1px solid var(--color-border) !important; }
-.decision-template-columns { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-3); margin-top: var(--space-3); border: 0; }
-.decision-template-columns > .ui-surface--secondary { min-width: 0; padding: 14px; }
-
 @media(max-width:760px) {
   .ui-disclosure-surface > summary { min-height: 56px; padding: 10px 12px; }
   .ui-disclosure-body { padding: 0 12px 12px; }
   .company-history-details .ui-disclosure-body { padding: 0 12px; }
-  .decision-facts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .decision-template-columns { grid-template-columns: minmax(0, 1fr); }
-}
-
-/* Keep every Notion section heading inside its shared analysis surface. */
-.universal-analysis-page .analysis-section {
-  display: block !important;
-  box-sizing: border-box;
-  width: 100%;
-  min-width: 0;
-  max-width: 100%;
-  margin: var(--space-6) 0 var(--space-4) !important;
-  padding: var(--space-5) var(--space-6) !important;
-  overflow: hidden;
-}
-
-.universal-analysis-page .analysis-section > h2,
-.universal-analysis-page .analysis-section > h3,
-.universal-analysis-page .analysis-section > h4,
-.universal-analysis-page .analysis-section > h5,
-.universal-analysis-page .analysis-section > h6 {
-  box-sizing: border-box;
-  display: block;
-  width: 100%;
-  min-width: 0;
-  max-width: 100%;
-  margin: 0 !important;
-  overflow-wrap: anywhere !important;
-  word-break: normal !important;
-}
-
-@media(max-width:760px) {
-  .universal-analysis-page .analysis-section {
-    margin: 24px 0 12px !important;
-    padding: 18px 20px !important;
-  }
 }

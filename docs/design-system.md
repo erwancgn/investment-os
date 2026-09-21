@@ -51,6 +51,7 @@ La page Lovable de référence est un banc de comparaison mobile. Elle peut mont
 7. Toute passe UI doit réduire ou stabiliser les conflits directs, les redondances, les déclarations `!important` et les tokens concurrents. Une extension additive peut augmenter ponctuellement uniquement si elle est locale, intentionnelle et justifiée par un vrai contexte responsive, state ou accessibility ; cette hausse doit être documentée et accompagnée d’une baisse de la complexité globale.
 8. Pour le Portfolio, `ux-foundations.css` est propriétaire de la composition desktop/mobile des positions, de l’exposition et de Trajectoire. `globals.css` ne doit plus contenir d’ancienne grille Portfolio ou de mécanique de cible concurrente ; les surfaces Apple Light / Liquid Glass restent fournies par les primitives partagées.
 9. Pour le Shell, `GlassChrome` porte le matériau Liquid Glass de la sidebar et de la navigation mobile. `ux-foundations.css` porte uniquement leur géométrie et la composition du branding, du header, du menu compte et de la bannière PWA ; `globals.css` ne redéfinit pas ces éléments métier.
+10. Pour les lecteurs Analyse / Memo, `globals.css` conserve uniquement les primitives documentaires génériques (`notion-page`, `DisclosureSurface`, surfaces). `ux-foundations.css` est l’unique propriétaire de la composition du Reader : hero, largeur de lecture, TL;DR, sections, Decision Card, source disclosure et adaptations mobile.
 10. Pour Radar et Companies, `ux-foundations.css` porte la composition des listes, résumés, références d’analyse et variantes responsive. `DiscoveryCard` reste propriétaire du shell visuel Apple Light / Liquid Glass ; les cinq références Company restent des surfaces secondaires et ne sont jamais dupliquées dans `globals.css`.
 
 ## Gouvernance CSS et baseline de migration
@@ -63,7 +64,7 @@ La dette CSS existante est mesurée par [`scripts/audit-css-governance.mjs`](../
 
 Il distingue les sélecteurs exacts répétés, les conflits de propriétés dans un même contexte d’at-rule, les variantes responsive, les propriétés strictement redondantes, les extensions additives, les tokens répétés avec leurs valeurs, et les classes sans consommateur démontré.
 
-La baseline versionnée est [`scripts/css-audit-baseline.json`](../scripts/css-audit-baseline.json). Après la consolidation Radar / Companies du Lot 5C, l’état courant documenté est : 232 sélecteurs répétés, 52 conflits directs, 125 variantes responsive, 13 redondances identiques et 42 extensions additives ; 0 token répété et 0 valeur concurrente ; 392 déclarations `!important` ; 318 classes définies et 0 classe orpheline.
+La baseline versionnée est [`scripts/css-audit-baseline.json`](../scripts/css-audit-baseline.json). Après la consolidation Analyse / Reader du Lot 5D, l’état courant documenté est : 199 sélecteurs répétés, 21 conflits directs, 125 variantes responsive, 12 redondances identiques et 41 extensions additives ; 0 token répété et 0 valeur concurrente ; 349 déclarations `!important` ; 318 classes définies et 0 classe orpheline.
 
 Le prochain chantier de réduction, son séquencement et ses critères de sortie sont
 documentés dans [`docs/css-debt-roadmap.md`](./css-debt-roadmap.md).

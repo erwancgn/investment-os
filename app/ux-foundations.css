@@ -952,14 +952,24 @@ summary:focus-visible {
   line-height: 1.6;
 }
 
-/* Analysis reader — source utilities collapse behind the content hierarchy. */
+/* Analysis reader — one content owner; generic Notion primitives stay in globals.css. */
 .universal-analysis-reader {
-  max-width: 1120px;
+  max-width: 1160px;
   margin: 0 auto;
+  padding-bottom: 70px;
 }
 .universal-analysis-reader .report-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(210px, auto);
+  align-items: end;
+  gap: 28px;
   padding: var(--space-6);
   border-radius: var(--radius-lg);
+}
+.report-kicker {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 .universal-analysis-reader .report-hero h1 {
   max-width: 850px;
@@ -967,51 +977,212 @@ summary:focus-visible {
   font-size: clamp(24px, 3vw, 34px);
   line-height: 1.18;
 }
+.universal-analysis-reader .report-hero p {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: 9px;
+}
 .universal-analysis-reader .report-verdict {
   max-width: 280px;
+  display: flex;
+  flex-direction: column;
+  padding-left: 24px;
+  border-left: 1px solid var(--color-border);
 }
-.universal-analysis-layout {
+.universal-analysis-reader .report-verdict small {
+  color: var(--color-text-muted);
+  font-size: 8px;
+}
+.universal-analysis-reader .report-verdict strong {
+  margin: 8px 0;
+  font-size: 13px;
+}
+.universal-analysis-reader .report-verdict span {
+  font-size: 20px;
+  font-weight: 800;
+}
+.notion-layout.universal-analysis-layout {
+  width: 100%;
   display: block;
   margin-top: var(--space-4);
 }
-.universal-analysis-page {
-  max-width: 940px;
+.notion-page.universal-analysis-page {
+  width: 100%;
+  max-width: 900px;
+  min-width: 0;
   margin: 0 auto;
-  padding: var(--space-8) clamp(22px, 5vw, 56px);
+  padding: 38px 48px;
 }
-.analysis-lead {
-  max-width: none;
-  margin: 0 0 var(--space-5);
-  padding: var(--space-5);
+.notion-page.universal-analysis-page .analysis-section {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  display: block;
+  margin: var(--space-6) 0 var(--space-4);
+  padding: var(--space-5) var(--space-6);
+  overflow: hidden;
+  border-top: 1px solid var(--color-border);
+  scroll-margin-top: 18px;
 }
-.analysis-lead p {
-  max-width: var(--measure-copy);
+.notion-page.universal-analysis-page .analysis-section > h2,
+.notion-page.universal-analysis-page .analysis-section > h3,
+.notion-page.universal-analysis-page .analysis-section > h4,
+.notion-page.universal-analysis-page .analysis-section > h5,
+.notion-page.universal-analysis-page .analysis-section > h6 {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  margin: 0;
+  color: var(--color-text);
+  font-size: 21px;
+  line-height: 1.3;
+  letter-spacing: -.2px;
+  overflow-wrap: anywhere;
+  word-break: normal;
+}
+.notion-page.universal-analysis-page > p {
+  max-width: 76ch;
+  margin: 14px 0;
+  font-size: 14px;
+  line-height: 1.72;
+}
+.notion-page.universal-analysis-page > ul,
+.notion-page.universal-analysis-page > ol {
+  max-width: 74ch;
+  margin: 12px 0 20px;
+  padding-left: 26px;
+}
+.notion-page.universal-analysis-page > ul li,
+.notion-page.universal-analysis-page > ol li {
+  margin: 7px 0;
+  font-size: 14px;
+  line-height: 1.65;
+}
+.notion-page.universal-analysis-page > blockquote {
+  max-width: 76ch;
+  margin: 18px 0;
+  padding: 15px 18px;
+  border-left: 2px solid #5d8df0;
+  background: rgba(93, 141, 240, .07);
+  font-size: 14px;
+  line-height: 1.7;
+}
+.notion-page.universal-analysis-page code {
+  padding: 2px 4px;
+  border-radius: 4px;
+  background: rgba(60, 60, 67, .08);
+  color: var(--color-accent-strong);
+  font-size: .9em;
+}
+.notion-page.universal-analysis-page a {
+  color: var(--color-accent);
+  text-decoration-color: color-mix(in srgb, var(--color-accent) 45%, transparent);
+  text-underline-offset: 2px;
+}
+.notion-page.universal-analysis-page hr {
+  margin: 22px 0;
+  border: 0;
+  border-top: 1px solid var(--color-border);
+}
+.notion-page.universal-analysis-page .notion-callout {
+  max-width: 76ch;
+  grid-template-columns: 25px minmax(0, 1fr);
+  align-items: start;
+  gap: 10px;
+  margin: 18px 0;
+  padding: 16px 18px;
+}
+.notion-page.universal-analysis-page .notion-callout > span {
+  padding-top: 0;
+  color: var(--color-accent);
+  font-size: 16px;
+  line-height: 1.3;
+}
+.notion-page.universal-analysis-page .notion-callout p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.65;
+}
+.universal-analysis-page .notion-page-footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+  margin-top: 32px;
+  padding-top: 18px;
+  border-top: 1px solid var(--color-border);
+  color: var(--color-text-muted);
+  font-size: 8px;
+}
+.universal-analysis-page .notion-page-footer a {
+  color: var(--color-accent);
+}
+.toc-empty {
+  display: block;
+  padding: 7px 0;
+  color: var(--color-text-muted);
+  font-size: 8px;
+  line-height: 1.5;
+}
+.featured-document-open {
+  margin-top: var(--space-4);
+}
+.section-document-button {
+  width: 100%;
+  border: 0;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+}
+.section-document-button:hover {
+  background: var(--glass-blue);
+}
+.relation-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.relation-chip {
+  min-width: 145px;
+  max-width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 8px 10px;
+  border: 1px solid var(--color-border);
+  border-radius: 7px;
+  background: var(--glass-inset);
+  color: var(--color-text);
+  text-decoration: none;
+}
+.relation-chip span {
+  color: var(--color-text-muted);
+  font-size: 7px;
+  letter-spacing: .7px;
+  text-transform: uppercase;
+}
+.relation-chip strong {
+  color: var(--color-text);
+  font-size: 9px;
+  overflow-wrap: anywhere;
+}
+.relation-chip.relation-source {
+  border-color: rgba(22, 128, 68, .24);
+  background: rgba(52, 199, 89, .08);
 }
 .analysis-source-details {
   margin: 0 0 var(--space-6);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  background: var(--color-bg-elevated);
   overflow: hidden;
+  border: 1px solid var(--color-border) !important;
+  background: var(--glass-inset) !important;
+}
+.analysis-source-details .ui-disclosure-body {
+  padding: 0;
 }
 .analysis-source-details > summary {
   min-height: 58px;
   padding: 10px var(--space-4);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-4);
-  list-style: none;
-  cursor: pointer;
-}
-.analysis-source-details > summary::-webkit-details-marker {
-  display: none;
-}
-.analysis-source-details > summary span {
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
 }
 .analysis-source-details > summary strong {
   color: var(--color-text-secondary);
@@ -1020,13 +1191,6 @@ summary:focus-visible {
 .analysis-source-details > summary small {
   color: var(--color-text-muted);
   font-size: 9px;
-}
-.analysis-source-details > summary b {
-  color: var(--color-accent);
-  font-size: var(--font-xs);
-}
-.analysis-source-details[open] > summary {
-  border-bottom: 1px solid var(--color-border);
 }
 .analysis-source-body {
   padding: var(--space-4);
@@ -1051,24 +1215,64 @@ summary:focus-visible {
 .analysis-source-body > .notion-original {
   font-size: var(--font-xs);
 }
-.universal-analysis-page .analysis-scenario-bear {
-  border-left-color: var(--color-negative);
+.universal-analysis-page .analysis-scenario-bear { border-left-color: var(--color-negative); }
+.universal-analysis-page .analysis-scenario-base { border-left-color: var(--color-warning); }
+.universal-analysis-page .analysis-scenario-bull { border-left-color: var(--color-positive); }
+
+.decision-template {
+  margin: 0 0 var(--space-6);
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
 }
-.universal-analysis-page .analysis-scenario-base {
-  border-left-color: var(--color-warning);
+.decision-template-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 15px;
+  margin-bottom: 13px;
 }
-.universal-analysis-page .analysis-scenario-bull {
-  border-left-color: var(--color-positive);
+.decision-template-head h2 {
+  margin: 4px 0 0;
+  font-size: 19px;
 }
-.universal-analysis-page > p,
-.universal-analysis-page > ul,
-.universal-analysis-page > ol,
-.universal-analysis-page > blockquote {
-  max-width: var(--measure-copy);
+.decision-template-head .eyebrow { margin: 0; }
+.decision-template-badge {
+  padding: 6px 9px;
+  border: 1px solid color-mix(in srgb, var(--color-accent) 35%, transparent);
+  border-radius: var(--radius-pill);
+  color: var(--color-accent);
+  font-size: 8px;
+  white-space: nowrap;
 }
-.decision-template-columns > div {
+.decision-facts {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.decision-template-block {
+  margin-top: var(--space-3);
+  padding: 14px;
+  border-left: 1px solid var(--color-border) !important;
+}
+.decision-template-block p,
+.decision-template-columns p {
+  margin: 7px 0 0;
+  font-size: 10px;
+  line-height: 1.7;
+}
+.decision-template-columns {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-3);
+  margin-top: var(--space-3);
+  border: 0;
+}
+.decision-template-columns > .ui-surface--secondary {
   min-width: 0;
+  padding: 14px;
 }
+
 
 @media (max-width: 1100px) {
   .portfolio-main-grid {
@@ -1415,33 +1619,25 @@ summary:focus-visible {
     font-size: 10px;
   }
 
-  .universal-analysis-reader .report-hero {
-    padding: 18px 16px;
-  }
-  .universal-analysis-reader .report-hero h1 {
-    font-size: 23px;
-  }
-  .universal-analysis-reader .report-verdict {
-    max-width: none;
-  }
-  .universal-analysis-page {
-    padding: 16px 14px;
-  }
-  .analysis-lead {
-    padding: 16px 14px;
-  }
   .analysis-source-details > summary {
     min-height: 56px;
     padding: 9px 12px;
   }
-  .analysis-source-details > summary strong {
-    font-size: 12px;
-  }
-  .analysis-source-details > summary small {
-    font-size: 9px;
-  }
   .analysis-source-body {
     padding: 12px;
+  }
+  .decision-template-badge {
+    font-size: 7px;
+  }
+  .decision-facts {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .decision-template-columns {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .decision-template-block p,
+  .decision-template-columns p {
+    font-size: 11px;
   }
 }
 
@@ -1493,6 +1689,9 @@ summary:focus-visible {
     width: 100%;
     margin-inline: 0;
     overflow: visible;
+  }
+  .universal-analysis-reader {
+    padding-bottom: 105px;
   }
 
   /* Company identity is a compact vertical card; no desktop status column. */
@@ -1681,10 +1880,8 @@ summary:focus-visible {
   }
 
   .universal-analysis-page .analysis-section {
-    grid-template-columns: 22px minmax(0, 1fr) !important;
-    gap: 8px !important;
-    margin: 28px 0 13px !important;
-    padding-top: 22px !important;
+    margin: 24px 0 12px !important;
+    padding: 18px 20px !important;
   }
 
   .universal-analysis-page .analysis-section h2,
@@ -1960,11 +2157,6 @@ select {
   font: inherit;
   text-align: left;
   cursor: pointer;
-}
-
-.relation-chip.relation-source {
-  background: rgba(52, 199, 89, 0.08) !important;
-  border-color: rgba(22, 128, 68, 0.24) !important;
 }
 
 .notion-page th,
@@ -2806,9 +2998,6 @@ table {
   -webkit-text-fill-color: var(--color-text) !important;
 }
 
-.featured-document-open {
-  margin-top: var(--space-4);
-}
 .analysis-load-more {
   margin-top: var(--space-4);
 }
@@ -3006,11 +3195,6 @@ table {
   border-top: 1px solid var(--color-border);
 }
 
-.analysis-source-details {
-  border: 1px solid var(--color-border) !important;
-  background: var(--glass-inset) !important;
-}
-
 .analysis-lead,
 .latest-info-summary {
   display: block;
@@ -3049,15 +3233,6 @@ table {
   font-size: 10px !important;
   letter-spacing: 0 !important;
   text-transform: none !important;
-}
-
-.analysis-source-details {
-  margin-bottom: var(--space-6);
-  overflow: hidden;
-}
-
-.notion-callout {
-  padding: 14px 16px;
 }
 
 /* White belongs to the primary liquid-glass page/card only. Structural
