@@ -6,12 +6,14 @@ Le design system possède désormais une entrée publique unique, un seul bloc `
 aucun token concurrent et aucune classe orpheline détectée. La dette restante est une
 dette de cascade et de consolidation, mesurée par la baseline versionnée :
 
-- 185 sélecteurs exacts répétés ;
+- 179 sélecteurs exacts répétés ;
 - 0 conflit direct de propriétés ;
 - 136 variantes responsive ;
-- 11 déclarations strictement redondantes ;
-- 38 extensions additives ;
-- 309 déclarations `!important`.
+- 1 redondance stricte intentionnelle ;
+- 42 extensions additives ;
+- 306 déclarations `!important`.
+
+La redondance stricte restante est volontaire : le fallback `.ui-surface--glass` est déclaré dans deux contextes indépendants, l'absence de support du blur et `prefers-reduced-transparency`. Elle ne doit pas être supprimée tant que ces deux comportements restent distincts.
 
 Cette baseline est un plafond de non-régression, pas un état cible. Les sélecteurs répétés, conflits directs, redondances, déclarations `!important`, tokens concurrents et classes orphelines sont stricts. Les variantes responsive et extensions additives sont revues dans leur contexte : elles ne constituent pas une dette par nature lorsqu’elles expriment un comportement réellement différent et localisé.
 
@@ -21,7 +23,7 @@ Durée estimée : 4 à 6 jours de développement, puis 0,5 à 1 jour de recette
 visuelle mobile et desktop.
 
 1. Conserver zéro conflit direct entre `globals.css` et `ux-foundations.css` ; toute nouvelle composition métier reste dans `ux-foundations.css`.
-2. Réduire progressivement les 11 redondances restantes et les `!important` seulement après suppression de leur règle concurrente.
+2. Réduire progressivement les `!important` seulement après suppression de leur règle concurrente ; la redondance `ui-surface--glass` est explicitement conservée.
 3. Revoir les variantes responsive par composant : conserver celles qui expriment un vrai changement de composition et supprimer uniquement les doublons de cascade.
 4. Ne découper `ux-foundations.css` que si le découpage réduit réellement la cascade ; ne pas créer de fichier pour un seul consommateur.
 5. Passer à la validation Lovable puis à la recette finale application + Storybook avant toute fusion vers `main` ou publication Sites.

@@ -833,7 +833,7 @@ summary:focus-visible {
 .generic-company-main .hero-logo {
   width: 48px;
   height: 48px;
-  flex-basis: 48px;
+  flex: 0 0 48px;
   border-radius: var(--radius-md);
 }
 .generic-company-main .hero-title h1 {
@@ -1762,11 +1762,6 @@ summary:focus-visible {
     max-width: calc(100% - 52px);
     overflow: hidden;
     text-overflow: ellipsis;
-  }
-
-  .company-main-grid,
-  .company-summary-grid {
-    grid-template-columns: minmax(0, 1fr) !important;
   }
 
   .latest-info-card,
@@ -2700,12 +2695,6 @@ table {
   .latest-info-card {
     padding: 17px 15px;
   }
-  .latest-info-summary p,
-  .latest-info-summary ul,
-  .analysis-lead p,
-  .analysis-lead ul {
-    font-size: 15px !important;
-  }
 }
 
 /* Final mobile cascade guard — keep this at EOF. */
@@ -3034,14 +3023,10 @@ table {
 }
 
 @media (max-width: 760px) {
-  .latest-analysis-metadata {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
   .analysis-list-row .analysis-verdict-cell {
     display: -webkit-box;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 2;
-    overflow: hidden;
   }
 }
 
