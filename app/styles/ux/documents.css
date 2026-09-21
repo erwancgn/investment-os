@@ -49,8 +49,6 @@
 .analysis-lead p,
 .analysis-lead ul {
   margin: 0 !important;
-  padding-left: 0;
-  color: var(--color-text) !important;
   font-size: 15px !important;
   line-height: 1.58 !important;
 }
@@ -216,14 +214,14 @@
   }
 
   .research-coverage-table .ui-data-table,
-  .research-coverage-table .ui-data-table tbody,
-  .research-coverage-table .ui-data-table tr {
+  .research-coverage-table .ui-data-table tbody {
     display: block;
     width: 100%;
   }
 
   .research-coverage-table .ui-data-table tr {
     display: grid;
+    width: 100%;
     grid-template-columns: minmax(0, 1fr) minmax(52px, .65fr) minmax(68px, auto);
     gap: 8px;
     padding: 12px;
@@ -387,14 +385,6 @@
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-}
-
-.analysis-lead p,
-.analysis-lead li,
-.latest-info-summary p,
-.latest-info-summary li {
-  color: var(--color-content-copy) !important;
-  -webkit-text-fill-color: var(--color-content-copy) !important;
 }
 
 .latest-info-summary-more {

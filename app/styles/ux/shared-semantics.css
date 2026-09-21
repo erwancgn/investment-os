@@ -20,7 +20,6 @@
 .position-value strong,
 .position-quote strong,
 .company-identity strong,
-.analysis-title strong,
 .detail-heading h2,
 .generic-company-main .hero-title h1,
 .universal-analysis-reader .report-hero h1,
@@ -113,7 +112,6 @@
   cursor: pointer;
 }
 
-.analysis-list-head,
 .table-head {
   background: rgba(242, 242, 247, 0.92) !important;
   color: var(--color-text) !important;
@@ -303,6 +301,7 @@ table {
 .analysis-list-head {
   background: transparent !important;
   border: 0 !important;
+  color: var(--color-text) !important;
 }
 
 .analysis-list-row {

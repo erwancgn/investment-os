@@ -207,8 +207,6 @@
   border: 0;
   border-right: 1px solid var(--color-border);
   border-bottom: 1px solid var(--color-border);
-  background: transparent;
-  color: var(--color-text-secondary);
   font-size: 12px;
   line-height: 1.45;
   text-align: left;
@@ -216,6 +214,10 @@
   white-space: normal;
   overflow-wrap: anywhere;
   word-break: normal;
+}
+.notion-table td {
+  background: transparent;
+  color: var(--color-text-secondary);
 }
 .notion-table th {
   position: static;
@@ -455,7 +457,8 @@ input, select { font-size: 16px; }
 .ui-action-button--compact { width: auto; min-width: 78px; min-height: var(--ui-control-hit-height); padding: 7px 10px; font-size: var(--font-xs); }
 .ui-data-table-wrap { box-sizing: border-box; width: 100%; overflow: hidden; border: 1px solid var(--color-border); border-radius: var(--radius-md); background: rgba(255, 255, 255, 0.5); }
 .ui-data-table { width: 100%; border-collapse: collapse; table-layout: auto; }
-.ui-data-table th, .ui-data-table td { padding: 11px 12px; border: 0; border-bottom: 1px solid var(--color-border); color: var(--color-text-secondary); font-size: var(--font-xs); line-height: 1.35; text-align: left; vertical-align: middle; overflow-wrap: anywhere; }
+.ui-data-table th, .ui-data-table td { padding: 11px 12px; border: 0; border-bottom: 1px solid var(--color-border); font-size: var(--font-xs); line-height: 1.35; text-align: left; vertical-align: middle; overflow-wrap: anywhere; }
+.ui-data-table td { color: var(--color-text-secondary); }
 .ui-data-table th { background: var(--glass-inset); color: var(--color-text-muted); font-weight: 650; }
 .ui-data-table tbody tr:last-child td { border-bottom: 0; }
 .ui-data-table strong { color: var(--color-text); }

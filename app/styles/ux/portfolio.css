@@ -136,8 +136,7 @@
 .allocation-panel {
   padding: 22px 22px 14px;
 }
-.allocation-panel .panel-head .eyebrow,
-.allocation-panel .panel-head h2 {
+.allocation-panel .panel-head .eyebrow {
   font-size: revert;
 }
 .allocation-panel .panel-head .eyebrow::after,
