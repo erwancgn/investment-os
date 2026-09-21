@@ -761,8 +761,11 @@
   .holding-metric-grid article {
     width: auto;
     min-width: 0 !important;
-    min-height: 96px;
     padding: 12px !important;
+  }
+
+  .company-metrics article {
+    min-height: 96px;
   }
 
   .company-metrics strong,
@@ -817,10 +820,6 @@
     margin-inline: 0 !important;
   }
 
-  .latest-info-summary p,
-  .latest-info-summary li,
-  .analysis-lead p,
-  .analysis-lead li,
   .notion-callout p {
     color: var(--color-text-secondary) !important;
     font-size: 15px !important;
