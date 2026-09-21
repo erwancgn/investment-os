@@ -131,7 +131,7 @@ export function DocumentSearch({ openCompany }: { openCompany: (companyId: strin
   const hasQuery = parseSearchTerms(query).length > 0;
   const settled = debouncedQuery === query.trim();
   return <>
-    <section className="research-hero research-search-workspace">
+    <section className="research-search-workspace">
       <div className="research-search-heading">
         <div className="ai-orb text-orb">TXT</div>
         <div><h2>Recherche documentaire globale</h2><p>Retrouve un concept dans le texte complet des snapshots Notion, puis ouvre sa source réelle.</p></div>
