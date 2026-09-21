@@ -435,7 +435,6 @@
 }
 
 /* Shared list/detail refinements used by the other audited screens. */
-.analysis-stats article,
 .company-metrics article,
 .detail-card {
   border-radius: var(--radius-md);
