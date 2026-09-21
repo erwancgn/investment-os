@@ -35,7 +35,8 @@ jobs:
 
       - run: npm run lint
       - run: npm run audit:css:governance
-      - run: npm test
+      - run: npm run typecheck
+      - run: npm run test:storybook-coverage
       - run: npm run build-storybook
 
       - name: Serve Storybook
