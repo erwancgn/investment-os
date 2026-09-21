@@ -3,7 +3,7 @@ import path from "node:path";
 import postcss from "postcss";
 
 const root = process.cwd();
-const files = ["app/globals.css", "app/ux-foundations.css"];
+const files = ["app/ux-foundations.css", "app/globals.css"];
 
 function normalize(value) {
   return value.replace(/\s+/g, " ").trim();
@@ -36,6 +36,7 @@ function add(map, key, value) {
 }
 
 const selectorOccurrences = new Map();
+const declarationChains = new Map();
 const importantOccurrences = [];
 const inventory = {};
 
@@ -68,6 +69,15 @@ for (const file of files) {
       };
       add(selectorOccurrences, selector, occurrence);
       for (const declaration of decls) {
+        add(declarationChains, `${selector}\u0000${context}\u0000${declaration.property}`, {
+          file,
+          selector,
+          context,
+          line: occurrence.line,
+          property: declaration.property,
+          value: declaration.value,
+          important: declaration.important,
+        });
         if (declaration.important) {
           importantOccurrences.push({
             file,
@@ -133,6 +143,57 @@ for (const [selector, occurrences] of selectorOccurrences) {
   }
 }
 
+function classifyDeclarationChains() {
+  const sameFile = [];
+  const crossFile = [];
+  let shadowedDeclarations = 0;
+  let identicalDeclarations = 0;
+
+  for (const occurrences of declarationChains.values()) {
+    if (occurrences.length < 2) continue;
+    const byFile = new Map();
+    for (const item of occurrences) add(byFile, item.file, item);
+
+    for (const [file, items] of byFile) {
+      if (items.length < 2) continue;
+      const values = [...new Set(items.map(item => `${item.value}${item.important ? " !important" : ""}`))];
+      if (values.length === 1) identicalDeclarations += items.length - 1;
+      else shadowedDeclarations += items.length - 1;
+      sameFile.push({
+        file,
+        selector: items[0].selector,
+        context: items[0].context,
+        property: items[0].property,
+        values,
+        lines: items.map(item => item.line),
+      });
+    }
+
+    if (byFile.size > 1) {
+      crossFile.push({
+        selector: occurrences[0].selector,
+        context: occurrences[0].context,
+        property: occurrences[0].property,
+        values: occurrences.map(item => ({
+          file: item.file,
+          line: item.line,
+          value: item.value,
+          important: item.important,
+        })),
+      });
+    }
+  }
+
+  return {
+    sameFile: sameFile.sort((a, b) => a.file.localeCompare(b.file) || a.selector.localeCompare(b.selector) || a.property.localeCompare(b.property)),
+    crossFile: crossFile.sort((a, b) => a.selector.localeCompare(b.selector) || a.property.localeCompare(b.property)),
+    shadowedDeclarations,
+    identicalDeclarations,
+  };
+}
+
+const declarationChainResult = classifyDeclarationChains();
+
 function topImportant(limit = 60) {
   const grouped = new Map();
   for (const item of importantOccurrences) {
@@ -157,10 +218,16 @@ const result = {
     importantDeclarations: importantOccurrences.length,
     uxImportantDeclarations: importantOccurrences.filter(item => item.file === "app/ux-foundations.css").length,
     globalsImportantDeclarations: importantOccurrences.filter(item => item.file === "app/globals.css").length,
+    sameFileDeclarationChains: declarationChainResult.sameFile.length,
+    crossFileDeclarationChains: declarationChainResult.crossFile.length,
+    shadowedDeclarations: declarationChainResult.shadowedDeclarations,
+    identicalRepeatedDeclarations: declarationChainResult.identicalDeclarations,
   },
   sameContextCrossFileSelectors,
   uxRepeatedSameContext: uxRepeatedSameContext.sort((a, b) => b.count - a.count || a.selector.localeCompare(b.selector)),
   globalsRepeatedSameContext: globalsRepeatedSameContext.sort((a, b) => b.count - a.count || a.selector.localeCompare(b.selector)),
+  sameFileDeclarationChains: declarationChainResult.sameFile,
+  crossFileDeclarationChains: declarationChainResult.crossFile,
   topImportantSelectors: topImportant(),
 };
 
