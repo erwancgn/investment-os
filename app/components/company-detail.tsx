@@ -262,7 +262,7 @@ export function CompanyDetail({ companyId, close, initialData }: { companyId: st
         <BackButton onBack={close} ariaLabel="Retour à la vue précédente" />
       </div>
       {error && !initialData && <p className="resource-error" role="status">{error} La dernière fiche chargée reste affichée.</p>}
-      <header className="company-hero generic-company-hero">
+      <PrimaryBlock as="header" className="company-hero generic-company-hero">
         <div className="company-hero-main generic-company-main">
           <div className="hero-logo">{(data.ticker || title).slice(0, 2).toUpperCase()}</div>
           <div>
@@ -284,7 +284,7 @@ export function CompanyDetail({ companyId, close, initialData }: { companyId: st
           <strong>{data.watchlistMembership ? data.monitoringStatus || "Non renseignée" : data.ownershipStatus}</strong>
           <span>{data.watchlistMembership ? `Decision : ${data.decision || "Non renseignée"}` : data.researchStage || "Recherche à compléter"}</span>
         </div>
-      </header>
+      </PrimaryBlock>
       <Tabs
         options={tabs.map(([id, label]) => ({
           value: id,
