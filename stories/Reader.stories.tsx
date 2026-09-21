@@ -7,7 +7,7 @@ const memoDocument = {
   ...document,
   id: "doc-memo",
   title: "Investment Memo CIO — Reference",
-  category: "synthese",
+  category: "synthese" as const,
   agent: "Investment Memo CIO",
   score: "",
   verdict: "Hold / monitor",
