@@ -14,22 +14,20 @@ const memoDocument = {
   summary: "Thèse long terme intacte, avec discipline sur la valorisation et suivi des catalyseurs.",
   plainText: `# Investment Memo CIO
 ## Decision Card
-| Champ | Valeur |
-| --- | --- |
-| Action | Hold |
-| Confiance | High |
-| Prochaine revue | Après résultats |
+Champ | Valeur | Détail
+Action | Hold | Position conservée
+Confiance | High | Thèse intacte
+Prochaine revue | Après résultats | Revalider la valorisation
 
 ## Raisonnement décisif
 La qualité opérationnelle reste forte, mais le prix impose de conserver une marge de sécurité.
 
 ## État des modules
-| Module | Statut |
-| --- | --- |
-| Business | Validated |
-| Valuation | Current |
-| Short | Current |
-| Portfolio | Current |
+Module | Statut | Note
+Business | Validated | Qualité confirmée
+Valuation | Current | Discipline requise
+Short | Current | Aucun signal bloquant
+Portfolio | Current | Taille maîtrisée
 
 ## Risques
 - Compression des multiples
