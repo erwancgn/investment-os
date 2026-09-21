@@ -72,11 +72,15 @@ summary:focus-visible {
 }
 .portfolio-overview-main > div:first-child > span {
   display: block;
-  margin-top: var(--space-3);  font-size: var(--font-sm);
+  margin-top: var(--space-3);
+  color: var(--color-text-secondary);
+  font-size: var(--font-sm);
 }
 .portfolio-overview-main > div:first-child > strong {
   display: block;
-  margin: 3px 0 2px;  font-size: var(--font-2xl);
+  margin: 3px 0 2px;
+  color: var(--color-text);
+  font-size: var(--font-2xl);
   line-height: 1.1;
   letter-spacing: -1.1px;
 }
@@ -88,19 +92,27 @@ summary:focus-visible {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
-.portfolio-kpis > span {  padding: 4px var(--space-5);
+.portfolio-kpis > span {
+  min-width: 0;
+  padding: 4px var(--space-5);
   border-left: 1px solid var(--color-border);
   display: grid;
   grid-template-rows: minmax(26px, auto) minmax(29px, auto) minmax(18px, auto);
   justify-items: start;
   gap: 4px;
 }
-.portfolio-kpis small {  font-size: 10px;
+.portfolio-kpis small {
+  color: var(--color-text-muted);
+  font-size: 10px;
 }
-.portfolio-kpis strong {  font-size: var(--font-lg);
+.portfolio-kpis strong {
+  color: var(--color-text);
+  font-size: var(--font-lg);
   line-height: 1.25;
 }
-.portfolio-kpis b {  font-size: 10px;
+.portfolio-kpis b {
+  color: var(--color-text-muted);
+  font-size: 10px;
   font-weight: 500;
 }
 .portfolio-scope-switch {
@@ -119,7 +131,9 @@ summary:focus-visible {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 10px;  cursor: pointer;
+  gap: 10px;
+  color: var(--color-text-muted);
+  cursor: pointer;
 }
 .portfolio-scope-switch button span {
   font-size: 10px;
@@ -223,7 +237,9 @@ summary:focus-visible {
   font-weight: 900;
 }
 .asset-name strong {
-  display: block;  font-size: 11px;
+  display: block;
+  color: var(--color-text);
+  font-size: 11px;
   font-weight: 700;
   line-height: 1.3;
 }
@@ -248,10 +264,14 @@ summary:focus-visible {
 }
 .weights strong,
 .position-value strong,
-.position-quote strong {  font-size: 10px;
+.position-quote strong {
+  color: var(--color-text);
+  font-size: 10px;
 }
 .position-value small,
-.position-quote small {  text-transform: uppercase;
+.position-quote small {
+  color: var(--color-text-muted);
+  text-transform: uppercase;
   letter-spacing: 0.45px;
 }
 .pnl-badge {
@@ -261,18 +281,24 @@ summary:focus-visible {
   flex-direction: column;
   align-items: flex-end;
   justify-content: center;
-  gap: 2px;  min-height: var(--ui-control-hit-height);
+  gap: 2px;
+  min-width: 0;
+  min-height: var(--ui-control-hit-height);
   padding: 0;
   border: 0;
   border-radius: 6px;
   background: transparent;
   font: inherit;
   font-size: 9px;
-  font-weight: 700;  cursor: pointer;
+  font-weight: 700;
+  text-align: right;
+  cursor: pointer;
 }
 .pnl-badge strong {
   font-size: inherit;
-  line-height: 1.1;}
+  line-height: 1.1;
+  white-space: nowrap;
+}
 
 .side-stack {
   display: grid;
@@ -446,7 +472,9 @@ summary:focus-visible {
 .watch-theme-filter {
   margin: 0 0 var(--space-4);
   border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);  overflow: hidden;
+  border-radius: var(--radius-md);
+  background: var(--color-bg-elevated);
+  overflow: hidden;
 }
 .watch-theme-filter > summary {
   min-height: 44px;
@@ -454,14 +482,18 @@ summary:focus-visible {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: var(--space-4);  font-size: var(--font-xs);
+  gap: var(--space-4);
+  color: var(--color-text-muted);
+  font-size: var(--font-xs);
   list-style: none;
   cursor: pointer;
 }
 .watch-theme-filter > summary::-webkit-details-marker {
   display: none;
 }
-.watch-theme-filter > summary strong {  font-size: var(--font-xs);
+.watch-theme-filter > summary strong {
+  color: var(--color-accent);
+  font-size: var(--font-xs);
 }
 .watch-theme-filter[open] > summary {
   border-bottom: 1px solid var(--color-border);
@@ -714,7 +746,10 @@ summary:focus-visible {
   gap: 3px;
   padding: 7px;
   border: 1px solid var(--surface-stroke);
-  border-radius: var(--radius-sm); text-decoration: none;
+  border-radius: var(--radius-sm);
+  background: var(--surface-secondary);
+  color: inherit;
+  text-decoration: none;
 }
 .research-reference > span {
   color: var(--color-text-muted);
@@ -729,7 +764,12 @@ summary:focus-visible {
   white-space: nowrap;
 }
 .research-reference.available:hover {
-.research-reference.available > strong {}
+  border-color: color-mix(in srgb, var(--color-accent) 35%, var(--surface-stroke));
+  background: var(--glass-blue);
+}
+.research-reference.available > strong {
+  color: var(--color-accent);
+}
 .research-reference.missing {
   opacity: .42;
 }
@@ -775,10 +815,14 @@ summary:focus-visible {
   text-overflow: ellipsis;
   white-space: normal;
 }
-.analysis-score-cell {}
+.analysis-score-cell {
+  color: var(--color-text);
+}
 
 /* Company sheet — compact identity, one current document, history on demand. */
-.generic-company-detail {  margin: 0 auto;
+.generic-company-detail {
+  max-width: 1180px;
+  margin: 0 auto;
 }
 .generic-company-hero {
   min-height: 108px;
@@ -835,7 +879,9 @@ summary:focus-visible {
 .company-summary-primary {
   padding: var(--space-6);
 }
-.company-research-overview {}
+.company-research-overview {
+  padding: var(--space-5);
+}
 .company-research-overview h2 {
   margin: 0 0 var(--space-3);
   font-size: var(--font-lg);
@@ -886,7 +932,9 @@ summary:focus-visible {
   color: var(--color-text-muted);
   font-size: 9px;
 }
-.company-history-details > summary b {  font-size: var(--font-xs);
+.company-history-details > summary b {
+  color: var(--color-accent);
+  font-size: var(--font-xs);
 }
 .company-history-details[open] > summary {
   border-bottom: 1px solid var(--color-border);
@@ -907,7 +955,9 @@ summary:focus-visible {
 }
 
 /* Analysis reader — one content owner; generic Notion primitives stay in globals.css. */
-.universal-analysis-reader {  margin: 0 auto;
+.universal-analysis-reader {
+  max-width: 1160px;
+  margin: 0 auto;
   padding-bottom: 70px;
 }
 .universal-analysis-reader .report-hero {
@@ -1087,7 +1137,9 @@ summary:focus-visible {
   text-align: left;
   cursor: pointer;
 }
-.section-document-button:hover {}
+.section-document-button:hover {
+  background: var(--glass-blue);
+}
 .relation-list {
   display: flex;
   flex-wrap: wrap;
@@ -1101,7 +1153,10 @@ summary:focus-visible {
   gap: 4px;
   padding: 8px 10px;
   border: 1px solid var(--color-border);
-  border-radius: 7px; text-decoration: none;
+  border-radius: 7px;
+  background: var(--glass-inset);
+  color: var(--color-text);
+  text-decoration: none;
 }
 .relation-chip span {
   color: var(--color-text-muted);
@@ -1170,6 +1225,9 @@ summary:focus-visible {
   padding: 0;
   border: 0;
   border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
 .decision-template-head {
   display: flex;
   align-items: flex-start;
@@ -1600,7 +1658,9 @@ summary:focus-visible {
 @media (max-width: 760px) {
 
   .generic-company-detail,
-  .universal-analysis-reader {    margin-inline: 0;
+  .universal-analysis-reader {
+    width: 100%;
+    margin-inline: 0;
     overflow: visible;
   }
   .universal-analysis-reader {
@@ -1773,7 +1833,9 @@ summary:focus-visible {
   }
 
   .universal-analysis-layout,
-  .universal-analysis-page {    margin-inline: 0 !important;
+  .universal-analysis-page {
+    width: 100%;
+    margin-inline: 0 !important;
   }
 
   .universal-analysis-page {
@@ -2495,7 +2557,12 @@ table {
 }
 
 .latest-info-summary,
-.analysis-lead {  gap: 10px;
+.analysis-lead {
+  display: grid;
+  gap: 10px;
+  margin: var(--space-5) 0;
+  padding: 16px 18px;
+}
 
 .latest-info-summary > small,
 .analysis-lead > span,
