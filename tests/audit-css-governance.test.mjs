@@ -2,16 +2,13 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
 import { auditCssGovernance } from "../scripts/audit-css-governance.mjs";
+import { governanceCssFiles } from "../scripts/css-file-manifest.mjs";
 
 test("CSS governance matches the checked-in debt baseline", async () => {
   const result = await auditCssGovernance();
   const baseline = JSON.parse(await readFile(new URL("../scripts/css-audit-baseline.json", import.meta.url), "utf8"));
 
-  assert.deepEqual(result.scope.cssFiles, [
-    "app/globals.css",
-    "app/ux-foundations.css",
-    "stories/storybook.css",
-  ]);
+  assert.deepEqual(result.scope.cssFiles, governanceCssFiles);
   assert.deepEqual(result.metrics, baseline.thresholds);
   assert.deepEqual(result.baseline.regressions, []);
   assert.deepEqual(result.findings.orphanClasses, []);

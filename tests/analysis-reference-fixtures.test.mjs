@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { access, readFile } from "node:fs/promises";
 import test from "node:test";
+import { uxCssFiles } from "../scripts/css-file-manifest.mjs";
 
 const fixtureUrl = new URL("../app/data/analysis-reference-fixtures.json", import.meta.url);
 const rendererUrl = new URL("../app/lib/notion-renderer.ts", import.meta.url);
@@ -22,7 +23,8 @@ const notionTableUrl = new URL("../app/components/notion-table.tsx", import.meta
 const watchlistUrl = new URL("../app/components/notion-watchlist.tsx", import.meta.url);
 const companiesUrl = new URL("../app/components/notion-companies.tsx", import.meta.url);
 const analysesUrl = new URL("../app/components/notion-analyses.tsx", import.meta.url);
-const uxUrl = new URL("../app/ux-foundations.css", import.meta.url);
+const uxUrls = uxCssFiles.map(file => new URL(`../${file}`, import.meta.url));
+const readUxSource = async () => (await Promise.all(uxUrls.map(url => readFile(url, "utf8")))).join("\n");
 const globalsUrl = new URL("../app/globals.css", import.meta.url);
 const designSystemUrl = new URL("../app/design-system.css", import.meta.url);
 const uiPrimitivesUrl = new URL("../app/components/ui-primitives.tsx", import.meta.url);
@@ -307,7 +309,7 @@ test("company detail stays dynamic instead of using the legacy Nebius cockpit", 
 test("earnings expose the five canonical refresh routes in the company design system", async () => {
   const dataSource = await readFile(dataUrl, "utf8");
   const companySource = await readFile(companyDetailUrl, "utf8");
-  const uxSource = await readFile(uxUrl, "utf8");
+  const uxSource = await readUxSource();
   assert.match(dataSource, /export type EarningsReviewFields/);
   assert.match(dataSource, /Business.*Valuation.*Short.*Portfolio.*Mémo CIO/s);
   assert.match(dataSource, /propertyValue\(p,"Earnings Date"\).*propertyValue\(p,"Analysis Date"\)/);
@@ -324,7 +326,7 @@ test("earnings expose the five canonical refresh routes in the company design sy
 
 test("two-column earnings tables prioritize result readability on mobile", async () => {
   const tableSource = await readFile(new URL("../app/components/notion-table.tsx", import.meta.url), "utf8");
-  const uxSource = await readFile(uxUrl, "utf8");
+  const uxSource = await readUxSource();
   assert.match(tableSource, /columnCount === 2 \? " notion-table-two-column"/);
   assert.match(uxSource, /data-analysis-template="earnings".*notion-table-two-column/s);
   assert.match(uxSource, /width: 32% !important/);
@@ -457,7 +459,7 @@ test("standard analyses and CIO memo reuse the shared hero and fact grid", async
   const readerSource = await readFile(analysisReaderUrl, "utf8");
   const memoSource = await readFile(memoReaderUrl, "utf8");
   const primitiveSource = await readFile(uiPrimitivesUrl, "utf8");
-  const uxSource = await readFile(uxUrl, "utf8");
+  const uxSource = await readUxSource();
   assert.match(presentationSource, /export function AnalysisReportHero/);
   assert.match(presentationSource, /export function AnalysisFactGrid/);
   assert.match(presentationSource, /<MetadataGrid/);
@@ -512,7 +514,7 @@ test("company summaries are segmented for a scannable mobile preview", async () 
 });
 
 test("research copy uses the shared readable text token", async () => {
-  const uxSource = await readFile(uxUrl, "utf8");
+  const uxSource = await readUxSource();
   const globalsSource = await readFile(globalsUrl, "utf8");
   assert.match(globalsSource, /--color-content-copy: #3a3a3c/);
   assert.match(globalsSource, /\.notion-callout p \{ margin: 0; color: var\(--color-content-copy\); \}/);
@@ -526,7 +528,7 @@ test("discovery lists keep stable identities and separate interactive targets", 
   const companiesSource = await readFile(companiesUrl, "utf8");
   const analysesSource = await readFile(analysesUrl, "utf8");
   const globalsSource = await readFile(globalsUrl, "utf8");
-  const uxSource = await readFile(uxUrl, "utf8");
+  const uxSource = await readUxSource();
 
   assert.doesNotMatch(watchlistSource, /accentFor/);
   assert.match(watchlistSource, /kind="watchlist"/);
@@ -542,7 +544,7 @@ test("discovery lists keep stable identities and separate interactive targets", 
 });
 
 test("Apple Light theme stays isolated from data and parser contracts", async () => {
-  const uxSource = await readFile(uxUrl, "utf8");
+  const uxSource = await readUxSource();
   const globalsSource = await readFile(globalsUrl, "utf8");
   const designSystemSource = await readFile(designSystemUrl, "utf8");
   const layoutSource = await readFile(new URL("../app/layout.tsx", import.meta.url), "utf8");
@@ -555,7 +557,7 @@ test("Apple Light theme stays isolated from data and parser contracts", async ()
 });
 
 test("Apple Light theme covers shared surfaces and aligns financial figures", async () => {
-  const uxSource = await readFile(uxUrl, "utf8");
+  const uxSource = await readUxSource();
   const globalsSource = await readFile(globalsUrl, "utf8");
   assert.match(uxSource, /\.ui-metadata-item/);
   assert.match(uxSource, /\.decision-template \{/);
@@ -573,7 +575,7 @@ test("portfolio hides internal calculation and method panels", async () => {
 
 test("shared UI primitives drive progress bars and segmented filters", async () => {
   const primitiveSource = await readFile(uiPrimitivesUrl, "utf8");
-  const uxSource = await readFile(uxUrl, "utf8");
+  const uxSource = await readUxSource();
   const globalsSource = await readFile(globalsUrl, "utf8");
   const portfolioSource = await readFile(new URL("../app/components/live-portfolio-dashboard.tsx", import.meta.url), "utf8");
   const targetSource = await readFile(new URL("../app/components/target-allocation.tsx", import.meta.url), "utf8");
@@ -651,7 +653,7 @@ test("research actions and coverage use the shared mobile UI primitives", async 
   const holdingSource = await readFile(liveHoldingSummaryUrl, "utf8");
   const readerSource = await readFile(analysisReaderUrl, "utf8");
   const latestInfoSource = await readFile(latestInfoUrl, "utf8");
-  const uxSource = await readFile(uxUrl, "utf8");
+  const uxSource = await readUxSource();
 
   assert.match(primitiveSource, /export function ActionButton/);
   assert.match(primitiveSource, /export function BackButton/);
@@ -675,7 +677,7 @@ test("analysis and company details share the same nested liquid-glass primitives
   const readerSource = await readFile(analysisReaderUrl, "utf8");
   const companySource = await readFile(companyDetailUrl, "utf8");
   const latestInfoSource = await readFile(latestInfoUrl, "utf8");
-  const uxSource = await readFile(uxUrl, "utf8");
+  const uxSource = await readUxSource();
   const globalsSource = await readFile(globalsUrl, "utf8");
 
   assert.match(primitiveSource, /export function PrimaryBlock/);
@@ -711,7 +713,7 @@ test("analysis and company details share the same nested liquid-glass primitives
 });
 
 test("analysis section headings stay contained in their shared surface", async () => {
-  const uxSource = await readFile(uxUrl, "utf8");
+  const uxSource = await readUxSource();
   assert.match(uxSource, /\.notion-page\.universal-analysis-page \.analysis-section \{[\s\S]*box-sizing: border-box;[\s\S]*width: 100%;[\s\S]*overflow: hidden;/);
   assert.match(uxSource, /\.notion-page\.universal-analysis-page \.analysis-section > h2,[\s\S]*overflow-wrap: anywhere;/);
 });
@@ -719,7 +721,7 @@ test("analysis section headings stay contained in their shared surface", async (
 test("active discovery actions no longer depend on legacy button classes", async () => {
   const watchlistSource = await readFile(watchlistUrl, "utf8");
   const analysesSource = await readFile(analysesUrl, "utf8");
-  const uxSource = await readFile(uxUrl, "utf8");
+  const uxSource = await readUxSource();
 
   assert.match(watchlistSource, /<DiscoveryAction/);
   assert.doesNotMatch(watchlistSource, /watch-card-action/);
