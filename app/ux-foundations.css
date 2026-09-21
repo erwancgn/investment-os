@@ -142,7 +142,8 @@
 .allocation-panel {
   padding: 22px 22px 14px;
 }
-.allocation-panel .panel-head .eyebrow {
+.allocation-panel .panel-head .eyebrow,
+.allocation-panel .panel-head h2 {
   font-size: revert;
 }
 .allocation-panel .panel-head .eyebrow::after,
@@ -440,6 +441,7 @@
 }
 
 /* Shared list/detail refinements used by the other audited screens. */
+.analysis-stats article,
 .company-metrics article,
 .detail-card {
   border-radius: var(--radius-md);
@@ -1617,11 +1619,9 @@
 .universal-analysis-layout,
 .universal-analysis-page,
 .report-hero,
+.latest-info-card,
 .holding-summary {
   min-width: 0;
-  max-width: 100%;
-}
-.latest-info-card {
   max-width: 100%;
 }
 
@@ -1757,11 +1757,15 @@
     margin-inline: 0 !important;
   }
 
+  .latest-info-summary p,
+  .latest-info-summary li,
+  .analysis-lead p,
+  .analysis-lead li,
   .notion-callout p {
-  color: var(--color-text-secondary) !important;
-  font-size: 15px !important;
-  line-height: 1.58 !important;
-}
+    color: var(--color-text-secondary) !important;
+    font-size: 15px !important;
+    line-height: 1.58 !important;
+  }
 
   /* Analysis reading surface follows a single readable column. */
   .universal-analysis-reader .report-hero {
@@ -1835,22 +1839,19 @@
 
 .company-metrics article,
 .detail-card,
+.analysis-list,
+.company-table,
 .notion-sync-panel {
+  
+  border-color: var(--color-border) !important;
   box-shadow: var(--shadow-panel) !important;
 }
-.analysis-list,
-.company-table {
-  border-color: var(--color-border) !important;
-}
 .portfolio-overview,
+.generic-company-hero,
 .universal-analysis-reader .report-hero {
   background: rgba(255, 255, 255, 0.76) !important;
   border-color: var(--color-border) !important;
   box-shadow: var(--shadow-panel) !important;
-  backdrop-filter: saturate(180%) blur(24px);
-  -webkit-backdrop-filter: saturate(180%) blur(24px);
-}
-.generic-company-hero {
   backdrop-filter: saturate(180%) blur(24px);
   -webkit-backdrop-filter: saturate(180%) blur(24px);
 }
@@ -1861,6 +1862,7 @@
 .position-value strong,
 .position-quote strong,
 .company-identity strong,
+.analysis-title strong,
 .detail-heading h2,
 .generic-company-main .hero-title h1,
 .universal-analysis-reader .report-hero h1,
@@ -1879,6 +1881,7 @@
 .position-quote small,
 .analysis-title small,
 .generic-company-main p,
+.universal-analysis-page > p,
 .universal-analysis-page li,
 .universal-analysis-page blockquote {
   color: var(--color-text-secondary) !important;
@@ -1886,12 +1889,9 @@
 .portfolio-scope-switch button,
 .theme-cloud button,
 .watch-theme-filter,
-.analysis-source-details {
-  background: rgba(255, 255, 255, 0.66) !important;
-  border-color: var(--color-border) !important;
-  color: var(--color-text-secondary) !important;
-}
+.analysis-source-details,
 .company-history-details {
+  background: rgba(255, 255, 255, 0.66) !important;
   border-color: var(--color-border) !important;
   color: var(--color-text-secondary) !important;
 }
@@ -1957,16 +1957,16 @@
 .company-hero,
 .generic-company-hero,
 .report-hero,
+.holding-summary,
 .decision-template {
   background: var(--glass-fill) !important;
   border-color: var(--color-border) !important;
   box-shadow: var(--shadow-panel) !important;
 }
-.holding-summary {
-  box-shadow: var(--shadow-panel) !important;
-}
 
+.company-metrics article,
 .research-reference,
+.holding-metric-grid article,
 .scenario,
 .decision-facts > div,
 .decision-template-block,
@@ -1991,9 +1991,7 @@
   cursor: pointer;
 }
 
-.analysis-list-head {
-  color: var(--color-text) !important;
-}
+.analysis-list-head,
 .table-head {
   background: rgba(242, 242, 247, 0.92) !important;
   color: var(--color-text) !important;
@@ -2236,10 +2234,7 @@ table {
 /* Main surfaces stay white; nested cards use the neutral liquid-glass inset. */
 .company-section-block,
 .company-summary-grid,
-.company-research-overview {
-  border-color: var(--color-border) !important;
-  color: var(--color-text) !important;
-}
+.company-research-overview,
 .holding-summary,
 .notion-sync-panel,
 .detail-card {
@@ -2469,7 +2464,9 @@ table {
 .company-metrics article > strong,
 .company-metrics article > strong small,
 .research-reference.available > strong,
-.research-reference.missing > strong {
+.research-reference.missing > strong,
+.report-verdict strong,
+.report-verdict span {
   color: var(--color-analysis-value) !important;
 }
 
@@ -2526,15 +2523,11 @@ table {
   content: none !important;
 }
 .latest-info-summary p,
-.analysis-lead p {
-  margin: 0 !important;
-  padding-left: 0;
-  font-size: 15px !important;
-  line-height: 1.58 !important;
-}
 .latest-info-summary ul,
+.analysis-lead p,
 .analysis-lead ul {
   margin: 0 !important;
+  padding-left: 0;
   color: var(--color-text) !important;
   font-size: 15px !important;
   line-height: 1.58 !important;
@@ -2628,9 +2621,7 @@ table {
 .latest-info-summary p,
 .latest-info-summary li,
 .analysis-lead p,
-.analysis-lead li {
-  opacity: 1 !important;
-}
+.analysis-lead li,
 .universal-analysis-page > p,
 .universal-analysis-page > ul,
 .universal-analysis-page > ol,
@@ -2703,13 +2694,11 @@ table {
   }
 
   .research-coverage-table .ui-data-table,
-.research-coverage-table .ui-data-table tbody {
-  display: block;
-  width: 100%;
-}
-.research-coverage-table .ui-data-table tr {
-  width: 100%;
-}
+  .research-coverage-table .ui-data-table tbody,
+  .research-coverage-table .ui-data-table tr {
+    display: block;
+    width: 100%;
+  }
 
   .research-coverage-table .ui-data-table tr {
     display: grid;
