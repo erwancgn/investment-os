@@ -5,21 +5,6 @@
  * Business rules here must not depend on winning a primitive-specificity fight.
  */
 
-button,
-a,
-input,
-select,
-summary {
-  -webkit-tap-highlight-color: transparent;
-}
-button:focus-visible,
-a:focus-visible,
-input:focus-visible,
-select:focus-visible,
-summary:focus-visible {
-  outline: 2px solid var(--color-accent);
-  outline-offset: 3px;
-}
 /* Portfolio — one summary, one positions surface, targets only in Trajectoire. */
 .live-dashboard-head {
   min-height: 34px;
@@ -2934,12 +2919,6 @@ table {
 
 /* Dynamic labels stay inside their component bounds. Compact badges remain
    single-line by design; full decisions are exposed through title/metadata. */
-.ui-badge {
-  min-width: 0;
-  max-width: 100%;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
 .detail-heading > :first-child,
 .memo-section-title > :first-child,
 .report-verdict {
