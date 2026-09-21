@@ -1,17 +1,17 @@
 {
   "version": 1,
-  "capturedAt": "2026-09-20",
-  "scope": "app CSS governance audit after historical-layer cleanup and Storybook reference coverage",
+  "capturedAt": "2026-09-21",
+  "scope": "app CSS governance audit after v171 shell reconciliation and canonical document ownership cleanup",
   "thresholds": {
-    "exactRepeatedSelectors": 285,
-    "directPropertyConflicts": 83,
+    "exactRepeatedSelectors": 281,
+    "directPropertyConflicts": 81,
     "responsiveVariants": 131,
     "strictRedundantDeclarations": 24,
-    "additiveExtensions": 47,
+    "additiveExtensions": 45,
     "repeatedTokens": 0,
     "conflictingTokens": 0,
-    "importantDeclarations": 464,
-    "definedClasses": 324,
+    "importantDeclarations": 453,
+    "definedClasses": 323,
     "orphanClasses": 0
   }
 }

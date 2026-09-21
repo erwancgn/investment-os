@@ -157,7 +157,9 @@ function StandardAnalysisReader({ document, companyName, onBack }: { document: A
   ];
   return (
     <section className="research-reader universal-analysis-reader" data-analysis-template={templateKind}>
-      <BackButton onBack={onBack} ariaLabel="Retour à la liste précédente" />
+      <div className="detail-navigation">
+        <BackButton onBack={onBack} ariaLabel="Retour à la liste précédente" />
+      </div>
       <AnalysisReportHero
         badges={
           <>

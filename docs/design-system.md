@@ -58,7 +58,7 @@ La dette CSS existante est mesurée par [`scripts/audit-css-governance.mjs`](../
 
 Il distingue les sélecteurs exacts répétés, les conflits de propriétés dans un même contexte d’at-rule, les variantes responsive, les propriétés strictement redondantes, les extensions additives, les tokens répétés avec leurs valeurs, et les classes sans consommateur démontré.
 
-La baseline versionnée est [`scripts/css-audit-baseline.json`](../scripts/css-audit-baseline.json). L’état courant documenté est : 285 sélecteurs répétés, 83 conflits directs, 131 variantes responsive, 24 redondances identiques et 47 extensions additives ; 0 token répété et 0 valeur concurrente ; 464 déclarations `!important` ; 324 classes définies et 0 classe orpheline.
+La baseline versionnée est [`scripts/css-audit-baseline.json`](../scripts/css-audit-baseline.json). Après la réconciliation du shell v171, l’état courant documenté est : 281 sélecteurs répétés, 81 conflits directs, 131 variantes responsive, 24 redondances identiques et 45 extensions additives ; 0 token répété et 0 valeur concurrente ; 453 déclarations `!important` ; 323 classes définies et 0 classe orpheline.
 
 Le prochain chantier de réduction, son séquencement et ses critères de sortie sont
 documentés dans [`docs/css-debt-roadmap.md`](./css-debt-roadmap.md).

@@ -4,22 +4,6 @@
  * system without touching data, calculations or Notion synchronisation.
  */
 
-html {
-  background: var(--color-bg);
-}
-body {
-  font-family:
-    ui-sans-serif,
-    -apple-system,
-    BlinkMacSystemFont,
-    "Segoe UI",
-    sans-serif;
-  font-size: var(--font-sm);
-  line-height: 1.45;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-}
-
 button,
 a,
 input,
@@ -1158,12 +1142,6 @@ summary:focus-visible {
 /* Mobile-first document surfaces — v94
    The page itself never scrolls horizontally. Dense data may scroll inside a
    labelled component, while identity, metrics and reading surfaces reflow. */
-html,
-body {
-  width: 100%;
-  max-width: 100%;
-  overflow-x: hidden;
-}
 
 .company-detail,
 .generic-company-detail,
@@ -1497,17 +1475,6 @@ body {
 }
 
 /* Apple Light surface layer — v77, values now owned by globals.css. */
-html,
-body {
-  background: var(--color-bg) !important;
-  color: var(--color-text) !important;
-}
-body {
-  font-family:
-    -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text",
-    "Segoe UI", sans-serif;
-  letter-spacing: -0.01em;
-}
 button,
 input,
 textarea,
@@ -1805,32 +1772,26 @@ select {
   width: min(360px, calc(100vw - 36px));
   max-width: min(360px, calc(100vw - 36px));
   padding: 9px 12px;
-  border: 1px solid var(--color-border) !important;
+  border: 1px solid color-mix(in srgb, var(--color-positive) 45%, var(--color-border));
   border-radius: var(--radius-pill);
-  background: rgba(255, 255, 255, 0.92) !important;
-  color: var(--color-text-secondary) !important;
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--color-positive);
   font-size: 10px;
   line-height: 1.35;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1) !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
   backdrop-filter: saturate(180%) blur(20px);
   -webkit-backdrop-filter: saturate(180%) blur(20px);
+  pointer-events: none;
 }
 .notion-background-sync-dot {
   width: 7px;
   height: 7px;
   flex: 0 0 7px;
   border-radius: 50%;
-  background: var(--color-text-muted);
-}
-.notion-background-sync.done {
-  color: var(--color-positive) !important;
-  border-color: color-mix(in srgb, var(--color-positive) 45%, var(--color-border)) !important;
-}
-.notion-background-sync.done .notion-background-sync-dot {
   background: var(--color-positive);
 }
 @media (max-width: 760px) {
-  body > .notion-background-sync {
+  .app-shell > .notion-background-sync {
     right: 12px;
     bottom: 74px;
     left: 12px;
@@ -2561,13 +2522,6 @@ table {
 
 /* Final mobile cascade guard — keep this at EOF. */
 @media (max-width: 760px) {
-  html,
-  body {
-    width: 100%;
-    max-width: 100%;
-    overflow-x: clip !important;
-  }
-
   .company-detail,
   .generic-company-detail,
   .research-reader,
@@ -3384,28 +3338,11 @@ table {
   }
 }
 
-.generic-company-detail,
-.universal-analysis-reader {
-  padding-top: 64px;
-}
-
-.company-detail-error {
-  padding-top: 64px;
-}
-
-@media (max-width: 760px) {
-  .ui-back-button {
-    top: max(12px, calc(env(safe-area-inset-top) + 12px));
-    left: 12px;
-    width: 48px;
-    height: 48px;
-  }
-
-  .generic-company-detail,
-  .universal-analysis-reader,
-  .company-detail-error {
-    padding-top: 64px;
-  }
+.detail-navigation {
+  position: sticky;
+  top: max(12px, calc(env(safe-area-inset-top) + 12px));
+  z-index: 30;
+  width: max-content;
 }
 
 /* CIO memo: decision first, source document second. Historical Memo scores are
@@ -3580,7 +3517,6 @@ table {
 /* Shared loading, error and document-row contracts. */
 .detail-loading {
   min-height: 55dvh;
-  padding-top: 76px;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
