@@ -13,7 +13,7 @@ dette de cascade et de consolidation, mesurée par la baseline versionnée :
 - 42 extensions additives ;
 - 392 déclarations `!important`.
 
-Cette baseline est un plafond de non-régression, pas un état cible. Chaque compteur surveillé doit rester stable ou diminuer à la fin d’un lot.
+Cette baseline est un plafond de non-régression, pas un état cible. Les conflits directs, redondances, déclarations `!important` et tokens concurrents doivent rester stables ou diminuer à la fin d’un lot. Les extensions additives peuvent augmenter ponctuellement si elles sont intentionnelles, locales et justifiées par un vrai contexte responsive/state/accessibility, avec justification dans le commit et baisse mesurable de la complexité globale.
 
 ## Périmètre recommandé
 
