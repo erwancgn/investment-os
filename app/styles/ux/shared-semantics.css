@@ -39,7 +39,6 @@
 .position-quote small,
 .analysis-title small,
 .generic-company-main p,
-.universal-analysis-page > p,
 .universal-analysis-page li,
 .universal-analysis-page blockquote {
   color: var(--color-text-secondary) !important;
@@ -541,9 +540,7 @@ table {
 .company-metrics article > strong,
 .company-metrics article > strong small,
 .research-reference.available > strong,
-.research-reference.missing > strong,
-.report-verdict strong,
-.report-verdict span {
+.research-reference.missing > strong {
   color: var(--color-analysis-value) !important;
 }
 
