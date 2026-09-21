@@ -137,21 +137,15 @@ export const ProductionVisualReview: Story = {
       />
       <section className="storybook-reference-section" aria-labelledby="review-companies">
         <h2 id="review-companies">Companies · production · 390px</h2>
-        <div className="storybook-mobile-review-frame">
-          {frame(<NotionCompanies initialData={{ companies: [company] }} openCompany={() => undefined} />)}
-        </div>
+        {frame(<NotionCompanies initialData={{ companies: [company] }} openCompany={() => undefined} />)}
       </section>
       <section className="storybook-reference-section" aria-labelledby="review-radar">
         <h2 id="review-radar">Radar · production · 390px</h2>
-        <div className="storybook-mobile-review-frame">
-          {frame(<NotionWatchlist initialData={watchlist} openCompany={() => undefined} />)}
-        </div>
+        {frame(<NotionWatchlist initialData={watchlist} openCompany={() => undefined} />)}
       </section>
       <section className="storybook-reference-section" aria-labelledby="review-analyses">
         <h2 id="review-analyses">Analyses · production · 390px</h2>
-        <div className="storybook-mobile-review-frame">
-          {frame(<NotionAnalyses initialData={analysesData} />)}
-        </div>
+        {frame(<NotionAnalyses initialData={analysesData} />)}
       </section>
     </div>
   ),
