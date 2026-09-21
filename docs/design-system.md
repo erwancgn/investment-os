@@ -51,6 +51,7 @@ La page Lovable de référence est un banc de comparaison mobile. Elle peut mont
 7. Toute passe UI doit réduire ou stabiliser chaque compteur surveillé par l’audit de gouvernance. Une amélioration visuelle ou une reclassification qui augmente un compteur n’est pas considérée comme terminée.
 8. Pour le Portfolio, `ux-foundations.css` est propriétaire de la composition desktop/mobile des positions, de l’exposition et de Trajectoire. `globals.css` ne doit plus contenir d’ancienne grille Portfolio ou de mécanique de cible concurrente ; les surfaces Apple Light / Liquid Glass restent fournies par les primitives partagées.
 9. Pour le Shell, `GlassChrome` porte le matériau Liquid Glass de la sidebar et de la navigation mobile. `ux-foundations.css` porte uniquement leur géométrie et la composition du branding, du header, du menu compte et de la bannière PWA ; `globals.css` ne redéfinit pas ces éléments métier.
+10. Pour Radar et Companies, `ux-foundations.css` porte la composition des listes, résumés, références d’analyse et variantes responsive. `DiscoveryCard` reste propriétaire du shell visuel Apple Light / Liquid Glass ; les cinq références Company restent des surfaces secondaires et ne sont jamais dupliquées dans `globals.css`.
 
 ## Gouvernance CSS et baseline de migration
 
@@ -62,7 +63,7 @@ La dette CSS existante est mesurée par [`scripts/audit-css-governance.mjs`](../
 
 Il distingue les sélecteurs exacts répétés, les conflits de propriétés dans un même contexte d’at-rule, les variantes responsive, les propriétés strictement redondantes, les extensions additives, les tokens répétés avec leurs valeurs, et les classes sans consommateur démontré.
 
-La baseline versionnée est [`scripts/css-audit-baseline.json`](../scripts/css-audit-baseline.json). Après le nettoyage Portfolio résiduel du Lot 5B, l’état courant documenté est : 236 sélecteurs répétés, 54 conflits directs, 127 variantes responsive, 13 redondances identiques et 42 extensions additives ; 0 token répété et 0 valeur concurrente ; 394 déclarations `!important` ; 319 classes définies et 0 classe orpheline.
+La baseline versionnée est [`scripts/css-audit-baseline.json`](../scripts/css-audit-baseline.json). Après la consolidation Radar / Companies du Lot 5C, l’état courant documenté est : 232 sélecteurs répétés, 52 conflits directs, 125 variantes responsive, 13 redondances identiques et 42 extensions additives ; 0 token répété et 0 valeur concurrente ; 392 déclarations `!important` ; 318 classes définies et 0 classe orpheline.
 
 Le prochain chantier de réduction, son séquencement et ses critères de sortie sont
 documentés dans [`docs/css-debt-roadmap.md`](./css-debt-roadmap.md).

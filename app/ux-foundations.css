@@ -593,6 +593,58 @@ summary:focus-visible {
   content-visibility: auto;
   contain-intrinsic-size: auto 96px;
 }
+.watchlist-overview {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+.watchlist-overview > div {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  column-gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+}
+.watchlist-overview .eyebrow {
+  grid-column: 1 / -1;
+  margin: 0 0 5px;
+}
+.watchlist-overview strong {
+  color: var(--color-accent);
+  font-size: var(--font-xl);
+}
+.watchlist-overview span {
+  align-self: end;
+  padding-bottom: 3px;
+  color: var(--color-text-muted);
+  font-size: var(--font-xs);
+}
+.notion-watch-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 15px;
+}
+.watch-theme-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: var(--space-3);
+}
+.watch-decision {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--color-text);
+  font-size: var(--font-sm);
+  font-weight: 700;
+  line-height: 1.25;
+}
+.decision-hold-off,
+.decision-reject {
+  color: var(--color-text);
+}
 .watch-card-head {
   display: grid;
   grid-template-columns: 40px minmax(0, 1fr) auto;
@@ -621,11 +673,32 @@ summary:focus-visible {
   min-height: 0;
   display: -webkit-box;
   overflow: hidden;
+  margin: 0 0 var(--space-4);
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 3;
+  color: var(--color-text-secondary);
+  font-size: var(--font-sm);
+  line-height: 1.5;
 }
 
-.company-list-row {
+.research-company-table .table-head,
+.research-company-table .company-list-row {
+  display: grid;
+  grid-template-columns: minmax(180px, 1.3fr) minmax(390px, 2.4fr) .55fr .65fr 26px;
+  align-items: center;
+  gap: 14px;
+}
+.research-company-table .table-head {
+  padding: 12px 18px;
+  color: var(--color-text-muted);
+  font-size: 8px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+.research-company-table .company-list-row {
+  position: relative;
+  min-height: 73px;
+  padding: 12px 18px;
   cursor: default;
 }
 .company-state-tags {
@@ -646,12 +719,96 @@ summary:focus-visible {
 .company-identity-button {
   min-width: 0;
   min-height: var(--ui-control-hit-height);
+  display: flex;
+  align-items: center;
+  gap: 12px;
   padding: 0;
   border: 0;
   background: none;
   color: inherit;
   text-align: left;
   cursor: pointer;
+}
+.company-identity-copy > small {
+  margin-top: 4px;
+  overflow: hidden;
+  color: var(--color-text-secondary);
+  font-size: 8px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.research-reference-grid {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(62px, 1fr));
+  gap: 5px;
+}
+.research-reference {
+  display: flex;
+  min-width: 0;
+  min-height: var(--ui-control-hit-height);
+  flex-direction: column;
+  gap: 3px;
+  padding: 7px;
+  border: 1px solid var(--surface-stroke);
+  border-radius: var(--radius-sm);
+  background: var(--surface-secondary);
+  color: inherit;
+  text-decoration: none;
+}
+.research-reference > span {
+  color: var(--color-text-muted);
+  font-size: 7px;
+}
+.research-reference > small {
+  overflow: hidden;
+  color: var(--color-text-muted);
+  font-size: 7px;
+  font-variant-numeric: tabular-nums;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.research-reference.available:hover {
+  border-color: color-mix(in srgb, var(--color-accent) 35%, var(--surface-stroke));
+  background: var(--glass-blue);
+}
+.research-reference.available > strong {
+  color: var(--color-accent);
+}
+.research-reference.missing {
+  opacity: .42;
+}
+.research-company-table .date-cell {
+  display: flex;
+  flex-direction: column;
+}
+.research-company-table .date-cell strong {
+  font-size: 9px;
+}
+.research-company-table .date-cell small {
+  margin-top: 3px;
+  color: var(--color-text-secondary);
+  font-size: 8px;
+}
+.row-arrow {
+  width: 44px;
+  min-height: 44px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--color-text-muted);
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+}
+.row-arrow:hover,
+.row-arrow:focus-visible {
+  outline: none;
+  background: rgba(0, 122, 255, .06);
+  color: var(--color-accent);
 }
 .company-identity-button:hover strong {
   color: var(--color-accent);
@@ -917,6 +1074,9 @@ summary:focus-visible {
   .portfolio-main-grid {
     grid-template-columns: 1fr;
   }
+  .notion-watch-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
   .sector-panel .donut-wrap {
     justify-content: flex-start;
   }
@@ -1094,11 +1254,24 @@ summary:focus-visible {
   }
 
   .watchlist-overview {
-    gap: 8px;
+    display: flex;
+    overflow-x: auto;
+    margin-right: -15px;
+    padding-right: 15px;
   }
-  .watchlist-overview > div {
-    min-width: 145px;
-    padding: 12px;
+  .watchlist-overview > .ui-surface {
+    min-width: 165px;
+  }
+  .watch-status-filters {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    margin-right: -15px;
+    padding-right: 15px;
+    scroll-snap-type: x mandatory;
+  }
+  .watch-status-filters button {
+    flex: 0 0 auto;
+    scroll-snap-align: start;
   }
   .watch-theme-filter {
     margin-bottom: 12px;
@@ -1108,23 +1281,27 @@ summary:focus-visible {
   }
   .watch-theme-filter .theme-cloud {
     flex-wrap: wrap;
-    margin: 0;
     padding: 10px 12px;
     overflow-x: visible;
   }
   .notion-watch-grid {
     grid-template-columns: 1fr;
-    gap: 10px;
   }
   .ui-discovery-card--watchlist .watch-thesis {
     -webkit-line-clamp: 2;
     font-size: 12px;
     line-height: 1.5;
   }
+  .research-company-table .table-head {
+    display: none;
+  }
   .research-company-table .company-list-row {
+    width: 100%;
+    min-width: 0;
     grid-template-columns: minmax(0, 1fr) auto;
-    gap: 10px 12px;
-    padding: 14px;
+    gap: 13px;
+    margin-bottom: 10px;
+    padding: 15px;
   }
   .research-company-table .company-identity-button {
     grid-column: 1;
@@ -1154,6 +1331,10 @@ summary:focus-visible {
   .research-company-table .date-cell {
     grid-column: 1;
     grid-row: 4;
+  }
+  .company-identity-copy > small,
+  .research-company-table .date-cell small {
+    font-size: 11px;
   }
   .research-company-table .row-arrow {
     grid-column: 2;
@@ -1662,8 +1843,6 @@ select {
 .portfolio-kpis b,
 .position-value small,
 .position-quote small,
-.company-identity small,
-.date-cell small,
 .analysis-title small,
 .generic-company-main p,
 .universal-analysis-page > p,
@@ -1714,12 +1893,6 @@ select {
 .watch-theme-filter > summary strong,
 .analysis-source-details > summary b,
 .company-history-details > summary b {
-  color: var(--color-accent) !important;
-}
-.row-arrow {
-  color: var(--color-text-muted) !important;
-}
-.company-identity-button:hover strong {
   color: var(--color-accent) !important;
 }
 .analysis-source-details[open] > summary,
@@ -2013,7 +2186,6 @@ table {
   border: 0 !important;
 }
 
-.research-company-table .table-row,
 .analysis-list-row {
   margin-bottom: 12px;
 }
@@ -2022,7 +2194,6 @@ table {
    on company/analysis pages, and equal-width controls at narrow widths. */
 
 @media (max-width: 760px) {
-  .research-company-table .table-row,
   .analysis-list-row {
     width: 100%;
     min-width: 0 !important;
@@ -2763,9 +2934,6 @@ table {
   white-space: nowrap;
   font-size: 11px;
   line-height: 1.25;
-}
-.research-reference > small {
-  font-variant-numeric: tabular-nums;
 }
 .latest-analysis-metadata {
   grid-template-columns: repeat(2, minmax(0, 1fr));
