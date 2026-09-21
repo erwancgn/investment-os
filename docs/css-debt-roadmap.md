@@ -6,11 +6,11 @@ Le design system possède désormais une entrée publique unique, un seul bloc `
 aucun token concurrent et aucune classe orpheline détectée. La dette restante est une
 dette de cascade et de consolidation, mesurée par la baseline versionnée :
 
-- 281 sélecteurs exacts répétés ;
+- 280 sélecteurs exacts répétés ;
 - 81 conflits directs de propriétés ;
 - 131 variantes responsive ;
 - 24 déclarations strictement redondantes ;
-- 45 extensions additives ;
+- 44 extensions additives ;
 - 453 déclarations `!important`.
 
 Cette baseline est un plafond de non-régression, pas un état cible.

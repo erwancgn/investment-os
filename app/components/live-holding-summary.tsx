@@ -21,7 +21,7 @@ function HoldingMetrics({ positions, detailed, onRefresh, loading }: { positions
   const firstQuote = positions.find(item => item.nativePrice != null);
   const accounts = [...new Set(positions.map(item => item.account).filter(Boolean))].join(" · ");
   return <PrimaryBlock as="section" className={`holding-summary ${detailed ? "holding-summary-detailed" : ""}`}>
-    <div className="holding-summary-head"><div><p className="eyebrow">Position live</p><h2>Données du portefeuille</h2></div><div className="holding-summary-actions"><span className="holding-source">Yahoo + conversion EUR</span><button className="holding-refresh" onClick={onRefresh} disabled={loading} title="Rafraîchir le cours et recalculer la position" aria-label="Rafraîchir le cours et recalculer la position">{loading ? "…" : "↻"}</button></div></div>
+    <div className="holding-summary-head"><div><p className="eyebrow">Position live</p><h2>Données du portefeuille</h2></div><div className="holding-summary-actions"><span className="holding-source">Yahoo + conversion EUR</span><button className="holding-refresh" onClick={onRefresh} disabled={loading} title="Rafraîchir le cours et recalculer la position" aria-label="Rafraîchir le cours et recalculer la position"><span aria-hidden="true">{loading ? "…" : "↻"}</span></button></div></div>
     <div className="holding-metric-grid">
       <SecondaryBlock as="article"><span>Nombre de titres</span><strong>{number(quantity, 4)}</strong><small>{accounts || "Enveloppe non renseignée"}</small></SecondaryBlock>
       <SecondaryBlock as="article"><span>PRU réel</span><strong>{money(weightedPru, 2)}</strong><small>coût Notion : {money(cost)}</small></SecondaryBlock>
