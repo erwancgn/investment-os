@@ -1617,27 +1617,12 @@
 .research-reader,
 .universal-analysis-reader,
 .universal-analysis-layout,
-.notion-layout,
-.notion-page,
 .universal-analysis-page,
 .report-hero,
 .latest-info-card,
 .holding-summary {
   min-width: 0;
   max-width: 100%;
-}
-
-.notion-table-wrap,
-.notion-page .notion-table-wrap,
-.universal-analysis-page .notion-table-wrap {
-  contain: inline-size;
-  overscroll-behavior-inline: contain;
-  scrollbar-width: thin;
-}
-
-.notion-table-wrap:focus-visible {
-  outline: 2px solid var(--color-accent);
-  outline-offset: 2px;
 }
 
 @media (max-width: 760px) {
@@ -1840,14 +1825,6 @@
     color: var(--color-text) !important;
   }
 
-  .notion-callout {
-    width: 100%;
-    max-width: 100%;
-    grid-template-columns: 18px minmax(0, 1fr) !important;
-    margin-inline: 0 !important;
-    padding: 14px !important;
-  }
-
   .notion-table a {
     overflow-wrap: anywhere;
   }
@@ -2014,39 +1991,21 @@
   cursor: pointer;
 }
 
-.notion-page th,
-.universal-analysis-page th,
 .analysis-list-head,
 .table-head {
   background: rgba(242, 242, 247, 0.92) !important;
   color: var(--color-text) !important;
 }
 
-.notion-page td,
-.universal-analysis-page td,
-.notion-page p,
-.notion-callout p,
 .analysis-lead p,
 .decision-template-block p,
 .decision-template-columns p {
   color: var(--color-text-secondary) !important;
 }
 
-.notion-page h1,
-.notion-page h2,
-.notion-page h3,
-.notion-page h4,
-.notion-page h5,
-.notion-page h6,
 .decision-facts strong,
 .sector-list strong {
   color: var(--color-text) !important;
-}
-
-.universal-analysis-page code,
-.notion-page code {
-  background: rgba(60, 60, 67, 0.08) !important;
-  color: var(--color-accent-strong) !important;
 }
 
 .theme-cloud small {
@@ -2581,70 +2540,6 @@ table {
   padding-left: 20px;
 }
 
-.notion-table-wrap,
-.notion-page .notion-table-wrap,
-.universal-analysis-page .notion-table-wrap {
-  width: 100%;
-  max-width: 100%;
-  margin: 18px 0 24px !important;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-}
-
-.notion-table,
-.notion-page .notion-table,
-.universal-analysis-page .notion-table {
-  width: 100%;
-  min-width: 0 !important;
-  table-layout: auto !important;
-  border-collapse: separate !important;
-  border-spacing: 0 !important;
-  background: transparent !important;
-}
-
-.notion-table th,
-.notion-table td,
-.notion-page .notion-table th,
-.notion-page .notion-table td,
-.universal-analysis-page .notion-table th,
-.universal-analysis-page .notion-table td {
-  min-width: 0 !important;
-  width: auto;
-  padding: 11px 12px !important;
-  border: 0 !important;
-  border-right: 1px solid var(--color-border) !important;
-  border-bottom: 1px solid var(--color-border) !important;
-  color: var(--color-text-secondary) !important;
-  background: transparent !important;
-  font-size: 12px !important;
-  line-height: 1.45 !important;
-  text-align: left;
-  vertical-align: top;
-  white-space: normal;
-  overflow-wrap: anywhere;
-  word-break: normal;
-}
-
-.notion-table th,
-.notion-page .notion-table th,
-.universal-analysis-page .notion-table th {
-  position: static !important;
-  color: var(--color-text) !important;
-  background: rgba(229, 229, 234, 0.52) !important;
-  font-weight: 650;
-}
-
-.notion-table tr:last-child > *,
-.notion-page .notion-table tr:last-child > *,
-.universal-analysis-page .notion-table tr:last-child > * {
-  border-bottom: 0 !important;
-}
-.notion-table tr > *:last-child,
-.notion-page .notion-table tr > *:last-child,
-.universal-analysis-page .notion-table tr > *:last-child {
-  border-right: 0 !important;
-}
-
 @media (max-width: 760px) {
   .latest-info-card {
     padding: 17px 15px;
@@ -2657,9 +2552,7 @@ table {
   .generic-company-detail,
   .research-reader,
   .universal-analysis-reader,
-  .notion-layout,
   .universal-analysis-layout,
-  .notion-page,
   .universal-analysis-page,
   .company-section-block {
     box-sizing: border-box;
@@ -2711,54 +2604,6 @@ table {
     overflow-wrap: break-word !important;
   }
 
-  .notion-table-wrap,
-  .notion-page .notion-table-wrap,
-  .universal-analysis-page .notion-table-wrap {
-    box-sizing: border-box;
-    width: 100% !important;
-    max-width: 100% !important;
-    margin: 18px 0 24px !important;
-    overflow-x: auto !important;
-    overflow-y: hidden;
-    border-left: 1px solid var(--color-border) !important;
-    border-right: 1px solid var(--color-border) !important;
-    border-radius: var(--radius-md) !important;
-    overscroll-behavior-inline: contain;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  .notion-table,
-  .notion-page .notion-table,
-  .universal-analysis-page .notion-table {
-    width: max-content !important;
-    min-width: 100% !important;
-    max-width: none !important;
-    table-layout: auto !important;
-  }
-
-  .notion-table-wide,
-  .notion-page .notion-table-wide,
-  .universal-analysis-page .notion-table-wide {
-    min-width: max(100%, calc(var(--notion-columns) * 148px)) !important;
-  }
-
-  .notion-table th,
-  .notion-table td,
-  .notion-page .notion-table th,
-  .notion-page .notion-table td,
-  .universal-analysis-page .notion-table th,
-  .universal-analysis-page .notion-table td {
-    width: auto !important;
-    min-width: min(42vw, 168px) !important;
-    max-width: min(72vw, 300px) !important;
-    padding: 11px 12px !important;
-    font-size: 14px !important;
-    line-height: 1.45 !important;
-    white-space: normal !important;
-    word-break: normal !important;
-    overflow-wrap: break-word !important;
-    hyphens: none !important;
-  }
 }
 
 @media (max-width: 380px) {
@@ -2777,7 +2622,6 @@ table {
 .latest-info-summary li,
 .analysis-lead p,
 .analysis-lead li,
-.notion-callout p,
 .universal-analysis-page > p,
 .universal-analysis-page > ul,
 .universal-analysis-page > ol,
@@ -2796,7 +2640,6 @@ table {
 .latest-info-summary li *,
 .analysis-lead p *,
 .analysis-lead li *,
-.notion-callout p *,
 .universal-analysis-page > p *,
 .universal-analysis-page > ul li *,
 .universal-analysis-page > ol li *,
@@ -2808,7 +2651,6 @@ table {
 
 .latest-info-summary strong,
 .analysis-lead strong,
-.notion-callout strong,
 .universal-analysis-page > p strong,
 .universal-analysis-page > ul li strong,
 .universal-analysis-page > ol li strong,
