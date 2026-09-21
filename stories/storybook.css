@@ -6,6 +6,19 @@
   padding: var(--space-6);
 }
 
+.storybook-reference-page {
+  max-width: 1180px;
+}
+
+.storybook-reference-section {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.storybook-reference-section > h2 {
+  margin: 0;
+}
+
 .storybook-inline {
   display: flex;
   flex-wrap: wrap;

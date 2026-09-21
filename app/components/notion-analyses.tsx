@@ -86,7 +86,6 @@ export function NotionAnalyses({ initialData, initialLoading, initialError }: No
       <section className="analysis-list">
         <div className="table-head analysis-list-head">
           <span>Rapport</span>
-          <span>Agent</span>
           <span>Conclusion</span>
           <span>Verdict</span>
           <span>Fraîcheur</span>
@@ -95,14 +94,13 @@ export function NotionAnalyses({ initialData, initialLoading, initialError }: No
           <DiscoveryCard as="button" type="button" kind="analysis" className="analysis-list-row" key={item.id} onClick={() => open(item)}>
             <div className="analysis-title">
               <span>{(item.companyName === "Non relié" ? item.agent : item.companyName).slice(0, 2).toUpperCase()}</span>
-              <div>
-                <strong>{item.title}</strong>
+              <div className="analysis-title-copy">
+                <div><strong>{item.title}</strong><Badge className="analysis-agent">{item.agent}</Badge></div>
                 <small>
                   {item.companyName} · {labels[item.sourceKey] ?? item.sourceKey}
                 </small>
               </div>
             </div>
-            <Badge className="analysis-agent">{item.agent}</Badge>
             <strong className="analysis-score-cell">{item.category === "business" || item.category === "valuation" ? item.score || "—" : item.verdict || item.status || "Disponible"}</strong>
             <span className="analysis-verdict-cell">{item.verdict || item.status || "Document Notion"}</span>
             <Badge tone="positive" className="analysis-freshness">

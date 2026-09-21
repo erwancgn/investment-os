@@ -24,6 +24,7 @@ const companiesUrl = new URL("../app/components/notion-companies.tsx", import.me
 const analysesUrl = new URL("../app/components/notion-analyses.tsx", import.meta.url);
 const uxUrl = new URL("../app/ux-foundations.css", import.meta.url);
 const globalsUrl = new URL("../app/globals.css", import.meta.url);
+const designSystemUrl = new URL("../app/design-system.css", import.meta.url);
 const uiPrimitivesUrl = new URL("../app/components/ui-primitives.tsx", import.meta.url);
 const uiManifestUrl = new URL("../ui-foundation-manifest.md", import.meta.url);
 const primitiveStoriesUrl = new URL("../stories/UIPrimitives.stories.tsx", import.meta.url);
@@ -512,10 +513,11 @@ test("company summaries are segmented for a scannable mobile preview", async () 
 
 test("research copy uses the shared readable text token", async () => {
   const uxSource = await readFile(uxUrl, "utf8");
-  assert.match(uxSource, /--color-content-copy: #3a3a3c/);
+  const globalsSource = await readFile(globalsUrl, "utf8");
+  assert.match(globalsSource, /--color-content-copy: #3a3a3c/);
   assert.match(uxSource, /\.analysis-lead p,[\s\S]*\.notion-callout p,[\s\S]*color: var\(--color-content-copy\) !important/);
   assert.match(uxSource, /-webkit-text-fill-color: var\(--color-content-copy\) !important/);
-  assert.ok(uxSource.lastIndexOf("Content readability guard") > uxSource.lastIndexOf("Final mobile cascade guard"));
+  assert.match(uxSource, /latest-info-summary p,[\s\S]*\.decision-template-columns p/);
 });
 
 test("discovery lists keep stable identities and separate interactive targets", async () => {
@@ -540,21 +542,23 @@ test("discovery lists keep stable identities and separate interactive targets", 
 
 test("Apple Light theme stays isolated from data and parser contracts", async () => {
   const uxSource = await readFile(uxUrl, "utf8");
+  const globalsSource = await readFile(globalsUrl, "utf8");
+  const designSystemSource = await readFile(designSystemUrl, "utf8");
   const layoutSource = await readFile(new URL("../app/layout.tsx", import.meta.url), "utf8");
-  assert.match(uxSource, /Apple Light surface layer/);
-  assert.match(uxSource, /color-scheme: light/);
+  assert.match(designSystemSource, /@import "\.\/ux-foundations\.css";[\s\S]*@import "\.\/globals\.css";/);
+  assert.match(globalsSource, /color-scheme: light/);
   assert.match(uxSource, /backdrop-filter: saturate\(180%\) blur\(24px\)/);
-  assert.match(uxSource, /--color-bg: #f5f5f7/);
+  assert.match(globalsSource, /--surface-canvas: #f5f5f7/);
+  assert.match(globalsSource, /--color-bg: var\(--surface-canvas\)/);
   assert.match(layoutSource, /themeColor: "#f5f5f7"/);
 });
 
 test("Apple Light theme covers shared surfaces and aligns financial figures", async () => {
   const uxSource = await readFile(uxUrl, "utf8");
   const globalsSource = await readFile(globalsUrl, "utf8");
-  assert.match(uxSource, /Apple Light completeness and financial alignment/);
   assert.match(uxSource, /\.ui-metadata-item/);
   assert.match(globalsSource, /\.decision-template \{/);
-  assert.match(globalsSource, /--surface-secondary: rgba\(242, 242, 247, \.92\)/);
+  assert.match(globalsSource, /--surface-secondary: var\(--contrast-surface-secondary, rgba\(242, 242, 247, \.92\)\)/);
   assert.match(uxSource, /font-variant-numeric: tabular-nums lining-nums/);
   assert.match(uxSource, /grid-template-columns:\s*minmax\(210px, 1fr\)\s*minmax\(\s*88px,\s*0?\.45fr\s*\)\s*66px\s*84px\s*84px\s*82px/);
 });
@@ -660,7 +664,6 @@ test("research actions and coverage use the shared mobile UI primitives", async 
   assert.match(holdingSource, /className="holding-summary-state holding-summary-loading" aria-busy="true"/);
   assert.doesNotMatch(companySource, /panel company-research-overview/);
   assert.doesNotMatch(readerSource, /analysis-section-number/);
-  assert.match(uxSource, /Reusable research UI consolidation/);
   assert.match(uxSource, /\.company-section-block,[\s\S]*background: transparent !important/);
   assert.match(uxSource, /\.research-coverage-table \.ui-data-table tr[\s\S]*grid-template-columns: minmax\(0, 1fr\) minmax\(52px, \.65fr\) minmax\(68px, auto\)/);
   assert.match(uxSource, /research-coverage-table \.ui-data-table \.research-type-cell[\s\S]*grid-row: 1;/);
@@ -695,10 +698,8 @@ test("analysis and company details share the same nested liquid-glass primitives
   assert.doesNotMatch(latestInfoSource, /className="panel/);
   assert.match(latestInfoSource, /<SecondaryBlock className="latest-info-summary"/);
   assert.match(latestInfoSource, /<MetadataGrid items=/);
-  assert.match(uxSource, /Shared nested liquid-glass surfaces/);
   assert.match(uxSource, /\.company-summary-grid,[\s\S]*background: transparent !important/);
-  assert.match(globalsSource, /Apple-inspired semantic surface system/);
-  assert.match(globalsSource, /\.ui-surface--primary[\s\S]*--surface-primary/);
+  assert.match(globalsSource, /\.ui-surface\.ui-surface--primary[\s\S]*--surface-primary/);
   assert.match(globalsSource, /\.ui-surface--secondary[\s\S]*--surface-secondary/);
   assert.match(globalsSource, /\.ui-surface--glass[\s\S]*backdrop-filter/);
   assert.match(globalsSource, /prefers-reduced-transparency: reduce/);

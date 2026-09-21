@@ -5,15 +5,15 @@ import postcss from "postcss";
 const root = process.cwd();
 const appRoot = path.join(root, "app");
 const fix = process.argv.includes("--fix");
-const cssFiles = ["globals.css", "ux-foundations.css", "notion-sync-compact.css", "iphone-experience.css"];
+const cssFiles = ["globals.css", "ux-foundations.css"];
 const dynamicPrefixes = [
   "analysis-scenario-", "decision-", "reference-", "ui-progress-track--", "ui-surface--",
   "ui-badge--", "ui-discovery-card--",
 ];
 const dynamicNames = new Set([
-  "active", "analysis-key-fact--priority", "attractive", "available", "clickable", "error", "is-active",
+  "active", "analysis-key-fact--priority", "available", "clickable", "error", "is-active",
   "integrity-warning", "live", "missing", "negative", "negative-pnl", "neutral", "ok", "positive",
-  "positive-pnl", "notion-table-two-column", "snapshot", "starting", "running", "done", "warning",
+  "positive-pnl", "notion-table-two-column", "snapshot", "done", "warning",
 ]);
 
 async function filesUnder(directory) {

@@ -4,62 +4,6 @@
  * system without touching data, calculations or Notion synchronisation.
  */
 
-:root {
-  color-scheme: dark;
-  --color-bg: #07100e;
-  --color-bg-elevated: #0a1512;
-  --color-surface: #0e1a16;
-  --color-surface-raised: #12211b;
-  --color-surface-active: #173328;
-  --color-border: #263a32;
-  --color-border-strong: #365a4b;
-  --color-text: #edf7f2;
-  --color-text-secondary: #a5b5ae;
-  --color-text-muted: #74857e;
-  --color-accent: #6fe7b0;
-  --color-accent-strong: #43ce94;
-  --color-positive: #6fe7b0;
-  --color-negative: #ff8c8c;
-  --color-warning: #f3c66c;
-  --color-info: #79a8ff;
-  --color-violet: #b79aff;
-
-  --space-1: 4px;
-  --space-2: 8px;
-  --space-3: 12px;
-  --space-4: 16px;
-  --space-5: 20px;
-  --space-6: 24px;
-  --space-8: 32px;
-  --space-10: 40px;
-
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 16px;
-  --radius-pill: 999px;
-
-  --font-xs: 11px;
-  --font-sm: 13px;
-  --font-md: 15px;
-  --font-lg: 18px;
-  --font-xl: 24px;
-  --font-2xl: clamp(28px, 3vw, 38px);
-  --measure-copy: 76ch;
-  --line-copy: 1.6;
-  --control-height: 38px;
-  --shadow-panel: 0 18px 42px rgba(0, 0, 0, 0.16);
-
-  /* Backward-compatible aliases used by the existing screens. */
-  --bg: var(--color-bg);
-  --panel: var(--color-surface);
-  --border: var(--color-border);
-  --muted: var(--color-text-muted);
-  --text: var(--color-text);
-  --green: var(--color-accent);
-  --red: var(--color-negative);
-  --amber: var(--color-warning);
-}
-
 html {
   background: var(--color-bg);
 }
@@ -91,18 +35,6 @@ summary:focus-visible {
   outline: 2px solid var(--color-accent);
   outline-offset: 3px;
 }
-
-.content-inner {
-  max-width: 1360px;
-  padding: var(--space-8) var(--space-10) 72px;
-}
-.page-header {
-  margin-bottom: var(--space-6);
-}
-.page-header h1 {
-  font-size: var(--font-xl);
-  letter-spacing: -0.55px;
-}
 .eyebrow {
   color: var(--color-accent);
   font-size: 10px;
@@ -112,7 +44,7 @@ summary:focus-visible {
 .notion-global-refresh button,
 .live-dashboard-head button,
 .live-portfolio-state > button:not(.ui-back-button) {
-  min-height: var(--control-height);
+  min-height: var(--control-height-mobile-context, var(--control-height));
   border-radius: var(--radius-sm);
 }
 
@@ -254,6 +186,7 @@ summary:focus-visible {
 
 
 .allocation-row {
+  position: relative;
   grid-template-columns: minmax(220px, 1.4fr) minmax(
       70px,
       0.55fr
@@ -268,6 +201,21 @@ summary:focus-visible {
 }
 .allocation-row.clickable:hover {
   background: rgba(27, 57, 46, 0.45);
+}
+.position-open {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border: 0;
+  border-radius: inherit;
+  background: transparent;
+  cursor: pointer;
+}
+.allocation-row .pnl-badge {
+  position: relative;
+  z-index: 2;
+  min-height: 44px;
+  cursor: pointer;
 }
 .asset-dot {
   width: 38px;
@@ -363,12 +311,41 @@ summary:focus-visible {
   display: flex;
   flex-direction: column;
   gap: 3px;
+  flex: 1 1 15rem;
 }
 .notion-sync-meta {
   margin: 0;
   color: var(--color-text-muted);
-  font-size: 10px;
-  line-height: 1.4;
+  font-size: .875rem;
+  line-height: 1.5;
+}
+.notion-sync-panel > summary {
+  flex-wrap: wrap;
+  gap: var(--page-block-gap);
+  padding: 1rem;
+}
+.notion-sync-panel .notion-sync-actions {
+  flex: 0 1 auto;
+}
+.notion-sync-details {
+  padding: 0 21px 18px;
+  border-top: 1px solid var(--color-border);
+}
+.notion-sync-details .notion-sync-subtitle {
+  margin: 15px 0 0;
+  color: var(--color-text-muted);
+  font-size: 11px;
+}
+.notion-sync-details .notion-sync-copy {
+  margin-top: 9px;
+}
+@media (max-width: 560px) {
+  .notion-sync-panel .notion-sync-actions {
+    width: 100%;
+  }
+  .notion-sync-details {
+    padding: 0 16px 16px;
+  }
 }
 
 /* Shared list/detail refinements used by the other audited screens. */
@@ -384,11 +361,6 @@ summary:focus-visible {
 .analysis-list-row {
   min-height: 62px;
 }
-.notion-page,
-.universal-analysis-page {
-  border-radius: var(--radius-md);
-}
-
 /* Discovery lists — stable identities and compact, comparable signals. */
 .watch-theme-filter {
   margin: 0 0 var(--space-4);
@@ -506,7 +478,7 @@ summary:focus-visible {
 }
 .watch-card-head {
   display: grid;
-  grid-template-columns: 38px minmax(0, 1fr) auto;
+  grid-template-columns: 40px minmax(0, 1fr) auto;
   gap: var(--space-3);
   align-items: start;
 }
@@ -529,12 +501,8 @@ summary:focus-visible {
   font-size: var(--font-xs);
 }
 .watch-card-identity h3 {
-  flex: 1 1 auto;
   min-width: 0;
   margin: 0;
-  color: var(--color-text) !important;
-  font-size: var(--font-lg);
-  font-weight: 500;
   line-height: 1.2;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -549,25 +517,6 @@ summary:focus-visible {
   align-items: start;
   gap: var(--space-3);
 }
-.watch-signal-row > span {
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-}
-.watch-signal-row small {
-  color: var(--color-text-muted);
-  font-size: 8px;
-  text-transform: uppercase;
-  letter-spacing: 0.7px;
-}
-.watch-signal-row strong {
-  overflow: hidden;
-  color: var(--color-text-secondary);
-  font-size: var(--font-xs);
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
 .ui-discovery-card--watchlist .watch-thesis {
   min-height: 0;
   display: -webkit-box;
@@ -578,9 +527,6 @@ summary:focus-visible {
 
 .company-list-row {
   cursor: default;
-}
-.company-list-row:hover {
-  background: rgba(20, 37, 31, 0.55);
 }
 .company-state-tags {
   display: flex;
@@ -609,10 +555,6 @@ summary:focus-visible {
 .company-identity-button:hover strong {
   color: var(--color-accent);
 }
-.company-identity-button .owned-dot {
-  flex: 0 0 auto;
-}
-.watch-decision { margin-left: 0; }
 .analysis-list-row .analysis-verdict-cell {
   min-width: 0;
   overflow: hidden;
@@ -886,21 +828,6 @@ summary:focus-visible {
 }
 
 @media (max-width: 760px) {
-  :root {
-    --font-sm: 14px;
-    --control-height: 42px;
-  }
-  .content-inner {
-    padding: 16px 12px 104px;
-  }
-  .page-header {
-    margin-bottom: var(--space-4);
-  }
-  .page-header h1 {
-    max-width: 270px;
-    font-size: 22px;
-    line-height: 1.16;
-  }
   .notion-global-refresh button {
     min-height: 40px;
     padding: 8px 10px;
@@ -1143,24 +1070,10 @@ summary:focus-visible {
     grid-row: 2;
     justify-self: end;
   }
-  .analysis-list-row .analysis-agent {
-    grid-column: 1;
-    grid-row: 3;
-  }
   .analysis-list-row .analysis-score-cell {
     grid-column: 2;
     grid-row: 3;
     justify-self: end;
-  }
-
-  .mobile-nav button {
-    min-height: 48px;
-  }
-  .mobile-nav button small {
-    font-size: 10px;
-  }
-  .mobile-nav button span {
-    font-size: 20px;
   }
 
   .generic-company-hero {
@@ -1252,9 +1165,6 @@ body {
   overflow-x: hidden;
 }
 
-.app-shell,
-.content,
-.content-inner,
 .company-detail,
 .generic-company-detail,
 .company-main-grid,
@@ -1270,11 +1180,6 @@ body {
 .holding-summary {
   min-width: 0;
   max-width: 100%;
-}
-
-.content,
-.content-inner {
-  width: 100%;
 }
 
 .notion-table-wrap,
@@ -1298,20 +1203,6 @@ body {
 }
 
 @media (max-width: 760px) {
-  :root {
-    --mobile-page-gutter: 12px;
-    --mobile-card-padding: 16px;
-    --mobile-control-size: 44px;
-  }
-
-  .content {
-    overflow-x: clip;
-  }
-
-  .content-inner {
-    width: 100%;
-    padding-inline: var(--mobile-page-gutter) !important;
-  }
 
   .generic-company-detail,
   .universal-analysis-reader {
@@ -1605,47 +1496,7 @@ body {
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    scroll-behavior: auto !important;
-    transition-duration: 0.01ms !important;
-    animation-duration: 0.01ms !important;
-  }
-}
-
-/* Apple Light surface layer — v77, intentionally isolated for rollback. */
-:root {
-  color-scheme: light;
-  --color-bg: #f5f5f7;
-  --color-bg-elevated: #ffffff;
-  --color-surface: rgba(255, 255, 255, 0.86);
-  --color-surface-raised: rgba(255, 255, 255, 0.96);
-  --color-surface-active: #e8f2ff;
-  --color-border: rgba(60, 60, 67, 0.14);
-  --color-border-strong: rgba(60, 60, 67, 0.26);
-  --color-text: #1d1d1f;
-  --color-text-secondary: #48484a;
-  --color-text-muted: #6e6e73;
-  --color-accent: #007aff;
-  --color-accent-strong: #006ee6;
-  --color-positive: #168044;
-  --color-negative: #d70015;
-  --color-warning: #9a6400;
-  --color-info: #007aff;
-  --color-violet: #6e54c7;
-  --bg: var(--color-bg);
-  --panel: var(--color-surface);
-  --border: var(--color-border);
-  --muted: var(--color-text-muted);
-  --text: var(--color-text);
-  --green: var(--color-accent);
-  --red: var(--color-negative);
-  --amber: var(--color-warning);
-  --shadow-panel: 0 14px 34px rgba(0, 0, 0, 0.08);
-}
-
+/* Apple Light surface layer — v77, values now owned by globals.css. */
 html,
 body {
   background: var(--color-bg) !important;
@@ -1663,22 +1514,6 @@ textarea,
 select {
   color: var(--color-text);
 }
-.app-shell {
-  background:
-    radial-gradient(
-      circle at 90% -10%,
-      rgba(0, 122, 255, 0.08),
-      transparent 32%
-    ),
-    var(--color-bg) !important;
-}
-.sidebar {
-  background: rgba(255, 255, 255, 0.76) !important;
-  border-right-color: var(--color-border) !important;
-  box-shadow: 8px 0 28px rgba(0, 0, 0, 0.04);
-  backdrop-filter: saturate(180%) blur(24px);
-  -webkit-backdrop-filter: saturate(180%) blur(24px);
-}
 .brand span,
 .eyebrow,
 .positive {
@@ -1686,22 +1521,6 @@ select {
 }
 .brand-mark {
   box-shadow: 0 5px 14px rgba(0, 122, 255, 0.2);
-}
-.sidebar nav button {
-  color: var(--color-text-muted) !important;
-}
-.sidebar nav button:hover {
-  background: rgba(0, 122, 255, 0.06) !important;
-  color: var(--color-text) !important;
-}
-.sidebar nav button.active {
-  background: rgba(0, 122, 255, 0.1) !important;
-  color: var(--color-accent) !important;
-  box-shadow: inset 3px 0 var(--color-accent) !important;
-}
-.sidebar nav em {
-  color: #fff !important;
-  background: var(--color-accent) !important;
 }
 .sidebar-bottom .sync-card,
 .sync-card {
@@ -1719,13 +1538,6 @@ select {
 .sync-card i {
   background: var(--color-positive) !important;
   box-shadow: 0 0 8px rgba(22, 128, 68, 0.28);
-}
-.content-inner {
-  padding-top: 28px;
-}
-.page-header h1,
-.page-header {
-  color: var(--color-text);
 }
 .freshness,
 .analysis-total {
@@ -1747,19 +1559,6 @@ select {
 .notion-global-refresh button:hover:not(:disabled),
 .live-dashboard-head button:hover {
   background: #fff !important;
-}
-.pwa-update-banner {
-  background: rgba(255, 255, 255, 0.86) !important;
-  border-color: var(--color-border) !important;
-  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.14) !important;
-  color: var(--color-text);
-  backdrop-filter: saturate(180%) blur(20px);
-}
-.pwa-update-banner strong {
-  color: var(--color-text) !important;
-}
-.pwa-update-banner span {
-  color: var(--color-text-muted) !important;
 }
 .pwa-update-actions button {
   background: var(--color-accent) !important;
@@ -1815,7 +1614,6 @@ select {
 .weights small,
 .position-value small,
 .position-quote small,
-.watch-thesis,
 .company-identity small,
 .date-cell small,
 .analysis-title small,
@@ -1846,19 +1644,7 @@ select {
   color: var(--color-text-muted) !important;
   border-color: var(--color-border) !important;
 }
-.table-row,
-.analysis-list-row,
-.allocation-row {
-  border-color: var(--color-border) !important;
-}
-.table-row:hover,
-.analysis-list-row:hover,
-.allocation-row.clickable:hover {
-  background: rgba(0, 122, 255, 0.045) !important;
-}
-.asset-dot,
-.company-logo,
-.analysis-title > span {
+.asset-dot {
   background: #eef3f8 !important;
   color: var(--color-accent) !important;
   border-color: var(--color-border) !important;
@@ -1887,29 +1673,16 @@ select {
 .company-history-details > summary b {
   color: var(--color-accent) !important;
 }
-.watch-decision {
-  background: rgba(0, 122, 255, 0.1) !important;
-  color: var(--color-accent) !important;
-}
 .row-arrow {
   color: var(--color-text-muted) !important;
 }
 .company-identity-button:hover strong {
   color: var(--color-accent) !important;
 }
-.analysis-lead {
-  background: rgba(0, 122, 255, 0.07) !important;
-  border-color: rgba(0, 122, 255, 0.22) !important;
-}
 .analysis-source-details[open] > summary,
 .company-history-details[open] > summary,
 .watch-theme-filter[open] > summary {
   border-color: var(--color-border) !important;
-}
-.universal-analysis-page {
-  background: rgba(255, 255, 255, 0.92) !important;
-  border-color: var(--color-border) !important;
-  box-shadow: var(--shadow-panel) !important;
 }
 .universal-analysis-page th {
   background: #f2f2f7 !important;
@@ -1919,26 +1692,7 @@ select {
   color: var(--color-text-secondary) !important;
   border-color: var(--color-border) !important;
 }
-.mobile-nav {
-  background: rgba(255, 255, 255, 0.82) !important;
-  border-color: var(--color-border) !important;
-  box-shadow: 0 -8px 26px rgba(0, 0, 0, 0.08) !important;
-  backdrop-filter: saturate(180%) blur(22px);
-  -webkit-backdrop-filter: saturate(180%) blur(22px);
-}
-.mobile-nav button {
-  color: var(--color-text-muted) !important;
-}
-.mobile-nav button.active {
-  color: var(--color-accent) !important;
-}
 @media (max-width: 760px) {
-  .sidebar {
-    background: rgba(255, 255, 255, 0.9) !important;
-  }
-  .content-inner {
-    padding-top: max(18px, env(safe-area-inset-top));
-  }
   .portfolio-overview,
   .generic-company-hero,
   .universal-analysis-reader .report-hero {
@@ -1950,18 +1704,9 @@ select {
   .analysis-list {
     border-radius: 16px;
   }
-  .universal-analysis-page {
-    border-radius: 16px;
-  }
 }
 
-/* Apple Light completeness and financial alignment — v78 */
-:root {
-  --glass-fill: rgba(255, 255, 255, 0.82);
-  --glass-fill-strong: rgba(255, 255, 255, 0.96);
-  --glass-inset: rgba(242, 242, 247, 0.76);
-  --glass-blue: rgba(0, 122, 255, 0.08);
-}
+/* Apple Light completeness and financial alignment — v78 values now live in globals.css. */
 
 /* Convert every remaining legacy dark container into a semantic light surface. */
 .company-hero,
@@ -1977,26 +1722,18 @@ select {
 .company-metrics article,
 .research-reference,
 .holding-metric-grid article,
-.trajectory-progress,
-.notion-page,
-.notion-page table,
-.target-list article,
 .scenario,
 .decision-facts > div,
 .decision-template-block,
 .decision-template-columns > div,
-.notion-callout,
-.relation-chip,
-.analysis-lead {
+.relation-chip {
   background: var(--glass-inset) !important;
   border-color: var(--color-border) !important;
   color: var(--color-text) !important;
 }
 
 .research-reference.available:hover,
-.section-document-button:hover,
-.table-row:hover,
-.analysis-list-row:hover {
+.section-document-button:hover {
   background: var(--glass-blue) !important;
   border-color: rgba(0, 122, 255, 0.24) !important;
 }
@@ -2048,9 +1785,7 @@ select {
   color: var(--color-accent-strong) !important;
 }
 
-.theme-cloud small,
-.company-logo,
-.analysis-title > span {
+.theme-cloud small {
   background: rgba(60, 60, 67, 0.07) !important;
   color: var(--color-text-secondary) !important;
 }
@@ -2060,12 +1795,49 @@ select {
 }
 
 .notion-background-sync {
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: min(360px, calc(100vw - 36px));
+  max-width: min(360px, calc(100vw - 36px));
+  padding: 9px 12px;
+  border: 1px solid var(--color-border) !important;
+  border-radius: var(--radius-pill);
   background: rgba(255, 255, 255, 0.92) !important;
-  border-color: var(--color-border) !important;
   color: var(--color-text-secondary) !important;
+  font-size: 10px;
+  line-height: 1.35;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1) !important;
   backdrop-filter: saturate(180%) blur(20px);
   -webkit-backdrop-filter: saturate(180%) blur(20px);
+}
+.notion-background-sync-dot {
+  width: 7px;
+  height: 7px;
+  flex: 0 0 7px;
+  border-radius: 50%;
+  background: var(--color-text-muted);
+}
+.notion-background-sync.done {
+  color: var(--color-positive) !important;
+  border-color: color-mix(in srgb, var(--color-positive) 45%, var(--color-border)) !important;
+}
+.notion-background-sync.done .notion-background-sync-dot {
+  background: var(--color-positive);
+}
+@media (max-width: 760px) {
+  body > .notion-background-sync {
+    right: 12px;
+    bottom: 74px;
+    left: 12px;
+    width: auto;
+    max-width: none;
+    justify-content: center;
+  }
 }
 
 .holding-refresh,
@@ -2272,9 +2044,6 @@ table {
   color: var(--color-accent) !important;
 }
 
-.target-list article,
-.trajectory-progress,
-.allocation-row,
 .theme-cloud {
   border-color: var(--color-border) !important;
 }
@@ -2320,7 +2089,6 @@ table {
 }
 
 .allocation-row {
-  background: transparent !important;
   border-bottom: 1px solid var(--color-border) !important;
 }
 
@@ -2331,9 +2099,6 @@ table {
   min-width: 0 !important;
   min-height: 0 !important;
   padding: 0 !important;
-  border: 0 !important;
-  background: transparent !important;
-  box-shadow: none !important;
 }
 
 .company-table,
@@ -2376,14 +2141,6 @@ table {
 }
 
 /* Portfolio controls and final light-surface cleanup — v81 */
-
-.allocation-progress .ui-progress-fill {
-  background: linear-gradient(
-    90deg,
-    var(--ui-progress-accent),
-    #5ac8fa
-  ) !important;
-}
 
 /* Main surfaces stay white; nested cards use the neutral liquid-glass inset. */
 .company-section-block,
@@ -2461,7 +2218,6 @@ table {
 }
 
 /* All progress tracks share the trajectory blue gradient. */
-.ui-progress-track--positive .ui-progress-fill,
 .target-list i b,
 .trajectory-progress > i b {
   background: linear-gradient(
@@ -2472,14 +2228,6 @@ table {
 }
 
 /* Trajectory rows use colour as status: reached, or materially above target. */
-.target-progress-bar.ui-progress-track--positive .ui-progress-fill {
-  background: linear-gradient(90deg, var(--ui-progress-positive), #62d98a) !important;
-}
-
-.target-progress-bar.ui-progress-track--warning .ui-progress-fill {
-  background: linear-gradient(90deg, var(--ui-progress-warning), #ffcc66) !important;
-}
-
 .target-outside-status {
   display: block;
   margin-top: 7px;
@@ -2500,14 +2248,6 @@ table {
 
 .target-allocation {
   margin-bottom: var(--space-5);
-}
-
-.target-progress-bar.ui-progress-track--positive + .target-progress-copy {
-  color: var(--ui-progress-positive);
-}
-
-.target-progress-bar.ui-progress-track--warning + .target-progress-copy {
-  color: var(--ui-progress-warning);
 }
 
 .target-total-warning {
@@ -2581,10 +2321,6 @@ table {
   gap: 16px;
   min-height: 68px;
   padding: 14px 16px !important;
-  background: transparent !important;
-  border-top: 0 !important;
-  border-bottom: 1px solid var(--color-border) !important;
-  border-radius: 0 !important;
 }
 
 .target-list article > div {
@@ -2633,10 +2369,8 @@ table {
 /* Analysis values use the app's natural text colour. Green/red are reserved
    for financial P/L signals (the explicit .positive/.negative P/L classes).
    This keeps research scores, coverage counters and analytical verdicts
-   visually neutral while preserving the existing parser/data model. */
-:root {
-  --color-analysis-value: var(--color-text);
-}
+   visually neutral while preserving the existing parser/data model. The
+   token is canonicalized in globals.css. */
 
 .analysis-stats article > strong,
 .analysis-score-cell,
@@ -2646,10 +2380,8 @@ table {
 .company-metrics article > strong small,
 .research-reference.available > strong,
 .research-reference.missing > strong,
-.watchlist-overview > div > strong,
 .report-verdict strong,
-.report-verdict span,
-.watch-signal-row strong {
+.report-verdict span {
   color: var(--color-analysis-value) !important;
 }
 
@@ -2657,13 +2389,6 @@ table {
 .analysis-stats article > small.positive,
 .analysis-stats article > small.negative {
   color: var(--color-text-muted) !important;
-}
-
-/* Watchlist conviction/decision labels are analytical metadata, not P/L. */
-.watch-decision,
-.decision-hold-off,
-.decision-reject {
-  color: var(--color-text-secondary) !important;
 }
 
 /* Structured Notion documents — one shared presentation layer. */
@@ -2689,10 +2414,6 @@ table {
   gap: 10px;
   margin: var(--space-5) 0;
   padding: 16px 18px;
-  border: 1px solid var(--color-border) !important;
-  border-left: 3px solid var(--color-accent) !important;
-  border-radius: var(--radius-md) !important;
-  background: var(--glass-inset) !important;
 }
 
 .latest-info-summary > small,
@@ -2741,10 +2462,6 @@ table {
   max-width: 100%;
   margin: 18px 0 24px !important;
   overflow-x: auto;
-  border: 1px solid var(--color-border) !important;
-  border-radius: var(--radius-md) !important;
-  background: var(--glass-inset) !important;
-  box-shadow: none !important;
   -webkit-overflow-scrolling: touch;
 }
 
@@ -2845,22 +2562,10 @@ table {
 /* Final mobile cascade guard — keep this at EOF. */
 @media (max-width: 760px) {
   html,
-  body,
-  .app-shell,
-  .content,
-  .content-inner {
+  body {
     width: 100%;
     max-width: 100%;
     overflow-x: clip !important;
-  }
-
-  .content {
-    margin-left: 0 !important;
-  }
-  .content-inner {
-    margin: 0 !important;
-    padding: max(16px, env(safe-area-inset-top)) 12px
-      calc(104px + env(safe-area-inset-bottom)) !important;
   }
 
   .company-detail,
@@ -2944,8 +2649,6 @@ table {
     margin: 18px 0 24px !important;
     overflow-x: auto !important;
     overflow-y: hidden;
-    border: 1px solid var(--color-border) !important;
-    border-radius: var(--radius-md) !important;
     overscroll-behavior-inline: contain;
     -webkit-overflow-scrolling: touch;
   }
@@ -2993,10 +2696,8 @@ table {
 
 /* Content readability guard — semantic research copy must keep the same
    contrast as the rest of the light interface. Accent colours remain reserved
-   for labels, links and explicit positive/negative financial performance. */
-:root {
-  --color-content-copy: #3a3a3c;
-}
+   for labels, links and explicit positive/negative financial performance. The
+   token is canonicalized in globals.css. */
 
 .latest-info-summary p,
 .latest-info-summary li,
@@ -3044,97 +2745,11 @@ table {
   -webkit-text-fill-color: var(--color-text) !important;
 }
 
-/* Reusable research UI consolidation — buttons, tables and document sections */
-.ui-action-button {
-  box-sizing: border-box;
-  width: 100%;
-  min-height: 44px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-3);
-  padding: 10px 14px;
-  border: 1px solid rgba(0, 122, 255, 0.28);
-  border-radius: var(--radius-sm);
-  background: var(--glass-blue);
-  color: var(--color-accent);
-  font: inherit;
-  font-size: var(--font-sm);
-  font-weight: 650;
-  line-height: 1.2;
-  text-align: left;
-  cursor: pointer;
-  -webkit-tap-highlight-color: transparent;
-}
-
-.ui-action-button:hover,
-.ui-action-button:focus-visible {
-  border-color: rgba(0, 122, 255, 0.5);
-  background: rgba(0, 122, 255, 0.1);
-  outline: none;
-}
-
-.ui-action-button b {
-  flex: 0 0 auto;
-  color: inherit;
-  font-size: 16px;
-  font-weight: 500;
-}
-
-.ui-action-button--compact {
-  width: auto;
-  min-width: 78px;
-  min-height: 36px;
-  padding: 7px 10px;
-  font-size: var(--font-xs);
-}
-
 .featured-document-open {
   margin-top: var(--space-4);
 }
 .analysis-load-more {
   margin-top: var(--space-4);
-}
-
-.ui-data-table-wrap {
-  box-sizing: border-box;
-  width: 100%;
-  overflow: hidden;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  background: rgba(255, 255, 255, 0.5);
-}
-
-.ui-data-table {
-  width: 100%;
-  border-collapse: collapse;
-  table-layout: auto;
-}
-
-.ui-data-table th,
-.ui-data-table td {
-  padding: 11px 12px;
-  border: 0;
-  border-bottom: 1px solid var(--color-border);
-  color: var(--color-text-secondary);
-  font-size: var(--font-xs);
-  line-height: 1.35;
-  text-align: left;
-  vertical-align: middle;
-  overflow-wrap: anywhere;
-}
-
-.ui-data-table th {
-  background: var(--glass-inset);
-  color: var(--color-text-muted);
-  font-weight: 650;
-}
-
-.ui-data-table tbody tr:last-child td {
-  border-bottom: 0;
-}
-.ui-data-table strong {
-  color: var(--color-text);
 }
 
 /* Notion is the content source; these wrappers only provide rhythm, not a
@@ -3154,15 +2769,6 @@ table {
 }
 .company-research-overview > h2 {
   margin-bottom: var(--space-4);
-}
-
-/* Section headings already carry their source number. Removing the decorative
-   micro-index also releases its empty grid column on narrow screens. */
-
-.universal-analysis-page .analysis-section {
-  display: block !important;
-  grid-template-columns: none !important;
-  gap: 0 !important;
 }
 
 @media (max-width: 760px) {
@@ -3328,45 +2934,6 @@ table {
    primary white surface; every nested information block uses this component
    contract instead of owning a bespoke background, border and spacing. */
 
-.ui-metadata-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--space-3);
-  margin: 0 0 var(--space-4);
-  padding: 0;
-}
-
-.ui-metadata-item {
-  min-width: 0;
-  padding: 14px;
-}
-
-.ui-metadata-item dt {
-  color: var(--color-text-muted);
-  font-size: 10px;
-  font-weight: 500;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-}
-
-.ui-metadata-item dd {
-  margin: 7px 0 0;
-  color: var(--color-text) !important;
-  -webkit-text-fill-color: var(--color-text) !important;
-  font-size: 14px;
-  font-weight: 600;
-  line-height: 1.4;
-  overflow-wrap: anywhere;
-}
-
-.ui-metadata-item > small {
-  display: block;
-  margin-top: 5px;
-  color: var(--color-text-muted);
-  font-size: 10px;
-  line-height: 1.4;
-}
-
 .analysis-report-hero--without-outcome {
   grid-template-columns: minmax(0, 1fr) !important;
 }
@@ -3391,9 +2958,6 @@ table {
   border-top: 1px solid var(--color-border);
 }
 
-.analysis-lead,
-.latest-info-summary,
-.notion-callout,
 .analysis-source-details {
   border: 1px solid var(--color-border) !important;
   background: var(--glass-inset) !important;
@@ -3684,14 +3248,6 @@ table {
 .research-search-workspace .global-search-field {
   margin: 0;
 }
-.research-search-workspace .ui-search-field {
-  background: var(--glass-inset) !important;
-  border-color: rgba(0, 122, 255, 0.24) !important;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.78),
-    0 0 0 3px rgba(0, 122, 255, 0.05) !important;
-}
-
 .global-search-filters {
   display: flex;
   align-items: center;
@@ -3828,46 +3384,6 @@ table {
   }
 }
 
-/* Shared floating back control for detail and reader views. */
-.ui-back-button {
-  position: fixed;
-  top: max(12px, calc(env(safe-area-inset-top) + 12px));
-  left: calc(225px + 16px);
-  z-index: 30;
-  width: 48px;
-  height: 48px;
-  display: grid;
-  place-items: center;
-  padding: 0;
-  border: 1px solid rgba(255, 255, 255, 0.78);
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.76);
-  color: var(--color-text);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-  backdrop-filter: saturate(180%) blur(20px);
-  -webkit-backdrop-filter: saturate(180%) blur(20px);
-  cursor: pointer;
-  -webkit-tap-highlight-color: transparent;
-}
-
-.ui-back-button svg {
-  width: 25px;
-  height: 25px;
-  fill: none;
-  stroke: currentColor;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  stroke-width: 2.2;
-}
-
-.ui-back-button:hover {
-  background: rgba(255, 255, 255, 0.9);
-}
-.ui-back-button:focus-visible {
-  outline: 3px solid rgba(0, 122, 255, 0.32);
-  outline-offset: 3px;
-}
-
 .generic-company-detail,
 .universal-analysis-reader {
   padding-top: 64px;
@@ -3889,12 +3405,6 @@ table {
   .universal-analysis-reader,
   .company-detail-error {
     padding-top: 64px;
-  }
-}
-
-@media (prefers-reduced-transparency: reduce) {
-  .ui-back-button {
-    background: rgba(255, 255, 255, 0.96);
   }
 }
 
@@ -4064,4 +3574,283 @@ table {
     align-items: center;
   }
 
+}
+
+
+/* Shared loading, error and document-row contracts. */
+.detail-loading {
+  min-height: 55dvh;
+  padding-top: 76px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 20px;
+}
+.resource-error {
+  color: #9a4615;
+  font-size: 14px;
+}
+/* Company detail and portfolio interaction refinements. */
+.generic-company-detail > .ui-tabs {
+  margin-block: 20px;
+}
+.company-metrics .ui-stat-card > strong {
+  font-size: 1.25rem;
+  line-height: 1.25;
+}
+.company-metrics .ui-stat-card > span,
+.company-metrics .ui-stat-card > small {
+  font-size: .8125rem;
+  line-height: 1.45;
+}
+.company-metrics .ui-stat-card > strong small {
+  font-size: .75rem;
+}
+.company-metrics .company-date > strong {
+  font-size: 1rem;
+  overflow-wrap: normal;
+}
+@media (max-width: 760px) {
+  .generic-company-detail > .ui-tabs {
+    margin-block: 16px;
+  }
+  .company-metrics .company-date > strong {
+    font-size: .9375rem;
+  }
+}
+
+/* Lot 5C — canonical application shell and responsive ownership.
+   Layout owns geometry here; visual tokens remain in the global foundation. */
+.app-shell {
+  min-height: 100dvh;
+  background:
+    radial-gradient(circle at 90% -10%, rgba(0, 122, 255, 0.08), transparent 32%),
+    var(--color-bg) !important;
+}
+
+.sidebar {
+  position: fixed;
+  inset: 0 auto 0 0;
+  z-index: 10;
+  display: flex;
+  width: 225px;
+  flex-direction: column;
+  padding: 28px 18px 22px;
+  border-right: 1px solid var(--color-border) !important;
+  background: rgba(255, 255, 255, 0.76) !important;
+  box-shadow: 8px 0 28px rgba(0, 0, 0, 0.04);
+  backdrop-filter: saturate(180%) blur(24px);
+  -webkit-backdrop-filter: saturate(180%) blur(24px);
+}
+.sidebar nav {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.sidebar nav button {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  color: var(--color-text-muted) !important;
+  font-size: 14px;
+  text-align: left;
+  cursor: pointer;
+}
+.sidebar nav button:hover {
+  background: rgba(0, 122, 255, 0.06) !important;
+  color: var(--color-text) !important;
+}
+.sidebar nav button.active {
+  background: rgba(0, 122, 255, 0.1) !important;
+  color: var(--color-accent) !important;
+  box-shadow: inset 3px 0 var(--color-accent) !important;
+}
+.sidebar nav em {
+  margin-left: auto;
+  padding: 2px 5px;
+  border-radius: 4px;
+  background: var(--color-accent) !important;
+  color: #fff !important;
+  font-size: 9px;
+  font-style: normal;
+  font-weight: 800;
+}
+
+.content {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  min-height: 100vh;
+  margin-left: 225px;
+}
+.content-inner {
+  width: 100%;
+  min-width: 0;
+  max-width: 1480px;
+  margin: auto;
+  padding: 34px 42px 60px;
+}
+.content-inner > div {
+  min-width: 0;
+}
+
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 30px;
+  color: var(--color-text);
+}
+.page-header .header-account-tools {
+  margin-left: var(--space-2);
+}
+.page-header h1 {
+  max-width: none;
+  margin: 0;
+  color: var(--color-text);
+  font-size: 25px;
+  line-height: 1.2;
+  letter-spacing: -0.7px;
+}
+
+.pwa-update-banner {
+  position: fixed;
+  top: max(12px, env(safe-area-inset-top));
+  left: 50%;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  width: min(560px, calc(100vw - 32px));
+  padding: 13px 15px;
+  transform: translateX(-50%);
+  border: 1px solid var(--color-border) !important;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.86) !important;
+  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.14) !important;
+  color: var(--color-text);
+  backdrop-filter: saturate(180%) blur(20px);
+}
+.pwa-update-banner > div:first-child {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 4px;
+}
+.pwa-update-banner strong {
+  color: var(--color-text) !important;
+  font-size: 11px;
+}
+.pwa-update-banner span {
+  color: var(--color-text-muted) !important;
+  font-size: 9px;
+}
+
+.mobile-nav {
+  display: none;
+  background: rgba(255, 255, 255, 0.82) !important;
+  border-color: var(--color-border) !important;
+  box-shadow: 0 -8px 26px rgba(0, 0, 0, 0.08) !important;
+  backdrop-filter: saturate(180%) blur(22px);
+  -webkit-backdrop-filter: saturate(180%) blur(22px);
+}
+
+@media (max-width: 760px) {
+  .app-shell {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: clip !important;
+  }
+
+  .app-shell > .sidebar {
+    display: none;
+    background: rgba(255, 255, 255, 0.9) !important;
+  }
+
+  .app-shell > .content {
+    margin-left: 0 !important;
+    padding: max(16px, env(safe-area-inset-top))
+      max(16px, env(safe-area-inset-right))
+      calc(110px + env(safe-area-inset-bottom))
+      max(16px, env(safe-area-inset-left));
+  }
+  .app-shell .content-inner {
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .page-header {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: end;
+    column-gap: var(--space-3);
+    margin-bottom: 18px;
+  }
+  .app-shell .page-header .header-account-tools {
+    margin-left: 0;
+  }
+  .app-shell .page-header h1 {
+    max-width: 270px;
+    font-size: clamp(1.65rem, 6vw, 2rem);
+    line-height: 1.15;
+  }
+  .mobile-nav {
+    position: fixed;
+    inset: auto max(10px, env(safe-area-inset-right)) max(8px, env(safe-area-inset-bottom)) max(10px, env(safe-area-inset-left));
+    z-index: 20;
+    display: grid;
+    width: auto;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    grid-template-rows: 1fr;
+    grid-auto-flow: row;
+    padding: 6px;
+    border-top: 1px solid var(--color-border);
+    border-radius: 24px;
+  }
+  .mobile-nav button {
+    display: flex;
+    min-width: 0;
+    min-height: 52px;
+    align-items: center;
+    flex-direction: column;
+    gap: 4px;
+    border: 0;
+    background: none;
+    color: var(--color-text-muted) !important;
+  }
+  .mobile-nav button span {
+    font-size: 20px;
+  }
+  .mobile-nav button small {
+    font-size: 12px;
+  }
+  .mobile-nav button.active {
+    color: var(--color-accent) !important;
+  }
+
+  .pwa-update-banner {
+    gap: 12px;
+    padding: 12px;
+    flex-wrap: wrap;
+  }
+  body > .pwa-update-banner strong {
+    font-size: 10px;
+  }
+  body > .pwa-update-banner span {
+    font-size: 8px;
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .mobile-nav,
+  .sidebar,
+  .pwa-update-banner {
+    background: #f5f5f7;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
 }

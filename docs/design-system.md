@@ -8,12 +8,19 @@ Le design system est la source commune de l’application, de Storybook et des v
 
 | Besoin | Source |
 | --- | --- |
+| Entrée CSS publique commune à la production et Storybook | [`app/design-system.css`](../app/design-system.css) |
 | Primitives React partagées | [`app/components/ui-primitives.tsx`](../app/components/ui-primitives.tsx) |
 | Contrats visuels des primitives, surfaces et tokens globaux | [`app/globals.css`](../app/globals.css) |
 | Layouts métier, composition responsive et compatibilité historique | [`app/ux-foundations.css`](../app/ux-foundations.css) |
 | Références exécutables et données d’état | [`stories/`](../stories/) |
 
 Les valeurs ne doivent pas être recopiées dans cette documentation. En cas de divergence, les primitives de production et leurs stories font foi.
+
+### Entrée et propriété CSS
+
+`app/design-system.css` est l’unique entrée CSS publique. `app/layout.tsx` et `.storybook/preview.ts` l’importent directement, dans cet ordre immuable : Tailwind, fondations UX, puis globals canoniques. `stories/storybook.css` reste une feuille de contexte Storybook, pas une seconde entrée du design system.
+
+`app/globals.css` est l’unique propriétaire des tokens canoniques et des alias historiques encore consommés. `ux-foundations.css` porte les règles de composition et de responsive sans redéfinir de bloc `:root`. Les contextes d’accessibilité et de responsive utilisent les propriétés canoniques et leurs tokens existants, sans créer de token concurrent.
 
 ## Contrat de surface
 
@@ -40,6 +47,49 @@ La page Lovable de référence est un banc de comparaison mobile. Elle peut mont
 5. Une story utilise le composant de production et évite toute dépendance réseau.
 6. Une migration n’est terminée que lorsque les anciens overrides ne sont plus référencés et peuvent être supprimés sans régression.
 7. Toute passe UI doit réduire ou stabiliser le nombre d’overrides spécifiques ; une amélioration visuelle qui augmente la concurrence CSS n’est pas considérée comme terminée.
+
+## Gouvernance CSS et baseline de migration
+
+La dette CSS existante est mesurée par [`scripts/audit-css-governance.mjs`](../scripts/audit-css-governance.mjs). L’audit couvre les trois feuilles actuellement chargées ou référencées par le système :
+
+- `app/globals.css` ;
+- `app/ux-foundations.css` ;
+- `stories/storybook.css`.
+
+Il distingue les sélecteurs exacts répétés, les conflits de propriétés dans un même contexte d’at-rule, les variantes responsive, les propriétés strictement redondantes, les extensions additives, les tokens répétés avec leurs valeurs, et les classes sans consommateur démontré.
+
+La baseline versionnée est [`scripts/css-audit-baseline.json`](../scripts/css-audit-baseline.json). L’état courant documenté est : 285 sélecteurs répétés, 83 conflits directs, 131 variantes responsive, 24 redondances identiques et 47 extensions additives ; 0 token répété et 0 valeur concurrente ; 464 déclarations `!important` ; 324 classes définies et 0 classe orpheline.
+
+Le prochain chantier de réduction, son séquencement et ses critères de sortie sont
+documentés dans [`docs/css-debt-roadmap.md`](./css-debt-roadmap.md).
+
+La commande de gouvernance échoue avec un code non nul si un compteur surveillé augmente :
+
+```bash
+npm run audit:css:governance
+```
+
+Pour obtenir la preuve machine stable, notamment pour une CI ou un archivage de diagnostic :
+
+```bash
+npm run audit:css:governance:json
+```
+
+`npm run audit:css` reste l’audit historique des sélecteurs supprimables ; il n’est pas remplacé par l’audit de gouvernance. Les deux commandes doivent rester vertes pendant la migration.
+
+### Registre des classes dynamiques
+
+Une classe n’est exemptée de l’analyse des orphelines que si son générateur est documenté dans [`scripts/css-audit-registry.mjs`](../scripts/css-audit-registry.mjs). Chaque entrée indique le fichier/composant producteur, les valeurs admises et la raison du contrat. Les mots génériques présents dans les données ou les variables (`error`, `warning`, `running`, etc.) ne prouvent pas à eux seuls qu’une classe CSS est consommée.
+
+Le composant `notion-background-sync` rend uniquement l’état `done` et son registre dynamique ne conserve aucune variante CSS sans consommateur. Les anciennes classes `.signal.attractive`, `.notion-background-sync.starting` et `.warning` ont été supprimées après vérification des consommateurs.
+
+Les compteurs de baseline peuvent diminuer ou rester stables. Une nouvelle exception ne doit pas être ajoutée pour faire passer la CI : il faut d’abord prouver le générateur, le périmètre responsive/state/accessibility et documenter l’entrée du registre.
+
+Le test ciblé de l’audit vérifie la baseline, le périmètre des trois feuilles, les catégories de redéfinitions, les primitives dynamiques, `research-score-cell` et les états génériques explicitement scopés :
+
+```bash
+npm run test:css-audit
+```
 
 ## Vérification locale
 

@@ -1,5 +1,5 @@
 import { definePreview } from "@storybook/react-vite";
-import "../app/globals.css";
+import "../app/design-system.css";
 import "../stories/storybook.css";
 
 export default definePreview({

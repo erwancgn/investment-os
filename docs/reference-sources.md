@@ -47,7 +47,9 @@ portefeuille, de ventes, de cibles ou de warrants ne doit être ajouté au dép�
 
 ## Référence visuelle
 
-La référence Lovable active est le projet `Compact Controls Test`, commit `c11099d10e75e010c40d2c926daecc8f97db5370`.
+La référence Lovable active est le projet `Compact Controls Test`, vérifié en lecture
+seule via le connecteur Lovable sur le commit
+`bb2785a45fd1758c448e66872205991c87852293`.
 
 Elle valide notamment :
 
@@ -59,6 +61,11 @@ Elle valide notamment :
 - la carte Radar avec identité, badge adjacent, action icon-only, trois signaux, thèmes et thèse.
 
 Lovable est un banc de validation visuelle. Les primitives de production et leurs stories restent l’implémentation canonique.
+
+Le contrat détaillé et le mapping Lovable → export React → classe racine → story sont
+documentés dans [`docs/lovable-design-system.md`](./lovable-design-system.md). Lovable
+décrit le visible, Storybook vérifie l’exécution et le code porte l’API ainsi que
+l’accessibilité ; tout écart doit être arbitré par diff explicite sans override ajouté.
 
 ## Gouvernance du design system Storybook
 

@@ -54,15 +54,13 @@ export function NotionCompanies({ openCompany, initialData }: { openCompany: (co
       {visible.map((item) => <DiscoveryCard as="article" kind="company" className="table-row company-list-row" key={item.id}>
         <button type="button" className="company-identity company-identity-button" onClick={() => openCompany(item.id)} aria-label={`Ouvrir la fiche ${item.name}`}>
           <div className="company-logo">{(item.ticker || item.name).slice(0, 2).toUpperCase()}</div>
-          <div><strong>{item.name}</strong><small>{item.ticker || "Sans ticker"} · {item.industry || item.sector || "Classification à compléter"}</small></div>
-          {item.ownershipStatus === "Owned" && <span className="owned-dot" aria-label="Owned" />}
+          <div className="company-identity-copy"><div><strong>{item.name}</strong>{item.ownershipStatus === "Owned" && <Badge tone="positive">Owned</Badge>}</div><small>{item.ticker || "Sans ticker"} · {item.industry || item.sector || "Classification à compléter"}</small></div>
         </button>
         <div className="research-reference-grid">{referenceOrder.map((kind) => {
           const reference = item.researchReferences.find((doc) => doc.kind === kind);
           return reference ? <button type="button" onClick={() => openCompany(item.id, reference.id)} className={`research-reference available reference-${kind}`} title={`${reference.title} · ${reference.verdict || reference.status}`} aria-label={`Ouvrir ${referenceLabels[kind]} de ${item.name}`} key={kind}><span>{referenceLabels[kind]}</span><strong>{referenceValue(reference)}</strong><small>{referenceDetail(reference)}</small></button> : <span className="research-reference missing" key={kind}><span>{referenceLabels[kind]}</span><strong>—</strong><small>Non disponible</small></span>;
         })}</div>
         <div className="company-state-tags">
-          {item.ownershipStatus === "Owned" && <Badge tone="positive">Owned</Badge>}
           {item.watchlistMembership && <Badge>Watchlist</Badge>}
           {item.watchlistMembership && item.monitoringStatus && <small>{item.monitoringStatus}{item.decision ? ` · ${item.decision}` : ""}</small>}
           {!item.watchlistMembership && item.ownershipStatus !== "Owned" && <span className="signal">Non classé</span>}

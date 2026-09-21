@@ -1,0 +1,7 @@
+/*
+ * Public CSS entry point.
+ * Keep this order stable: framework, UX foundations, then canonical globals.
+ */
+@import "tailwindcss";
+@import "./ux-foundations.css";
+@import "./globals.css";

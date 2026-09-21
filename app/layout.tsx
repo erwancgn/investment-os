@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
-import "./globals.css";
-import "./iphone-experience.css";
+import "./design-system.css";
 import { PwaRegister } from "./components/pwa-register";
 
 export const metadata: Metadata = {
