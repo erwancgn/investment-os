@@ -25,21 +25,43 @@ summary:focus-visible {
   letter-spacing: 1.55px;
 }
 
-.live-dashboard-head button,
-.live-portfolio-state > button:not(.ui-back-button) {
-  min-height: var(--ui-control-hit-height);
-  border-radius: var(--radius-sm);
-}
-
 /* Portfolio — one summary, one positions surface, targets only in Trajectoire. */
 .live-dashboard-head {
   min-height: 34px;
-  margin: 0 0 var(--space-3);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 0 0 12px;
+  color: #778780;
+  font-size: 9px;
+}
+.live-dashboard-head span:nth-child(2) {
+  margin-left: auto;
+}
+.live-dashboard-head button,
+.live-portfolio-state > button:not(.ui-back-button) {
+  min-height: var(--ui-control-hit-height);
+  padding: 8px 11px;
+  border: 1px solid rgba(0, 122, 255, 0.32);
+  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, 0.74);
+  color: var(--color-accent);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+  cursor: pointer;
+}
+.live-dashboard-head button:hover {
+  background: #fff;
+}
+.live-portfolio-state {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 18px;
+  padding: 24px;
+}
+.live-portfolio-state span {
   color: var(--color-text-muted);
   font-size: 10px;
-}
-.live-dashboard-head button {
-  padding: 7px 12px;
 }
 
 .portfolio-overview {
@@ -132,7 +154,9 @@ summary:focus-visible {
 }
 
 .portfolio-main-grid {
-  grid-template-columns: minmax(0, 1.85fr) minmax(300px, 0.75fr);
+  display: grid;
+  grid-template-columns: minmax(0, 1.75fr) minmax(320px, 1fr);
+  gap: 18px;
   align-items: start;
 }
 .allocation-panel {
@@ -191,20 +215,57 @@ summary:focus-visible {
   background: transparent;
   cursor: pointer;
 }
+.allocation-list {
+  margin-top: 5px;
+}
+.asset-name {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  min-width: 0;
+}
+.asset-name > div {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
 .asset-dot {
-  width: 38px;
-  height: 38px;
-  flex-basis: 38px;
-  border-radius: 10px;
+  width: 36px;
+  height: 36px;
+  flex: 0 0 36px;
+  display: grid;
+  place-items: center;
+  border-radius: 9px;
+  background: #eef3f8;
+  color: var(--color-accent);
+  font-size: 10px;
+  font-weight: 900;
 }
 .asset-name strong {
+  display: block;
   color: var(--color-text);
-  font-size: var(--font-sm);
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.3;
 }
 .asset-name small,
 .weights small {
-  color: var(--color-text-muted);
-  font-size: 9px;
+  color: var(--color-text-secondary);
+  font-size: 8px;
+}
+.asset-metadata {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px 7px;
+  margin-top: 5px;
+}
+.asset-metadata span {
+  white-space: nowrap;
+}
+.asset-metadata span + span::before {
+  content: "·";
+  margin-right: 7px;
+  color: #41504a;
 }
 .weights strong,
 .position-value strong,
@@ -856,9 +917,6 @@ summary:focus-visible {
   .portfolio-main-grid {
     grid-template-columns: 1fr;
   }
-  .portfolio-main-grid .side-stack {
-    grid-template-columns: 1fr;
-  }
   .sector-panel .donut-wrap {
     justify-content: flex-start;
   }
@@ -869,17 +927,24 @@ summary:focus-visible {
 
 @media (max-width: 760px) {
   .live-dashboard-head {
-    gap: 8px;
-    margin-bottom: 10px;
+    flex-wrap: wrap;
   }
   .live-dashboard-head span:first-child {
     flex: 1 1 100%;
   }
   .live-dashboard-head span:nth-child(2) {
     flex: 1 1 auto;
+    margin-left: 0;
   }
   .live-dashboard-head button {
-    min-height: var(--ui-control-hit-height);
+    margin-left: auto;
+  }
+
+  .portfolio-main-grid {
+    display: block;
+  }
+  .portfolio-main-grid .side-stack {
+    margin-top: 27px;
   }
 
   .portfolio-overview {
@@ -982,19 +1047,8 @@ summary:focus-visible {
     justify-self: end;
     align-self: center;
   }
-  .asset-name strong {
-    font-size: 12px;
-  }
-  .asset-name small {
-    font-size: 9px;
-  }
   .asset-metadata {
     line-height: 1.45;
-  }
-  .asset-dot {
-    width: 28px;
-    height: 28px;
-    flex-basis: 28px;
   }
   .position-value strong,
   .position-quote strong {
@@ -1565,16 +1619,6 @@ select {
 .freshness i {
   background: var(--color-positive) !important;
 }
-.live-dashboard-head button,
-.live-portfolio-state > button:not(.ui-back-button) {
-  background: rgba(255, 255, 255, 0.74) !important;
-  border-color: rgba(0, 122, 255, 0.32) !important;
-  color: var(--color-accent) !important;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
-}
-.live-dashboard-head button:hover {
-  background: #fff !important;
-}
 
 .company-metrics article,
 .detail-card,
@@ -1616,8 +1660,6 @@ select {
 .portfolio-overview-main > div:first-child > span,
 .portfolio-kpis small,
 .portfolio-kpis b,
-.asset-name small,
-.weights small,
 .position-value small,
 .position-quote small,
 .company-identity small,
@@ -1648,11 +1690,6 @@ select {
 .analysis-list-head {
   background: rgba(242, 242, 247, 0.88) !important;
   color: var(--color-text-muted) !important;
-  border-color: var(--color-border) !important;
-}
-.asset-dot {
-  background: #eef3f8 !important;
-  color: var(--color-accent) !important;
   border-color: var(--color-border) !important;
 }
 .pnl-badge.positive-pnl {
@@ -3356,12 +3393,6 @@ table {
   gap: 6px;
   flex-wrap: wrap;
 }
-@media (max-width: 760px) {
-  .sector-panel .panel-head {
-    align-items: flex-start;
-  }
-}
-
 /* Exposure header: keep the dimension selector beside the single label. */
 .exposure-panel-heading {
   width: 100%;
@@ -3394,14 +3425,6 @@ table {
 }
 
 /* The diagnostic is a primary portfolio surface, like the other page cards. */
-
-@media (max-width: 760px) {
-  .exposure-panel-heading {
-    align-items: center;
-  }
-
-}
-
 
 /* Shared loading, error and document-row contracts. */
 .detail-loading {

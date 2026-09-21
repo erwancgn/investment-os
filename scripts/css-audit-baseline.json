@@ -1,17 +1,17 @@
 {
   "version": 1,
   "capturedAt": "2026-09-21",
-  "scope": "app CSS governance audit after Shell ownership consolidation (Lot 5A)",
+  "scope": "app CSS governance audit after residual Portfolio cleanup (Lot 5B)",
   "thresholds": {
-    "exactRepeatedSelectors": 243,
-    "directPropertyConflicts": 57,
-    "responsiveVariants": 129,
-    "strictRedundantDeclarations": 15,
+    "exactRepeatedSelectors": 236,
+    "directPropertyConflicts": 54,
+    "responsiveVariants": 127,
+    "strictRedundantDeclarations": 13,
     "additiveExtensions": 42,
     "repeatedTokens": 0,
     "conflictingTokens": 0,
-    "importantDeclarations": 403,
-    "definedClasses": 322,
+    "importantDeclarations": 394,
+    "definedClasses": 319,
     "orphanClasses": 0
   }
 }

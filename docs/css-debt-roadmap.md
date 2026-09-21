@@ -6,12 +6,12 @@ Le design system possède désormais une entrée publique unique, un seul bloc `
 aucun token concurrent et aucune classe orpheline détectée. La dette restante est une
 dette de cascade et de consolidation, mesurée par la baseline versionnée :
 
-- 243 sélecteurs exacts répétés ;
-- 57 conflits directs de propriétés ;
-- 129 variantes responsive ;
-- 15 déclarations strictement redondantes ;
+- 236 sélecteurs exacts répétés ;
+- 54 conflits directs de propriétés ;
+- 127 variantes responsive ;
+- 13 déclarations strictement redondantes ;
 - 42 extensions additives ;
-- 403 déclarations `!important`.
+- 394 déclarations `!important`.
 
 Cette baseline est un plafond de non-régression, pas un état cible. Chaque compteur surveillé doit rester stable ou diminuer à la fin d’un lot.
 
@@ -20,7 +20,7 @@ Cette baseline est un plafond de non-régression, pas un état cible. Chaque com
 Durée estimée : 4 à 6 jours de développement, puis 0,5 à 1 jour de recette
 visuelle mobile et desktop.
 
-1. Classifier les 57 conflits restants par domaine et par risque, en commençant par le shell,
+1. Classifier les 54 conflits restants par domaine et par risque, en commençant par le shell,
    les cartes de découverte et les lecteurs.
 2. Regrouper les règles d'un même composant dans un propriétaire unique et supprimer
    les répétitions rendues inutiles.
