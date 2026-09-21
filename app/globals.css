@@ -187,13 +187,13 @@ input, select { font-size: 16px; }
 .ui-surface {
   box-sizing: border-box;
   border: 1px solid var(--surface-stroke) !important;
-  border-radius: var(--radius-md) !important;
+  border-radius: var(--ui-surface-radius, var(--radius-md)) !important;
   color: var(--color-text) !important;
 }
 
 .ui-surface.ui-surface--primary {
   background: var(--surface-primary) !important;
-  box-shadow: var(--surface-shadow) !important;
+  box-shadow: var(--ui-surface-shadow, var(--surface-shadow)) !important;
 }
 
 .ui-surface.ui-surface--secondary {
@@ -258,7 +258,12 @@ input, select { font-size: 16px; }
 .ui-stat-card > strong { color: var(--color-text); font-size: clamp(1.6rem, 4vw, 2.2rem); line-height: 1; }
 .ui-stat-card > small { color: var(--color-text-muted); font-size: var(--font-xs); }
 .ui-stat-card.integrity-warning > strong { color: var(--color-warning); }
-.ui-discovery-card { min-width: 0; padding: var(--space-4); }
+.ui-discovery-card {
+  --ui-surface-radius: var(--radius-lg);
+  --ui-surface-shadow: 0 1px 3px oklch(0.2 0.02 260 / 0.06);
+  min-width: 0;
+  padding: 14px;
+}
 .ui-discovery-card--company:hover,
 .ui-discovery-card--analysis:hover { background: color-mix(in srgb, var(--color-accent) 4.5%, var(--surface-primary)); }
 .ui-discovery-card--analysis:focus-visible, .ui-discovery-card--company:focus-visible, .ui-discovery-card--watchlist:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 3px; }
@@ -272,7 +277,7 @@ input, select { font-size: 16px; }
 .watch-card-title { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: start; gap: 8px; min-width: 0; }
 .ui-discovery-card--company .company-identity-copy > div > strong,
 .ui-discovery-card--analysis .analysis-title-copy > div > strong,
-.ui-discovery-card--watchlist .watch-card-title h3 { min-width: 0; margin: 0; display: -webkit-box; overflow: hidden; -webkit-box-orient: vertical; -webkit-line-clamp: 2; white-space: normal; overflow-wrap: anywhere; color: var(--color-text); font-size: var(--font-lg); font-weight: 700; line-height: 1.2; }
+.ui-discovery-card--watchlist .watch-card-title h3 { min-width: 0; margin: 0; display: -webkit-box; overflow: hidden; -webkit-box-orient: vertical; -webkit-line-clamp: 2; white-space: normal; overflow-wrap: anywhere; color: var(--color-text); font-size: 15px; font-weight: 700; line-height: 1.2; }
 .ui-discovery-card--company .company-identity-copy .ui-badge,
 .ui-discovery-card--analysis .analysis-title-copy .ui-badge,
 .ui-discovery-card--watchlist .watch-card-title .ui-badge { justify-self: end; flex: 0 0 auto; }

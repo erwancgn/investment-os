@@ -44,14 +44,11 @@ documentée `852fd99aae56a16aeaa47163aca3b426d8784b1d`.
   et des actions de Discovery Card, et autorise le titre de carte sur deux lignes.
 - Les tokens de couleur et la pile de police visibles restent alignés avec les tokens
   canoniques de production.
-- Quatre écarts visuels restent à arbitrer avant synchronisation finale sur le shell
-  Discovery Card : padding (production 16 px, référence Lovable 14 px), taille du titre
-  Company/Analysis/Watchlist (production `--font-lg`, soit 20 px dans la baseline actuelle,
-  référence Lovable 15 px), rayon (production `--radius-md`, soit 12 px, référence Lovable
-  16 px) et ombre (production `--surface-shadow`, plus marquée, référence Lovable
-  `0 1px 3px` très légère).
-- Aucun de ces écarts ne doit être corrigé par un override local : l'arbitrage doit
-  modifier le contrat canonique ou la référence Lovable, puis être vérifié dans Storybook.
+- L'arbitrage Discovery Card est validé : le shell partagé de production est aligné
+  avec la référence Lovable pour le padding, la taille de titre, le rayon et l'ombre.
+- L'alignement est porté par le contrat partagé `.ui-discovery-card` et les variables
+  locales de `.ui-surface` ; aucune variante Company, Radar ou Analysis n'ajoute
+  d'override visuel propre.
 
 La source Lovable expose notamment `src/components/CompactControl.tsx`,
 `src/components/CompanyDiscoveryCard.tsx` et `src/routes/index.tsx`. Le projet
