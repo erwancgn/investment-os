@@ -236,17 +236,37 @@ function baselineDelta(value, threshold) {
   return value - threshold;
 }
 
+const strictBaselineMetrics = new Set([
+  "exactRepeatedSelectors",
+  "directPropertyConflicts",
+  "strictRedundantDeclarations",
+  "repeatedTokens",
+  "conflictingTokens",
+  "importantDeclarations",
+  "orphanClasses",
+]);
+
+const reviewOnlyMetrics = new Set([
+  "responsiveVariants",
+  "additiveExtensions",
+  "definedClasses",
+]);
+
 function compareBaseline(metrics, baseline) {
   const deltas = {};
   const regressions = [];
+  const reviewDrifts = [];
   for (const [metric, threshold] of Object.entries(baseline.thresholds)) {
     const value = metrics[metric];
     if (typeof value !== "number") continue;
     const delta = baselineDelta(value, threshold);
     deltas[metric] = { baseline: threshold, current: value, delta };
-    if (delta > 0) regressions.push({ metric, baseline: threshold, current: value, delta });
+    if (delta <= 0) continue;
+    const finding = { metric, baseline: threshold, current: value, delta };
+    if (strictBaselineMetrics.has(metric)) regressions.push(finding);
+    else if (reviewOnlyMetrics.has(metric)) reviewDrifts.push(finding);
   }
-  return { deltas, regressions };
+  return { deltas, regressions, reviewDrifts };
 }
 
 export async function auditCssGovernance({ compare = true } = {}) {
@@ -270,7 +290,7 @@ export async function auditCssGovernance({ compare = true } = {}) {
     definedClasses: parsed.classDefinitions.size,
     orphanClasses: orphanClasses.length,
   };
-  const baseline = compare ? compareBaseline(metrics, baselineSource) : { deltas: {}, regressions: [] };
+  const baseline = compare ? compareBaseline(metrics, baselineSource) : { deltas: {}, regressions: [], reviewDrifts: [] };
   return {
     version: 1,
     scope: { cssFiles, sourceRoots },
@@ -306,6 +326,9 @@ function printHuman(result) {
   console.log(`Dynamic registry entries: ${result.dynamicClassRegistry.length}`);
   console.log(`Dynamic entries requiring state review: ${result.dynamicClassRegistry.filter(entry => entry.reviewRequired).map(entry => entry.id).join(", ") || "none"}`);
   console.log(`Orphan candidates: ${metrics.orphanClasses ? result.findings.orphanClasses.map(item => item.className).join(", ") : "none"}`);
+  if (baseline.reviewDrifts.length) {
+    console.log(`Review-only drift: ${baseline.reviewDrifts.map(item => `${item.metric} (+${item.delta})`).join(", ")}`);
+  }
   if (baseline.regressions.length) {
     console.error(`Baseline regressions: ${baseline.regressions.map(item => `${item.metric} (+${item.delta})`).join(", ")}`);
   } else {

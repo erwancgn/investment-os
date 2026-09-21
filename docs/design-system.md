@@ -48,13 +48,13 @@ La page Lovable de référence est un banc de comparaison mobile. Elle peut mont
 4. Chaque interaction conserve son nom, son état actif, son focus visible et son libellé accessible.
 5. Une story utilise le composant de production et évite toute dépendance réseau.
 6. Une migration n’est terminée que lorsque les anciens overrides ne sont plus référencés et peuvent être supprimés sans régression.
-7. Toute passe UI doit réduire ou stabiliser les conflits directs, les redondances, les déclarations `!important` et les tokens concurrents. Une extension additive peut augmenter ponctuellement uniquement si elle est locale, intentionnelle et justifiée par un vrai contexte responsive, state ou accessibility ; cette hausse doit être documentée et accompagnée d’une baisse de la complexité globale.
+7. Toute passe UI doit réduire ou stabiliser les sélecteurs répétés, les conflits directs, les redondances, les déclarations `!important`, les tokens concurrents et les classes orphelines. Les variantes responsive et les extensions additives sont des métriques de revue, pas des erreurs par nature : elles peuvent augmenter ponctuellement uniquement si elles sont locales, intentionnelles et justifiées par un vrai contexte responsive, state ou accessibility, avec baisse de la complexité globale.
 8. Pour le Portfolio, `ux-foundations.css` est propriétaire de la composition desktop/mobile des positions, de l’exposition et de Trajectoire. `globals.css` ne doit plus contenir d’ancienne grille Portfolio ou de mécanique de cible concurrente ; les surfaces Apple Light / Liquid Glass restent fournies par les primitives partagées.
 9. Pour le Shell, `GlassChrome` porte le matériau Liquid Glass de la sidebar et de la navigation mobile. `ux-foundations.css` porte uniquement leur géométrie et la composition du branding, du header, du menu compte et de la bannière PWA ; `globals.css` ne redéfinit pas ces éléments métier.
 10. Pour les lecteurs Analyse / Memo, `globals.css` conserve uniquement les primitives documentaires génériques (`notion-page`, `DisclosureSurface`, surfaces). `ux-foundations.css` est l’unique propriétaire de la composition du Reader : hero, largeur de lecture, TL;DR, sections, Decision Card, source disclosure et adaptations mobile.
 11. Pour la Recherche documentaire, `SearchField` et les classes `ui-search-*` restent des primitives dans `globals.css`. `ux-foundations.css` est l’unique propriétaire du workspace, des filtres, résultats, états vide/sans résultat et adaptations mobile. L’ancienne classe `research-hero` ne fait plus partie du contrat de production.
 12. L’ordre d’import reste `ux-foundations.css` puis `globals.css`. Cet ordre ne doit pas servir de mécanisme de résolution des conflits : `ux-foundations.css` possède la composition métier/responsive, `globals.css` possède les tokens et primitives partagées. Un sélecteur métier ne doit pas dépendre d’un override de primitive chargé après lui.
-10. Pour Radar et Companies, `ux-foundations.css` porte la composition des listes, résumés, références d’analyse et variantes responsive. `DiscoveryCard` reste propriétaire du shell visuel Apple Light / Liquid Glass ; les cinq références Company restent des surfaces secondaires et ne sont jamais dupliquées dans `globals.css`.
+13. Pour Radar et Companies, `ux-foundations.css` porte la composition des listes, résumés, références d’analyse et variantes responsive. `DiscoveryCard` reste propriétaire du shell visuel Apple Light / Liquid Glass ; les cinq références Company restent des surfaces secondaires et ne sont jamais dupliquées dans `globals.css`.
 
 ## Gouvernance CSS et baseline de migration
 
@@ -66,12 +66,12 @@ La dette CSS existante est mesurée par [`scripts/audit-css-governance.mjs`](../
 
 Il distingue les sélecteurs exacts répétés, les conflits de propriétés dans un même contexte d’at-rule, les variantes responsive, les propriétés strictement redondantes, les extensions additives, les tokens répétés avec leurs valeurs, et les classes sans consommateur démontré.
 
-La baseline versionnée est [`scripts/css-audit-baseline.json`](../scripts/css-audit-baseline.json). Après la consolidation d’architecture CSS du Lot 5F, l’état courant documenté est : 190 sélecteurs répétés, 9 conflits directs, 132 variantes responsive, 11 redondances identiques et 38 extensions additives ; 0 token répété et 0 valeur concurrente ; 312 déclarations `!important` ; 317 classes définies et 0 classe orpheline. Les 7 variantes responsive nettes supplémentaires sont une reclassification de conflits supprimés : aucun nouveau breakpoint n’a été ajouté, et le nombre total de règles baisse de 1099 à 1081.
+La baseline versionnée est [`scripts/css-audit-baseline.json`](../scripts/css-audit-baseline.json). Après l’audit global du Lot 6, l’état courant documenté est : 185 sélecteurs répétés, 0 conflit direct, 136 variantes responsive, 11 redondances identiques et 38 extensions additives ; 0 token répété et 0 valeur concurrente ; 309 déclarations `!important` ; 317 classes définies et 0 classe orpheline. Les quatre variantes responsive nettes supplémentaires correspondent aux contrats Company désormais explicites entre desktop et mobile ; aucun nouveau breakpoint n’est ajouté, tandis que les neuf conflits directs restants sont supprimés et le nombre total de règles diminue.
 
 Le prochain chantier de réduction, son séquencement et ses critères de sortie sont
 documentés dans [`docs/css-debt-roadmap.md`](./css-debt-roadmap.md).
 
-La commande de gouvernance échoue avec un code non nul si un compteur surveillé augmente :
+La commande de gouvernance échoue avec un code non nul lorsqu’une métrique stricte régresse. Les variantes responsive, extensions additives et le nombre de classes définies sont signalés pour revue sans faire échouer seuls la commande :
 
 ```bash
 npm run audit:css:governance
@@ -91,7 +91,7 @@ Une classe n’est exemptée de l’analyse des orphelines que si son générate
 
 Le composant `notion-background-sync` rend uniquement l’état `done` et son registre dynamique ne conserve aucune variante CSS sans consommateur. Les anciennes classes `.signal.attractive`, `.notion-background-sync.starting` et `.warning` ont été supprimées après vérification des consommateurs.
 
-Les seuils de baseline ne doivent jamais être relevés pour masquer une dette. Les conflits directs, redondances, déclarations `!important` et tokens concurrents doivent rester stables ou diminuer après un lot. Les extensions additives peuvent exceptionnellement augmenter si l’extension est intentionnelle, locale, liée à un vrai contexte responsive/state/accessibility et documentée dans le même commit ; le volume total de règles et la complexité de cascade doivent malgré tout tendre à diminuer. Une nouvelle exception de classe ne doit pas être ajoutée pour faire passer la CI : il faut d’abord prouver le générateur, le périmètre responsive/state/accessibility et documenter l’entrée du registre.
+Les seuils de baseline ne doivent jamais être relevés pour masquer une dette. Les sélecteurs répétés, conflits directs, redondances, déclarations `!important`, tokens concurrents et classes orphelines sont des métriques strictes : elles doivent rester stables ou diminuer après un lot. Les variantes responsive et extensions additives sont des métriques de revue ; une hausse n’est acceptable que si elle est intentionnelle, locale, liée à un vrai contexte responsive/state/accessibility et documentée dans le même commit. Le nombre de classes définies est informatif ; toute nouvelle classe doit néanmoins avoir un consommateur prouvé. Le volume total de règles et la complexité de cascade doivent tendre à diminuer.
 
 Le test ciblé de l’audit vérifie la baseline, le périmètre des trois feuilles, les catégories de redéfinitions, les primitives dynamiques, `research-score-cell` et les états génériques explicitement scopés :
 

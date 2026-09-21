@@ -6,30 +6,25 @@ Le design system possède désormais une entrée publique unique, un seul bloc `
 aucun token concurrent et aucune classe orpheline détectée. La dette restante est une
 dette de cascade et de consolidation, mesurée par la baseline versionnée :
 
-- 190 sélecteurs exacts répétés ;
-- 9 conflits directs de propriétés ;
-- 132 variantes responsive ;
+- 185 sélecteurs exacts répétés ;
+- 0 conflit direct de propriétés ;
+- 136 variantes responsive ;
 - 11 déclarations strictement redondantes ;
 - 38 extensions additives ;
-- 312 déclarations `!important`.
+- 309 déclarations `!important`.
 
-Cette baseline est un plafond de non-régression, pas un état cible. Les conflits directs, redondances, déclarations `!important` et tokens concurrents doivent rester stables ou diminuer à la fin d’un lot. Les extensions additives peuvent augmenter ponctuellement si elles sont intentionnelles, locales et justifiées par un vrai contexte responsive/state/accessibility, avec justification dans le commit et baisse mesurable de la complexité globale.
+Cette baseline est un plafond de non-régression, pas un état cible. Les sélecteurs répétés, conflits directs, redondances, déclarations `!important`, tokens concurrents et classes orphelines sont stricts. Les variantes responsive et extensions additives sont revues dans leur contexte : elles ne constituent pas une dette par nature lorsqu’elles expriment un comportement réellement différent et localisé.
 
 ## Périmètre recommandé
 
 Durée estimée : 4 à 6 jours de développement, puis 0,5 à 1 jour de recette
 visuelle mobile et desktop.
 
-1. Les 9 conflits directs restants sont concentrés sur Company Detail ; les traiter comme dernier domaine avant l’audit global. en commençant par le shell,
-   les cartes de découverte et les lecteurs.
-2. Regrouper les règles d'un même composant dans un propriétaire unique et supprimer
-   les répétitions rendues inutiles.
-3. Réduire les `!important` seulement après suppression de la règle concurrente qui
-   les rend nécessaires.
-4. Découper `ux-foundations.css` par responsabilités stables lorsque le déplacement
-   réduit réellement la cascade ; ne pas créer de fichiers pour un seul consommateur.
-5. Conserver `globals.css` comme propriétaire des tokens et des primitives visuelles,
-   sans y réintroduire des règles de composition métier.
+1. Conserver zéro conflit direct entre `globals.css` et `ux-foundations.css` ; toute nouvelle composition métier reste dans `ux-foundations.css`.
+2. Réduire progressivement les 11 redondances restantes et les `!important` seulement après suppression de leur règle concurrente.
+3. Revoir les variantes responsive par composant : conserver celles qui expriment un vrai changement de composition et supprimer uniquement les doublons de cascade.
+4. Ne découper `ux-foundations.css` que si le découpage réduit réellement la cascade ; ne pas créer de fichier pour un seul consommateur.
+5. Passer à la validation Lovable puis à la recette finale application + Storybook avant toute fusion vers `main` ou publication Sites.
 
 ## Garde-fous
 

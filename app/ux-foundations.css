@@ -826,6 +826,7 @@ summary:focus-visible {
 }
 .generic-company-hero {
   min-height: 108px;
+  justify-content: space-between;
   padding: var(--space-5) var(--space-6);
   border-radius: var(--radius-lg);
 }
@@ -847,23 +848,29 @@ summary:focus-visible {
   flex-wrap: wrap;
 }
 .generic-company-status {
-  min-width: 170px;
-  padding-left: var(--space-6);
+  min-width: 150px;
+  padding: 14px 0 0;
+  border-top: 1px solid var(--color-border);
+  text-align: left;
 }
 .generic-company-status strong {
   margin: 4px 0;
   font-size: var(--font-md);
 }
 .company-metrics {
-  gap: var(--space-2);
-  margin-bottom: var(--space-4);
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 13px;
+  margin-bottom: 17px;
 }
 .company-metrics article {
   min-height: 92px;
-  padding: var(--space-3) var(--space-4);
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
 }
 .company-metrics strong {
-  margin: 7px 0 3px;
+  margin: 11px 0 6px;
   font-size: var(--font-lg);
 }
 .company-summary-grid {
@@ -937,11 +944,11 @@ summary:focus-visible {
 }
 .company-traceability {
   max-width: 940px;
-  margin-top: var(--space-2);
+  margin-top: var(--space-3);
 }
-.company-traceability p {
+.company-traceability .ui-disclosure-body p {
   max-width: var(--measure-copy);
-  margin: 0 0 var(--space-3);
+  margin: 0;
   color: var(--color-text-muted);
   font-size: var(--font-xs);
   line-height: 1.6;
@@ -1282,6 +1289,9 @@ summary:focus-visible {
   .company-summary-grid {
     grid-template-columns: 1fr;
   }
+  .company-metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 @media (max-width: 760px) {
@@ -1565,10 +1575,6 @@ summary:focus-visible {
     justify-self: end;
   }
 
-  .generic-company-hero {
-    min-height: 0;
-    padding: 16px;
-  }
   .generic-company-main {
     align-items: flex-start;
   }
@@ -1576,22 +1582,6 @@ summary:focus-visible {
     align-items: flex-start;
     flex-direction: column;
     gap: 6px;
-  }
-  .generic-company-status {
-    min-width: 0;
-    padding-top: 12px;
-  }
-  .company-metrics {
-    display: flex;
-    gap: 8px;
-    margin-right: -12px;
-    overflow-x: auto;
-    padding-right: 12px;
-    scroll-snap-type: x mandatory;
-  }
-  .company-metrics article {
-    min-width: 145px;
-    scroll-snap-align: start;
   }
   .company-summary-primary {
     padding: 17px 15px;
@@ -1722,10 +1712,6 @@ summary:focus-visible {
     border-top: 1px solid var(--color-border);
     border-left: 0 !important;
     text-align: left !important;
-  }
-
-  .generic-company-status strong {
-    font-size: 15px;
   }
 
   /* Tabs are the only horizontally scrollable navigation element. */
@@ -2151,9 +2137,31 @@ select {
 }
 
 .holding-refresh {
-  background: var(--glass-blue) !important;
-  border-color: rgba(0, 122, 255, 0.24) !important;
-  color: var(--color-accent) !important;
+  width: var(--ui-control-hit-height);
+  height: var(--ui-control-hit-height);
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: var(--glass-blue);
+  color: var(--color-accent);
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+}
+.holding-refresh > span {
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  border: 1px solid #315447;
+  border-radius: 50%;
+  background: #101b17;
+}
+.holding-refresh:disabled {
+  opacity: .55;
+  cursor: wait;
 }
 
 /* Financial numerals use equal-width glyphs and fixed alignment anchors. */
