@@ -72,4 +72,5 @@ test("dead CSS audit uses the canonical dynamic registry and scans object column
   assert.doesNotMatch(source, /const dynamicPrefixes =/);
   assert.doesNotMatch(source, /const dynamicNames =/);
   assert.ok(source.includes("addStaticClasses(match[2]);"));
+  assert.match(source, /!fix && removedSelectors > 0/);
 });
