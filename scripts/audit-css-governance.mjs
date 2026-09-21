@@ -20,6 +20,15 @@ function normalize(value) {
   return value.replace(/\s+/g, " ").trim();
 }
 
+function normalizeAtRuleParams(value) {
+  return normalize(value)
+    .replace(/\s*:\s*/g, ":")
+    .replace(/\s*,\s*/g, ",")
+    .replace(/\(\s*/g, "(")
+    .replace(/\s*\)/g, ")")
+    .replace(/\s*(<=|>=|=|<|>)\s*/g, "$1");
+}
+
 function relative(file) {
   return path.relative(root, file).replaceAll(path.sep, "/");
 }
@@ -41,7 +50,7 @@ function atRuleContext(node) {
   const context = [];
   let parent = node.parent;
   while (parent) {
-    if (parent.type === "atrule") context.unshift(`@${parent.name}${parent.params ? ` ${normalize(parent.params)}` : ""}`);
+    if (parent.type === "atrule") context.unshift(`@${parent.name}${parent.params ? ` ${normalizeAtRuleParams(parent.params)}` : ""}`);
     parent = parent.parent;
   }
   return context.length ? context.join(" > ") : "root";

@@ -53,3 +53,14 @@ test("production and Storybook import the same public CSS entry", async () => {
     ["tailwindcss", "./ux-foundations.css", "./globals.css"],
   );
 });
+
+
+test("responsive contexts are canonicalized before conflict classification", async () => {
+  const result = await auditCssGovernance({ compare: false });
+  const analysisRow = result.findings.repeatedSelectors.find(item => item.selector === ".analysis-list-row");
+
+  assert.ok(analysisRow, "analysis-list-row should remain a tracked repeated selector");
+  assert.ok(analysisRow.contexts.includes("@media (max-width:760px)"));
+  assert.equal(analysisRow.contexts.some(context => context.includes("max-width: 760px")), false);
+  assert.deepEqual(result.findings.propertyConflicts, []);
+});
