@@ -98,11 +98,11 @@ npm run test
 
 Une classe n’est exemptée de l’analyse des orphelines que si son générateur est documenté dans [`scripts/css-audit-registry.mjs`](../scripts/css-audit-registry.mjs). Chaque entrée indique le fichier/composant producteur, les valeurs admises et la raison du contrat. Les mots génériques présents dans les données ou les variables (`error`, `warning`, `running`, etc.) ne prouvent pas à eux seuls qu’une classe CSS est consommée.
 
-Le composant `notion-background-sync` rend uniquement l’état `done` et son registre dynamique ne conserve aucune variante CSS sans consommateur. Les anciennes classes `.signal.attractive`, `.notion-background-sync.starting` et `.warning` ont été supprimées après vérification des consommateurs.
+Le composant `notion-background-sync` rend un toast transitoire unique après l’événement `notion-sync-complete` et n’émet aucun modificateur d’état CSS dynamique. Le registre ne conserve donc aucune variante CSS dédiée à ses anciens états. Les anciennes classes `.signal.attractive`, `.notion-background-sync.starting` et `.warning` ont été supprimées après vérification des consommateurs.
 
 Les seuils de baseline ne doivent jamais être relevés pour masquer une dette. Les sélecteurs répétés, conflits directs, redondances, déclarations `!important`, tokens concurrents et classes orphelines sont des métriques strictes : elles doivent rester stables ou diminuer après un lot. Les variantes responsive et extensions additives sont des métriques de revue ; une hausse n’est acceptable que si elle est intentionnelle, locale, liée à un vrai contexte responsive/state/accessibility et documentée dans le même commit. Le nombre de classes définies est informatif ; toute nouvelle classe doit néanmoins avoir un consommateur prouvé. Le volume total de règles et la complexité de cascade doivent tendre à diminuer.
 
-Le test ciblé de l’audit vérifie la baseline, le périmètre des trois feuilles, les catégories de redéfinitions, les primitives dynamiques, `research-score-cell` et les états génériques explicitement scopés :
+Les tests ciblés vérifient la baseline, le périmètre défini par le manifeste canonique (neuf modules UX, `globals.css` et `storybook.css`), les catégories de redéfinitions, les primitives dynamiques, `research-score-cell`, les états génériques explicitement scopés et le caractère bloquant du contrat d’ownership :
 
 ```bash
 npm run test:css-audit

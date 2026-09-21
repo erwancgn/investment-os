@@ -218,6 +218,12 @@ function topImportant(limit = 60) {
   return [...grouped.values()].sort((a, b) => b.count - a.count || a.selector.localeCompare(b.selector)).slice(0, limit);
 }
 
+const ownershipContractMetrics = [
+  "sameFileDeclarationChains",
+  "globalUxDeclarationChains",
+  "uxModuleDeclarationChains",
+];
+
 const result = {
   inventory,
   metrics: {
@@ -245,4 +251,23 @@ const result = {
   topImportantSelectors: topImportant(),
 };
 
+const ownershipContractViolations = ownershipContractMetrics
+  .filter(metric => result.metrics[metric] > 0)
+  .map(metric => ({ metric, value: result.metrics[metric] }));
+
+result.contract = {
+  metrics: ownershipContractMetrics,
+  violations: ownershipContractViolations,
+  status: ownershipContractViolations.length ? "FAIL" : "PASS",
+};
+
 console.log(JSON.stringify(result, null, 2));
+
+if (ownershipContractViolations.length) {
+  console.error(
+    `CSS ownership contract failed: ${ownershipContractViolations
+      .map(({ metric, value }) => `${metric}=${value}`)
+      .join(", ")}`,
+  );
+  process.exitCode = 1;
+}

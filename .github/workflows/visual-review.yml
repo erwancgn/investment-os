@@ -3,7 +3,20 @@ name: Visual review
 on:
   push:
     branches:
+      - main
       - refactor/css-foundation-cleanup
+    paths:
+      - "app/**"
+      - "stories/**"
+      - ".storybook/**"
+      - "package.json"
+      - "package-lock.json"
+      - ".github/workflows/visual-review.yml"
+      - "tests/**"
+      - "scripts/**"
+  pull_request:
+    branches:
+      - main
     paths:
       - "app/**"
       - "stories/**"
