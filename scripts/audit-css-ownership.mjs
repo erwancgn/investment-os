@@ -1,9 +1,10 @@
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import postcss from "postcss";
+import { appCssFiles } from "./css-file-manifest.mjs";
 
 const root = process.cwd();
-const files = ["app/ux-foundations.css", "app/globals.css"];
+const files = appCssFiles;
 
 function normalize(value) {
   return value.replace(/\s+/g, " ").trim();
@@ -107,7 +108,7 @@ const globalsRepeatedSameContext = [];
 
 for (const [selector, occurrences] of selectorOccurrences) {
   const globals = occurrences.filter(item => item.file === "app/globals.css");
-  const ux = occurrences.filter(item => item.file === "app/ux-foundations.css");
+  const ux = occurrences.filter(item => item.file.startsWith("app/styles/ux/"));
 
   if (globals.length && ux.length) {
     const commonContexts = [...new Set(globals.map(item => item.context))]
@@ -138,7 +139,7 @@ for (const [selector, occurrences] of selectorOccurrences) {
         lines: items.map(item => item.line),
       };
       if (file === "app/globals.css") globalsRepeatedSameContext.push(finding);
-      else uxRepeatedSameContext.push(finding);
+      else if (file.startsWith("app/styles/ux/")) uxRepeatedSameContext.push(finding);
     }
   }
 }

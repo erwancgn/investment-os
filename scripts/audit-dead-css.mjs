@@ -2,11 +2,12 @@ import { readFile, readdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import postcss from "postcss";
 import { dynamicClassEntry, dynamicClassRegistry } from "./css-audit-registry.mjs";
+import { appCssFiles } from "./css-file-manifest.mjs";
 
 const root = process.cwd();
 const appRoot = path.join(root, "app");
 const fix = process.argv.includes("--fix");
-const cssFiles = ["globals.css", "ux-foundations.css"];
+const cssFiles = appCssFiles.map(file => file.replace(/^app\//, ""));
 async function filesUnder(directory) {
   const entries = await readdir(directory, { withFileTypes: true });
   const files = await Promise.all(entries.map(async entry => {

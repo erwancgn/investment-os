@@ -4,14 +4,11 @@ import process from "node:process";
 import { fileURLToPath } from "node:url";
 import postcss from "postcss";
 import { dynamicClassEntry, dynamicClassRegistry } from "./css-audit-registry.mjs";
+import { governanceCssFiles } from "./css-file-manifest.mjs";
 
 const root = process.cwd();
 const baselinePath = path.join(root, "scripts", "css-audit-baseline.json");
-const cssFiles = [
-  "app/globals.css",
-  "app/ux-foundations.css",
-  "stories/storybook.css",
-];
+const cssFiles = governanceCssFiles;
 const sourceRoots = ["app", "stories", ".storybook"];
 const jsonOnly = process.argv.includes("--json");
 const allowBaselineDrift = process.argv.includes("--allow-baseline-drift");
