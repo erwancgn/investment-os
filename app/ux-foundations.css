@@ -1875,17 +1875,12 @@
 .universal-analysis-page blockquote {
   color: var(--color-text-secondary) !important;
 }
-.portfolio-scope-switch button,
-.theme-cloud button,
-.watch-theme-filter,
-.analysis-source-details,
-.company-history-details {
+.portfolio-scope-switch button {
   background: rgba(255, 255, 255, 0.66) !important;
   border-color: var(--color-border) !important;
   color: var(--color-text-secondary) !important;
 }
-.portfolio-scope-switch button.active,
-.theme-cloud button.active {
+.portfolio-scope-switch button.active {
   background: rgba(0, 122, 255, 0.1) !important;
   border-color: rgba(0, 122, 255, 0.28) !important;
   color: var(--color-accent) !important;
@@ -1908,21 +1903,6 @@
   color: var(--color-text-secondary) !important;
 }
 
-.watch-theme-filter > summary,
-.analysis-source-details > summary,
-.company-history-details > summary {
-  color: var(--color-text-secondary) !important;
-}
-.watch-theme-filter > summary strong,
-.analysis-source-details > summary b,
-.company-history-details > summary b {
-  color: var(--color-accent) !important;
-}
-.analysis-source-details[open] > summary,
-.company-history-details[open] > summary,
-.watch-theme-filter[open] > summary {
-  border-color: var(--color-border) !important;
-}
 .universal-analysis-page td {
   border-color: var(--color-border) !important;
 }
@@ -1974,11 +1954,6 @@
 .decision-facts strong,
 .sector-list strong {
   color: var(--color-text) !important;
-}
-
-.theme-cloud small {
-  background: rgba(60, 60, 67, 0.07) !important;
-  color: var(--color-text-secondary) !important;
 }
 
 .notion-background-sync {
@@ -2134,26 +2109,6 @@ table {
   gap: 5px;
 }
 
-.theme-cloud > button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 72px;
-  min-height: var(--ui-control-hit-height);
-  padding: 0 16px;
-  border-radius: var(--ui-control-radius) !important;
-  line-height: 1;
-}
-
-.theme-cloud > button.active {
-  background: rgba(0, 122, 255, 0.1) !important;
-  border-color: rgba(0, 122, 255, 0.28) !important;
-  color: var(--color-accent) !important;
-}
-
-.theme-cloud {
-  border-color: var(--color-border) !important;
-}
 
 @media (max-width: 760px) {
   .allocation-progress {
