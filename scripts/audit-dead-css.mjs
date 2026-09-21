@@ -38,6 +38,7 @@ for (const file of sourceFiles) {
     const expression = match[1].split(/\n\s*[A-Za-z_$][\w$]*\s*:/, 1)[0];
     for (const literal of expression.matchAll(/(["'`])([\s\S]*?)\1/g)) addStaticClasses(literal[2]);
   }
+  for (const match of source.matchAll(/\bclassName\s*:\s*(["'`])([\s\S]*?)\1/g)) addStaticClasses(match[2]);
 
   for (const match of source.matchAll(/\bclassList\.(?:add|remove|toggle)\(([^)]*)\)/g)) {
     for (const literal of match[1].matchAll(/(["'`])([\s\S]*?)\1/g)) addStaticClasses(literal[2]);
