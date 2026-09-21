@@ -37,6 +37,7 @@ jobs:
 
       - run: npm run lint
       - run: npm run audit:css:governance
+      - run: npm run audit:css:ownership
       - run: npm run audit:css
       - run: npm test
       - run: npm run build-storybook
