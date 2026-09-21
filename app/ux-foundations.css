@@ -1837,18 +1837,7 @@
   color: var(--color-text-muted) !important;
 }
 
-.company-metrics article,
-.detail-card,
-.analysis-list,
-.company-table,
-.notion-sync-panel {
-  
-  border-color: var(--color-border) !important;
-  box-shadow: var(--shadow-panel) !important;
-}
-.portfolio-overview,
-.generic-company-hero,
-.universal-analysis-reader .report-hero {
+.portfolio-overview {
   background: rgba(255, 255, 255, 0.76) !important;
   border-color: var(--color-border) !important;
   box-shadow: var(--shadow-panel) !important;
@@ -1954,23 +1943,8 @@
 /* Apple Light completeness and financial alignment — v78 values now live in globals.css. */
 
 /* Convert every remaining legacy dark container into a semantic light surface. */
-.company-hero,
-.generic-company-hero,
-.report-hero,
-.holding-summary,
-.decision-template {
-  background: var(--glass-fill) !important;
-  border-color: var(--color-border) !important;
-  box-shadow: var(--shadow-panel) !important;
-}
-
-.company-metrics article,
 .research-reference,
-.holding-metric-grid article,
 .scenario,
-.decision-facts > div,
-.decision-template-block,
-.decision-template-columns > div,
 .relation-chip {
   background: var(--glass-inset) !important;
   border-color: var(--color-border) !important;
@@ -1995,12 +1969,6 @@
 .table-head {
   background: rgba(242, 242, 247, 0.92) !important;
   color: var(--color-text) !important;
-}
-
-.analysis-lead p,
-.decision-template-block p,
-.decision-template-columns p {
-  
 }
 
 .decision-facts strong,
@@ -2232,23 +2200,8 @@ table {
 /* Portfolio controls and final light-surface cleanup — v81 */
 
 /* Main surfaces stay white; nested cards use the neutral liquid-glass inset. */
-.company-section-block,
-.company-summary-grid,
-.company-research-overview,
-.holding-summary,
-.notion-sync-panel,
-.detail-card {
-  background: var(--glass-fill-strong) !important;
-  border-color: var(--color-border) !important;
-  color: var(--color-text) !important;
-}
-
-.holding-metric-grid article,
 .notion-source-grid button,
-.company-metrics article,
-.company-summary-primary,
-.analysis-section,
-.holding-summary-state {
+.analysis-section {
   background: var(--glass-inset) !important;
   border-color: var(--color-border) !important;
   color: var(--color-text) !important;
