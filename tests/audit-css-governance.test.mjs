@@ -64,3 +64,12 @@ test("responsive contexts are canonicalized before conflict classification", asy
   assert.equal(analysisRow.contexts.some(context => context.includes("max-width: 760px")), false);
   assert.deepEqual(result.findings.propertyConflicts, []);
 });
+
+test("dead CSS audit uses the canonical dynamic registry and scans object column classes", async () => {
+  const source = await readFile(new URL("../scripts/audit-dead-css.mjs", import.meta.url), "utf8");
+
+  assert.match(source, /dynamicClassEntry, dynamicClassRegistry/);
+  assert.doesNotMatch(source, /const dynamicPrefixes =/);
+  assert.doesNotMatch(source, /const dynamicNames =/);
+  assert.match(source, /className\\s\*:\\s\*\(\["'\\`\]\)/);
+});
