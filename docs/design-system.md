@@ -50,6 +50,7 @@ La page Lovable de référence est un banc de comparaison mobile. Elle peut mont
 6. Une migration n’est terminée que lorsque les anciens overrides ne sont plus référencés et peuvent être supprimés sans régression.
 7. Toute passe UI doit réduire ou stabiliser chaque compteur surveillé par l’audit de gouvernance. Une amélioration visuelle ou une reclassification qui augmente un compteur n’est pas considérée comme terminée.
 8. Pour le Portfolio, `ux-foundations.css` est propriétaire de la composition desktop/mobile des positions, de l’exposition et de Trajectoire. `globals.css` ne doit plus contenir d’ancienne grille Portfolio ou de mécanique de cible concurrente ; les surfaces Apple Light / Liquid Glass restent fournies par les primitives partagées.
+9. Pour le Shell, `GlassChrome` porte le matériau Liquid Glass de la sidebar et de la navigation mobile. `ux-foundations.css` porte uniquement leur géométrie et la composition du branding, du header, du menu compte et de la bannière PWA ; `globals.css` ne redéfinit pas ces éléments métier.
 
 ## Gouvernance CSS et baseline de migration
 
@@ -61,7 +62,7 @@ La dette CSS existante est mesurée par [`scripts/audit-css-governance.mjs`](../
 
 Il distingue les sélecteurs exacts répétés, les conflits de propriétés dans un même contexte d’at-rule, les variantes responsive, les propriétés strictement redondantes, les extensions additives, les tokens répétés avec leurs valeurs, et les classes sans consommateur démontré.
 
-La baseline versionnée est [`scripts/css-audit-baseline.json`](../scripts/css-audit-baseline.json). Après la consolidation Portfolio, l’état courant documenté est : 249 sélecteurs répétés, 60 conflits directs, 129 variantes responsive, 16 redondances identiques et 44 extensions additives ; 0 token répété et 0 valeur concurrente ; 419 déclarations `!important` ; 322 classes définies et 0 classe orpheline.
+La baseline versionnée est [`scripts/css-audit-baseline.json`](../scripts/css-audit-baseline.json). Après la consolidation Shell du Lot 5A, l’état courant documenté est : 243 sélecteurs répétés, 57 conflits directs, 129 variantes responsive, 15 redondances identiques et 42 extensions additives ; 0 token répété et 0 valeur concurrente ; 403 déclarations `!important` ; 322 classes définies et 0 classe orpheline.
 
 Le prochain chantier de réduction, son séquencement et ses critères de sortie sont
 documentés dans [`docs/css-debt-roadmap.md`](./css-debt-roadmap.md).

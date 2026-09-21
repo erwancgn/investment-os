@@ -25,7 +25,6 @@ summary:focus-visible {
   letter-spacing: 1.55px;
 }
 
-.notion-global-refresh button,
 .live-dashboard-head button,
 .live-portfolio-state > button:not(.ui-back-button) {
   min-height: var(--ui-control-hit-height);
@@ -869,12 +868,6 @@ summary:focus-visible {
 }
 
 @media (max-width: 760px) {
-  .notion-global-refresh button {
-    min-height: var(--ui-control-hit-height);
-    padding: 8px 10px;
-    font-size: 10px;
-  }
-
   .live-dashboard-head {
     gap: 8px;
     margin-bottom: 10px;
@@ -1559,30 +1552,9 @@ textarea,
 select {
   color: var(--color-text);
 }
-.brand span,
 .eyebrow,
 .positive {
   color: var(--color-accent) !important;
-}
-.brand-mark {
-  box-shadow: 0 5px 14px rgba(0, 122, 255, 0.2);
-}
-.sidebar-bottom .sync-card,
-.sync-card {
-  background: rgba(255, 255, 255, 0.68) !important;
-  border-color: var(--color-border) !important;
-  box-shadow: var(--shadow-panel);
-}
-.sync-card strong {
-  color: var(--color-text) !important;
-}
-.sync-card small,
-.sync-card i {
-  color: var(--color-text-muted) !important;
-}
-.sync-card i {
-  background: var(--color-positive) !important;
-  box-shadow: 0 0 8px rgba(22, 128, 68, 0.28);
 }
 .freshness,
 .analysis-total {
@@ -1593,7 +1565,6 @@ select {
 .freshness i {
   background: var(--color-positive) !important;
 }
-.notion-global-refresh button,
 .live-dashboard-head button,
 .live-portfolio-state > button:not(.ui-back-button) {
   background: rgba(255, 255, 255, 0.74) !important;
@@ -1601,18 +1572,8 @@ select {
   color: var(--color-accent) !important;
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
 }
-.notion-global-refresh button:hover:not(:disabled),
 .live-dashboard-head button:hover {
   background: #fff !important;
-}
-.pwa-update-actions button {
-  background: var(--color-accent) !important;
-  color: #fff !important;
-}
-.pwa-update-actions .pwa-update-later {
-  background: transparent !important;
-  border-color: var(--color-border) !important;
-  color: var(--color-text-secondary) !important;
 }
 
 .company-metrics article,
@@ -3500,11 +3461,84 @@ table {
   width: 225px;
   flex-direction: column;
   padding: 28px 18px 22px;
-  border-right: 1px solid var(--color-border) !important;
-  background: rgba(255, 255, 255, 0.76) !important;
-  box-shadow: 8px 0 28px rgba(0, 0, 0, 0.04);
-  backdrop-filter: saturate(180%) blur(24px);
-  -webkit-backdrop-filter: saturate(180%) blur(24px);
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 10px 30px;
+}
+.brand > div {
+  display: flex;
+  align-items: baseline;
+  gap: 5px;
+  font-size: 17px;
+}
+.brand span {
+  color: var(--color-accent);
+  font-weight: 700;
+}
+.brand-mark {
+  width: 29px;
+  height: 29px;
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  padding: 5px;
+  border-radius: 8px;
+  background: linear-gradient(145deg, #8af2c2, #38c98f);
+  box-shadow: 0 5px 14px rgba(0, 122, 255, 0.2);
+}
+.brand-mark span {
+  display: block;
+  width: 4px;
+  border-radius: 4px;
+  background: #0a1713;
+}
+.brand-mark span:nth-child(1) { height: 8px; }
+.brand-mark span:nth-child(2) { height: 15px; }
+.brand-mark span:nth-child(3) { height: 20px; }
+.nav-icon {
+  width: 22px;
+  font-size: 20px;
+  text-align: center;
+}
+.sidebar-bottom {
+  display: grid;
+  gap: 14px;
+  margin-top: auto;
+}
+.sync-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.68);
+  box-shadow: var(--shadow-panel);
+}
+.sync-card > span { font-size: 18px; }
+.sync-card div {
+  display: flex;
+  flex-direction: column;
+}
+.sync-card strong {
+  color: var(--color-text);
+  font-size: 12px;
+}
+.sync-card small {
+  margin-top: 3px;
+  color: var(--color-text-muted);
+  font-size: 10px;
+}
+.sync-card i {
+  width: 7px;
+  height: 7px;
+  margin-left: auto;
+  border-radius: 50%;
+  background: var(--color-positive);
+  box-shadow: 0 0 8px rgba(22, 128, 68, 0.28);
 }
 .sidebar nav {
   display: flex;
@@ -3563,12 +3597,19 @@ table {
   min-width: 0;
 }
 
-.page-header {
+.app-shell .page-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-5);
+  margin: 0 0 var(--space-5);
+  color: var(--color-text);
+}
+.header-account-tools {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  margin-bottom: 30px;
-  color: var(--color-text);
+  gap: 10px;
+  flex: 0 0 auto;
 }
 .page-header .header-account-tools {
   margin-left: var(--space-2);
@@ -3577,9 +3618,53 @@ table {
   max-width: none;
   margin: 0;
   color: var(--color-text);
-  font-size: 25px;
-  line-height: 1.2;
+  font-size: var(--font-xl);
+  line-height: 1.15;
   letter-spacing: -0.7px;
+}
+.avatar {
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: #244437;
+  color: var(--color-accent);
+  font-size: 15px;
+  font-weight: 700;
+}
+.notion-global-refresh {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.notion-global-refresh button {
+  min-height: var(--ui-control-hit-height);
+  padding: 9px 12px;
+  border: 1px solid rgba(0, 122, 255, 0.32);
+  border-radius: 9px;
+  background: rgba(255, 255, 255, 0.74);
+  color: var(--color-accent);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.notion-global-refresh button:hover:not(:disabled) {
+  background: #fff;
+}
+.notion-global-refresh button:disabled {
+  opacity: .7;
+  cursor: wait;
+}
+.notion-global-refresh span {
+  position: absolute;
+  max-width: 240px;
+  margin-top: 58px;
+  color: #ffb4a8;
+  font-size: 9px;
+  line-height: 1.3;
 }
 
 .pwa-update-banner {
@@ -3614,14 +3699,33 @@ table {
   color: var(--color-text-muted) !important;
   font-size: 9px;
 }
+.pwa-update-actions {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-left: auto;
+  flex: 0 0 auto;
+}
+.pwa-update-actions button {
+  min-height: var(--ui-control-hit-height);
+  padding: 8px 10px;
+  border: 0;
+  border-radius: 7px;
+  background: var(--color-accent);
+  color: #fff;
+  font-size: 9px;
+  font-weight: 800;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.pwa-update-actions .pwa-update-later {
+  border: 1px solid var(--color-border);
+  background: transparent;
+  color: var(--color-text-secondary);
+}
 
 .mobile-nav {
   display: none;
-  background: rgba(255, 255, 255, 0.82) !important;
-  border-color: var(--color-border) !important;
-  box-shadow: 0 -8px 26px rgba(0, 0, 0, 0.08) !important;
-  backdrop-filter: saturate(180%) blur(22px);
-  -webkit-backdrop-filter: saturate(180%) blur(22px);
 }
 
 @media (max-width: 760px) {
@@ -3633,7 +3737,6 @@ table {
 
   .app-shell > .sidebar {
     display: none;
-    background: rgba(255, 255, 255, 0.9) !important;
   }
 
   .app-shell > .content {
@@ -3648,15 +3751,33 @@ table {
     padding: 0 !important;
   }
 
-  .page-header {
+  .app-shell .page-header {
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
-    align-items: end;
-    column-gap: var(--space-3);
+    align-items: flex-start;
+    gap: var(--space-3);
     margin-bottom: 18px;
+  }
+  .app-shell .page-header .ui-section-header-copy {
+    min-width: 0;
+  }
+  .app-shell .page-header .ui-section-header-actions {
+    width: auto;
+    align-self: end;
+    justify-content: flex-end;
+    flex-wrap: nowrap;
+    gap: 8px;
+    margin-bottom: 2px;
   }
   .app-shell .page-header .header-account-tools {
     margin-left: 0;
+  }
+  .app-shell .page-header .freshness {
+    display: none;
+  }
+  .app-shell .page-header .notion-global-refresh button {
+    padding: 8px 11px;
+    font-size: 11px;
   }
   .app-shell .page-header h1 {
     max-width: 270px;
@@ -3673,8 +3794,6 @@ table {
     grid-template-rows: 1fr;
     grid-auto-flow: row;
     padding: 6px;
-    border-top: 1px solid var(--color-border);
-    border-radius: 24px;
   }
   .mobile-nav button {
     display: flex;
@@ -3710,9 +3829,17 @@ table {
   }
 }
 
+@media (max-width: 520px) {
+  .pwa-update-actions {
+    gap: 5px;
+  }
+  .pwa-update-actions button {
+    padding: 8px 7px;
+    font-size: 8px;
+  }
+}
+
 @media (prefers-reduced-transparency: reduce) {
-  .mobile-nav,
-  .sidebar,
   .pwa-update-banner {
     background: #f5f5f7;
     backdrop-filter: none;
