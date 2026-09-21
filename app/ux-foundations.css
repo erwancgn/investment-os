@@ -4127,3 +4127,25 @@ table {
 /* Five-tab mobile navigation; secondary Notion management lives in the profile menu. */
 @media(max-width:760px){}
 
+/* Canonical business list/reader overrides — moved from globals in Lot 9B. */
+.company-table,
+.analysis-list {
+  overflow: visible !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+@media (max-width: 760px) {
+  .signal { font-size: 11px; padding: 7px 10px; }
+  .analysis-list { overflow: visible; background: none; border: 0; }
+  .analysis-list-head { display: none; }
+  .analysis-title strong { font-size: 14px; line-height: 1.35; }
+  .analysis-title small,
+  .analysis-list-row > span,
+  .analysis-list-row > strong { font-size: 11px; }
+  .report-hero h1 { font-size: 23px; line-height: 1.2; }
+  .report-hero p,
+  .report-verdict small { font-size: 11px; }
+}
+
