@@ -21,7 +21,7 @@ vérité.
 
 | Famille | Tokens gagnants | Règle d’usage |
 |---|---|---|
-| Police | `--font-family-sans`, `--font-geist-mono` | Le texte UI utilise `--font-family-sans`; le monospace est réservé aux données qui le nécessitent. |
+| Police | `--font-family-sans`, `--font-geist-mono`, `--font-discovery-title` | Le texte UI utilise `--font-family-sans`; le titre Discovery utilise son rôle sémantique dédié et reste au-dessus des valeurs, métadonnées et labels internes ; le monospace est réservé aux données qui le nécessitent. |
 | Couleurs sémantiques | `--color-bg`, `--color-bg-elevated`, `--color-surface`, `--color-surface-raised`, `--color-surface-active`, `--color-border`, `--color-border-strong`, `--color-text`, `--color-text-secondary`, `--color-text-muted`, `--color-accent`, `--color-accent-strong`, `--color-positive`, `--color-negative`, `--color-warning`, `--color-info`, `--color-violet`, `--color-content-copy` | Les composants consomment les rôles sémantiques ; aucune couleur littérale ne doit être ajoutée dans une primitive. |
 | Surfaces | `--surface-canvas`, `--surface-primary`, `--surface-secondary`, `--surface-glass`, `--surface-glass-fallback`, `--surface-stroke`, `--surface-stroke-strong`, `--surface-highlight`, `--surface-blur` | `Surface` et ses wrappers déterminent la hiérarchie primaire, secondaire et glass. |
 | Rayons | `--radius-sm`, `--radius-md`, `--radius-lg`, `--radius-pill` | Les rayons sont choisis par rôle ; une nouvelle valeur locale doit être justifiée dans le contrat. |
@@ -49,6 +49,13 @@ documentée `852fd99aae56a16aeaa47163aca3b426d8784b1d`.
 - L'alignement est porté par le contrat partagé `.ui-discovery-card` et les variables
   locales de `.ui-surface` ; aucune variante Company, Radar ou Analysis n'ajoute
   d'override visuel propre.
+- Le titre Discovery est désormais un rôle typographique sémantique partagé ; les
+  signaux, métadonnées, badges et textes secondaires restent visuellement subordonnés.
+- La recherche et son compteur restent côte à côte au viewport mobile de référence.
+- Les filtres visibles restent en pills jusqu'à six choix ; les taxonomies plus larges
+  ou dynamiques utilisent `DisclosureSurface`, comme les thèmes du Radar.
+- Les synthèses KPI restent compactes : jusqu'à trois `StatCard` sur une ligne, puis
+  2 × 2 pour quatre et 3 × 2 pour cinq ou six avant de basculer le surplus en détail.
 
 La source Lovable expose notamment `src/components/CompactControl.tsx`,
 `src/components/CompanyDiscoveryCard.tsx` et `src/routes/index.tsx`. Le projet

@@ -32,6 +32,9 @@ jobs:
           mv package-lock.json /tmp/package-lock.sites
           npm install --package-lock=false --no-audit --no-fund
 
+      - run: npm run typecheck
+      - run: npm run test:css-audit
+      - run: npm run test:storybook-coverage
       - run: npm run build-storybook
 
       - name: Serve Storybook

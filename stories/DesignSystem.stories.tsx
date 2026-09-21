@@ -12,6 +12,7 @@ import {
   DataTable,
   DiscoveryAction,
   DiscoveryCard,
+  DisclosureSurface,
   FilterBar,
   GlassChrome,
   MetadataGrid,
@@ -25,7 +26,7 @@ import {
   Surface,
   Tabs,
 } from "../app/components/ui-primitives";
-import { analysesData, company, watchlist } from "./reference-fixtures";
+import { analysesData, company, lumentumCompany, watchlist } from "./reference-fixtures";
 import { frame } from "./reference-frame";
 
 const meta = {
@@ -46,6 +47,7 @@ export const Overview: Story = {
     const [segment, setSegment] = useState("All");
     const [tab, setTab] = useState("Summary");
     const [account, setAccount] = useState("All accounts");
+    const [theme, setTheme] = useState("All themes");
     const [query, setQuery] = useState("");
 
     return (
@@ -72,6 +74,15 @@ export const Overview: Story = {
           <div className="storybook-stack">
             <SearchField value={query} onChange={setQuery} placeholder="Search companies, tickers or analyses" ariaLabel="Search reference" count="3 results" />
             <FilterBar ariaLabel="Reference filters"><SegmentedControl options={["All", "Owned", "Watchlist"].map(value => ({ value, label: value }))} value={segment} onChange={setSegment} ariaLabel="Reference segment" /></FilterBar>
+            <DisclosureSurface level="primary" summary={<><span>Themes</span><strong>{theme}</strong></>}>
+              <SegmentedControl
+                options={["All themes", "AI", "Data center", "Semiconductors", "Cloud", "Networking", "Quality"].map(value => ({ value, label: value }))}
+                value={theme}
+                onChange={setTheme}
+                ariaLabel="Reference theme taxonomy"
+                className="theme-cloud"
+              />
+            </DisclosureSurface>
             <Tabs options={["Summary", "Portfolio", "Research"].map(value => ({ value, label: value }))} value={tab} onChange={setTab} ariaLabel="Reference tabs" />
             <div className="storybook-inline">
               <CompactControl variant="select" ariaLabel="Account" value={account} onChange={setAccount} options={[{ value: "All accounts", label: "All accounts" }, { value: "CTO", label: "CTO" }, { value: "PEA", label: "PEA" }]} />
@@ -137,7 +148,7 @@ export const ProductionVisualReview: Story = {
       />
       <section className="storybook-reference-section" aria-labelledby="review-companies">
         <h2 id="review-companies">Companies · production · 390px</h2>
-        {frame(<NotionCompanies initialData={{ companies: [company] }} openCompany={() => undefined} />)}
+        {frame(<NotionCompanies initialData={{ companies: [company, lumentumCompany] }} openCompany={() => undefined} />)}
       </section>
       <section className="storybook-reference-section" aria-labelledby="review-radar">
         <h2 id="review-radar">Radar · production · 390px</h2>

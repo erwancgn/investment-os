@@ -6,11 +6,11 @@ Le design system possède désormais une entrée publique unique, un seul bloc `
 aucun token concurrent et aucune classe orpheline détectée. La dette restante est une
 dette de cascade et de consolidation, mesurée par la baseline versionnée :
 
-- 178 sélecteurs exacts répétés ;
+- 177 sélecteurs exacts répétés ;
 - 0 conflit direct de propriétés ;
 - 134 variantes responsive ;
 - 1 redondance stricte intentionnelle ;
-- 43 extensions additives ;
+- 42 extensions additives ;
 - 292 déclarations `!important`.
 
 Le nettoyage de cascade du Lot 7A a supprimé 14 déclarations `!important` dont le résultat était intégralement supplanté plus loin dans le même contexte CSS, sans modifier le comportement calculé. L'audit canonicalise désormais les paramètres des `@media` avant comparaison : les formes `@media(max-width:760px)` et `@media (max-width: 760px)` ne peuvent plus masquer un conflit. Trois conflits responsive historiques ainsi révélés ont été supprimés au profit du propriétaire `ux-foundations.css`.
