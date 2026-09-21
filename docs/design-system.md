@@ -86,7 +86,7 @@ Pour obtenir la preuve machine stable, notamment pour une CI ou un archivage de 
 npm run audit:css:governance:json
 ```
 
-`npm run audit:css` reste l’audit historique des sélecteurs supprimables ; il n’est pas remplacé par l’audit de gouvernance. Les deux commandes doivent rester vertes pendant la migration.
+`npm run audit:css` reste l’audit historique des sélecteurs supprimables ; il n’est pas remplacé par l’audit de gouvernance. Depuis le Lot 9, il s’appuie sur le même registre dynamique canonique et retourne un code non nul lorsqu’un sélecteur supprimable est détecté en mode audit. Les deux commandes doivent rester vertes pendant la migration.
 
 ### Registre des classes dynamiques
 
