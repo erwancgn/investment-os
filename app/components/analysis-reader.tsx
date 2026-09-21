@@ -92,7 +92,7 @@ function DecisionTemplate({ decision }: { decision: DecisionFields }) {
     ["Risque principal", decision.keyRisk],
   ].filter((item): item is [string, string] => Boolean(item[1]));
   return (
-    <section className="decision-template">
+    <SecondaryBlock as="section" className="decision-template">
       <div className="decision-template-head">
         <div>
           <p className="eyebrow">Decision Card</p>
@@ -123,7 +123,7 @@ function DecisionTemplate({ decision }: { decision: DecisionFields }) {
           ))}
         </div>
       )}
-    </section>
+    </SecondaryBlock>
   );
 }
 
