@@ -1854,13 +1854,6 @@
 }
 
 /* Apple Light surface layer — v77, values now owned by globals.css. */
-button,
-input,
-textarea,
-select {
-  color: var(--color-text);
-}
-.freshness,
 .analysis-total {
   background: rgba(255, 255, 255, 0.68) !important;
   border-color: var(--color-border) !important;
