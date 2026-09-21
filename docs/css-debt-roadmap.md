@@ -1,4 +1,4 @@
-# Prochain chantier — réduction de la dette CSS
+# Dette CSS — état après le Lot 9
 
 ## Point de départ
 
@@ -18,6 +18,30 @@ Le nettoyage de cascade du Lot 7A a supprimé 14 déclarations `!important` dont
 La redondance stricte restante est volontaire : le fallback `.ui-surface--glass` est déclaré dans deux contextes indépendants, l'absence de support du blur et `prefers-reduced-transparency`. Elle ne doit pas être supprimée tant que ces deux comportements restent distincts.
 
 Cette baseline est un plafond de non-régression, pas un état cible. Les sélecteurs répétés, conflits directs, redondances, déclarations `!important`, tokens concurrents et classes orphelines sont stricts. Les variantes responsive et extensions additives sont revues dans leur contexte : elles ne constituent pas une dette par nature lorsqu’elles expriment un comportement réellement différent et localisé.
+
+## Décision du Lot 9 — 21 septembre 2026
+
+Le découpage de `ux-foundations.css` n'est pas retenu. La feuille est chargée globalement par
+`design-system.css` et un split en plusieurs fichiers importés au même endroit ne réduirait ni
+le CSS chargé, ni la cascade, ni le nombre de règles actives. Il ajouterait surtout des frontières
+de fichiers sans nouveau propriétaire fonctionnel. Un découpage ne devra être reconsidéré que si
+une extraction réellement scindée par route/composant permet de réduire les règles chargées et la
+cascade calculée, sans dupliquer les règles partagées.
+
+La passe code mort a été renforcée avant toute suppression :
+
+- `audit-dead-css.mjs` utilise désormais le registre dynamique canonique
+  `css-audit-registry.mjs` au lieu d'une liste parallèle d'exemptions génériques ;
+- les classes portées par les configurations d'objets React, notamment les colonnes de
+  `DataTable`, sont explicitement détectées ;
+- un candidat `.research-coverage-table .ui-data-table .research-score-cell` a été contrôlé
+  contre `CompanyDetail` et `DataTable` puis conservé : il est réellement consommé ;
+- `npm run audit:css` échoue désormais lorsqu'un sélecteur supprimable est détecté en mode
+  audit ; le mode `--fix` reste volontairement séparé.
+
+Aucune règle CSS n'a été supprimée dans ce lot faute de candidat mort prouvé. La baseline CSS
+reste donc inchangée. Le prochain gate est la review fraîche de la branche complète face à
+`main`, sans nouveau refactor CSS préalable sauf régression détectée.
 
 ## Périmètre recommandé
 
