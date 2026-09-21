@@ -1,16 +1,16 @@
 {
   "version": 1,
   "capturedAt": "2026-09-21",
-  "scope": "app CSS governance audit after Lot 7A strict redundancy cleanup",
+  "scope": "app CSS governance audit after Lot 7A dead cascade cleanup",
   "thresholds": {
     "exactRepeatedSelectors": 179,
     "directPropertyConflicts": 0,
-    "responsiveVariants": 136,
+    "responsiveVariants": 135,
     "strictRedundantDeclarations": 1,
-    "additiveExtensions": 42,
+    "additiveExtensions": 43,
     "repeatedTokens": 0,
     "conflictingTokens": 0,
-    "importantDeclarations": 306,
+    "importantDeclarations": 292,
     "definedClasses": 317,
     "orphanClasses": 0
   }

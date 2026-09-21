@@ -1177,7 +1177,6 @@ summary:focus-visible {
   margin: 0 0 var(--space-6);
   overflow: hidden;
   border: 1px solid var(--color-border) !important;
-  background: var(--glass-inset) !important;
 }
 .analysis-source-details .ui-disclosure-body {
   padding: 0;
@@ -1785,7 +1784,6 @@ summary:focus-visible {
   .analysis-lead {
     width: 100%;
     margin-inline: 0 !important;
-    padding: 14px !important;
   }
 
   .latest-info-summary p,
@@ -1869,13 +1867,6 @@ summary:focus-visible {
   }
 }
 
-@media (max-width: 380px) {
-  .company-metrics,
-  .holding-metric-grid {
-    grid-template-columns: minmax(0, 1fr) !important;
-  }
-}
-
 /* Apple Light surface layer — v77, values now owned by globals.css. */
 button,
 input,
@@ -1956,8 +1947,6 @@ select {
 }
 .table-head,
 .analysis-list-head {
-  background: rgba(242, 242, 247, 0.88) !important;
-  color: var(--color-text-muted) !important;
   border-color: var(--color-border) !important;
 }
 .pnl-badge.positive-pnl {
@@ -1989,12 +1978,7 @@ select {
 .watch-theme-filter[open] > summary {
   border-color: var(--color-border) !important;
 }
-.universal-analysis-page th {
-  background: #f2f2f7 !important;
-  color: var(--color-text) !important;
-}
 .universal-analysis-page td {
-  color: var(--color-text-secondary) !important;
   border-color: var(--color-border) !important;
 }
 @media (max-width: 760px) {
@@ -2371,15 +2355,6 @@ table {
   color: var(--color-text-muted);
   font-size: 15px;
   text-align: center;
-}
-
-.portfolio-kpis b.positive,
-.portfolio-kpis b.negative {
-  color: var(--color-positive) !important;
-}
-
-.portfolio-kpis b.negative {
-  color: var(--color-negative) !important;
 }
 
 /* Trajectory rows use colour as status: reached, or materially above target. */
@@ -2873,10 +2848,6 @@ table {
    second white card around an already card-based document. */
 .company-section-block,
 .company-research-overview {
-  background: transparent !important;
-  border: 0 !important;
-  border-radius: 0 !important;
-  box-shadow: none !important;
   padding: 0 !important;
 }
 

@@ -8,10 +8,12 @@ dette de cascade et de consolidation, mesurée par la baseline versionnée :
 
 - 179 sélecteurs exacts répétés ;
 - 0 conflit direct de propriétés ;
-- 136 variantes responsive ;
+- 135 variantes responsive ;
 - 1 redondance stricte intentionnelle ;
-- 42 extensions additives ;
-- 306 déclarations `!important`.
+- 43 extensions additives ;
+- 292 déclarations `!important`.
+
+Le nettoyage de cascade du Lot 7A a supprimé 14 déclarations `!important` dont le résultat était intégralement supplanté plus loin dans le même contexte CSS, sans modifier le comportement calculé.
 
 La redondance stricte restante est volontaire : le fallback `.ui-surface--glass` est déclaré dans deux contextes indépendants, l'absence de support du blur et `prefers-reduced-transparency`. Elle ne doit pas être supprimée tant que ces deux comportements restent distincts.
 
