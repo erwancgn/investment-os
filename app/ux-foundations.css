@@ -1887,7 +1887,7 @@ select {
 .analysis-list,
 .company-table,
 .notion-sync-panel {
-  background: rgba(255, 255, 255, 0.82) !important;
+  
   border-color: var(--color-border) !important;
   box-shadow: var(--shadow-panel) !important;
 }
