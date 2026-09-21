@@ -1,7 +1,8 @@
 /*
- * Investment OS UI foundations — v74
- * Imported last on purpose: one reversible layer consolidates the visual
- * system without touching data, calculations or Notion synchronisation.
+ * Investment OS UI foundations.
+ * Loaded before globals.css: this file owns business composition and responsive
+ * layout, while globals.css remains the final owner of shared primitives/tokens.
+ * Business rules here must not depend on winning a primitive-specificity fight.
  */
 
 button,
@@ -19,12 +20,6 @@ summary:focus-visible {
   outline: 2px solid var(--color-accent);
   outline-offset: 3px;
 }
-.eyebrow {
-  color: var(--color-accent);
-  font-size: 10px;
-  letter-spacing: 1.55px;
-}
-
 /* Portfolio — one summary, one positions surface, targets only in Trajectoire. */
 .live-dashboard-head {
   min-height: 34px;
@@ -1582,10 +1577,6 @@ summary:focus-visible {
     flex-direction: column;
     gap: 6px;
   }
-  .generic-company-main .hero-title h1 {
-    font-size: 22px;
-    line-height: 1.18;
-  }
   .generic-company-status {
     min-width: 0;
     padding-top: 12px;
@@ -1673,13 +1664,6 @@ summary:focus-visible {
 .notion-table-wrap:focus-visible {
   outline: 2px solid var(--color-accent);
   outline-offset: 2px;
-}
-
-.notion-table,
-.notion-page .notion-table,
-.universal-analysis-page .notion-table {
-  width: max-content !important;
-  min-width: 100% !important;
 }
 
 @media (max-width: 760px) {
@@ -1884,30 +1868,6 @@ summary:focus-visible {
     padding: 18px 20px !important;
   }
 
-  .universal-analysis-page .analysis-section h2,
-  .universal-analysis-page .analysis-section h3,
-  .universal-analysis-page .analysis-section h4,
-  .universal-analysis-page .analysis-section h5,
-  .universal-analysis-page .analysis-section h6 {
-    min-width: 0;
-    font-size: clamp(19px, 5.6vw, 23px) !important;
-    line-height: 1.25 !important;
-    overflow-wrap: break-word;
-  }
-
-  .universal-analysis-page > p,
-  .universal-analysis-page > ul,
-  .universal-analysis-page > ol,
-  .universal-analysis-page > blockquote {
-    width: 100%;
-    max-width: 100% !important;
-    color: var(--color-text-secondary) !important;
-    font-size: 16px !important;
-    line-height: 1.58 !important;
-    text-align: left !important;
-    overflow-wrap: break-word;
-  }
-
   .universal-analysis-page a {
     color: var(--color-accent) !important;
   }
@@ -1923,48 +1883,6 @@ summary:focus-visible {
     padding: 14px !important;
   }
 
-  /* Wide Notion tables retain readable cells and scroll inside their card. */
-  .notion-table-wrap,
-  .notion-page .notion-table-wrap,
-  .universal-analysis-page .notion-table-wrap {
-    width: 100% !important;
-    max-width: 100% !important;
-    margin: 16px 0 22px !important;
-    overflow-x: auto !important;
-    border-left: 1px solid var(--color-border) !important;
-    border-right: 1px solid var(--color-border) !important;
-    border-radius: var(--radius-md) !important;
-  }
-
-  .notion-table,
-  .notion-page .notion-table,
-  .universal-analysis-page .notion-table {
-    width: max-content !important;
-    min-width: 100% !important;
-    table-layout: auto !important;
-  }
-
-  .notion-table-wide,
-  .notion-page .notion-table-wide,
-  .universal-analysis-page .notion-table-wide {
-    min-width: max(100%, calc(var(--notion-columns) * 148px)) !important;
-  }
-
-  .notion-table th,
-  .notion-table td,
-  .notion-page .notion-table th,
-  .notion-page .notion-table td,
-  .universal-analysis-page .notion-table th,
-  .universal-analysis-page .notion-table td {
-    min-width: min(42vw, 168px) !important;
-    max-width: min(74vw, 300px);
-    padding: 11px 12px !important;
-    font-size: 14px !important;
-    line-height: 1.45 !important;
-    overflow-wrap: break-word !important;
-    word-break: normal !important;
-    hyphens: none;
-  }
   .notion-table a {
     overflow-wrap: anywhere;
   }
@@ -1984,18 +1902,11 @@ textarea,
 select {
   color: var(--color-text);
 }
-.eyebrow,
-.positive {
-  color: var(--color-accent) !important;
-}
 .freshness,
 .analysis-total {
   background: rgba(255, 255, 255, 0.68) !important;
   border-color: var(--color-border) !important;
   color: var(--color-text-muted) !important;
-}
-.freshness i {
-  background: var(--color-positive) !important;
 }
 
 .company-metrics article,
@@ -2781,39 +2692,11 @@ table {
   .latest-info-card {
     padding: 17px 15px;
   }
-  .latest-info-card .detail-heading h2 {
-    font-size: 18px;
-  }
-  .latest-info-summary,
-  .analysis-lead {
-    padding: 14px;
-  }
   .latest-info-summary p,
   .latest-info-summary ul,
   .analysis-lead p,
   .analysis-lead ul {
     font-size: 15px !important;
-  }
-  .notion-table-wrap,
-  .notion-page .notion-table-wrap,
-  .universal-analysis-page .notion-table-wrap {
-    width: auto;
-    margin-inline: 0 !important;
-  }
-  .notion-table,
-  .notion-page .notion-table,
-  .universal-analysis-page .notion-table {
-    min-width: 100% !important;
-  }
-  .notion-table th,
-  .notion-table td,
-  .notion-page .notion-table th,
-  .notion-page .notion-table td,
-  .universal-analysis-page .notion-table th,
-  .universal-analysis-page .notion-table td {
-    min-width: 0 !important;
-    padding: 10px !important;
-    font-size: 13px !important;
   }
 }
 
@@ -2840,23 +2723,6 @@ table {
     grid-template-columns: minmax(0, 1fr) !important;
   }
 
-  .company-metrics,
-  .holding-metric-grid {
-    display: grid !important;
-    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-    gap: 8px !important;
-    margin-right: 0 !important;
-    padding-right: 0 !important;
-    overflow: visible !important;
-  }
-
-  .company-metrics article,
-  .holding-metric-grid article {
-    box-sizing: border-box;
-    width: auto !important;
-    min-width: 0 !important;
-  }
-
   .latest-info-summary p,
   .latest-info-summary li,
   .analysis-lead p,
@@ -2872,10 +2738,12 @@ table {
   .universal-analysis-page > ul,
   .universal-analysis-page > ol,
   .universal-analysis-page > blockquote {
+    width: 100%;
     max-width: 100% !important;
     color: var(--color-text-secondary) !important;
     font-size: 16px !important;
     line-height: 1.62 !important;
+    text-align: left !important;
     word-break: normal !important;
     overflow-wrap: break-word !important;
   }
@@ -2885,6 +2753,7 @@ table {
   .universal-analysis-page .analysis-section h4,
   .universal-analysis-page .analysis-section h5,
   .universal-analysis-page .analysis-section h6 {
+    min-width: 0;
     font-size: clamp(20px, 6vw, 25px) !important;
     line-height: 1.24 !important;
     word-break: normal !important;
@@ -2900,6 +2769,9 @@ table {
     margin: 18px 0 24px !important;
     overflow-x: auto !important;
     overflow-y: hidden;
+    border-left: 1px solid var(--color-border) !important;
+    border-right: 1px solid var(--color-border) !important;
+    border-radius: var(--radius-md) !important;
     overscroll-behavior-inline: contain;
     -webkit-overflow-scrolling: touch;
   }

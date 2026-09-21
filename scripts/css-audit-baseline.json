@@ -1,16 +1,16 @@
 {
   "version": 1,
   "capturedAt": "2026-09-21",
-  "scope": "app CSS governance audit after Search ownership consolidation (Lot 5E)",
+  "scope": "app CSS governance audit after CSS architecture consolidation (Lot 5F)",
   "thresholds": {
-    "exactRepeatedSelectors": 196,
-    "directPropertyConflicts": 21,
-    "responsiveVariants": 125,
-    "strictRedundantDeclarations": 12,
+    "exactRepeatedSelectors": 190,
+    "directPropertyConflicts": 9,
+    "responsiveVariants": 132,
+    "strictRedundantDeclarations": 11,
     "additiveExtensions": 38,
     "repeatedTokens": 0,
     "conflictingTokens": 0,
-    "importantDeclarations": 349,
+    "importantDeclarations": 312,
     "definedClasses": 317,
     "orphanClasses": 0
   }
