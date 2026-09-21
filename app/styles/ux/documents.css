@@ -1,7 +1,6 @@
 /* Structured analysis/document composition layered on canonical Notion primitives. */
 /* Structured Notion documents — one shared presentation layer. */
 .latest-info-card {
-  min-width: 0;
   padding: var(--space-6);
   border-top-width: 1px !important;
 }
