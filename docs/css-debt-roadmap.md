@@ -1,75 +1,106 @@
-# Dette CSS — état après le Lot 9
+# Dette CSS — état après le Lot 9B
 
-## Point de départ
+## Statut
 
-Le design system possède désormais une entrée publique unique, un seul bloc `:root`,
-aucun token concurrent et aucune classe orpheline détectée. La dette restante est une
-dette de cascade et de consolidation, mesurée par la baseline versionnée :
+Le Lot 9B ferme le chantier de consolidation CSS avant review finale de branche.
+
+Le monolithe `app/ux-foundations.css` n'est plus propriétaire des règles métier. Il est désormais
+un point d'entrée ordonné qui importe les modules UX suivants :
+
+- `app/styles/ux/portfolio.css` ;
+- `app/styles/ux/discovery.css` ;
+- `app/styles/ux/company.css` ;
+- `app/styles/ux/analysis-reader.css` ;
+- `app/styles/ux/shared-semantics.css` ;
+- `app/styles/ux/documents.css` ;
+- `app/styles/ux/workspaces.css` ;
+- `app/styles/ux/shell.css` ;
+- `app/styles/ux/shared-business.css`.
+
+Le découpage a été réalisé uniquement après nettoyage des anciennes strates de cascade. Il ne sert
+donc pas à masquer le monolithe : les audits canoniques parcourent explicitement les neuf modules
+via `scripts/css-file-manifest.mjs`.
+
+## Résultat du Lot 9B
+
+Baseline de départ :
 
 - 177 sélecteurs exacts répétés ;
 - 0 conflit direct de propriétés ;
 - 134 variantes responsive ;
 - 1 redondance stricte intentionnelle ;
 - 42 extensions additives ;
-- 292 déclarations `!important`.
+- 292 déclarations `!important` ;
+- 0 token répété ou concurrent ;
+- 0 classe orpheline.
 
-Le nettoyage de cascade du Lot 7A a supprimé 14 déclarations `!important` dont le résultat était intégralement supplanté plus loin dans le même contexte CSS, sans modifier le comportement calculé. L'audit canonicalise désormais les paramètres des `@media` avant comparaison : les formes `@media(max-width:760px)` et `@media (max-width: 760px)` ne peuvent plus masquer un conflit. Trois conflits responsive historiques ainsi révélés ont été supprimés au profit du propriétaire `ux-foundations.css`.
+Nouvelle baseline :
 
-La redondance stricte restante est volontaire : le fallback `.ui-surface--glass` est déclaré dans deux contextes indépendants, l'absence de support du blur et `prefers-reduced-transparency`. Elle ne doit pas être supprimée tant que ces deux comportements restent distincts.
+- 174 sélecteurs exacts répétés ;
+- 0 conflit direct de propriétés ;
+- 132 variantes responsive ;
+- 1 redondance stricte intentionnelle ;
+- 41 extensions additives ;
+- 222 déclarations `!important` ;
+- 0 token répété ou concurrent ;
+- 0 classe orpheline.
 
-Cette baseline est un plafond de non-régression, pas un état cible. Les sélecteurs répétés, conflits directs, redondances, déclarations `!important`, tokens concurrents et classes orphelines sont stricts. Les variantes responsive et extensions additives sont revues dans leur contexte : elles ne constituent pas une dette par nature lorsqu’elles expriment un comportement réellement différent et localisé.
+Le Lot 9B a donc retiré 70 déclarations `!important` par rapport à la baseline précédente, réduit
+les variantes et extensions de cascade, et conservé zéro conflit direct.
 
-## Décision du Lot 9 — 21 septembre 2026
+L'audit d'ownership renforcé vérifie en plus les sélecteurs et propriétés au niveau individuel,
+y compris lorsque les sélecteurs sont regroupés différemment dans le CSS. Après consolidation :
 
-Le découpage de `ux-foundations.css` n'est pas retenu. La feuille est chargée globalement par
-`design-system.css` et un split en plusieurs fichiers importés au même endroit ne réduirait ni
-le CSS chargé, ni la cascade, ni le nombre de règles actives. Il ajouterait surtout des frontières
-de fichiers sans nouveau propriétaire fonctionnel. Un découpage ne devra être reconsidéré que si
-une extraction réellement scindée par route/composant permet de réduire les règles chargées et la
-cascade calculée, sans dupliquer les règles partagées.
+- aucune chaîne de propriété `globals.css ↔ UX` ne doit subsister ;
+- aucune chaîne de propriété concurrente entre modules UX ne doit subsister ;
+- aucune chaîne de propriété répétée dans un même module ne doit être acceptée sans justification ;
+- `npm run audit:css` doit rester à 0 sélecteur et 0 règle supprimable.
 
-La passe code mort a été renforcée avant toute suppression :
+La redondance stricte restante est volontaire : le fallback `.ui-surface--glass` existe dans deux
+contextes d'accessibilité distincts et ne doit pas être fusionné tant que ces comportements restent
+indépendants.
 
-- `audit-dead-css.mjs` utilise désormais le registre dynamique canonique
-  `css-audit-registry.mjs` au lieu d'une liste parallèle d'exemptions génériques ;
-- les classes portées par les configurations d'objets React, notamment les colonnes de
-  `DataTable`, sont explicitement détectées ;
-- un candidat `.research-coverage-table .ui-data-table .research-score-cell` a été contrôlé
-  contre `CompanyDetail` et `DataTable` puis conservé : il est réellement consommé ;
-- `npm run audit:css` échoue désormais lorsqu'un sélecteur supprimable est détecté en mode
-  audit ; le mode `--fix` reste volontairement séparé.
+## Règles d'ownership
 
-Aucune règle CSS n'a été supprimée dans ce lot faute de candidat mort prouvé. La baseline CSS
-reste donc inchangée. Le prochain gate est la review fraîche de la branche complète face à
-`main`, sans nouveau refactor CSS préalable sauf régression détectée.
+1. `globals.css` possède les tokens et primitives visuelles partagées.
+2. Les modules `app/styles/ux/*` possèdent composition métier, layout et responsive.
+3. `ux-foundations.css` ne contient que l'ordre d'import des modules UX.
+4. L'ordre d'import ne doit jamais servir à corriger un conflit d'ownership.
+5. Un même sélecteur peut exister dans plusieurs contextes seulement lorsque le contexte exprime
+   un vrai comportement responsive/state/accessibility et qu'aucune propriété concurrente ne se
+   repose sur la cascade pour obtenir le rendu final.
+6. Une primitive partagée est réutilisée avant toute règle visuelle locale équivalente.
+7. La baseline est un plafond de non-régression, jamais une cible à relever.
 
-## Périmètre recommandé
+## Garde-fous automatiques
 
-Durée estimée : 4 à 6 jours de développement, puis 0,5 à 1 jour de recette
-visuelle mobile et desktop.
+- `npm run audit:css:governance` : tokens, répétitions, conflits, responsive, `!important`,
+  classes orphelines et baseline.
+- `npm run audit:css:ownership` : collisions de propriétés entre owners et modules.
+- `npm run audit:css` : sélecteurs/règles supprimables avec registre dynamique canonique.
+- `npm test` : contrats fonctionnels et CSS.
+- `npm run build-storybook` + captures 390 px / 1440 px : validation visuelle de référence.
 
-1. Conserver zéro conflit direct entre `globals.css` et `ux-foundations.css` ; toute nouvelle composition métier reste dans `ux-foundations.css`.
-2. Réduire progressivement les `!important` seulement après suppression de leur règle concurrente ; la redondance `ui-surface--glass` est explicitement conservée.
-3. Revoir les variantes responsive par composant : conserver celles qui expriment un vrai changement de composition et supprimer uniquement les doublons de cascade.
-4. Ne découper `ux-foundations.css` que si le découpage réduit réellement la cascade ; ne pas créer de fichier pour un seul consommateur.
-5. Passer à la validation Lovable puis à la recette finale application + Storybook avant toute fusion vers `main` ou publication Sites.
+## Prochain lot — Lot 10
 
-## Garde-fous
+Le Lot 10 n'est pas un nouveau refactor CSS par défaut. C'est une review fraîche de toute la branche
+`refactor/css-foundation-cleanup` face à `main`.
 
-- Traiter un domaine à la fois avec un diff réversible.
-- Ne jamais supprimer un sélecteur à partir du seul audit statique : vérifier les
-  consommateurs React et le registre des classes dynamiques.
-- Exécuter après chaque lot `npm run audit:css:governance`, les tests applicatifs et
-  les stories des écrans concernés.
-- Vérifier les références mobile 390 px et desktop 1440 px avant de diminuer la
-  baseline.
-- Une valeur de baseline ne baisse qu'après suppression effective du code ; elle ne
-  doit jamais être modifiée pour masquer une régression.
+La review doit couvrir :
 
-## Critères de sortie
+1. architecture CSS et respect des owners ;
+2. composants React modifiés et absence de compatibilité inutile ;
+3. chemins Notion / client resource et absence de régression fonctionnelle ;
+4. Storybook, fixtures et couverture visuelle ;
+5. tests, audits et workflow CI ;
+6. secrets, données personnelles et exposition accidentelle du portefeuille ;
+7. code mort ou fichiers devenus inutiles ;
+8. diff global face à `main`.
 
-- zéro nouveau token concurrent ou classe orpheline ;
-- aucun conflit direct non documenté sur les primitives partagées ;
-- réduction mesurable des sélecteurs répétés et des `!important` ;
-- rendu Storybook et application inchangé sur les écrans de référence ;
-- documentation et baseline mises à jour dans le même commit que chaque réduction.
+Le résultat du Lot 10 est obligatoirement l'un des deux verdicts suivants :
+
+- `MERGE` ;
+- `CHANGES REQUIRED`.
+
+Aucun merge vers `main` ni aucune publication Sites ne fait partie automatiquement du Lot 10.
+Ils nécessitent une validation utilisateur explicite après le verdict.

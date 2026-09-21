@@ -11,7 +11,8 @@ Le design system est la source commune de l’application, de Storybook et des v
 | Entrée CSS publique commune à la production et Storybook | [`app/design-system.css`](../app/design-system.css) |
 | Primitives React partagées | [`app/components/ui-primitives.tsx`](../app/components/ui-primitives.tsx) |
 | Contrats visuels des primitives, surfaces et tokens globaux | [`app/globals.css`](../app/globals.css) |
-| Layouts métier, composition responsive et compatibilité historique | [`app/ux-foundations.css`](../app/ux-foundations.css) |
+| Ordre public des modules UX | [`app/ux-foundations.css`](../app/ux-foundations.css) |
+| Layouts métier et composition responsive | [`app/styles/ux/`](../app/styles/ux/) |
 | Références exécutables et données d’état | [`stories/`](../stories/) |
 
 Les valeurs ne doivent pas être recopiées dans cette documentation. En cas de divergence, les primitives de production et leurs stories font foi.
@@ -20,7 +21,7 @@ Les valeurs ne doivent pas être recopiées dans cette documentation. En cas de 
 
 `app/design-system.css` est l’unique entrée CSS publique. `app/layout.tsx` et `.storybook/preview.ts` l’importent directement, dans cet ordre immuable : Tailwind, fondations UX, puis globals canoniques. `stories/storybook.css` reste une feuille de contexte Storybook, pas une seconde entrée du design system.
 
-`app/globals.css` est l’unique propriétaire des tokens canoniques et des alias historiques encore consommés. `ux-foundations.css` porte les règles de composition et de responsive sans redéfinir de bloc `:root`. Les contextes d’accessibilité et de responsive utilisent les propriétés canoniques et leurs tokens existants, sans créer de token concurrent.
+`app/globals.css` est l’unique propriétaire des tokens canoniques et des primitives visuelles partagées. `ux-foundations.css` est uniquement l’agrégateur ordonné des modules `app/styles/ux/*`. Ces modules portent la composition métier et le responsive sans redéfinir de bloc `:root`. `scripts/css-file-manifest.mjs` est la liste canonique utilisée par les audits afin qu’un découpage de fichier ne puisse jamais masquer la dette de cascade.
 
 ## Contrat de surface
 
@@ -52,41 +53,46 @@ La page Lovable de référence est un banc de comparaison mobile. Elle peut mont
 5. Une story utilise le composant de production et évite toute dépendance réseau.
 6. Une migration n’est terminée que lorsque les anciens overrides ne sont plus référencés et peuvent être supprimés sans régression.
 7. Toute passe UI doit réduire ou stabiliser les sélecteurs répétés, les conflits directs, les redondances, les déclarations `!important`, les tokens concurrents et les classes orphelines. Les variantes responsive et les extensions additives sont des métriques de revue, pas des erreurs par nature : elles peuvent augmenter ponctuellement uniquement si elles sont locales, intentionnelles et justifiées par un vrai contexte responsive, state ou accessibility, avec baisse de la complexité globale.
-8. Pour le Portfolio, `ux-foundations.css` est propriétaire de la composition desktop/mobile des positions, de l’exposition et de Trajectoire. `globals.css` ne doit plus contenir d’ancienne grille Portfolio ou de mécanique de cible concurrente ; les surfaces Apple Light / Liquid Glass restent fournies par les primitives partagées.
-9. Pour le Shell, `GlassChrome` porte le matériau Liquid Glass de la sidebar et de la navigation mobile. `ux-foundations.css` porte uniquement leur géométrie et la composition du branding, du header, du menu compte et de la bannière PWA ; `globals.css` ne redéfinit pas ces éléments métier.
-10. Pour les lecteurs Analyse / Memo, `globals.css` conserve uniquement les primitives documentaires génériques (`notion-page`, `DisclosureSurface`, surfaces). `ux-foundations.css` est l’unique propriétaire de la composition du Reader : hero, largeur de lecture, TL;DR, sections, Decision Card, source disclosure et adaptations mobile.
-11. Pour la Recherche documentaire, `SearchField` et les classes `ui-search-*` restent des primitives dans `globals.css`. `ux-foundations.css` est l’unique propriétaire du workspace, des filtres, résultats, états vide/sans résultat et adaptations mobile. L’ancienne classe `research-hero` ne fait plus partie du contrat de production.
-12. L’ordre d’import reste `ux-foundations.css` puis `globals.css`. Cet ordre ne doit pas servir de mécanisme de résolution des conflits : `ux-foundations.css` possède la composition métier/responsive, `globals.css` possède les tokens et primitives partagées. Un sélecteur métier ne doit pas dépendre d’un override de primitive chargé après lui.
-13. Pour Radar et Companies, `ux-foundations.css` porte la composition des listes, résumés, références d’analyse et variantes responsive. `DiscoveryCard` reste propriétaire du shell visuel Apple Light / Liquid Glass ; les cinq références Company restent des surfaces secondaires et ne sont jamais dupliquées dans `globals.css`.
+8. Pour le Portfolio, les modules UX sont propriétaires de la composition desktop/mobile des positions, de l’exposition et de Trajectoire. `globals.css` ne doit plus contenir d’ancienne grille Portfolio ou de mécanique de cible concurrente ; les surfaces Apple Light / Liquid Glass restent fournies par les primitives partagées.
+9. Pour le Shell, `GlassChrome` porte le matériau Liquid Glass de la sidebar et de la navigation mobile. les modules UX portent uniquement leur géométrie et la composition du branding, du header, du menu compte et de la bannière PWA ; `globals.css` ne redéfinit pas ces éléments métier.
+10. Pour les lecteurs Analyse / Memo, `globals.css` conserve uniquement les primitives documentaires génériques (`notion-page`, `DisclosureSurface`, surfaces). les modules UX sont les propriétaires de la composition du Reader : hero, largeur de lecture, TL;DR, sections, Decision Card, source disclosure et adaptations mobile.
+11. Pour la Recherche documentaire, `SearchField` et les classes `ui-search-*` restent des primitives dans `globals.css`. les modules UX sont les propriétaires du workspace, des filtres, résultats, états vide/sans résultat et adaptations mobile. L’ancienne classe `research-hero` ne fait plus partie du contrat de production.
+12. L’ordre public reste `ux-foundations.css` puis `globals.css`. `ux-foundations.css` importe les modules UX dans l’ordre canonique documenté par `scripts/css-file-manifest.mjs`. Cet ordre ne doit pas servir de mécanisme de résolution des conflits : les modules UX possèdent la composition métier/responsive et `globals.css` les tokens/primitives. L’audit d’ownership doit rester à zéro chaîne de propriété `globals ↔ UX` et zéro chaîne concurrente entre modules.
+13. Pour Radar et Companies, les modules UX portent la composition des listes, résumés, références d’analyse et variantes responsive. `DiscoveryCard` reste propriétaire du shell visuel Apple Light / Liquid Glass ; les cinq références Company restent des surfaces secondaires et ne sont jamais dupliquées dans `globals.css`.
 
 ## Gouvernance CSS et baseline de migration
 
-La dette CSS existante est mesurée par [`scripts/audit-css-governance.mjs`](../scripts/audit-css-governance.mjs). L’audit couvre les trois feuilles actuellement chargées ou référencées par le système :
+La dette CSS est mesurée par `scripts/audit-css-governance.mjs`. Son périmètre est défini par
+`scripts/css-file-manifest.mjs` et couvre les neuf modules UX, `app/globals.css` et
+`stories/storybook.css`. Le fichier agrégateur `ux-foundations.css` n'est volontairement pas
+compté comme une seconde source de règles.
 
-- `app/globals.css` ;
-- `app/ux-foundations.css` ;
-- `stories/storybook.css`.
+Après le Lot 9B, la baseline versionnée est :
 
-Il distingue les sélecteurs exacts répétés, les conflits de propriétés dans un même contexte d’at-rule, les variantes responsive, les propriétés strictement redondantes, les extensions additives, les tokens répétés avec leurs valeurs, et les classes sans consommateur démontré.
+- 174 sélecteurs exacts répétés ;
+- 0 conflit direct ;
+- 132 variantes responsive ;
+- 1 redondance stricte intentionnelle ;
+- 41 extensions additives ;
+- 0 token répété ou concurrent ;
+- 222 déclarations `!important` ;
+- 317 classes définies ;
+- 0 classe orpheline.
 
-La baseline versionnée est [`scripts/css-audit-baseline.json`](../scripts/css-audit-baseline.json). Après la normalisation des contextes responsive du Lot 7A, l’état courant documenté est : 177 sélecteurs répétés, 0 conflit direct, 134 variantes responsive, 1 redondance stricte intentionnelle et 42 extensions additives ; 0 token répété et 0 valeur concurrente ; 292 déclarations `!important` ; 317 classes définies et 0 classe orpheline. La redondance restante correspond au fallback `ui-surface--glass`, volontairement présent dans deux contextes d’accessibilité indépendants. L’audit canonicalise les paramètres des at-rules avant classification afin que des écritures équivalentes d’un même breakpoint ne créent plus de faux contextes distincts. Les trois conflits responsive historiques révélés par cette correction ont été supprimés dans `globals.css`, avec conservation du comportement actif dans `ux-foundations.css`. Les variations de catégories responsive/additives proviennent de cette reclassification et de la suppression de déclarations mortes.
+`audit-css-ownership.mjs` complète la gouvernance en analysant les sélecteurs individuels même
+lorsqu'ils appartiennent à des groupes CSS différents. Le contrat de sortie du Lot 9B est zéro
+chaîne de propriété entre `globals.css` et les modules UX, zéro chaîne concurrente entre modules
+UX, et zéro chaîne répétée intra-module non justifiée.
 
-Le prochain chantier de réduction, son séquencement et ses critères de sortie sont
-documentés dans [`docs/css-debt-roadmap.md`](./css-debt-roadmap.md).
-
-La commande de gouvernance échoue avec un code non nul lorsqu’une métrique stricte régresse. Les variantes responsive, extensions additives et le nombre de classes définies sont signalés pour revue sans faire échouer seuls la commande :
+Les seuils ne doivent jamais être relevés pour masquer une dette. Une baisse est figée uniquement
+après suppression effective de code/cascade et validation du gate complet.
 
 ```bash
 npm run audit:css:governance
+npm run audit:css:ownership
+npm run audit:css
+npm run test
 ```
-
-Pour obtenir la preuve machine stable, notamment pour une CI ou un archivage de diagnostic :
-
-```bash
-npm run audit:css:governance:json
-```
-
-`npm run audit:css` reste l’audit historique des sélecteurs supprimables ; il n’est pas remplacé par l’audit de gouvernance. Depuis le Lot 9, il s’appuie sur le même registre dynamique canonique et retourne un code non nul lorsqu’un sélecteur supprimable est détecté en mode audit. Les deux commandes doivent rester vertes pendant la migration.
 
 ### Registre des classes dynamiques
 
