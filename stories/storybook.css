@@ -68,3 +68,11 @@
     grid-template-columns: 1fr;
   }
 }
+
+.storybook-mobile-review-frame {
+  width: min(390px, 100%);
+  overflow-x: auto;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-bg);
+}

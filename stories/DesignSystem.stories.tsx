@@ -1,5 +1,8 @@
 import { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import { NotionAnalyses } from "../app/components/notion-analyses";
+import { NotionCompanies } from "../app/components/notion-companies";
+import { NotionWatchlist } from "../app/components/notion-watchlist";
 import {
   ActionButton,
   AsyncState,
@@ -22,6 +25,8 @@ import {
   Surface,
   Tabs,
 } from "../app/components/ui-primitives";
+import { analysesData, company, watchlist } from "./reference-fixtures";
+import { frame } from "./reference-frame";
 
 const meta = {
   title: "Design System",
@@ -112,3 +117,42 @@ export const Overview: Story = {
   },
 };
 
+
+export const ProductionVisualReview: Story = {
+  parameters: {
+    viewport: { defaultViewport: "desktop" },
+    docs: {
+      description: {
+        story: "Canonical mobile review board. Every panel mounts a production screen at 390px with synthetic fixtures; no visual markup is duplicated in Storybook.",
+      },
+    },
+  },
+  render: () => (
+    <div className="storybook-stack storybook-reference-page">
+      <SectionHeader
+        heading="h1"
+        eyebrow="Investment OS"
+        title="Production visual review"
+        description="390px production screens used for visual comparison with the Lovable reference. The rendered components, not this Storybook wrapper, own the visual contract."
+      />
+      <section className="storybook-reference-section" aria-labelledby="review-companies">
+        <h2 id="review-companies">Companies · production · 390px</h2>
+        <div className="storybook-mobile-review-frame">
+          {frame(<NotionCompanies initialData={{ companies: [company] }} openCompany={() => undefined} />)}
+        </div>
+      </section>
+      <section className="storybook-reference-section" aria-labelledby="review-radar">
+        <h2 id="review-radar">Radar · production · 390px</h2>
+        <div className="storybook-mobile-review-frame">
+          {frame(<NotionWatchlist initialData={watchlist} openCompany={() => undefined} />)}
+        </div>
+      </section>
+      <section className="storybook-reference-section" aria-labelledby="review-analyses">
+        <h2 id="review-analyses">Analyses · production · 390px</h2>
+        <div className="storybook-mobile-review-frame">
+          {frame(<NotionAnalyses initialData={analysesData} />)}
+        </div>
+      </section>
+    </div>
+  ),
+};

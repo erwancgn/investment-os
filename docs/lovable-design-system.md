@@ -36,13 +36,20 @@ exécutable.
 ## Référence Lovable vérifiée
 
 La référence active est le projet `Compact Controls Test`, identifié par
-`52184df3-fbae-4c28-898f-d379409b03bd`, vérifié après synchronisation visuelle sur le
-commit Lovable final `852fd99aae56a16aeaa47163aca3b426d8784b1d`.
+`52184df3-fbae-4c28-898f-d379409b03bd`. Le connecteur Lovable expose actuellement le
+commit `75074e4d9b984ae9a72ee0dcc1cf7f6b990b1912`, qui remplace la référence précédemment
+documentée `852fd99aae56a16aeaa47163aca3b426d8784b1d`.
 
-- État vérifié : commit final disponible et utilisé comme référence visuelle active.
-- La vérification couvre les primitives, la police, les couleurs, les surfaces, les rayons,
-  les ombres et les contrôles décrits dans le contrat ci-dessus.
-- Le lot 7 synchronise Lovable via son connecteur, puis référence ici le commit vérifié.
+- Le dernier changement Lovable étend explicitement la cible tactile des contrôles compacts
+  et des actions de Discovery Card, et autorise le titre de carte sur deux lignes.
+- Les tokens de couleur et la pile de police visibles restent alignés avec les tokens
+  canoniques de production.
+- Deux écarts visuels restent à arbitrer avant synchronisation finale : le padding de
+  Discovery Card (production 16 px, référence Lovable 14 px) et la taille du titre
+  Company/Analysis/Watchlist (production `--font-lg`, soit 20 px dans la baseline actuelle,
+  référence Lovable 15 px).
+- Aucun de ces deux écarts ne doit être corrigé par un override local : l'arbitrage doit
+  modifier le contrat canonique ou la référence Lovable, puis être vérifié dans Storybook.
 
 La source Lovable expose notamment `src/components/CompactControl.tsx`,
 `src/components/CompanyDiscoveryCard.tsx` et `src/routes/index.tsx`. Le projet
@@ -71,9 +78,9 @@ apparaît donc trois fois pour documenter explicitement ses variantes `company`,
 | Filter container | `FilterBar` | `.ui-filter-bar` | `Controls`, `Design System/Overview`, screen stories / labelled group |
 | Tabs | `Tabs` | `.ui-tabs` | `Controls`, Company / active, arrow navigation, Home/End |
 | KPI card | `StatCard` | `.ui-stat-card` | `Data display`, `Design System/Overview`, Analyses / normal, long value |
-| Company discovery card | `DiscoveryCard` | `.ui-discovery-card--company` | Companies, `Design System/Overview` / normal, long, empty |
-| Radar discovery card | `DiscoveryCard` | `.ui-discovery-card--watchlist` | Radar, `Design System/Overview` / decision, themes, thesis |
-| Analysis discovery card | `DiscoveryCard` | `.ui-discovery-card--analysis` | Analyses, `Design System/Overview` / current, long, empty |
+| Company discovery card | `DiscoveryCard` | `.ui-discovery-card--company` | Companies, `Design System/Overview`, `Design System/ProductionVisualReview` / normal, long, empty |
+| Radar discovery card | `DiscoveryCard` | `.ui-discovery-card--watchlist` | Radar, `Design System/Overview`, `Design System/ProductionVisualReview` / decision, themes, thesis |
+| Analysis discovery card | `DiscoveryCard` | `.ui-discovery-card--analysis` | Analyses, `Design System/Overview`, `Design System/ProductionVisualReview` / current, long, empty |
 | Async state | `AsyncState` | `.ui-async-state` | `Badges / States`, screen state stories / empty, loading, error |
 | Primary block | `PrimaryBlock` | `.ui-surface--primary` | Surfaces, `Design System/Overview`, screen stories / semantic wrapper |
 | Secondary block | `SecondaryBlock` | `.ui-surface--secondary` | Surfaces, `Design System/Overview`, Reader / nested content |
