@@ -138,13 +138,14 @@ p, li, dd { text-wrap: pretty; }
 /* Shared interaction and accessibility contract formerly isolated in the
    iPhone compatibility layer. */
 [hidden] { display: none !important; }
-button, a, input, select { touch-action: manipulation; }
+button, a, input, select, summary { touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
 button { transition: background-color 120ms ease, opacity 120ms ease; }
 button:active { opacity: .65; }
 button:focus-visible,
 a:focus-visible,
 input:focus-visible,
-select:focus-visible {
+select:focus-visible,
+summary:focus-visible {
   outline: 3px solid var(--color-accent);
   outline-offset: 3px;
 }
@@ -180,6 +181,10 @@ input, select { font-size: 16px; }
 .ui-badge {
   display: inline-flex;
   align-items: center;
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
   min-height: 24px;
   padding: 3px 10px;
   border: 1px solid var(--surface-stroke);
