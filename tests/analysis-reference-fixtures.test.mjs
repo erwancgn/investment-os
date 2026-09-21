@@ -121,7 +121,7 @@ test("browser Notion surfaces are read-only and preserve live view refreshes", a
   const pageSource = await readFile(pageUrl, "utf8");
   const clientSource = await readFile(new URL("../app/lib/notion-sync-client.ts", import.meta.url), "utf8");
   assert.match(workerSource, /authorizeNotionMutation/);
-  assert.match(backgroundSource, /readBrowserNotionStatus/);
+  assert.doesNotMatch(backgroundSource, /readBrowserNotionStatus/);
   assert.match(pageSource, /useResourceLifecycle/);
   assert.match(await readFile(new URL("../app/lib/client-resource.ts", import.meta.url), "utf8"), /notion-sync-complete/);
   assert.match(clientSource, /\/api\/notion\/status/);
@@ -132,6 +132,8 @@ test("browser Notion surfaces are read-only and preserve live view refreshes", a
   assert.doesNotMatch(backgroundSource, /pageshow|visibilitychange|online/);
   assert.match(workerSource, /cache-control.*no-store/);
   const resourceSource = await readFile(new URL("../app/lib/client-resource.ts", import.meta.url), "utf8");
+  assert.match(resourceSource, /readBrowserNotionStatus/);
+  assert.match(resourceSource, /window\.dispatchEvent\(new Event\("notion-sync-complete"\)\)/);
   assert.match(resourceSource, /let scheduled/);
   assert.match(resourceSource, /}, 250\)/);
 });
@@ -557,7 +559,7 @@ test("Apple Light theme covers shared surfaces and aligns financial figures", as
   const uxSource = await readFile(uxUrl, "utf8");
   const globalsSource = await readFile(globalsUrl, "utf8");
   assert.match(uxSource, /\.ui-metadata-item/);
-  assert.match(globalsSource, /\.decision-template \{/);
+  assert.match(uxSource, /\.decision-template \{/);
   assert.match(globalsSource, /--surface-secondary: var\(--contrast-surface-secondary, rgba\(242, 242, 247, \.92\)\)/);
   assert.match(uxSource, /font-variant-numeric: tabular-nums lining-nums/);
   assert.match(uxSource, /grid-template-columns:\s*minmax\(210px, 1fr\)\s*minmax\(\s*88px,\s*0?\.45fr\s*\)\s*66px\s*84px\s*84px\s*82px/);
@@ -689,7 +691,7 @@ test("analysis and company details share the same nested liquid-glass primitives
   assert.doesNotMatch(readerSource, /className="back-button"/);
   assert.match(companySource, /<BackButton onBack=\{close\} ariaLabel="Retour à la vue précédente" \/>/);
   assert.doesNotMatch(companySource, /className="back-button"/);
-  assert.match(uxSource, /\.ui-back-button \{/);
+  assert.match(globalsSource, /\.ui-back-button \{/);
   assert.match(uxSource, /prefers-reduced-transparency: reduce/);
   assert.match(readerSource, /<SecondaryBlock className="analysis-lead"/);
   assert.match(readerSource, /<AnalysisFactGrid\s+ariaLabel="Repères du document"/);
@@ -710,10 +712,9 @@ test("analysis and company details share the same nested liquid-glass primitives
 });
 
 test("analysis section headings stay contained in their shared surface", async () => {
-  const globalsSource = await readFile(globalsUrl, "utf8");
-  assert.match(globalsSource, /Keep every Notion section heading inside its shared analysis surface/);
-  assert.match(globalsSource, /\.universal-analysis-page \.analysis-section \{[\s\S]*box-sizing: border-box;[\s\S]*width: 100%;[\s\S]*overflow: hidden;/);
-  assert.match(globalsSource, /\.universal-analysis-page \.analysis-section > h2,[\s\S]*overflow-wrap: anywhere !important;/);
+  const uxSource = await readFile(uxUrl, "utf8");
+  assert.match(uxSource, /\.notion-page\.universal-analysis-page \.analysis-section \{[\s\S]*box-sizing: border-box;[\s\S]*width: 100%;[\s\S]*overflow: hidden;/);
+  assert.match(uxSource, /\.notion-page\.universal-analysis-page \.analysis-section > h2,[\s\S]*overflow-wrap: anywhere;/);
 });
 
 test("active discovery actions no longer depend on legacy button classes", async () => {
