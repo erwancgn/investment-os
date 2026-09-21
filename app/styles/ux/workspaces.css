@@ -1,0 +1,583 @@
+/* Earnings, search, CIO memo, exposure and adjacent work surfaces. */
+/* Earnings — latest quarter and cross-module refresh routing. */
+.earnings-review-card {
+  display: grid;
+  gap: var(--space-5);
+  padding: var(--space-6);
+  overflow: hidden;
+}
+
+.earnings-review-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.earnings-review-heading .eyebrow,
+.earnings-routing-title .eyebrow {
+  margin: 0 0 7px;
+}
+
+.earnings-review-heading h2,
+.earnings-routing-title h3 {
+  margin: 0;
+  color: var(--color-text);
+}
+
+.earnings-review-heading h2 {
+  font-size: var(--font-xl);
+  line-height: 1.15;
+}
+
+.earnings-review-heading > div > span {
+  display: block;
+  margin-top: 7px;
+  color: var(--color-text-muted);
+  font-size: var(--font-xs);
+}
+
+.earnings-review-metadata {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin: 0;
+}
+
+.earnings-routing {
+  display: grid;
+  gap: var(--space-3);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--color-border);
+}
+
+.earnings-routing-title h3 {
+  font-size: var(--font-lg);
+}
+
+.earnings-routing-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: var(--space-2);
+}
+
+.earnings-routing-item {
+  display: flex;
+  min-width: 0;
+  min-height: 82px;
+  padding: 13px;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.earnings-routing-item > span {
+  color: var(--color-text-secondary);
+  font-size: var(--font-sm);
+  font-weight: 650;
+}
+
+.earnings-routing-item .ui-badge {
+  max-width: 100%;
+}
+
+@media (max-width: 900px) {
+  .earnings-review-metadata {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .earnings-routing-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .earnings-routing-item:last-child {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 760px) {
+  .earnings-review-card {
+    gap: var(--space-4);
+    padding: var(--space-4);
+  }
+  .earnings-review-heading {
+    flex-direction: column;
+  }
+  .earnings-review-heading h2 {
+    font-size: var(--font-lg);
+  }
+  .earnings-review-metadata {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .earnings-routing-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .earnings-routing-item,
+  .earnings-routing-item:last-child {
+    grid-column: auto;
+    min-height: 0;
+    flex-direction: row;
+    align-items: center;
+  }
+
+  /* Two-column Earnings tables prioritize the result instead of overflowing. */
+  .universal-analysis-reader[data-analysis-template="earnings"] .notion-table-two-column {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    table-layout: fixed !important;
+  }
+  .universal-analysis-reader[data-analysis-template="earnings"] .notion-table-two-column th:first-child,
+  .universal-analysis-reader[data-analysis-template="earnings"] .notion-table-two-column td:first-child {
+    width: 32% !important;
+    min-width: 0 !important;
+  }
+  .universal-analysis-reader[data-analysis-template="earnings"] .notion-table-two-column th:last-child,
+  .universal-analysis-reader[data-analysis-template="earnings"] .notion-table-two-column td:last-child {
+    width: 68% !important;
+    min-width: 0 !important;
+  }
+  .universal-analysis-reader[data-analysis-template="earnings"] .notion-table-two-column th,
+  .universal-analysis-reader[data-analysis-template="earnings"] .notion-table-two-column td {
+    padding: 11px 10px !important;
+    overflow-wrap: anywhere;
+  }
+}
+
+/* Global documentary search — a dense working surface, not an editorial hero. */
+.text-orb {
+  display: grid;
+  place-items: center;
+  color: #67e8f9;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: .12em;
+}
+
+.research-search-workspace {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+  gap: var(--space-4);
+  align-items: stretch !important;
+  text-align: left !important;
+  padding: var(--space-5) !important;
+  margin-bottom: var(--space-4);
+}
+
+.research-search-heading {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.research-search-heading .ai-orb {
+  width: 44px;
+  height: 44px;
+  flex: 0 0 44px;
+  margin: 0;
+}
+
+.research-search-heading h2 {
+  margin: 20px 0 9px;
+  color: var(--color-text);
+  font-size: 24px;
+}
+
+.research-search-heading p {
+  margin: 0;
+  color: var(--color-text-secondary);
+  font-size: var(--font-sm);
+  line-height: 1.5;
+}
+
+.research-search-workspace .global-search-field {
+  margin: 0;
+}
+.research-search-workspace .ui-search-field {
+  background: var(--glass-inset) !important;
+  border-color: rgba(0, 122, 255, 0.24) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.78),
+    0 0 0 3px rgba(0, 122, 255, 0.05) !important;
+}
+.global-search-filters {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.global-search-filters > label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--color-text-muted);
+  font-size: var(--font-xs);
+}
+
+.global-search-filters select {
+  min-height: var(--ui-control-hit-height);
+  padding: 0 34px 0 12px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--glass-inset);
+  color: var(--color-text);
+  font: inherit;
+}
+
+.search-empty-state,
+.empty-result {
+  max-width: 900px;
+  margin: 0 auto var(--space-5);
+}
+.search-empty-state {
+  padding: var(--space-5);
+}
+.empty-result {
+  padding: 24px;
+}
+.search-empty-state p {
+  color: var(--color-text-secondary);
+}
+.empty-result p {
+  margin-top: 8px;
+  color: var(--color-text-muted);
+}
+.search-empty-state > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: var(--space-3);
+}
+.search-empty-state button {
+  min-height: var(--ui-control-hit-height);
+  padding: 0 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  background: var(--glass-blue);
+  color: var(--color-accent);
+  cursor: pointer;
+}
+
+.search-results {
+  max-width: 900px;
+  display: grid;
+  gap: 12px;
+  margin: 22px auto 96px;
+}
+.search-result {
+  width: 100%;
+  display: grid;
+  gap: 11px;
+  padding: 20px;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.search-result > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  color: var(--color-text-muted);
+  font-size: 12px;
+}
+.search-result h3 {
+  font-size: 18px;
+}
+.search-result p {
+  color: var(--color-text-muted);
+  line-height: 1.65;
+}
+.search-result > strong {
+  color: #67e8f9;
+  font-size: 13px;
+}
+
+.search-results-header {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: 0 2px var(--space-2);
+}
+
+.search-results-header h2 {
+  margin: 0 0 3px;
+  font-size: var(--font-lg);
+}
+.search-results-header p,
+.search-results-header small {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: var(--font-xs);
+}
+.search-result-signals {
+  flex-wrap: wrap;
+  justify-content: flex-start !important;
+}
+.search-result-signals > span:last-child {
+  margin-left: auto;
+}
+.search-result-excerpt {
+  color: var(--color-content-copy) !important;
+}
+.search-result mark {
+  padding: 0 0.12em;
+  border-radius: 3px;
+  background: rgba(255, 204, 0, 0.3);
+  color: inherit;
+}
+
+.search-load-more {
+  display: flex;
+  justify-content: center;
+  padding: var(--space-3) 0;
+}
+
+@media (max-width: 760px) {
+  .search-results {
+    margin-top: 14px;
+  }
+  .search-result {
+    padding: 16px;
+  }
+  .research-search-workspace {
+    padding: 16px !important;
+  }
+  .research-search-heading {
+    align-items: flex-start;
+  }
+  .research-search-heading h2 {
+    font-size: 21px;
+  }
+  .research-search-heading .ai-orb {
+    width: 38px;
+    height: 38px;
+    flex-basis: 38px;
+  }
+  .global-search-filters {
+    align-items: stretch;
+    flex-direction: column;
+  }
+  .global-search-filters .ui-tabs {
+    width: 100%;
+  }
+  .global-search-filters .ui-tabs button {
+    flex: 1;
+  }
+  .global-search-filters > label {
+    justify-content: space-between;
+  }
+  .global-search-filters select {
+    flex: 1;
+    max-width: 220px;
+  }
+  .search-results-header {
+    align-items: flex-start;
+  }
+  .search-result-signals > span:last-child {
+    width: 100%;
+    margin-left: 0;
+  }
+}
+
+.detail-navigation {
+  position: sticky;
+  top: max(12px, calc(env(safe-area-inset-top) + 12px));
+  z-index: 30;
+  width: max-content;
+}
+
+/* CIO memo: decision first, source document second. Historical Memo scores are
+   deliberately never used as a visual signal. */
+.investment-memo-reader .memo-hero {
+  border-color: color-mix(
+    in srgb,
+    var(--color-accent) 32%,
+    var(--color-border)
+  );
+}
+.investment-memo-reader .memo-hero .report-verdict span {
+  color: var(--color-text-muted);
+  font-size: 12px;
+  font-weight: 500;
+}
+.memo-page {
+  display: flex;
+  flex-direction: column;
+}
+.memo-tldr {
+  order: 1;
+}
+.memo-decision-card {
+  order: 2;
+  margin: 0 0 var(--space-4);
+  padding: var(--space-5);
+  border: 1px solid
+    color-mix(in srgb, var(--color-accent) 32%, var(--color-border));
+  border-radius: var(--radius-lg);
+  background: linear-gradient(
+    145deg,
+    color-mix(in srgb, var(--color-accent) 7%, var(--glass-inset)),
+    var(--glass-inset)
+  );
+}
+.memo-section-title {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin-bottom: var(--space-4);
+}
+.memo-section-title h2 {
+  margin: 4px 0 0;
+  font-size: 20px;
+}
+.memo-section-title .eyebrow {
+  margin: 0;
+}
+.memo-decision-card .ui-metadata-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.memo-reasoning {
+  order: 3;
+  margin: 0 0 var(--space-4);
+  padding: 18px;
+  border-left: 3px solid var(--color-accent) !important;
+}
+.memo-reasoning small {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--color-accent);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.memo-reasoning p {
+  margin: 0;
+  color: var(--color-content-copy);
+  line-height: 1.65;
+}
+.memo-modules {
+  order: 4;
+}
+.memo-quick-nav {
+  order: 5;
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  margin: 0 0 var(--space-4);
+  padding-bottom: 4px;
+  scrollbar-width: thin;
+}
+.memo-quick-nav a {
+  flex: 0 0 auto;
+  padding: 7px 10px;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  color: var(--color-text-secondary);
+  font-size: 11px;
+  text-decoration: none;
+}
+.memo-page
+  > :not(.memo-tldr):not(.memo-decision-card):not(.memo-reasoning):not(
+    .memo-modules
+  ):not(.memo-quick-nav) {
+  order: 6;
+}
+.memo-traceability {
+  margin-top: var(--space-6);
+}
+
+@media (max-width: 760px) {
+  .memo-decision-card {
+    padding: 16px 14px;
+  }
+  .memo-section-title {
+    flex-direction: column;
+  }
+  .memo-decision-card .ui-metadata-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* Exposure dimension is independent from the sector detail toggle. */
+.sector-panel-controls {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+/* Exposure header: keep the dimension selector beside the single label. */
+.exposure-panel-heading {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+.exposure-panel-heading > .eyebrow {
+  flex: 0 0 auto;
+  margin: 0;
+}
+.exposure-panel-heading .sector-panel-controls {
+  display: flex;
+  align-items: center;
+  flex: 1 1 auto;
+  flex-wrap: wrap;
+  gap: 8px;
+  min-width: 0;
+  max-width: none;
+}
+.exposure-panel-heading .exposure-view-select,
+.exposure-panel-heading .exposure-detail-select {
+  flex: 0 0 auto;
+  width: max-content;
+  min-width: 0;
+}
+.exposure-panel-heading .ui-compact-control {
+  min-width: 0;
+}
+
+/* The diagnostic is a primary portfolio surface, like the other page cards. */
+
+/* Shared loading, error and document-row contracts. */
+.detail-loading {
+  min-height: 55dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 20px;
+}
+.resource-error {
+  color: #9a4615;
+  font-size: 14px;
+}
+/* Company detail and portfolio interaction refinements. */
+.generic-company-detail > .ui-tabs {
+  margin-block: 20px;
+}
+.company-metrics .ui-stat-card > strong {
+  font-size: 1.25rem;
+  line-height: 1.25;
+}
+.company-metrics .ui-stat-card > span,
+.company-metrics .ui-stat-card > small {
+  font-size: .8125rem;
+  line-height: 1.45;
+}
+.company-metrics .ui-stat-card > strong small {
+  font-size: .75rem;
+}
+.company-metrics .company-date > strong {
+  font-size: 1rem;
+  overflow-wrap: normal;
+}
+@media (max-width: 760px) {
+  .generic-company-detail > .ui-tabs {
+    margin-block: 16px;
+  }
+  .company-metrics .company-date > strong {
+    font-size: .9375rem;
+  }
+}

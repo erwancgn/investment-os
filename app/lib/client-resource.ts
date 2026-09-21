@@ -1,6 +1,7 @@
 "use client";
 import { useCallback, useEffect, useSyncExternalStore } from "react";
 import { createResourceCache, emptyResource, type ResourceSnapshot } from "./resource-cache";
+import { readBrowserNotionStatus } from "./notion-sync-client";
 
 const cache = createResourceCache();
 export function preloadResource(url: string) { void cache.read(url); }
@@ -11,6 +12,25 @@ export async function readNotionStatus() {
 export function useResourceLifecycle() {
   useEffect(() => {
     let scheduled: number | undefined;
+    let latestNotionSync: string | null | undefined;
+
+    const checkNotionSync = async () => {
+      try {
+        const status = await readBrowserNotionStatus();
+        const latest = (status.sources ?? [])
+          .map(source => source.last_completed_at)
+          .filter((value): value is string => Boolean(value))
+          .sort()
+          .at(-1) ?? null;
+        if (latestNotionSync !== undefined && latest && (!latestNotionSync || latest > latestNotionSync)) {
+          window.dispatchEvent(new Event("notion-sync-complete"));
+        }
+        latestNotionSync = latest;
+      } catch {
+        // Sync status is informational and must never block resource refreshes.
+      }
+    };
+
     const sync = () => {
       if (scheduled !== undefined) return;
       scheduled = window.setTimeout(() => {
@@ -19,10 +39,15 @@ export function useResourceLifecycle() {
         cache.refreshActive();
       }, 250);
     };
-    const resume = () => { if (document.visibilityState === "visible") cache.refreshActive(); };
+    const resume = () => {
+      if (document.visibilityState !== "visible") return;
+      cache.refreshActive();
+      void checkNotionSync();
+    };
     window.addEventListener("notion-sync-complete", sync);
     window.addEventListener("online", resume);
     document.addEventListener("visibilitychange", resume);
+    void checkNotionSync();
     return () => {
       window.removeEventListener("notion-sync-complete", sync);
       window.removeEventListener("online", resume);

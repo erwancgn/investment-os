@@ -1,0 +1,890 @@
+/* Analysis reader composition and responsive reading layout. */
+/* Analysis reader — one content owner; generic Notion primitives stay in globals.css. */
+.universal-analysis-reader {
+  
+  margin: 0 auto;
+  padding-bottom: 70px;
+}
+.universal-analysis-reader .report-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(210px, auto);
+  align-items: end;
+  gap: 28px;
+  padding: var(--space-6);
+  border-radius: var(--radius-lg);
+}
+.report-kicker {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.universal-analysis-reader .report-hero h1 {
+  max-width: 850px;
+  margin: var(--space-4) 0 var(--space-2);
+  font-size: clamp(24px, 3vw, 34px);
+  line-height: 1.18;
+}
+.universal-analysis-reader .report-hero p {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: 9px;
+}
+.universal-analysis-reader .report-verdict {
+  max-width: 280px;
+  display: flex;
+  flex-direction: column;
+  padding-left: 24px;
+  border-left: 1px solid var(--color-border);
+}
+.universal-analysis-reader .report-verdict small {
+  color: var(--color-text-muted);
+  font-size: 8px;
+}
+.universal-analysis-reader .report-verdict strong {
+  margin: 8px 0;
+  font-size: 13px;
+}
+.universal-analysis-reader .report-verdict span {
+  font-size: 20px;
+  font-weight: 800;
+}
+.notion-layout.universal-analysis-layout {
+  width: 100%;
+  display: block;
+  margin-top: var(--space-4);
+}
+.notion-page.universal-analysis-page {
+  width: 100%;
+  max-width: 900px;
+  min-width: 0;
+  margin: 0 auto;
+  padding: 38px 48px;
+}
+.notion-page.universal-analysis-page .analysis-section {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  display: block;
+  margin: var(--space-6) 0 var(--space-4);
+  padding: var(--space-5) var(--space-6);
+  overflow: hidden;
+  border-top: 1px solid var(--color-border);
+  scroll-margin-top: 18px;
+}
+.notion-page.universal-analysis-page .analysis-section > h2,
+.notion-page.universal-analysis-page .analysis-section > h3,
+.notion-page.universal-analysis-page .analysis-section > h4,
+.notion-page.universal-analysis-page .analysis-section > h5,
+.notion-page.universal-analysis-page .analysis-section > h6 {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  margin: 0;
+  color: var(--color-text);
+  font-size: 21px;
+  line-height: 1.3;
+  letter-spacing: -.2px;
+  overflow-wrap: anywhere;
+  word-break: normal;
+}
+.notion-page.universal-analysis-page > p {
+  max-width: 76ch;
+  margin: 14px 0;
+  font-size: 14px;
+  line-height: 1.72;
+}
+.notion-page.universal-analysis-page > ul,
+.notion-page.universal-analysis-page > ol {
+  max-width: 74ch;
+  margin: 12px 0 20px;
+  padding-left: 26px;
+}
+.notion-page.universal-analysis-page > ul li,
+.notion-page.universal-analysis-page > ol li {
+  margin: 7px 0;
+  font-size: 14px;
+  line-height: 1.65;
+}
+.notion-page.universal-analysis-page > blockquote {
+  max-width: 76ch;
+  margin: 18px 0;
+  padding: 15px 18px;
+  border-left: 2px solid #5d8df0;
+  background: rgba(93, 141, 240, .07);
+  font-size: 14px;
+  line-height: 1.7;
+}
+.notion-page.universal-analysis-page code {
+  padding: 2px 4px;
+  border-radius: 4px;
+  background: rgba(60, 60, 67, .08);
+  color: var(--color-accent-strong);
+  font-size: .9em;
+}
+.notion-page.universal-analysis-page a {
+  color: var(--color-accent);
+  text-decoration-color: color-mix(in srgb, var(--color-accent) 45%, transparent);
+  text-underline-offset: 2px;
+}
+.notion-page.universal-analysis-page hr {
+  margin: 22px 0;
+  border: 0;
+  border-top: 1px solid var(--color-border);
+}
+.notion-page.universal-analysis-page .notion-callout {
+  max-width: 76ch;
+  grid-template-columns: 25px minmax(0, 1fr);
+  align-items: start;
+  gap: 10px;
+  margin: 18px 0;
+  padding: 16px 18px;
+}
+.notion-page.universal-analysis-page .notion-callout > span {
+  padding-top: 0;
+  color: var(--color-accent);
+  font-size: 16px;
+  line-height: 1.3;
+}
+.notion-page.universal-analysis-page .notion-callout p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.65;
+}
+.universal-analysis-page .notion-page-footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+  margin-top: 32px;
+  padding-top: 18px;
+  border-top: 1px solid var(--color-border);
+  color: var(--color-text-muted);
+  font-size: 8px;
+}
+.universal-analysis-page .notion-page-footer a {
+  color: var(--color-accent);
+}
+.toc-empty {
+  display: block;
+  padding: 7px 0;
+  color: var(--color-text-muted);
+  font-size: 8px;
+  line-height: 1.5;
+}
+.featured-document-open {
+  margin-top: var(--space-4);
+}
+.section-document-button {
+  width: 100%;
+  border: 0;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+}
+.section-document-button:hover {
+  
+}
+.relation-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.relation-chip {
+  min-width: 145px;
+  max-width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 8px 10px;
+  border: 1px solid var(--color-border);
+  border-radius: 7px;
+  
+  
+  text-decoration: none;
+}
+.relation-chip span {
+  color: var(--color-text-muted);
+  font-size: 7px;
+  letter-spacing: .7px;
+  text-transform: uppercase;
+}
+.relation-chip strong {
+  color: var(--color-text);
+  font-size: 9px;
+  overflow-wrap: anywhere;
+}
+.relation-chip.relation-source {
+  border-color: rgba(22, 128, 68, .24);
+  background: rgba(52, 199, 89, .08);
+}
+.analysis-source-details {
+  margin: 0 0 var(--space-6);
+  overflow: hidden;
+  border: 1px solid var(--color-border) !important;
+}
+.analysis-source-details .ui-disclosure-body {
+  padding: 0;
+}
+.analysis-source-details > summary {
+  min-height: 58px;
+  padding: 10px var(--space-4);
+}
+.analysis-source-details > summary strong {
+  color: var(--color-text-secondary);
+  font-size: var(--font-xs);
+}
+.analysis-source-details > summary small {
+  color: var(--color-text-muted);
+  font-size: 9px;
+}
+.analysis-source-body {
+  padding: var(--space-4);
+}
+.analysis-source-body nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: var(--space-4);
+}
+.analysis-source-body nav a {
+  padding: 7px 10px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-pill);
+  color: var(--color-text-secondary);
+  font-size: 9px;
+  text-decoration: none;
+}
+.analysis-source-body .relation-list {
+  margin-bottom: var(--space-4);
+}
+.analysis-source-body > .notion-original {
+  font-size: var(--font-xs);
+}
+.universal-analysis-page .analysis-scenario-bear { border-left-color: var(--color-negative); }
+.universal-analysis-page .analysis-scenario-base { border-left-color: var(--color-warning); }
+.universal-analysis-page .analysis-scenario-bull { border-left-color: var(--color-positive); }
+
+.decision-template {
+  margin: 0 0 var(--space-6);
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  
+  
+}
+.decision-template-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 15px;
+  margin-bottom: 13px;
+}
+.decision-template-head h2 {
+  margin: 4px 0 0;
+  font-size: 19px;
+}
+.decision-template-head .eyebrow { margin: 0; }
+.decision-template-badge {
+  padding: 6px 9px;
+  border: 1px solid color-mix(in srgb, var(--color-accent) 35%, transparent);
+  border-radius: var(--radius-pill);
+  color: var(--color-accent);
+  font-size: 8px;
+  white-space: nowrap;
+}
+.decision-facts {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.decision-template-block {
+  margin-top: var(--space-3);
+  padding: 14px;
+  border-left: 1px solid var(--color-border) !important;
+}
+.decision-template-block p,
+.decision-template-columns p {
+  margin: 7px 0 0;
+  font-size: 10px;
+  line-height: 1.7;
+}
+.decision-template-columns {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-3);
+  margin-top: var(--space-3);
+  border: 0;
+}
+.decision-template-columns > .ui-surface--secondary {
+  min-width: 0;
+  padding: 14px;
+}
+
+
+@media (max-width: 1100px) {
+  .portfolio-main-grid {
+    grid-template-columns: 1fr;
+  }
+  .notion-watch-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .sector-panel .donut-wrap {
+    justify-content: flex-start;
+  }
+  .company-summary-grid {
+    grid-template-columns: 1fr;
+  }
+  .company-metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 760px) {
+  .live-dashboard-head {
+    flex-wrap: wrap;
+  }
+  .live-dashboard-head span:first-child {
+    flex: 1 1 100%;
+  }
+  .live-dashboard-head span:nth-child(2) {
+    flex: 1 1 auto;
+    margin-left: 0;
+  }
+  .live-dashboard-head button {
+    margin-left: auto;
+  }
+
+  .portfolio-main-grid {
+    display: block;
+  }
+  .portfolio-main-grid .side-stack {
+    margin-top: 27px;
+  }
+
+  .portfolio-overview {
+    padding: 18px 16px;
+    margin-bottom: 12px;
+  }
+  .portfolio-overview-main {
+    display: block;
+  }
+  .portfolio-overview-main > div:first-child > strong {
+    font-size: 34px;
+  }
+  .portfolio-kpis {
+    margin-top: 18px;
+    border-top: 1px solid var(--color-border);
+  }
+  .portfolio-kpis > span {
+    grid-template-rows: minmax(30px, auto) minmax(25px, auto) minmax(18px, auto);
+    padding: 14px 10px 3px;
+    border-left: 0;
+  }
+  .portfolio-kpis > span + span {
+    border-left: 1px solid var(--color-border);
+  }
+  .portfolio-kpis small {
+    min-height: 28px;
+    font-size: 9px;
+    line-height: 1.35;
+  }
+  .portfolio-kpis strong {
+    font-size: 15px;
+  }
+  .portfolio-scope-switch {
+    margin-top: 16px;
+    padding-top: 12px;
+  }
+  .portfolio-scope-switch button {
+    min-height: 46px;
+    padding: 7px 9px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+  }
+  .portfolio-scope-switch button span {
+    font-size: 9px;
+  }
+  .portfolio-scope-switch button strong {
+    font-size: 11px;
+  }
+
+  .allocation-panel {
+    padding: 17px 14px;
+  }
+  .allocation-panel .panel-head h2 {
+    font-size: 20px;
+  }
+  
+
+  .allocation-row {
+    grid-template-columns: minmax(0, 1fr) 92px;
+    min-height: 118px;
+    gap: 8px 12px;
+    font-size: 9px;
+    padding: 12px 0;
+    border-radius: 0;
+  }
+  .allocation-row .asset-name {
+    grid-column: 1;
+    grid-row: 1;
+  }
+  .allocation-row .weights {
+    grid-column: 2;
+    grid-row: 1;
+    width: 92px;
+    justify-self: end;
+    padding-top: 4px;
+  }
+  .allocation-row .position-value {
+    grid-column: 1;
+    grid-row: 3;
+  }
+  .allocation-row .position-quote {
+    grid-column: 1;
+    grid-row: 4;
+  }
+  .allocation-row .position-value,
+  .allocation-row .position-quote {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 5px;
+    text-align: left;
+  }
+  .allocation-row .pnl-badge {
+    grid-column: 2;
+    grid-row: 2 / span 3;
+    width: 92px;
+    font-size: 10px;
+    justify-self: end;
+    align-self: center;
+  }
+  .asset-metadata {
+    line-height: 1.45;
+  }
+  .position-value strong,
+  .position-quote strong {
+    font-size: 11px;
+  }
+
+  .sector-panel .panel-head {
+    align-items: flex-start;
+  }
+  .sector-panel .panel-head h2 {
+    font-size: 14px;
+  }
+  .donut-wrap {
+    justify-content: center !important;
+  }
+
+  .target-allocation {
+    margin: 18px 0 100px;
+    padding: 16px;
+    font-size: 10px;
+  }
+  .target-allocation .panel-head {
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .target-policy {
+    font-size: 11px;
+  }
+  .trajectory-progress > div {
+    line-height: 1.35;
+  }
+  .trajectory-progress > div:last-child {
+    align-items: flex-end;
+  }
+  .trajectory-progress > div:last-child span:last-child {
+    text-align: right;
+  }
+  .target-allocation .panel-head h2 {
+    font-size: 18px;
+  }
+  .notion-sync-panel {
+    margin-top: 10px;
+  }
+
+  .watchlist-overview {
+    display: flex;
+    overflow-x: auto;
+    margin-right: -15px;
+    padding-right: 15px;
+  }
+  .watchlist-overview > .ui-surface {
+    min-width: 165px;
+  }
+  .watch-status-filters {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    margin-right: -15px;
+    padding-right: 15px;
+    scroll-snap-type: x mandatory;
+  }
+  .watch-status-filters button {
+    flex: 0 0 auto;
+    scroll-snap-align: start;
+  }
+  .watch-theme-filter {
+    margin-bottom: 12px;
+  }
+  .watch-theme-filter > summary {
+    min-height: 46px;
+  }
+  .watch-theme-filter .theme-cloud {
+    flex-wrap: wrap;
+    padding: 10px 12px;
+    overflow-x: visible;
+  }
+  .notion-watch-grid {
+    grid-template-columns: 1fr;
+  }
+  .ui-discovery-card--watchlist .watch-thesis {
+    -webkit-line-clamp: 2;
+    font-size: 12px;
+    line-height: 1.5;
+  }
+  .research-company-table .table-head {
+    display: none;
+  }
+  .research-company-table .company-list-row {
+    width: 100%;
+    min-width: 0;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 13px;
+    margin-bottom: 10px;
+    padding: 15px;
+  }
+  .research-company-table .company-identity-button {
+    grid-column: 1;
+    grid-row: 1;
+  }
+  .research-company-table .research-reference-grid {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    grid-template-columns: repeat(5, minmax(104px, 1fr));
+    overflow-x: auto;
+  }
+  .research-company-table .research-reference {
+    min-width: 104px;
+    padding: 8px 6px;
+  }
+  .research-company-table .research-reference > span,
+  .research-company-table .research-reference > small {
+    font-size: 8px;
+  }
+  .research-company-table .research-reference > strong {
+    font-size: 12px;
+  }
+  .research-company-table .company-list-row > div:nth-of-type(2) {
+    grid-column: 1;
+    grid-row: 3;
+  }
+  .research-company-table .date-cell {
+    grid-column: 1;
+    grid-row: 4;
+  }
+  .company-identity-copy > small,
+  .research-company-table .date-cell small {
+    font-size: 11px;
+  }
+  .research-company-table .row-arrow {
+    grid-column: 2;
+    grid-row: 1 / span 4;
+  }
+  .analysis-list-row {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 7px 12px;
+    min-height: 0;
+    padding: 14px;
+  }
+  .analysis-list-row .analysis-title {
+    grid-column: 1 / -1;
+  }
+  .analysis-list-row .analysis-verdict-cell {
+    grid-column: 1;
+    grid-row: 2;
+    padding-top: 3px;
+    font-size: 12px;
+  }
+  .analysis-list-row .analysis-freshness {
+    grid-column: 2;
+    grid-row: 2;
+    justify-self: end;
+  }
+  .analysis-list-row .analysis-score-cell {
+    grid-column: 2;
+    grid-row: 3;
+    justify-self: end;
+  }
+
+  .generic-company-main {
+    align-items: flex-start;
+  }
+  .generic-company-main .hero-title {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .company-summary-primary {
+    padding: 17px 15px;
+  }
+  .company-history-details > summary {
+    min-height: 58px;
+    padding: 11px 14px;
+  }
+  .company-history-details > div {
+    padding: 0 14px;
+  }
+  .company-history-details > summary strong {
+    font-size: 13px;
+  }
+  .company-history-details > summary small {
+    font-size: 10px;
+  }
+
+  .analysis-source-details > summary {
+    min-height: 56px;
+    padding: 9px 12px;
+  }
+  .analysis-source-body {
+    padding: 12px;
+  }
+  .decision-template-badge {
+    font-size: 7px;
+  }
+  .decision-facts {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .decision-template-columns {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .decision-template-block p,
+  .decision-template-columns p {
+    font-size: 11px;
+  }
+}
+
+/* Mobile-first document surfaces — v94
+   The page itself never scrolls horizontally. Dense data may scroll inside a
+   labelled component, while identity, metrics and reading surfaces reflow. */
+
+.company-detail,
+.generic-company-detail,
+.company-main-grid,
+.company-summary-grid,
+.research-reader,
+.universal-analysis-reader,
+.universal-analysis-layout,
+.universal-analysis-page,
+.report-hero,
+.latest-info-card,
+.holding-summary {
+  min-width: 0;
+  max-width: 100%;
+}
+
+@media (max-width: 760px) {
+
+  .generic-company-detail,
+  .universal-analysis-reader {
+    
+    margin-inline: 0;
+    overflow: visible;
+  }
+  .universal-analysis-reader {
+    padding-bottom: 105px;
+  }
+
+  /* Company identity is a compact vertical card; no desktop status column. */
+  .generic-company-hero {
+    width: 100%;
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    align-items: start !important;
+    gap: 14px !important;
+    padding: var(--mobile-card-padding) !important;
+    overflow: hidden;
+  }
+
+  .generic-company-main {
+    width: 100%;
+    display: grid !important;
+    grid-template-columns: 46px minmax(0, 1fr);
+    gap: 12px;
+  }
+
+  .generic-company-main > div:last-child,
+  .generic-company-main .hero-title {
+    min-width: 0;
+  }
+
+  .generic-company-main .hero-title h1 {
+    max-width: 100%;
+    font-size: clamp(22px, 7vw, 28px) !important;
+    line-height: 1.12 !important;
+    overflow-wrap: break-word;
+  }
+
+  .generic-company-main p {
+    max-width: 100%;
+    font-size: 12px !important;
+    line-height: 1.45;
+    overflow-wrap: break-word;
+  }
+
+  .generic-company-status {
+    width: 100%;
+    min-width: 0 !important;
+    padding: 12px 0 0 !important;
+    border-top: 1px solid var(--color-border);
+    border-left: 0 !important;
+    text-align: left !important;
+  }
+
+  /* Tabs are the only horizontally scrollable navigation element. */
+
+  /* Summary and live-position metrics reflow instead of creating carousels. */
+  .company-metrics,
+  .holding-metric-grid {
+    width: 100%;
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px !important;
+    margin-right: 0 !important;
+    padding-right: 0 !important;
+    overflow: visible !important;
+  }
+
+  .company-metrics article,
+  .holding-metric-grid article {
+    width: auto;
+    min-width: 0 !important;
+    padding: 12px !important;
+  }
+
+  .company-metrics article {
+    min-height: 96px;
+  }
+
+  .company-metrics strong,
+  .holding-metric-grid strong {
+    white-space: normal !important;
+    overflow-wrap: break-word;
+  }
+
+  .holding-summary {
+    margin: 12px 0;
+    padding: var(--mobile-card-padding) !important;
+    overflow: hidden;
+  }
+
+  .holding-summary-head {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 10px;
+  }
+
+  .holding-summary-actions {
+    justify-content: space-between;
+    min-width: 0;
+  }
+
+  .holding-source {
+    max-width: calc(100% - 52px);
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .latest-info-card,
+  .company-research-overview {
+    width: 100%;
+  }
+
+  .latest-info-card .detail-heading {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 10px;
+  }
+
+  .latest-info-card .detail-heading h2 {
+    max-width: 100%;
+    font-size: 18px !important;
+    overflow-wrap: break-word;
+  }
+
+  .latest-info-summary,
+  .analysis-lead {
+    width: 100%;
+    margin-inline: 0 !important;
+  }
+
+  .notion-callout p {
+    color: var(--color-text-secondary) !important;
+    font-size: 15px !important;
+    line-height: 1.58 !important;
+  }
+
+  /* Analysis reading surface follows a single readable column. */
+  .universal-analysis-reader .report-hero {
+    width: 100%;
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 16px;
+    padding: var(--mobile-card-padding) !important;
+    overflow: hidden;
+  }
+
+  .universal-analysis-reader .report-hero > div,
+  .report-kicker {
+    min-width: 0;
+  }
+
+  .report-kicker {
+    flex-wrap: wrap;
+  }
+
+  .universal-analysis-reader .report-hero h1 {
+    max-width: 100%;
+    font-size: clamp(23px, 7vw, 29px) !important;
+    line-height: 1.16 !important;
+    overflow-wrap: break-word;
+  }
+
+  .universal-analysis-reader .report-verdict {
+    width: 100%;
+    max-width: none !important;
+    padding: 14px 0 0 !important;
+    border-top: 1px solid var(--color-border);
+    border-left: 0 !important;
+    text-align: left !important;
+  }
+
+  .universal-analysis-layout,
+  .universal-analysis-page {
+    
+    margin-inline: 0 !important;
+  }
+
+  .universal-analysis-page {
+    padding: var(--mobile-card-padding) !important;
+    overflow: visible;
+  }
+
+  .universal-analysis-page .analysis-section {
+    margin: 24px 0 12px !important;
+    padding: 18px 20px !important;
+  }
+
+  .universal-analysis-page a {
+    color: var(--color-accent) !important;
+  }
+  .universal-analysis-page strong {
+    color: var(--color-text) !important;
+  }
+
+  .notion-table a {
+    overflow-wrap: anywhere;
+  }
+}

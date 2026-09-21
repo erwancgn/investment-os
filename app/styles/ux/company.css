@@ -1,0 +1,135 @@
+/* Company sheet composition and company-specific layout. */
+/* Company sheet — compact identity, one current document, history on demand. */
+.generic-company-detail {
+  
+  margin: 0 auto;
+}
+.generic-company-hero {
+  min-height: 108px;
+  justify-content: space-between;
+  padding: var(--space-5) var(--space-6);
+  border-radius: var(--radius-lg);
+}
+.generic-company-main .hero-logo {
+  width: 48px;
+  height: 48px;
+  flex: 0 0 48px;
+  border-radius: var(--radius-md);
+}
+.generic-company-main .hero-title h1 {
+  font-size: var(--font-xl);
+  letter-spacing: -0.55px;
+}
+.generic-company-main p {
+  margin: 5px 0;
+  font-size: var(--font-xs);
+}
+.theme-tags {
+  flex-wrap: wrap;
+}
+.generic-company-status {
+  min-width: 150px;
+  padding: 14px 0 0;
+  border-top: 1px solid var(--color-border);
+  text-align: left;
+}
+.generic-company-status strong {
+  margin: 4px 0;
+  font-size: var(--font-md);
+}
+.company-metrics {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 13px;
+  margin-bottom: 17px;
+}
+.company-metrics article {
+  min-height: 92px;
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+}
+.company-metrics strong {
+  margin: 11px 0 6px;
+  font-size: var(--font-lg);
+}
+.company-summary-grid {
+  grid-template-columns: minmax(0, 1.45fr) minmax(280px, 0.8fr);
+}
+.company-summary-primary {
+  padding: var(--space-6);
+}
+.company-research-overview {
+  
+}
+.company-research-overview h2 {
+  margin: 0 0 var(--space-3);
+  font-size: var(--font-lg);
+}
+.company-research-overview > details {
+  margin-top: var(--space-3);
+}
+.company-research-overview > details summary,
+.company-traceability summary {
+  min-height: var(--ui-control-hit-height);
+  display: flex;
+  align-items: center;
+  color: var(--color-text-muted);
+  font-size: var(--font-xs);
+  cursor: pointer;
+}
+.company-research-overview > details .quality-row:first-of-type {
+  border-top: 1px solid var(--color-border);
+}
+.company-history-details {
+  max-width: 940px;
+  margin-top: var(--space-3);
+  overflow: hidden;
+}
+.company-history-details > summary {
+  min-height: 62px;
+  padding: var(--space-3) var(--space-5);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  list-style: none;
+  cursor: pointer;
+}
+.company-history-details > summary::-webkit-details-marker {
+  display: none;
+}
+.company-history-details > summary span {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.company-history-details > summary strong {
+  font-size: var(--font-sm);
+}
+.company-history-details > summary small {
+  color: var(--color-text-muted);
+  font-size: 9px;
+}
+.company-history-details > summary b {
+  
+  font-size: var(--font-xs);
+}
+.company-history-details[open] > summary {
+  border-bottom: 1px solid var(--color-border);
+}
+.company-history-details > div {
+  padding: 0 var(--space-5);
+}
+.company-traceability {
+  max-width: 940px;
+  margin-top: var(--space-3);
+}
+.company-traceability .ui-disclosure-body p {
+  max-width: var(--measure-copy);
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: var(--font-xs);
+  line-height: 1.6;
+}

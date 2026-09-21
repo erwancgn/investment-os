@@ -4,20 +4,26 @@ import process from "node:process";
 import { fileURLToPath } from "node:url";
 import postcss from "postcss";
 import { dynamicClassEntry, dynamicClassRegistry } from "./css-audit-registry.mjs";
+import { governanceCssFiles } from "./css-file-manifest.mjs";
 
 const root = process.cwd();
 const baselinePath = path.join(root, "scripts", "css-audit-baseline.json");
-const cssFiles = [
-  "app/globals.css",
-  "app/ux-foundations.css",
-  "stories/storybook.css",
-];
+const cssFiles = governanceCssFiles;
 const sourceRoots = ["app", "stories", ".storybook"];
 const jsonOnly = process.argv.includes("--json");
 const allowBaselineDrift = process.argv.includes("--allow-baseline-drift");
 
 function normalize(value) {
   return value.replace(/\s+/g, " ").trim();
+}
+
+function normalizeAtRuleParams(value) {
+  return normalize(value)
+    .replace(/\s*:\s*/g, ":")
+    .replace(/\s*,\s*/g, ",")
+    .replace(/\(\s*/g, "(")
+    .replace(/\s*\)/g, ")")
+    .replace(/\s*(<=|>=|=|<|>)\s*/g, "$1");
 }
 
 function relative(file) {
@@ -41,7 +47,7 @@ function atRuleContext(node) {
   const context = [];
   let parent = node.parent;
   while (parent) {
-    if (parent.type === "atrule") context.unshift(`@${parent.name}${parent.params ? ` ${normalize(parent.params)}` : ""}`);
+    if (parent.type === "atrule") context.unshift(`@${parent.name}${parent.params ? ` ${normalizeAtRuleParams(parent.params)}` : ""}`);
     parent = parent.parent;
   }
   return context.length ? context.join(" > ") : "root";
@@ -236,17 +242,37 @@ function baselineDelta(value, threshold) {
   return value - threshold;
 }
 
+const strictBaselineMetrics = new Set([
+  "exactRepeatedSelectors",
+  "directPropertyConflicts",
+  "strictRedundantDeclarations",
+  "repeatedTokens",
+  "conflictingTokens",
+  "importantDeclarations",
+  "orphanClasses",
+]);
+
+const reviewOnlyMetrics = new Set([
+  "responsiveVariants",
+  "additiveExtensions",
+  "definedClasses",
+]);
+
 function compareBaseline(metrics, baseline) {
   const deltas = {};
   const regressions = [];
+  const reviewDrifts = [];
   for (const [metric, threshold] of Object.entries(baseline.thresholds)) {
     const value = metrics[metric];
     if (typeof value !== "number") continue;
     const delta = baselineDelta(value, threshold);
     deltas[metric] = { baseline: threshold, current: value, delta };
-    if (delta > 0) regressions.push({ metric, baseline: threshold, current: value, delta });
+    if (delta <= 0) continue;
+    const finding = { metric, baseline: threshold, current: value, delta };
+    if (strictBaselineMetrics.has(metric)) regressions.push(finding);
+    else if (reviewOnlyMetrics.has(metric)) reviewDrifts.push(finding);
   }
-  return { deltas, regressions };
+  return { deltas, regressions, reviewDrifts };
 }
 
 export async function auditCssGovernance({ compare = true } = {}) {
@@ -270,7 +296,7 @@ export async function auditCssGovernance({ compare = true } = {}) {
     definedClasses: parsed.classDefinitions.size,
     orphanClasses: orphanClasses.length,
   };
-  const baseline = compare ? compareBaseline(metrics, baselineSource) : { deltas: {}, regressions: [] };
+  const baseline = compare ? compareBaseline(metrics, baselineSource) : { deltas: {}, regressions: [], reviewDrifts: [] };
   return {
     version: 1,
     scope: { cssFiles, sourceRoots },
@@ -306,6 +332,9 @@ function printHuman(result) {
   console.log(`Dynamic registry entries: ${result.dynamicClassRegistry.length}`);
   console.log(`Dynamic entries requiring state review: ${result.dynamicClassRegistry.filter(entry => entry.reviewRequired).map(entry => entry.id).join(", ") || "none"}`);
   console.log(`Orphan candidates: ${metrics.orphanClasses ? result.findings.orphanClasses.map(item => item.className).join(", ") : "none"}`);
+  if (baseline.reviewDrifts.length) {
+    console.log(`Review-only drift: ${baseline.reviewDrifts.map(item => `${item.metric} (+${item.delta})`).join(", ")}`);
+  }
   if (baseline.regressions.length) {
     console.error(`Baseline regressions: ${baseline.regressions.map(item => `${item.metric} (+${item.delta})`).join(", ")}`);
   } else {

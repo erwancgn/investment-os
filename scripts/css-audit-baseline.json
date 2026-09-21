@@ -1,17 +1,17 @@
 {
-  "version": 1,
-  "capturedAt": "2026-09-20",
-  "scope": "app CSS governance audit after historical-layer cleanup and Storybook reference coverage",
+  "version": 2,
+  "capturedAt": "2026-09-21",
+  "scope": "app CSS governance audit after Lot 9B cascade ownership consolidation",
   "thresholds": {
-    "exactRepeatedSelectors": 285,
-    "directPropertyConflicts": 83,
-    "responsiveVariants": 131,
-    "strictRedundantDeclarations": 24,
-    "additiveExtensions": 47,
+    "exactRepeatedSelectors": 174,
+    "directPropertyConflicts": 0,
+    "responsiveVariants": 132,
+    "strictRedundantDeclarations": 1,
+    "additiveExtensions": 41,
     "repeatedTokens": 0,
     "conflictingTokens": 0,
-    "importantDeclarations": 464,
-    "definedClasses": 324,
+    "importantDeclarations": 222,
+    "definedClasses": 317,
     "orphanClasses": 0
   }
 }

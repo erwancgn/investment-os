@@ -6,7 +6,14 @@ import { desktopFrame, frame, stateFrame } from "./reference-frame";
 import { livePortfolio } from "./reference-fixtures";
 
 const dashboard = (data: typeof livePortfolio | null = livePortfolio, loading = false, error = "") => (
-  <LivePortfolioDashboard data={data} loading={loading} error={error} onRefresh={() => undefined} openCompany={() => undefined} />
+  <LivePortfolioDashboard
+    data={data}
+    loading={loading}
+    error={error}
+    onRefresh={() => undefined}
+    openCompany={() => undefined}
+    beforeDiagnostic={<TargetAllocation data={data} />}
+  />
 );
 
 const meta = { title: "Reference screens/Portfolio", parameters: { layout: "fullscreen" } } satisfies Meta;
@@ -17,7 +24,14 @@ export const Mobile: Story = { parameters: { viewport: { defaultViewport: "mobil
 export const Desktop: Story = { parameters: { viewport: { defaultViewport: "desktop" } }, render: () => desktopFrame(dashboard()) };
 export const LongContent: Story = {
   parameters: { viewport: { defaultViewport: "desktop" } },
-  render: () => desktopFrame(<div className="storybook-stack"><TargetAllocation data={{ ...livePortfolio, targetLines: Array.from({ length: 10 }, (_, index) => ({ ...livePortfolio.targetLines[0], id: `target-${index}`, name: `Synthetic target company ${index + 1}` })) }} /><>{dashboard()}</></div>),
+  render: () => desktopFrame(dashboard({
+    ...livePortfolio,
+    targetLines: Array.from({ length: 10 }, (_, index) => ({
+      ...livePortfolio.targetLines[0],
+      id: `target-${index}`,
+      name: `Synthetic target company ${index + 1}`,
+    })),
+  })),
 };
 export const Empty: Story = { parameters: { viewport: { defaultViewport: "mobile" } }, render: () => stateFrame(dashboard(null, false, "Aucune donnée de portefeuille disponible.")) };
 export const Loading: Story = { parameters: { viewport: { defaultViewport: "mobile" } }, render: () => stateFrame(dashboard(null, true)) };

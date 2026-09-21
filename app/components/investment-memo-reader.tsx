@@ -188,7 +188,9 @@ export function InvestmentMemoReader({
       className="research-reader universal-analysis-reader investment-memo-reader"
       data-analysis-template="memo"
     >
-      <BackButton onBack={onBack} ariaLabel="Retour à la fiche entreprise" />
+      <div className="detail-navigation">
+        <BackButton onBack={onBack} ariaLabel="Retour à la fiche entreprise" />
+      </div>
       <AnalysisReportHero
         className="memo-hero"
         badges={

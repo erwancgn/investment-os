@@ -1,21 +1,13 @@
 import { readFile, readdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import postcss from "postcss";
+import { dynamicClassEntry, dynamicClassRegistry } from "./css-audit-registry.mjs";
+import { appCssFiles } from "./css-file-manifest.mjs";
 
 const root = process.cwd();
 const appRoot = path.join(root, "app");
 const fix = process.argv.includes("--fix");
-const cssFiles = ["globals.css", "ux-foundations.css"];
-const dynamicPrefixes = [
-  "analysis-scenario-", "decision-", "reference-", "ui-progress-track--", "ui-surface--",
-  "ui-badge--", "ui-discovery-card--",
-];
-const dynamicNames = new Set([
-  "active", "analysis-key-fact--priority", "available", "clickable", "error", "is-active",
-  "integrity-warning", "live", "missing", "negative", "negative-pnl", "neutral", "ok", "positive",
-  "positive-pnl", "notion-table-two-column", "snapshot", "done", "warning",
-]);
-
+const cssFiles = appCssFiles.map(file => file.replace(/^app\//, ""));
 async function filesUnder(directory) {
   const entries = await readdir(directory, { withFileTypes: true });
   const files = await Promise.all(entries.map(async entry => {
@@ -26,29 +18,37 @@ async function filesUnder(directory) {
 }
 
 const sourceFiles = (await filesUnder(appRoot)).filter(file => /\.(?:tsx?|jsx?|json)$/.test(file));
-const source = (await Promise.all(sourceFiles.map(file => readFile(file, "utf8")))).join("\n");
 const staticClasses = new Set();
-const classNamePattern = /className\s*=\s*(?:\{\s*)?(["'`])([\s\S]*?)\1\s*\}?/g;
-const objectClassNamePattern = /className\s*:\s*"([^"]*)"/g;
-for (const match of source.matchAll(classNamePattern)) {
-  const withoutExpressions = match[2].replace(/\$\{[\s\S]*?\}/g, " ");
-  for (const token of withoutExpressions.match(/-?[_a-zA-Z]+[\w-]*/g) ?? []) staticClasses.add(token);
-  for (const expression of match[2].matchAll(/\$\{([\s\S]*?)\}/g)) {
-    for (const literal of expression[1].matchAll(/(["'])(.*?)\1/g)) {
-      for (const token of literal[2].match(/-?[_a-zA-Z]+[\w-]*/g) ?? []) staticClasses.add(token);
-    }
+
+const tokensFromText = value => value.match(/-?[_a-zA-Z][\w-]*/g) ?? [];
+const addStaticClasses = value => {
+  for (const token of tokensFromText(value)) staticClasses.add(token);
+};
+
+for (const file of sourceFiles) {
+  const source = await readFile(file, "utf8");
+
+  for (const match of source.matchAll(/\bclassName\s*=\s*\{`([\s\S]*?)`/g)) addStaticClasses(match[1]);
+
+  for (const match of source.matchAll(/\bclassName\s*=\s*(?:"([^"]*)"|'([^']*)'|\{([\s\S]*?)\})/g)) {
+    addStaticClasses(match[1] ?? match[2] ?? "");
+    for (const literal of (match[3] ?? "").matchAll(/(["'`])([\s\S]*?)\1/g)) addStaticClasses(literal[2]);
+  }
+
+  for (const match of source.matchAll(/\bclassName\s*:\s*([\s\S]{0,220})/g)) {
+    const expression = match[1].split(/\n\s*[A-Za-z_$][\w$]*\s*:/, 1)[0];
+    for (const literal of expression.matchAll(/(["'`])([\s\S]*?)\1/g)) addStaticClasses(literal[2]);
+  }
+  for (const match of source.matchAll(/\bclassName\s*:\s*(["'`])([\s\S]*?)\1/g)) addStaticClasses(match[2]);
+
+  for (const match of source.matchAll(/\bclassList\.(?:add|remove|toggle)\(([^)]*)\)/g)) {
+    for (const literal of match[1].matchAll(/(["'`])([\s\S]*?)\1/g)) addStaticClasses(literal[2]);
   }
 }
-for (const match of source.matchAll(objectClassNamePattern)) {
-  for (const token of match[1].match(/-?[_a-zA-Z]+[\w-]*/g) ?? []) staticClasses.add(token);
-}
-for (const match of source.matchAll(/classList\.(?:add|remove|toggle)\(([^)]*)\)/g)) {
-  for (const token of match[1].match(/-?[_a-zA-Z]+[\w-]*/g) ?? []) staticClasses.add(token);
-}
 
-const isKnownClass = className => staticClasses.has(className)
-  || dynamicNames.has(className)
-  || dynamicPrefixes.some(prefix => className.startsWith(prefix));
+const isKnownClass = (className, selector) => staticClasses.has(className)
+  || Boolean(dynamicClassEntry(className))
+  || dynamicClassRegistry.some(entry => entry.selectorPattern && new RegExp(entry.selectorPattern).test(selector));
 
 let removedSelectors = 0;
 let removedRules = 0;
@@ -64,7 +64,7 @@ for (const relativeFile of cssFiles) {
     const selectors = postcss.list.comma(rule.selector);
     const liveSelectors = selectors.filter(selector => {
       const classNames = [...selector.matchAll(/\.(-?[_a-zA-Z]+[\w-]*)/g)].map(match => match[1]);
-      return classNames.length === 0 || classNames.every(isKnownClass);
+      return classNames.length === 0 || classNames.every(className => isKnownClass(className, selector));
     });
     removedSelectors += selectors.length - liveSelectors.length;
     if (liveSelectors.length === 0) {
@@ -85,3 +85,4 @@ for (const relativeFile of cssFiles) {
 }
 
 console.log(JSON.stringify({ mode: fix ? "fix" : "audit", removedSelectors, removedRules, examples }, null, 2));
+if (!fix && removedSelectors > 0) process.exitCode = 1;

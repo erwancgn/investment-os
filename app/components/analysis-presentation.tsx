@@ -3,7 +3,7 @@
 import type { ReactNode } from "react";
 import type { PresentationFact } from "../lib/document-presentation";
 import { isPriorityPresentationFact, splitPresentationFactValue } from "../lib/document-presentation";
-import { MetadataGrid } from "./ui-primitives";
+import { MetadataGrid, PrimaryBlock } from "./ui-primitives";
 
 type AnalysisOutcome = {
   label: string;
@@ -25,7 +25,7 @@ export function AnalysisReportHero({
   className?: string;
 }) {
   return (
-    <header className={`report-hero analysis-report-hero${outcome ? "" : " analysis-report-hero--without-outcome"} ${className}`.trim()}>
+    <PrimaryBlock as="header" className={`report-hero analysis-report-hero${outcome ? "" : " analysis-report-hero--without-outcome"} ${className}`.trim()}>
       <div>
         <div className="report-kicker">{badges}</div>
         <h1>{title}</h1>
@@ -38,7 +38,7 @@ export function AnalysisReportHero({
           {outcome.detail != null && <span>{outcome.detail}</span>}
         </div>
       )}
-    </header>
+    </PrimaryBlock>
   );
 }
 

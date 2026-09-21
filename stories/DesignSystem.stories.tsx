@@ -1,5 +1,8 @@
 import { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import { NotionAnalyses } from "../app/components/notion-analyses";
+import { NotionCompanies } from "../app/components/notion-companies";
+import { NotionWatchlist } from "../app/components/notion-watchlist";
 import {
   ActionButton,
   AsyncState,
@@ -9,6 +12,7 @@ import {
   DataTable,
   DiscoveryAction,
   DiscoveryCard,
+  DisclosureSurface,
   FilterBar,
   GlassChrome,
   MetadataGrid,
@@ -22,6 +26,8 @@ import {
   Surface,
   Tabs,
 } from "../app/components/ui-primitives";
+import { analysesData, company, watchlist } from "./reference-fixtures";
+import { frame } from "./reference-frame";
 
 const meta = {
   title: "Design System",
@@ -41,6 +47,7 @@ export const Overview: Story = {
     const [segment, setSegment] = useState("All");
     const [tab, setTab] = useState("Summary");
     const [account, setAccount] = useState("All accounts");
+    const [theme, setTheme] = useState("All themes");
     const [query, setQuery] = useState("");
 
     return (
@@ -67,6 +74,15 @@ export const Overview: Story = {
           <div className="storybook-stack">
             <SearchField value={query} onChange={setQuery} placeholder="Search companies, tickers or analyses" ariaLabel="Search reference" count="3 results" />
             <FilterBar ariaLabel="Reference filters"><SegmentedControl options={["All", "Owned", "Watchlist"].map(value => ({ value, label: value }))} value={segment} onChange={setSegment} ariaLabel="Reference segment" /></FilterBar>
+            <DisclosureSurface level="primary" summary={<><span>Themes</span><strong>{theme}</strong></>}>
+              <SegmentedControl
+                options={["All themes", "AI", "Data center", "Semiconductors", "Cloud", "Networking", "Quality"].map(value => ({ value, label: value }))}
+                value={theme}
+                onChange={setTheme}
+                ariaLabel="Reference theme taxonomy"
+                className="theme-cloud"
+              />
+            </DisclosureSurface>
             <Tabs options={["Summary", "Portfolio", "Research"].map(value => ({ value, label: value }))} value={tab} onChange={setTab} ariaLabel="Reference tabs" />
             <div className="storybook-inline">
               <CompactControl variant="select" ariaLabel="Account" value={account} onChange={setAccount} options={[{ value: "All accounts", label: "All accounts" }, { value: "CTO", label: "CTO" }, { value: "PEA", label: "PEA" }]} />
@@ -112,3 +128,36 @@ export const Overview: Story = {
   },
 };
 
+
+export const ProductionVisualReview: Story = {
+  parameters: {
+    viewport: { defaultViewport: "desktop" },
+    docs: {
+      description: {
+        story: "Canonical mobile review board. Every panel mounts a production screen at 390px with synthetic fixtures; no visual markup is duplicated in Storybook.",
+      },
+    },
+  },
+  render: () => (
+    <div className="storybook-stack storybook-reference-page">
+      <SectionHeader
+        heading="h1"
+        eyebrow="Investment OS"
+        title="Production visual review"
+        description="390px production screens used for visual comparison with the Lovable reference. The rendered components, not this Storybook wrapper, own the visual contract."
+      />
+      <section className="storybook-reference-section" aria-labelledby="review-companies">
+        <h2 id="review-companies">Companies · production · 390px</h2>
+        {frame(<NotionCompanies initialData={{ companies: [company] }} openCompany={() => undefined} />)}
+      </section>
+      <section className="storybook-reference-section" aria-labelledby="review-radar">
+        <h2 id="review-radar">Radar · production · 390px</h2>
+        {frame(<NotionWatchlist initialData={watchlist} openCompany={() => undefined} />)}
+      </section>
+      <section className="storybook-reference-section" aria-labelledby="review-analyses">
+        <h2 id="review-analyses">Analyses · production · 390px</h2>
+        {frame(<NotionAnalyses initialData={analysesData} />)}
+      </section>
+    </div>
+  ),
+};

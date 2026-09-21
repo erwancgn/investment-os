@@ -224,7 +224,9 @@ export function CompanyDetail({ companyId, close, initialData }: { companyId: st
   if (loading && !data)
     return (
       <>
-        <BackButton onBack={close} ariaLabel="Retour à la vue précédente" />
+        <div className="detail-navigation">
+          <BackButton onBack={close} ariaLabel="Retour à la vue précédente" />
+        </div>
         <PrimaryBlock as="section" className="live-portfolio-state">
           <strong>Chargement de la fiche Notion…</strong>
           <span>Récupération des propriétés, analyses et relations importées.</span>
@@ -234,8 +236,10 @@ export function CompanyDetail({ companyId, close, initialData }: { companyId: st
   if (!data)
     return (
       <>
-        <BackButton onBack={close} ariaLabel="Retour à la vue précédente" />
-        <PrimaryBlock as="section" className="live-portfolio-state company-detail-error">
+        <div className="detail-navigation">
+          <BackButton onBack={close} ariaLabel="Retour à la vue précédente" />
+        </div>
+        <PrimaryBlock as="section" className="live-portfolio-state">
           <strong>Fiche indisponible</strong><button onClick={() => void refresh()}>Réessayer</button>
           <span>{error || "Cette compagnie n’existe plus dans la base Notion."}</span>
         </PrimaryBlock>
@@ -254,9 +258,11 @@ export function CompanyDetail({ companyId, close, initialData }: { companyId: st
     .filter((item): item is ResearchHighlight => Boolean(item.document));
   return (
     <div className="company-detail generic-company-detail">
-      <BackButton onBack={close} ariaLabel="Retour à la vue précédente" />
+      <div className="detail-navigation">
+        <BackButton onBack={close} ariaLabel="Retour à la vue précédente" />
+      </div>
       {error && !initialData && <p className="resource-error" role="status">{error} La dernière fiche chargée reste affichée.</p>}
-      <header className="company-hero generic-company-hero">
+      <PrimaryBlock as="header" className="company-hero generic-company-hero">
         <div className="company-hero-main generic-company-main">
           <div className="hero-logo">{(data.ticker || title).slice(0, 2).toUpperCase()}</div>
           <div>
@@ -278,7 +284,7 @@ export function CompanyDetail({ companyId, close, initialData }: { companyId: st
           <strong>{data.watchlistMembership ? data.monitoringStatus || "Non renseignée" : data.ownershipStatus}</strong>
           <span>{data.watchlistMembership ? `Decision : ${data.decision || "Non renseignée"}` : data.researchStage || "Recherche à compléter"}</span>
         </div>
-      </header>
+      </PrimaryBlock>
       <Tabs
         options={tabs.map(([id, label]) => ({
           value: id,

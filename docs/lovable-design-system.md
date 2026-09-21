@@ -21,7 +21,7 @@ vérité.
 
 | Famille | Tokens gagnants | Règle d’usage |
 |---|---|---|
-| Police | `--font-family-sans`, `--font-geist-mono` | Le texte UI utilise `--font-family-sans`; le monospace est réservé aux données qui le nécessitent. |
+| Police | `--font-family-sans`, `--font-geist-mono`, `--font-discovery-title` | Le texte UI utilise `--font-family-sans`; le titre Discovery utilise son rôle sémantique dédié et reste au-dessus des valeurs, métadonnées et labels internes ; le monospace est réservé aux données qui le nécessitent. |
 | Couleurs sémantiques | `--color-bg`, `--color-bg-elevated`, `--color-surface`, `--color-surface-raised`, `--color-surface-active`, `--color-border`, `--color-border-strong`, `--color-text`, `--color-text-secondary`, `--color-text-muted`, `--color-accent`, `--color-accent-strong`, `--color-positive`, `--color-negative`, `--color-warning`, `--color-info`, `--color-violet`, `--color-content-copy` | Les composants consomment les rôles sémantiques ; aucune couleur littérale ne doit être ajoutée dans une primitive. |
 | Surfaces | `--surface-canvas`, `--surface-primary`, `--surface-secondary`, `--surface-glass`, `--surface-glass-fallback`, `--surface-stroke`, `--surface-stroke-strong`, `--surface-highlight`, `--surface-blur` | `Surface` et ses wrappers déterminent la hiérarchie primaire, secondaire et glass. |
 | Rayons | `--radius-sm`, `--radius-md`, `--radius-lg`, `--radius-pill` | Les rayons sont choisis par rôle ; une nouvelle valeur locale doit être justifiée dans le contrat. |
@@ -36,13 +36,42 @@ exécutable.
 ## Référence Lovable vérifiée
 
 La référence active est le projet `Compact Controls Test`, identifié par
-`52184df3-fbae-4c28-898f-d379409b03bd`, vérifié après synchronisation visuelle sur le
-commit Lovable final `852fd99aae56a16aeaa47163aca3b426d8784b1d`.
+`52184df3-fbae-4c28-898f-d379409b03bd`. Le connecteur Lovable expose actuellement le
+commit `75074e4d9b984ae9a72ee0dcc1cf7f6b990b1912`, qui remplace la référence précédemment
+documentée `852fd99aae56a16aeaa47163aca3b426d8784b1d`.
 
-- État vérifié : commit final disponible et utilisé comme référence visuelle active.
-- La vérification couvre les primitives, la police, les couleurs, les surfaces, les rayons,
-  les ombres et les contrôles décrits dans le contrat ci-dessus.
-- Le lot 7 synchronise Lovable via son connecteur, puis référence ici le commit vérifié.
+- Le dernier changement Lovable étend explicitement la cible tactile des contrôles compacts
+  et des actions de Discovery Card, et autorise le titre de carte sur deux lignes.
+- Les tokens de couleur et la pile de police visibles restent alignés avec les tokens
+  canoniques de production.
+- L'arbitrage Discovery Card est validé : le shell partagé de production est aligné
+  avec la référence Lovable pour le padding, la taille de titre, le rayon et l'ombre.
+- L'alignement est porté par le contrat partagé `.ui-discovery-card` et les variables
+  locales de `.ui-surface` ; aucune variante Company, Radar ou Analysis n'ajoute
+  d'override visuel propre.
+- Le titre Discovery est désormais un rôle typographique sémantique partagé ; les
+  signaux, métadonnées, badges et textes secondaires restent visuellement subordonnés.
+- La recherche et son compteur restent côte à côte au viewport mobile de référence.
+- Les filtres visibles restent en pills jusqu'à six choix ; les taxonomies plus larges
+  ou dynamiques utilisent `DisclosureSurface`, comme les thèmes du Radar.
+- Les synthèses KPI restent compactes : jusqu'à trois `StatCard` sur une ligne, puis
+  2 × 2 pour quatre et 3 × 2 pour cinq ou six avant de basculer le surplus en détail.
+
+### Clôture Lot 7C
+
+Le Lot 7C est validé le 21 septembre 2026 sur le commit `7146c7ad34ac2ef36c24b27bd8456bedd4cc069b`.
+Le workflow `Visual review` (run GitHub Actions `35609644581`) est vert sur son périmètre :
+lint, audit CSS de gouvernance, typecheck, couverture Storybook, build Storybook et captures Chromium.
+
+La revue mobile à 390 px confirme :
+- SearchField et compteur côte à côte ;
+- jusqu'à six filtres visibles sous forme de pills ;
+- les taxonomies larges représentées par `DisclosureSurface`, avec Thèmes Radar comme cas canonique ;
+- trois `StatCard` compactes sur une ligne ;
+- la hiérarchie typographique des `DiscoveryCard`, avec titre sémantique 15 px et contenus secondaires inférieurs ;
+- les cas longs `Advanced Micro Devices — Long Reference Name` et `Lumentum Holdings — Optical Networking and Datacenter Infrastructure` sans collision avec badges, métadonnées ou actions.
+
+Le compare Lovable → Storybook → production est donc fermé pour ce lot. La suite relève de la recette applicative complète du Lot 8 et de la review de merge.
 
 La source Lovable expose notamment `src/components/CompactControl.tsx`,
 `src/components/CompanyDiscoveryCard.tsx` et `src/routes/index.tsx`. Le projet
@@ -71,9 +100,9 @@ apparaît donc trois fois pour documenter explicitement ses variantes `company`,
 | Filter container | `FilterBar` | `.ui-filter-bar` | `Controls`, `Design System/Overview`, screen stories / labelled group |
 | Tabs | `Tabs` | `.ui-tabs` | `Controls`, Company / active, arrow navigation, Home/End |
 | KPI card | `StatCard` | `.ui-stat-card` | `Data display`, `Design System/Overview`, Analyses / normal, long value |
-| Company discovery card | `DiscoveryCard` | `.ui-discovery-card--company` | Companies, `Design System/Overview` / normal, long, empty |
-| Radar discovery card | `DiscoveryCard` | `.ui-discovery-card--watchlist` | Radar, `Design System/Overview` / decision, themes, thesis |
-| Analysis discovery card | `DiscoveryCard` | `.ui-discovery-card--analysis` | Analyses, `Design System/Overview` / current, long, empty |
+| Company discovery card | `DiscoveryCard` | `.ui-discovery-card--company` | Companies, `Design System/Overview`, `Design System/ProductionVisualReview` / normal, long, empty |
+| Radar discovery card | `DiscoveryCard` | `.ui-discovery-card--watchlist` | Radar, `Design System/Overview`, `Design System/ProductionVisualReview` / decision, themes, thesis |
+| Analysis discovery card | `DiscoveryCard` | `.ui-discovery-card--analysis` | Analyses, `Design System/Overview`, `Design System/ProductionVisualReview` / current, long, empty |
 | Async state | `AsyncState` | `.ui-async-state` | `Badges / States`, screen state stories / empty, loading, error |
 | Primary block | `PrimaryBlock` | `.ui-surface--primary` | Surfaces, `Design System/Overview`, screen stories / semantic wrapper |
 | Secondary block | `SecondaryBlock` | `.ui-surface--secondary` | Surfaces, `Design System/Overview`, Reader / nested content |

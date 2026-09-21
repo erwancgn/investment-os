@@ -147,5 +147,5 @@ Le dépôt GitHub [erwancgn/investment-os](https://github.com/erwancgn/investmen
 - [docs/analysis-rendering-contract.md](docs/analysis-rendering-contract.md) — contrat de rendu des analyses ;
 - [docs/data-quality.md](docs/data-quality.md) — règles d'intégrité et de qualité ;
 - [docs/reference-sources.md](docs/reference-sources.md) — hiérarchie des sources métier et références visuelles ;
-- [docs/remediation-plan.md](docs/remediation-plan.md) — plan strict de sécurisation, alignement et nettoyage par étapes ;
-- [docs/ui-audit-v74.md](docs/ui-audit-v74.md) — audit de la dette UI/CSS.
+- [docs/design-system.md](docs/design-system.md) — sources canoniques, contrats visuels et gouvernance CSS ;
+- [docs/lovable-design-system.md](docs/lovable-design-system.md) — mapping entre Lovable, React et Storybook.

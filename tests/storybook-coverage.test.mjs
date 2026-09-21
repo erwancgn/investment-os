@@ -32,7 +32,9 @@ test("reference screen stories use production components at both required viewpo
     Watchlist: ["NotionWatchlist", "mobile", "desktop"],
     Analyses: ["NotionAnalyses", "mobile", "desktop"],
     Portfolio: ["LivePortfolioDashboard", "mobile", "desktop"],
+    Company: ["CompanyDetail", "mobile", "desktop"],
     Reader: ["AnalysisReader", "mobile", "desktop"],
+    Search: ["DocumentSearch", "mobile", "desktop"],
   };
 
   for (const [storyName, [componentName, ...viewports]] of Object.entries(references)) {
@@ -54,6 +56,12 @@ test("reference screen stories use production components at both required viewpo
     assert.match(source, new RegExp(`<DiscoveryCard[^>]+kind=\"${kind}\"`), `${componentName} no longer mounts the production ${kind} card`);
   }
 
+  const shellSource = await read("stories/Shell.stories.tsx");
+  assert.match(shellSource, /import Home from "\.\.\/app\/page"/);
+  assert.match(shellSource, /<Home \/>/);
+  assert.match(shellSource, /defaultViewport: "mobile"/);
+  assert.match(shellSource, /defaultViewport: "desktop"/);
+
   const preview = await read(".storybook/preview.ts");
   const frame = await read("stories/reference-frame.tsx");
   assert.match(preview, /width: "390px"/);
@@ -70,4 +78,39 @@ test("the design-system page keeps the visible reference order", async () => {
     assert.ok(position > previous, `${section} is missing or out of order`);
     previous = position;
   }
+});
+
+
+test("the production visual review mounts real discovery screens at 390px", async () => {
+  const [source, frame] = await Promise.all([
+    read("stories/DesignSystem.stories.tsx"),
+    read("stories/reference-frame.tsx"),
+  ]);
+
+  assert.match(source, /export const ProductionVisualReview/);
+  for (const componentName of ["NotionCompanies", "NotionWatchlist", "NotionAnalyses"]) {
+    assert.match(source, new RegExp(`<${componentName}[\\s>]`), `ProductionVisualReview does not mount ${componentName}`);
+  }
+  assert.match(source, /from "\.\/reference-fixtures"/);
+  assert.match(source, /from "\.\/reference-frame"/);
+  assert.match(frame, /width: 390/);
+});
+
+
+test("the mobile visual contract covers long Discovery titles and explicit filter composition", async () => {
+  const [css, fixtures, story, companiesStory] = await Promise.all([
+    read("app/globals.css"),
+    read("stories/reference-fixtures.ts"),
+    read("stories/DesignSystem.stories.tsx"),
+    read("stories/Companies.stories.tsx"),
+  ]);
+
+  assert.match(css, /--font-discovery-title:\s*15px/);
+  assert.match(css, /font-size:\s*var\(--font-discovery-title\)/);
+  assert.match(css, /\.watch-signal-row strong\s*\{[^}]*font-size:\s*var\(--font-sm\)/s);
+  assert.match(fixtures, /Advanced Micro Devices — Long Reference Name/);
+  assert.match(companiesStory, /Lumentum Holdings — Optical Networking and Datacenter Infrastructure/);
+  assert.match(story, /companies: \[company\]/);
+  assert.match(story, /<DisclosureSurface[^>]*summary=/);
+  assert.match(story, /Reference theme taxonomy/);
 });
