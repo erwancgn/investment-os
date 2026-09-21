@@ -48,7 +48,8 @@ La page Lovable de référence est un banc de comparaison mobile. Elle peut mont
 4. Chaque interaction conserve son nom, son état actif, son focus visible et son libellé accessible.
 5. Une story utilise le composant de production et évite toute dépendance réseau.
 6. Une migration n’est terminée que lorsque les anciens overrides ne sont plus référencés et peuvent être supprimés sans régression.
-7. Toute passe UI doit réduire ou stabiliser le nombre d’overrides spécifiques ; une amélioration visuelle qui augmente la concurrence CSS n’est pas considérée comme terminée.
+7. Toute passe UI doit réduire ou stabiliser chaque compteur surveillé par l’audit de gouvernance. Une amélioration visuelle ou une reclassification qui augmente un compteur n’est pas considérée comme terminée.
+8. Pour le Portfolio, `ux-foundations.css` est propriétaire de la composition desktop/mobile des positions, de l’exposition et de Trajectoire. `globals.css` ne doit plus contenir d’ancienne grille Portfolio ou de mécanique de cible concurrente ; les surfaces Apple Light / Liquid Glass restent fournies par les primitives partagées.
 
 ## Gouvernance CSS et baseline de migration
 
@@ -60,7 +61,7 @@ La dette CSS existante est mesurée par [`scripts/audit-css-governance.mjs`](../
 
 Il distingue les sélecteurs exacts répétés, les conflits de propriétés dans un même contexte d’at-rule, les variantes responsive, les propriétés strictement redondantes, les extensions additives, les tokens répétés avec leurs valeurs, et les classes sans consommateur démontré.
 
-La baseline versionnée est [`scripts/css-audit-baseline.json`](../scripts/css-audit-baseline.json). Après la réconciliation du shell v171, l’état courant documenté est : 276 sélecteurs répétés, 81 conflits directs, 129 variantes responsive, 22 redondances identiques et 44 extensions additives ; 0 token répété et 0 valeur concurrente ; 449 déclarations `!important` ; 323 classes définies et 0 classe orpheline.
+La baseline versionnée est [`scripts/css-audit-baseline.json`](../scripts/css-audit-baseline.json). Après la consolidation Portfolio, l’état courant documenté est : 249 sélecteurs répétés, 60 conflits directs, 129 variantes responsive, 16 redondances identiques et 44 extensions additives ; 0 token répété et 0 valeur concurrente ; 419 déclarations `!important` ; 322 classes définies et 0 classe orpheline.
 
 Le prochain chantier de réduction, son séquencement et ses critères de sortie sont
 documentés dans [`docs/css-debt-roadmap.md`](./css-debt-roadmap.md).
@@ -85,7 +86,7 @@ Une classe n’est exemptée de l’analyse des orphelines que si son générate
 
 Le composant `notion-background-sync` rend uniquement l’état `done` et son registre dynamique ne conserve aucune variante CSS sans consommateur. Les anciennes classes `.signal.attractive`, `.notion-background-sync.starting` et `.warning` ont été supprimées après vérification des consommateurs.
 
-Les compteurs de baseline peuvent diminuer ou rester stables. Une nouvelle exception ne doit pas être ajoutée pour faire passer la CI : il faut d’abord prouver le générateur, le périmètre responsive/state/accessibility et documenter l’entrée du registre.
+Les seuils de baseline ne doivent jamais être relevés pour masquer une dette. Chaque compteur surveillé doit rester stable ou diminuer après un lot. Une nouvelle exception de classe ne doit pas être ajoutée pour faire passer la CI : il faut d’abord prouver le générateur, le périmètre responsive/state/accessibility et documenter l’entrée du registre.
 
 Le test ciblé de l’audit vérifie la baseline, le périmètre des trois feuilles, les catégories de redéfinitions, les primitives dynamiques, `research-score-cell` et les états génériques explicitement scopés :
 

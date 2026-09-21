@@ -1,17 +1,17 @@
 {
   "version": 1,
   "capturedAt": "2026-09-21",
-  "scope": "app CSS governance audit after DiscoveryCard hierarchy consolidation",
+  "scope": "app CSS governance audit after Portfolio responsive ownership consolidation",
   "thresholds": {
-    "exactRepeatedSelectors": 276,
-    "directPropertyConflicts": 81,
+    "exactRepeatedSelectors": 249,
+    "directPropertyConflicts": 60,
     "responsiveVariants": 129,
-    "strictRedundantDeclarations": 22,
+    "strictRedundantDeclarations": 16,
     "additiveExtensions": 44,
     "repeatedTokens": 0,
     "conflictingTokens": 0,
-    "importantDeclarations": 449,
-    "definedClasses": 323,
+    "importantDeclarations": 419,
+    "definedClasses": 322,
     "orphanClasses": 0
   }
 }
