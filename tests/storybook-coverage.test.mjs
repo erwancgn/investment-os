@@ -32,7 +32,9 @@ test("reference screen stories use production components at both required viewpo
     Watchlist: ["NotionWatchlist", "mobile", "desktop"],
     Analyses: ["NotionAnalyses", "mobile", "desktop"],
     Portfolio: ["LivePortfolioDashboard", "mobile", "desktop"],
+    Company: ["CompanyDetail", "mobile", "desktop"],
     Reader: ["AnalysisReader", "mobile", "desktop"],
+    Search: ["DocumentSearch", "mobile", "desktop"],
   };
 
   for (const [storyName, [componentName, ...viewports]] of Object.entries(references)) {
