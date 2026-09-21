@@ -56,6 +56,12 @@ test("reference screen stories use production components at both required viewpo
     assert.match(source, new RegExp(`<DiscoveryCard[^>]+kind=\"${kind}\"`), `${componentName} no longer mounts the production ${kind} card`);
   }
 
+  const shellSource = await read("stories/Shell.stories.tsx");
+  assert.match(shellSource, /import Home from "\.\.\/app\/page"/);
+  assert.match(shellSource, /<Home \/>/);
+  assert.match(shellSource, /defaultViewport: "mobile"/);
+  assert.match(shellSource, /defaultViewport: "desktop"/);
+
   const preview = await read(".storybook/preview.ts");
   const frame = await read("stories/reference-frame.tsx");
   assert.match(preview, /width: "390px"/);
