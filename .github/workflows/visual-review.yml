@@ -57,7 +57,7 @@ jobs:
       - name: Install screenshot browser
         run: npx --yes playwright@1.55.0 install --with-deps chromium
 
-      - name: Capture canonical visual review
+      - name: Capture Lot 8 application review
         shell: bash
         run: |
           set -euo pipefail
@@ -69,56 +69,65 @@ jobs:
               storybook-static/index.json | head -n 1
           }
 
+          capture() {
+            local id="$1"
+            local width="$2"
+            local height="$3"
+            local filename="$4"
+            test -n "$id"
+            test "$id" != "null"
+            npx --yes playwright@1.55.0 screenshot \
+              --browser chromium \
+              --viewport-size "$width,$height" \
+              --full-page \
+              --wait-for-timeout 1500 \
+              "http://127.0.0.1:6006/iframe.html?id=$id&viewMode=story" \
+              "visual-review/$filename.png"
+          }
+
           REVIEW_ID="$(story_id "Design System" "Production Visual Review")"
-          COMPANIES_ID="$(story_id "Reference screens/Companies" "Companies")"
+
+          PORTFOLIO_MOBILE_ID="$(story_id "Reference screens/Portfolio" "Mobile")"
+          PORTFOLIO_DESKTOP_ID="$(story_id "Reference screens/Portfolio" "Desktop")"
+          COMPANIES_MOBILE_ID="$(story_id "Reference screens/Companies" "Companies")"
+          COMPANIES_DESKTOP_ID="$(story_id "Reference screens/Companies" "Companies Desktop")"
           COMPANIES_LONG_ID="$(story_id "Reference screens/Companies" "Long")"
-          RADAR_ID="$(story_id "Reference screens/Watchlist · Radar" "Watchlist")"
-          ANALYSES_ID="$(story_id "Reference screens/Analyses" "Analyses")"
+          COMPANY_MOBILE_ID="$(story_id "Reference screens/Company" "Company")"
+          COMPANY_DESKTOP_ID="$(story_id "Reference screens/Company" "Company Desktop")"
+          RADAR_MOBILE_ID="$(story_id "Reference screens/Watchlist · Radar" "Watchlist")"
+          RADAR_DESKTOP_ID="$(story_id "Reference screens/Watchlist · Radar" "Watchlist Desktop")"
+          ANALYSES_MOBILE_ID="$(story_id "Reference screens/Analyses" "Analyses")"
+          ANALYSES_DESKTOP_ID="$(story_id "Reference screens/Analyses" "Analyses Desktop")"
+          READER_MOBILE_ID="$(story_id "Reference screens/Reader" "Reader")"
+          READER_DESKTOP_ID="$(story_id "Reference screens/Reader" "Reader Desktop")"
+          MEMO_MOBILE_ID="$(story_id "Reference screens/Reader" "Memo")"
+          MEMO_DESKTOP_ID="$(story_id "Reference screens/Reader" "Memo Desktop")"
+          SEARCH_MOBILE_ID="$(story_id "Reference screens/Search" "Search")"
+          SEARCH_DESKTOP_ID="$(story_id "Reference screens/Search" "Search Desktop")"
+          SHELL_MOBILE_ID="$(story_id "Reference screens/Shell" "Mobile")"
+          SHELL_DESKTOP_ID="$(story_id "Reference screens/Shell" "Desktop")"
 
-          for value in "$REVIEW_ID" "$COMPANIES_ID" "$COMPANIES_LONG_ID" "$RADAR_ID" "$ANALYSES_ID"; do
-            test -n "$value"
-            test "$value" != "null"
-          done
+          capture "$REVIEW_ID" 1440 900 "design-system-production-review"
 
-          npx --yes playwright@1.55.0 screenshot \
-            --browser chromium \
-            --viewport-size "1440,900" \
-            --full-page \
-            --wait-for-timeout 1500 \
-            "http://127.0.0.1:6006/iframe.html?id=$REVIEW_ID&viewMode=story" \
-            visual-review/design-system-production-review.png
-
-          npx --yes playwright@1.55.0 screenshot \
-            --browser chromium \
-            --viewport-size "390,844" \
-            --full-page \
-            --wait-for-timeout 1500 \
-            "http://127.0.0.1:6006/iframe.html?id=$COMPANIES_ID&viewMode=story" \
-            visual-review/companies-390.png
-
-          npx --yes playwright@1.55.0 screenshot \
-            --browser chromium \
-            --viewport-size "390,844" \
-            --full-page \
-            --wait-for-timeout 1500 \
-            "http://127.0.0.1:6006/iframe.html?id=$COMPANIES_LONG_ID&viewMode=story" \
-            visual-review/companies-long-390.png
-
-          npx --yes playwright@1.55.0 screenshot \
-            --browser chromium \
-            --viewport-size "390,844" \
-            --full-page \
-            --wait-for-timeout 1500 \
-            "http://127.0.0.1:6006/iframe.html?id=$RADAR_ID&viewMode=story" \
-            visual-review/radar-390.png
-
-          npx --yes playwright@1.55.0 screenshot \
-            --browser chromium \
-            --viewport-size "390,844" \
-            --full-page \
-            --wait-for-timeout 1500 \
-            "http://127.0.0.1:6006/iframe.html?id=$ANALYSES_ID&viewMode=story" \
-            visual-review/analyses-390.png
+          capture "$PORTFOLIO_MOBILE_ID" 390 844 "portfolio-390"
+          capture "$PORTFOLIO_DESKTOP_ID" 1440 900 "portfolio-1440"
+          capture "$COMPANIES_MOBILE_ID" 390 844 "companies-390"
+          capture "$COMPANIES_DESKTOP_ID" 1440 900 "companies-1440"
+          capture "$COMPANIES_LONG_ID" 390 844 "companies-long-390"
+          capture "$COMPANY_MOBILE_ID" 390 844 "company-detail-390"
+          capture "$COMPANY_DESKTOP_ID" 1440 900 "company-detail-1440"
+          capture "$RADAR_MOBILE_ID" 390 844 "radar-390"
+          capture "$RADAR_DESKTOP_ID" 1440 900 "radar-1440"
+          capture "$ANALYSES_MOBILE_ID" 390 844 "analyses-390"
+          capture "$ANALYSES_DESKTOP_ID" 1440 900 "analyses-1440"
+          capture "$READER_MOBILE_ID" 390 844 "analysis-reader-390"
+          capture "$READER_DESKTOP_ID" 1440 900 "analysis-reader-1440"
+          capture "$MEMO_MOBILE_ID" 390 844 "memo-reader-390"
+          capture "$MEMO_DESKTOP_ID" 1440 900 "memo-reader-1440"
+          capture "$SEARCH_MOBILE_ID" 390 844 "document-search-390"
+          capture "$SEARCH_DESKTOP_ID" 1440 900 "document-search-1440"
+          capture "$SHELL_MOBILE_ID" 390 844 "shell-mobile-390"
+          capture "$SHELL_DESKTOP_ID" 1440 900 "shell-desktop-1440"
 
       - uses: actions/upload-artifact@v4
         with:
