@@ -84,3 +84,4 @@ for (const relativeFile of cssFiles) {
 }
 
 console.log(JSON.stringify({ mode: fix ? "fix" : "audit", removedSelectors, removedRules, examples }, null, 2));
+if (!fix && removedSelectors > 0) process.exitCode = 1;
