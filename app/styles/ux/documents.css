@@ -1,0 +1,462 @@
+/* Structured analysis/document composition layered on canonical Notion primitives. */
+/* Structured Notion documents — one shared presentation layer. */
+.latest-info-card {
+  min-width: 0;
+  padding: var(--space-6);
+  border-top-width: 1px !important;
+}
+
+.latest-info-card .detail-heading {
+  align-items: flex-start;
+}
+
+.latest-info-card .detail-heading h2 {
+  max-width: 760px;
+  font-size: var(--font-lg);
+  line-height: 1.35;
+}
+
+.latest-info-summary,
+.analysis-lead {
+  
+  gap: 10px;
+  
+  
+}
+
+.latest-info-summary > small,
+.analysis-lead > span,
+.analysis-lead > span::after {
+  color: var(--color-accent) !important;
+  font-size: 10px !important;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.latest-info-summary > .latest-info-summary-more {
+  color: var(--color-text-muted) !important;
+  font-size: 10px !important;
+  font-weight: 500;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.analysis-lead > span::after {
+  content: none !important;
+}
+.latest-info-summary p,
+.latest-info-summary ul,
+.analysis-lead p,
+.analysis-lead ul {
+  margin: 0 !important;
+  padding-left: 0;
+  color: var(--color-text) !important;
+  font-size: 15px !important;
+  line-height: 1.58 !important;
+}
+
+.latest-info-summary ul,
+.analysis-lead ul {
+  display: grid;
+  gap: 8px;
+  padding-left: 20px;
+}
+
+@media (max-width: 760px) {
+  .latest-info-card {
+    padding: 17px 15px;
+  }
+}
+
+/* Final mobile cascade guard — keep this at EOF. */
+@media (max-width: 760px) {
+  .company-detail,
+  .generic-company-detail,
+  .research-reader,
+  .universal-analysis-reader,
+  .universal-analysis-layout,
+  .universal-analysis-page,
+  .company-section-block {
+    box-sizing: border-box;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
+
+  .company-main-grid,
+  .company-summary-grid {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .latest-info-summary p,
+  .latest-info-summary li,
+  .analysis-lead p,
+  .analysis-lead li {
+    color: var(--color-text) !important;
+    font-size: 15px !important;
+    line-height: 1.58 !important;
+    word-break: normal !important;
+    overflow-wrap: break-word !important;
+  }
+
+  .universal-analysis-page > p,
+  .universal-analysis-page > ul,
+  .universal-analysis-page > ol,
+  .universal-analysis-page > blockquote {
+    width: 100%;
+    max-width: 100% !important;
+    color: var(--color-text-secondary) !important;
+    font-size: 16px !important;
+    line-height: 1.62 !important;
+    text-align: left !important;
+    word-break: normal !important;
+    overflow-wrap: break-word !important;
+  }
+
+  .universal-analysis-page .analysis-section h2,
+  .universal-analysis-page .analysis-section h3,
+  .universal-analysis-page .analysis-section h4,
+  .universal-analysis-page .analysis-section h5,
+  .universal-analysis-page .analysis-section h6 {
+    min-width: 0;
+    font-size: clamp(20px, 6vw, 25px) !important;
+    line-height: 1.24 !important;
+    word-break: normal !important;
+    overflow-wrap: break-word !important;
+  }
+
+}
+
+@media (max-width: 380px) {
+  .company-metrics,
+  .holding-metric-grid {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+}
+
+/* Content readability guard — semantic research copy must keep the same
+   contrast as the rest of the light interface. Accent colours remain reserved
+   for labels, links and explicit positive/negative financial performance. The
+   token is canonicalized in globals.css. */
+
+.latest-info-summary p,
+.latest-info-summary li,
+.analysis-lead p,
+.analysis-lead li,
+.universal-analysis-page > p,
+.universal-analysis-page > ul,
+.universal-analysis-page > ol,
+.universal-analysis-page > ul li,
+.universal-analysis-page > ol li,
+.universal-analysis-page > blockquote,
+.universal-analysis-page td,
+.decision-template-block p,
+.decision-template-columns p {
+  color: var(--color-content-copy) !important;
+  -webkit-text-fill-color: var(--color-content-copy) !important;
+  opacity: 1 !important;
+}
+
+.latest-info-summary p *,
+.latest-info-summary li *,
+.analysis-lead p *,
+.analysis-lead li *,
+.universal-analysis-page > p *,
+.universal-analysis-page > ul li *,
+.universal-analysis-page > ol li *,
+.universal-analysis-page > blockquote * {
+  color: inherit !important;
+  -webkit-text-fill-color: inherit !important;
+  opacity: 1 !important;
+}
+
+.latest-info-summary strong,
+.analysis-lead strong,
+.universal-analysis-page > p strong,
+.universal-analysis-page > ul li strong,
+.universal-analysis-page > ol li strong,
+.universal-analysis-page > blockquote strong,
+.report-verdict strong,
+.report-verdict span {
+  color: var(--color-text) !important;
+  -webkit-text-fill-color: var(--color-text) !important;
+}
+
+.analysis-load-more {
+  margin-top: var(--space-4);
+}
+
+/* Notion is the content source; these wrappers only provide rhythm, not a
+   second white card around an already card-based document. */
+.company-section-block,
+.company-research-overview {
+  padding: 0 !important;
+}
+
+.company-research-overview > .eyebrow,
+.company-research-overview > h2 {
+  padding-inline: 4px;
+}
+.company-research-overview > h2 {
+  margin-bottom: var(--space-4);
+}
+
+@media (max-width: 760px) {
+  .research-coverage-table .ui-data-table thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .research-coverage-table .ui-data-table,
+  .research-coverage-table .ui-data-table tbody,
+  .research-coverage-table .ui-data-table tr {
+    display: block;
+    width: 100%;
+  }
+
+  .research-coverage-table .ui-data-table tr {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(52px, .65fr) minmax(68px, auto);
+    gap: 8px;
+    padding: 12px;
+    align-items: center;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .research-coverage-table .ui-data-table tr:last-child {
+    border-bottom: 0;
+  }
+
+  .research-coverage-table .ui-data-table td {
+    display: block;
+    width: auto !important;
+    min-width: 0;
+    max-width: none;
+    padding: 0;
+    border: 0;
+    overflow-wrap: anywhere;
+  }
+  .research-coverage-table .ui-data-table .research-type-cell {
+    grid-column: 1;
+    grid-row: 1;
+    align-self: center;
+  }
+  .research-coverage-table .ui-data-table .research-score-cell {
+    grid-column: 2;
+    grid-row: 1;
+    justify-self: start;
+    text-align: left;
+  }
+  .research-coverage-table .ui-data-table .research-action-cell {
+    grid-column: 3;
+    grid-row: 1;
+    justify-self: end;
+    min-width: 72px;
+  }
+  .research-coverage-table .research-type-cell strong {
+    display: block;
+    min-width: 0;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+  }
+  .research-coverage-table .ui-action-button--compact {
+    width: max-content;
+    max-width: 100%;
+    min-width: 72px;
+  }
+}
+
+/* Dynamic labels stay inside their component bounds. Compact badges remain
+   single-line by design; full decisions are exposed through title/metadata. */
+.detail-heading > :first-child,
+.memo-section-title > :first-child,
+.report-verdict {
+  min-width: 0;
+}
+.latest-info-card .detail-heading > .ui-badge {
+  flex: 0 1 auto;
+}
+.report-verdict strong,
+.report-verdict span {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+.research-reference > strong {
+  min-width: 0;
+  max-width: 100%;
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 11px;
+  line-height: 1.25;
+}
+.latest-analysis-metadata {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.latest-analysis-metadata .ui-metadata-item {
+  min-height: 76px;
+}
+.latest-analysis-metadata .ui-metadata-item:nth-child(3) {
+  grid-column: 1 / -1;
+}
+.latest-verdict-value {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+}
+.latest-verdict-value strong {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.latest-verdict-value small {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+  color: var(--color-text-muted);
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.35;
+}
+
+@media (max-width: 760px) {
+  .analysis-list-row .analysis-verdict-cell {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+}
+
+/* Shared nested liquid-glass surfaces. The analysis page itself remains the
+   primary white surface; every nested information block uses this component
+   contract instead of owning a bespoke background, border and spacing. */
+
+.analysis-report-hero--without-outcome {
+  grid-template-columns: minmax(0, 1fr) !important;
+}
+
+.analysis-structured-value {
+  display: grid;
+}
+
+.analysis-structured-value > span {
+  padding: 7px 0;
+}
+
+.analysis-structured-value > span:first-child {
+  padding-top: 0;
+}
+
+.analysis-structured-value > span:last-child {
+  padding-bottom: 0;
+}
+
+.analysis-structured-value > span + span {
+  border-top: 1px solid var(--color-border);
+}
+
+.analysis-lead,
+.latest-info-summary {
+  display: block;
+  margin: 0 0 var(--space-4);
+  padding: 16px 18px !important;
+}
+
+.analysis-lead section,
+.latest-info-summary section {
+  min-width: 0;
+}
+
+.analysis-lead section > span,
+.latest-info-summary section > small:first-child {
+  display: block;
+  margin-bottom: 9px;
+  color: var(--color-accent) !important;
+  font-size: 10px !important;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.analysis-lead p,
+.analysis-lead li,
+.latest-info-summary p,
+.latest-info-summary li {
+  color: var(--color-content-copy) !important;
+  -webkit-text-fill-color: var(--color-content-copy) !important;
+}
+
+.latest-info-summary-more {
+  display: block;
+  margin-top: 10px;
+  color: var(--color-text-muted) !important;
+  font-size: 10px !important;
+  letter-spacing: 0 !important;
+  text-transform: none !important;
+}
+
+/* White belongs to the primary liquid-glass page/card only. Structural
+   wrappers and traceability footers must not create nested white rectangles. */
+.company-summary-grid,
+.company-research-overview,
+.company-section-block,
+.company-detail-footer,
+.company-traceability {
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+.company-summary-grid {
+  padding: 0 !important;
+}
+
+.company-research-overview > details,
+.company-history-details {
+  border: 1px solid var(--color-border) !important;
+  border-radius: var(--radius-md) !important;
+  background: var(--glass-inset) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.72) !important;
+}
+
+.company-research-overview > details {
+  padding: 0 var(--space-4) var(--space-3);
+}
+
+@media (max-width: 760px) {
+  .ui-metadata-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .ui-metadata-item {
+    padding: 13px 12px;
+  }
+
+  .analysis-key-fact--priority {
+    grid-column: 1 / -1;
+  }
+  .analysis-lead,
+  .latest-info-summary {
+    padding: 14px !important;
+  }
+}
+
+@media (max-width: 360px) {
+  .ui-metadata-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

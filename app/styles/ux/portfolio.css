@@ -1,0 +1,449 @@
+/* Portfolio, trajectory and portfolio-system composition. */
+/* Portfolio — one summary, one positions surface, targets only in Trajectoire. */
+.live-dashboard-head {
+  min-height: 34px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 0 0 12px;
+  color: #778780;
+  font-size: 9px;
+}
+.live-dashboard-head span:nth-child(2) {
+  margin-left: auto;
+}
+.live-dashboard-head button,
+.live-portfolio-state > button:not(.ui-back-button) {
+  min-height: var(--ui-control-hit-height);
+  padding: 8px 11px;
+  border: 1px solid rgba(0, 122, 255, 0.32);
+  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, 0.74);
+  color: var(--color-accent);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+  cursor: pointer;
+}
+.live-dashboard-head button:hover {
+  background: #fff;
+}
+.live-portfolio-state {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 18px;
+  padding: 24px;
+}
+.live-portfolio-state span {
+  color: var(--color-text-muted);
+  font-size: 10px;
+}
+
+.portfolio-overview {
+  margin-bottom: var(--space-4);
+  padding: var(--space-6);
+  overflow: hidden;
+}
+.portfolio-overview-main {
+  display: grid;
+  grid-template-columns: minmax(250px, 0.8fr) minmax(0, 1.5fr);
+  gap: var(--space-8);
+  align-items: end;
+}
+.portfolio-overview-main > div:first-child > span {
+  display: block;
+  margin-top: var(--space-3);
+  
+  font-size: var(--font-sm);
+}
+.portfolio-overview-main > div:first-child > strong {
+  display: block;
+  margin: 3px 0 2px;
+  
+  font-size: var(--font-2xl);
+  line-height: 1.1;
+  letter-spacing: -1.1px;
+}
+.portfolio-overview-main > div:first-child > small {
+  color: var(--color-text-muted);
+  font-size: var(--font-xs);
+}
+.portfolio-kpis {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.portfolio-kpis > span {
+  
+  padding: 4px var(--space-5);
+  border-left: 1px solid var(--color-border);
+  display: grid;
+  grid-template-rows: minmax(26px, auto) minmax(29px, auto) minmax(18px, auto);
+  justify-items: start;
+  gap: 4px;
+}
+.portfolio-kpis small {
+  
+  font-size: 10px;
+}
+.portfolio-kpis strong {
+  
+  font-size: var(--font-lg);
+  line-height: 1.25;
+}
+.portfolio-kpis b {
+  
+  font-size: 10px;
+  font-weight: 500;
+}
+.portfolio-scope-switch {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-2);
+  margin-top: var(--space-6);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--color-border);
+}
+.portfolio-scope-switch button {
+  min-height: 48px;
+  padding: 8px 12px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  
+  cursor: pointer;
+}
+.portfolio-scope-switch button span {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+.portfolio-scope-switch button strong {
+  color: var(--color-text-secondary);
+  font-size: var(--font-sm);
+}
+.portfolio-scope-switch button.active strong {
+  color: var(--color-text);
+}
+
+.portfolio-main-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.75fr) minmax(320px, 1fr);
+  gap: 18px;
+  align-items: start;
+}
+.allocation-panel {
+  padding: 22px 22px 14px;
+}
+.allocation-panel .panel-head .eyebrow,
+.allocation-panel .panel-head h2 {
+  font-size: revert;
+}
+.allocation-panel .panel-head .eyebrow::after,
+.allocation-panel .panel-head h2::after {
+  content: none;
+}
+.allocation-panel .panel-head h2 {
+  margin: 0;
+  font-size: var(--font-lg);
+}
+.position-count {
+  padding: 6px 9px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-pill);
+  color: var(--color-text-muted);
+  font-size: 10px;
+}
+
+
+.allocation-row {
+  position: relative;
+  display: grid;
+  width: 100%;
+  grid-template-columns: minmax(210px, 1fr) minmax(88px, .45fr) 66px 84px 84px 82px;
+  align-items: center;
+  column-gap: 12px;
+  row-gap: 15px;
+  min-height: 64px;
+  font-size: 7px;
+  padding: 9px 0;
+  border: 0;
+  border-bottom: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: none;
+  text-align: left;
+}
+.allocation-row:last-child {
+  border-bottom: 0;
+}
+.allocation-row.clickable:hover {
+  background: rgba(27, 57, 46, 0.45);
+}
+.position-open {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border: 0;
+  border-radius: inherit;
+  background: transparent;
+  cursor: pointer;
+}
+.allocation-list {
+  margin-top: 5px;
+}
+.asset-name {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  min-width: 0;
+}
+.asset-name > div {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.asset-dot {
+  width: 36px;
+  height: 36px;
+  flex: 0 0 36px;
+  display: grid;
+  place-items: center;
+  border-radius: 9px;
+  background: #eef3f8;
+  color: var(--color-accent);
+  font-size: 10px;
+  font-weight: 900;
+}
+.asset-name strong {
+  display: block;
+  
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+.asset-name small,
+.weights small {
+  color: var(--color-text-secondary);
+  font-size: 8px;
+}
+.asset-metadata {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px 7px;
+  margin-top: 5px;
+}
+.asset-metadata span {
+  white-space: nowrap;
+}
+.asset-metadata span + span::before {
+  content: "·";
+  margin-right: 7px;
+  color: #41504a;
+}
+.weights strong,
+.position-value strong,
+.position-quote strong {
+  
+  font-size: 10px;
+}
+.position-value small,
+.position-quote small {
+  
+  text-transform: uppercase;
+  letter-spacing: 0.45px;
+}
+.pnl-badge {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 2px;
+  
+  min-height: var(--ui-control-hit-height);
+  padding: 0;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  font: inherit;
+  font-size: 9px;
+  font-weight: 700;
+  
+  cursor: pointer;
+}
+.pnl-badge strong {
+  font-size: inherit;
+  line-height: 1.1;
+  
+}
+
+.side-stack {
+  display: grid;
+  gap: 18px;
+}
+.sector-panel {
+  padding: 21px;
+}
+.sector-panel .panel-head {
+  gap: 10px;
+}
+.sector-panel .panel-head h2 {
+  font-size: var(--font-lg);
+  white-space: nowrap;
+}
+.donut-wrap {
+  display: flex;
+  align-items: center;
+  gap: 25px;
+  margin-top: 18px;
+}
+.donut {
+  width: 132px;
+  height: 132px;
+  flex: none;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+}
+.donut::before {
+  content: "";
+  width: 89px;
+  height: 89px;
+  border-radius: 50%;
+  grid-area: 1 / 1;
+  background: var(--glass-fill-strong) !important;
+}
+.donut > div {
+  grid-area: 1 / 1;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+}
+.donut strong {
+  font-size: 18px;
+}
+.donut small {
+  margin-top: 4px;
+  color: var(--color-text-muted);
+  font-size: 8px;
+}
+.sector-list {
+  flex: 1;
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.sector-list li {
+  display: grid;
+  grid-template-columns: 7px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px;
+  color: var(--color-text-muted);
+  font-size: 9px;
+}
+.sector-list li i {
+  width: 7px;
+  height: 7px;
+  border-radius: 2px;
+}
+.sector-list span {
+  color: var(--color-text-secondary);
+}
+
+/* Trajectory is the only target surface. */
+.target-allocation {
+  margin: 18px 0 var(--space-5);
+  padding: 19px;
+  font-size: 9px;
+}
+.target-allocation .panel-head h2 {
+  font-size: var(--font-lg);
+}
+.trajectory-progress {
+  display: grid;
+  gap: 8px;
+  margin: 13px 0;
+  padding: 14px;
+}
+.trajectory-progress > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  color: var(--color-text-muted);
+  font-size: inherit;
+}
+.trajectory-progress > div strong {
+  color: var(--color-text);
+  font-size: 12px;
+}
+.target-policy {
+  margin: 8px 0 16px;
+  color: var(--color-text-muted);
+  font-size: 10px;
+  line-height: 1.5;
+}
+
+/* Secondary system information stays readable but visually quiet. */
+.notion-sync-panel {
+  margin-top: var(--space-3);
+}
+.notion-sync-panel > summary > div:first-child {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  flex: 1 1 15rem;
+}
+.notion-sync-meta {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: .875rem;
+  line-height: 1.5;
+}
+.notion-sync-panel > summary {
+  flex-wrap: wrap;
+  gap: var(--page-block-gap);
+  padding: 1rem;
+}
+.notion-sync-panel .notion-sync-actions {
+  flex: 0 1 auto;
+}
+.notion-sync-details {
+  padding: 0 21px 18px;
+  border-top: 1px solid var(--color-border);
+}
+.notion-sync-details .notion-sync-subtitle {
+  margin: 15px 0 0;
+  color: var(--color-text-muted);
+  font-size: 11px;
+}
+.notion-sync-details .notion-sync-copy {
+  margin-top: 9px;
+}
+@media (max-width: 560px) {
+  .notion-sync-panel .notion-sync-actions {
+    width: 100%;
+  }
+  .notion-sync-details {
+    padding: 0 16px 16px;
+  }
+}
+
+/* Shared list/detail refinements used by the other audited screens. */
+.analysis-stats article,
+.company-metrics article,
+.detail-card {
+  border-radius: var(--radius-md);
+}
+.detail-heading h2,
+.detail-card > h2 {
+  line-height: 1.3;
+}
+.analysis-list-row {
+  min-height: 62px;
+}
