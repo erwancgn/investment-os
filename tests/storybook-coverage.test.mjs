@@ -101,7 +101,8 @@ test("the mobile visual contract covers long Discovery titles and explicit filte
   assert.match(css, /\.watch-signal-row strong\s*\{[^}]*font-size:\s*var\(--font-sm\)/s);
   assert.match(fixtures, /Advanced Micro Devices — Long Reference Name/);
   assert.match(fixtures, /Lumentum Holdings/);
-  assert.match(story, /companies: \[company, lumentumCompany\]/);
+  assert.match(story, /companies: \[company\]/);
+  assert.match(story, /companies: \[lumentumCompany\]/);
   assert.match(story, /<DisclosureSurface[^>]*summary=/);
   assert.match(story, /Reference theme taxonomy/);
 });

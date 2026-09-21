@@ -79,6 +79,7 @@ jobs:
             --browser chromium \
             --viewport-size "1440,900" \
             --full-page \
+            --wait-for-timeout 1500 \
             "http://127.0.0.1:6006/iframe.html?id=$REVIEW_ID&viewMode=story" \
             visual-review/design-system-production-review.png
 
@@ -86,6 +87,7 @@ jobs:
             --browser chromium \
             --viewport-size "390,844" \
             --full-page \
+            --wait-for-timeout 1500 \
             "http://127.0.0.1:6006/iframe.html?id=$COMPANIES_ID&viewMode=story" \
             visual-review/companies-390.png
 
@@ -93,6 +95,7 @@ jobs:
             --browser chromium \
             --viewport-size "390,844" \
             --full-page \
+            --wait-for-timeout 1500 \
             "http://127.0.0.1:6006/iframe.html?id=$RADAR_ID&viewMode=story" \
             visual-review/radar-390.png
 
@@ -100,6 +103,7 @@ jobs:
             --browser chromium \
             --viewport-size "390,844" \
             --full-page \
+            --wait-for-timeout 1500 \
             "http://127.0.0.1:6006/iframe.html?id=$ANALYSES_ID&viewMode=story" \
             visual-review/analyses-390.png
 

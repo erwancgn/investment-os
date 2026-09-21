@@ -257,7 +257,7 @@ input, select { font-size: 16px; }
 .ui-stat-card { display: flex; flex-direction: column; gap: 5px; min-height: 96px; padding: var(--space-3); }
 .ui-stat-card > span { color: var(--color-text-muted); font-size: var(--font-xs); line-height: 1.2; }
 .ui-stat-card > strong { color: var(--color-text); font-size: clamp(1.25rem, 4vw, 1.75rem); line-height: 1; }
-.ui-stat-card > small { color: var(--color-text-muted); font-size: var(--font-xs); line-height: 1.25; }
+.ui-stat-card > small { display: -webkit-box; overflow: hidden; -webkit-box-orient: vertical; -webkit-line-clamp: 2; color: var(--color-text-muted); font-size: var(--font-xs); line-height: 1.25; }
 .ui-stat-card.integrity-warning > strong { color: var(--color-warning); }
 .ui-discovery-card {
   --ui-surface-radius: var(--radius-lg);
