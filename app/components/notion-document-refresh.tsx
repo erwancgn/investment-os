@@ -17,8 +17,7 @@ export function NotionDocumentRefresh() {
       if (launch.accepted && launch.acceptedAt) {
         await waitForBrowserNotionRefresh(launch.acceptedAt);
       } else if (launch.running) {
-        const acceptedAt = new Date().toISOString();
-        await waitForBrowserNotionRefresh(acceptedAt);
+        await waitForBrowserNotionRefresh();
       }
       window.dispatchEvent(new Event("notion-sync-complete"));
     } catch (reason) {
