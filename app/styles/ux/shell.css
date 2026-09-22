@@ -135,7 +135,7 @@
 }
 
 .content {
-  width: 100%;
+  width: calc(100% - 225px);
   min-width: 0;
   max-width: 100%;
   min-height: 100vh;
@@ -277,6 +277,7 @@
   }
 
   .app-shell > .content {
+    width: 100%;
     margin-left: 0 !important;
     padding: max(16px, env(safe-area-inset-top))
       max(16px, env(safe-area-inset-right))
