@@ -60,7 +60,7 @@ flowchart LR
 
 ## Synchronisation Notion, TTL et webhook
 
-L'interface affiche d'abord les snapshots D1. Les mutations Notion sont strictement serveur-à-serveur : le navigateur ne déclenche aucune synchronisation et ne reçoit aucun secret. Les mises à jour courantes arrivent par le webhook Notion signé ; une réconciliation périodique peut appeler les routes internes avec le jeton serveur `NOTION_SYNC_AUTH_TOKEN` dans `Authorization: Bearer <token>`.
+L'interface affiche d'abord les snapshots D1. Les mises à jour courantes arrivent par le webhook Notion signé ; une réconciliation périodique peut appeler les routes internes avec le jeton serveur `NOTION_SYNC_AUTH_TOKEN` dans `Authorization: Bearer <token>`. L'interface owner-private expose aussi une action manuelle `Maj doc` via `/api/notion/refresh` : elle ne reçoit ni ne transmet aucun secret Notion et réutilise le même pipeline serveur de découverte, file d'import et finalisation.
 
 Les sept sources Notion sont parcourues, mais les blocs ne sont téléchargés que pour une page nouvelle ou dont le last_edited_time a changé. La comparaison utilise page_id + last_edited_time, jamais le titre.
 
@@ -79,6 +79,7 @@ Les verrous sont séparés par source afin qu'une analyse lente ne bloque pas le
 | Route | Usage |
 | --- | --- |
 | GET /api/notion/status | État du cache, des sources, de la file et du webhook. |
+| POST /api/notion/refresh | Réconciliation manuelle owner-private depuis l'interface ; même origine, aucun secret côté navigateur. |
 | POST /api/notion/sync-background | Découverte TTL serveur-à-serveur, protégée par `NOTION_SYNC_AUTH_TOKEN`. |
 | POST /api/notion/sync | Synchronisation contrôlée d'une source, serveur-à-serveur uniquement. |
 | POST /api/notion/import-next | Traitement borné du prochain lot de blocs, serveur-à-serveur uniquement. |
@@ -98,11 +99,11 @@ Les verrous sont séparés par source afin qu'une analyse lente ne bloque pas le
 - Les réponses 429, les verrous et les interruptions sont rejouables.
 - Une version ancienne ne peut pas écraser une version plus récente.
 - Après plusieurs échecs, une tâche est exposée comme erreur au lieu de boucler indéfiniment.
-- Aucun bouton ou cycle de vie du navigateur ne déclenche une mutation Notion.
+- `Maj doc` est l'unique action navigateur autorisée à demander une réconciliation documentaire ; elle passe par la route owner-private dédiée et n'expose aucun jeton serveur.
 
 ### Autorisation des réconciliations serveur
 
-`NOTION_SYNC_AUTH_TOKEN` est une variable d'environnement privée du Worker et du service serveur qui déclenche éventuellement une réconciliation périodique. Elle ne doit jamais être préfixée par `NEXT_PUBLIC_`, injectée dans le bundle client ou placée dans le dépôt. Les cinq routes de mutation refusent les requêtes sans `Authorization: Bearer <token>` correspondant. Le webhook conserve son propre secret de chemin et sa vérification HMAC ; ce mécanisme n'est pas utilisé par le navigateur.
+`NOTION_SYNC_AUTH_TOKEN` est une variable d'environnement privée du Worker et du service serveur qui déclenche éventuellement une réconciliation périodique. Elle ne doit jamais être préfixée par `NEXT_PUBLIC_`, injectée dans le bundle client ou placée dans le dépôt. Les cinq routes internes de mutation refusent les requêtes sans `Authorization: Bearer <token>` correspondant. `/api/notion/refresh` est distincte : elle hérite du périmètre owner-private du Site, refuse les requêtes cross-origin et ne transmet aucun secret au navigateur. Le webhook conserve son propre secret de chemin et sa vérification HMAC.
 
 ## Développement local
 
