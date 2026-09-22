@@ -171,12 +171,12 @@
 .page-header .header-account-tools {
   margin-left: var(--space-2);
 }
-.portfolio-page-header {
+.app-shell .portfolio-page-header {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   align-items: start;
   gap: 8px;
-  margin-bottom: var(--space-4) !important;
+  margin-bottom: var(--space-4);
 }
 .portfolio-header-title-row {
   display: flex;
@@ -348,7 +348,7 @@
     line-height: 1.15;
   }
   .app-shell .portfolio-page-header {
-    margin-bottom: 14px !important;
+    margin-bottom: 14px;
   }
   .app-shell .portfolio-header-actions {
     gap: 6px;
