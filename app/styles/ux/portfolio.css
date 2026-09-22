@@ -1,31 +1,5 @@
 /* Portfolio, trajectory and portfolio-system composition. */
 /* Portfolio — one summary, one positions surface, targets only in Trajectoire. */
-.live-dashboard-head {
-  min-height: 34px;
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  margin: 0 0 12px;
-  color: #778780;
-  font-size: 9px;
-}
-.live-dashboard-head span:nth-child(2) {
-  margin-left: auto;
-}
-.live-dashboard-head button,
-.live-portfolio-state > button:not(.ui-back-button) {
-  min-height: var(--ui-control-hit-height);
-  padding: 8px 11px;
-  border: 1px solid rgba(0, 122, 255, 0.32);
-  border-radius: var(--radius-sm);
-  background: rgba(255, 255, 255, 0.74);
-  color: var(--color-accent);
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
-  cursor: pointer;
-}
-.live-dashboard-head button:hover {
-  background: #fff;
-}
 .live-portfolio-state {
   display: flex;
   flex-direction: column;

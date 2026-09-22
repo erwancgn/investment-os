@@ -56,7 +56,7 @@ export const Controls: Story = {
         <SearchField value={query} onChange={setQuery} placeholder="Search" ariaLabel="Search" count="3 results" />
         <FilterBar ariaLabel="Filter examples"><SegmentedControl options={["All", "Owned", "Watchlist"].map((value) => ({ value, label: value }))} value={segment} onChange={setSegment} ariaLabel="Filter" /></FilterBar>
         <Tabs options={["Summary", "Portfolio", "Research"].map((value) => ({ value, label: value }))} value={tab} onChange={setTab} ariaLabel="Sections" />
-        <div className="storybook-inline"><ActionButton onClick={() => undefined}>Primary action</ActionButton><ActionButton compact onClick={() => undefined}>Compact action</ActionButton><BackButton onBack={() => undefined} /><Badge tone="positive">Positive</Badge><Badge tone="warning">Warning</Badge><Badge tone="negative">Negative</Badge></div>
+        <div className="storybook-inline"><ActionButton onClick={() => undefined}>Default</ActionButton><ActionButton compact onClick={() => undefined}>Compact</ActionButton><ActionButton pressed onClick={() => undefined}>Active</ActionButton><ActionButton disabled onClick={() => undefined}>Disabled</ActionButton><ActionButton loading onClick={() => undefined}>Loading</ActionButton><BackButton onBack={() => undefined} /><Badge tone="positive">Positive</Badge><Badge tone="warning">Warning</Badge><Badge tone="negative">Negative</Badge></div>
       </div>
     );
   },

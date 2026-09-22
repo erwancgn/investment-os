@@ -33,10 +33,10 @@ export function NotionDocumentRefresh() {
         compact
         onClick={refresh}
         disabled={running}
-        title="Synchroniser les documents Notion"
-        ariaLabel="Mettre à jour les documents Notion"
+        title="Synchroniser les données Notion"
+        ariaLabel="Mettre à jour les données Notion"
       >
-        {running ? "Synchro…" : "Maj doc"}
+        {running ? "Synchro…" : "Maj data"}
       </ActionButton>
       {error && <span role="status">{error}</span>}
     </div>

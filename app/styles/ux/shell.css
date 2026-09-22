@@ -153,12 +153,14 @@
 }
 
 .app-shell .page-header {
+  margin: 0 0 var(--space-5);
+  color: var(--color-text);
+}
+.app-shell .page-header:not(.portfolio-page-header) {
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
   gap: var(--space-5);
-  margin: 0 0 var(--space-5);
-  color: var(--color-text);
 }
 .header-account-tools {
   display: flex;
@@ -168,6 +170,33 @@
 }
 .page-header .header-account-tools {
   margin-left: var(--space-2);
+}
+.portfolio-page-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: start;
+  gap: 8px;
+  margin-bottom: var(--space-4) !important;
+}
+.portfolio-header-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  min-width: 0;
+}
+.portfolio-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: nowrap;
+  min-width: 0;
+}
+.portfolio-header-market {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: var(--font-xs);
+  line-height: 1.35;
 }
 .page-header h1 {
   max-width: none;
@@ -289,7 +318,7 @@
     padding: 0 !important;
   }
 
-  .app-shell .page-header {
+  .app-shell .page-header:not(.portfolio-page-header) {
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
     align-items: flex-start;
@@ -317,6 +346,12 @@
     max-width: 270px;
     font-size: clamp(1.65rem, 6vw, 2rem);
     line-height: 1.15;
+  }
+  .app-shell .portfolio-page-header {
+    margin-bottom: 14px !important;
+  }
+  .app-shell .portfolio-header-actions {
+    gap: 6px;
   }
   .mobile-nav {
     position: fixed;
