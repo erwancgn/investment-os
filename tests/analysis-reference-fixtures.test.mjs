@@ -180,7 +180,7 @@ test("app, document and market refreshes keep separate responsibilities", async 
   assert.match(globalSource, /SKIP_WAITING/);
   assert.doesNotMatch(globalSource, /\/api\/notion\//);
   assert.match(documentSource, /requestBrowserNotionRefresh/);
-  assert.match(documentSource, /Maj doc/);
+  assert.match(documentSource, /Maj data/);
   assert.doesNotMatch(documentSource, /serviceWorker|\/api\/portfolio\/live/);
   assert.match(statusSource, /Synchronisation en cours/);
   assert.match(statusSource, /notion-sync-meta/);

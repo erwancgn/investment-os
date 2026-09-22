@@ -1,17 +1,17 @@
 {
-  "version": 2,
-  "capturedAt": "2026-09-21",
-  "scope": "app CSS governance audit after Lot 9B cascade ownership consolidation",
+  "version": 3,
+  "capturedAt": "2026-09-22",
+  "scope": "app CSS governance audit after Portfolio header consolidation",
   "thresholds": {
-    "exactRepeatedSelectors": 174,
+    "exactRepeatedSelectors": 173,
     "directPropertyConflicts": 0,
     "responsiveVariants": 132,
     "strictRedundantDeclarations": 1,
-    "additiveExtensions": 41,
+    "additiveExtensions": 40,
     "repeatedTokens": 0,
     "conflictingTokens": 0,
     "importantDeclarations": 222,
-    "definedClasses": 317,
+    "definedClasses": 321,
     "orphanClasses": 0
   }
 }

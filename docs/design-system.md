@@ -67,16 +67,16 @@ La dette CSS est mesurée par `scripts/audit-css-governance.mjs`. Son périmètr
 `stories/storybook.css`. Le fichier agrégateur `ux-foundations.css` n'est volontairement pas
 compté comme une seconde source de règles.
 
-Après le Lot 9B, la baseline versionnée est :
+Après le Lot 9B et la consolidation du header Portfolio, la baseline versionnée est :
 
-- 174 sélecteurs exacts répétés ;
+- 173 sélecteurs exacts répétés ;
 - 0 conflit direct ;
 - 132 variantes responsive ;
 - 1 redondance stricte intentionnelle ;
-- 41 extensions additives ;
+- 40 extensions additives ;
 - 0 token répété ou concurrent ;
 - 222 déclarations `!important` ;
-- 317 classes définies ;
+- 321 classes définies ;
 - 0 classe orpheline.
 
 `audit-css-ownership.mjs` complète la gouvernance en analysant les sélecteurs individuels même
