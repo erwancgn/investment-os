@@ -14,6 +14,7 @@ const NotionAnalyses = lazy(() => import("./components/notion-analyses").then(mo
 const NotionWatchlist = lazy(() => import("./components/notion-watchlist").then(module => ({ default: module.NotionWatchlist })));
 const NotionIntegrity = lazy(() => import("./components/notion-integrity").then(module => ({ default: module.NotionIntegrity })));
 import { NotionGlobalRefresh } from "./components/notion-global-refresh";
+import { NotionDocumentRefresh } from "./components/notion-document-refresh";
 import { NotionBackgroundSync } from "./components/notion-background-sync";
 import { GlassChrome, SectionHeader } from "./components/ui-primitives";
 
@@ -75,7 +76,7 @@ function AccountMenu({ onOpenManagement }: { onOpenManagement: () => void }) {
 }
 
 function Header({ title, eyebrow, onOpenManagement }: { title: string; eyebrow: string; onOpenManagement: () => void }) {
-  return <SectionHeader className="page-header" heading="h1" eyebrow={eyebrow} title={title} actions={<><div className="header-account-tools"><NotionGlobalRefresh/><AccountMenu onOpenManagement={onOpenManagement}/></div></>} />;
+  return <SectionHeader className="page-header" heading="h1" eyebrow={eyebrow} title={title} actions={<><div className="header-account-tools"><NotionDocumentRefresh/><NotionGlobalRefresh/><AccountMenu onOpenManagement={onOpenManagement}/></div></>} />;
 }
 
 function Portfolio({ openCompany, onOpenManagement }: { openCompany: (id?: string) => void; onOpenManagement: () => void }) {
