@@ -43,9 +43,10 @@ export async function requestBrowserNotionRefresh(): Promise<BrowserRefreshLaunc
 
 const refreshSourceKeys = ["companies","analyses","earnings","portfolio","watchlist","decisions","sources"] as const;
 
-export async function waitForBrowserNotionRefresh(acceptedAt: string, timeoutMs = 60_000): Promise<BrowserSyncStatus> {
-  const acceptedTime = Date.parse(acceptedAt);
-  const deadline = Date.now() + timeoutMs;
+export async function waitForBrowserNotionRefresh(acceptedAt?: string, timeoutMs = 60_000): Promise<BrowserSyncStatus> {
+  const acceptedTime = acceptedAt ? Date.parse(acceptedAt) : NaN;
+  const startedAt = Date.now();
+  const deadline = startedAt + timeoutMs;
   while (Date.now() < deadline) {
     const status = await readBrowserNotionStatus();
     const states = new Map((status.sources ?? []).map(row => [row.source_key, row]));
@@ -57,10 +58,12 @@ export async function waitForBrowserNotionRefresh(acceptedAt: string, timeoutMs 
       || Number(status.webhook?.failed ?? 0) > 0
       || (status.sources ?? []).some(row => row.last_status === "error");
     if (failed) throw new Error("La synchronisation documentaire a rencontré une erreur.");
+    const busy = (status.sources ?? []).some(row => ["discovering","pending","imported"].includes(row.last_status ?? ""));
     const idle = Number(status.queue?.remaining ?? 0) === 0
       && Number(status.webhook?.pending ?? 0) === 0
-      && !(status.queue?.needsFinalize ?? false);
-    if (allScanned && idle) return status;
+      && !(status.queue?.needsFinalize ?? false)
+      && !busy;
+    if ((allScanned || (!acceptedAt && Date.now() - startedAt >= 1_500)) && idle) return status;
     await new Promise(resolve => window.setTimeout(resolve, 750));
   }
   throw new Error("La synchronisation documentaire prend plus de temps que prévu.");
