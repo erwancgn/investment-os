@@ -188,37 +188,19 @@
   font-size: 15px;
   font-weight: 700;
 }
-.notion-global-refresh {
+.header-refresh-control {
+  position: relative;
   display: flex;
   align-items: center;
-  gap: 7px;
 }
-.notion-global-refresh button {
-  min-height: var(--ui-control-hit-height);
-  padding: 9px 12px;
-  border: 1px solid rgba(0, 122, 255, 0.32);
-  border-radius: 9px;
-  background: rgba(255, 255, 255, 0.74);
-  color: var(--color-accent);
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
-  font-size: 11px;
-  font-weight: 700;
-  white-space: nowrap;
-  cursor: pointer;
-}
-.notion-global-refresh button:hover:not(:disabled) {
-  background: #fff;
-}
-.notion-global-refresh button:disabled {
-  opacity: .7;
-  cursor: wait;
-}
-.notion-global-refresh span {
+.header-refresh-control > span[role="status"] {
   position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  width: max-content;
   max-width: 240px;
-  margin-top: 58px;
-  color: #ffb4a8;
-  font-size: 9px;
+  color: var(--color-negative);
+  font-size: var(--font-xs);
   line-height: 1.3;
 }
 
@@ -329,10 +311,6 @@
   }
   .app-shell .page-header .freshness {
     display: none;
-  }
-  .app-shell .page-header .notion-global-refresh button {
-    padding: 8px 11px;
-    font-size: 11px;
   }
   .app-shell .page-header h1 {
     max-width: 270px;
