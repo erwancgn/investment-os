@@ -167,16 +167,21 @@ test("Notion webhook is authenticated, durable and coalesces on the latest page 
   assert.doesNotMatch(workerSource, /verificationToken\},\{headers/);
 });
 
-test("app refresh only updates the PWA shell while Notion refresh owns the snapshot", async () => {
+test("app, document and market refreshes keep separate responsibilities", async () => {
   const globalSource = await readFile(new URL("../app/components/notion-global-refresh.tsx", import.meta.url), "utf8");
+  const documentSource = await readFile(new URL("../app/components/notion-document-refresh.tsx", import.meta.url), "utf8");
   const statusSource = await readFile(new URL("../app/components/notion-sync-status.tsx", import.meta.url), "utf8");
   const clientSource = await readFile(new URL("../app/lib/notion-sync-client.ts", import.meta.url), "utf8");
-  assert.doesNotMatch(globalSource, /requestFullNotionSync|waitForFullNotionSync/);
   assert.match(globalSource, /registration\.update\(\)/);
   assert.match(globalSource, /SKIP_WAITING/);
-  assert.match(statusSource, /Lecture seule/);
+  assert.doesNotMatch(globalSource, /\/api\/notion\//);
+  assert.match(documentSource, /requestBrowserNotionRefresh/);
+  assert.match(documentSource, /Maj doc/);
+  assert.doesNotMatch(documentSource, /serviceWorker|\/api\/portfolio\/live/);
+  assert.match(statusSource, /Synchronisation en cours/);
   assert.match(statusSource, /notion-sync-meta/);
-  assert.doesNotMatch(statusSource, /onClick|request(?:Full|Pending|Background)NotionSync/);
+  assert.doesNotMatch(statusSource, /onClick|requestBrowserNotionRefresh/);
+  assert.match(clientSource, /\/api\/notion\/refresh/);
   assert.doesNotMatch(clientSource, /\/api\/notion\/(sync|import-next|sync-background|sync-portfolio|sync-all)/);
 });
 
