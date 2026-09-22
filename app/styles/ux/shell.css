@@ -135,7 +135,7 @@
 }
 
 .content {
-  width: 100%;
+  width: calc(100% - 225px);
   min-width: 0;
   max-width: 100%;
   min-height: 100vh;
@@ -153,12 +153,14 @@
 }
 
 .app-shell .page-header {
+  margin: 0 0 var(--space-5);
+  color: var(--color-text);
+}
+.app-shell .page-header:not(.portfolio-page-header) {
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
   gap: var(--space-5);
-  margin: 0 0 var(--space-5);
-  color: var(--color-text);
 }
 .header-account-tools {
   display: flex;
@@ -168,6 +170,33 @@
 }
 .page-header .header-account-tools {
   margin-left: var(--space-2);
+}
+.app-shell .portfolio-page-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: start;
+  gap: 8px;
+  margin-bottom: var(--space-4);
+}
+.portfolio-header-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  min-width: 0;
+}
+.portfolio-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: nowrap;
+  min-width: 0;
+}
+.portfolio-header-market {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: var(--font-xs);
+  line-height: 1.35;
 }
 .page-header h1 {
   max-width: none;
@@ -188,37 +217,19 @@
   font-size: 15px;
   font-weight: 700;
 }
-.notion-global-refresh {
+.header-refresh-control {
+  position: relative;
   display: flex;
   align-items: center;
-  gap: 7px;
 }
-.notion-global-refresh button {
-  min-height: var(--ui-control-hit-height);
-  padding: 9px 12px;
-  border: 1px solid rgba(0, 122, 255, 0.32);
-  border-radius: 9px;
-  background: rgba(255, 255, 255, 0.74);
-  color: var(--color-accent);
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
-  font-size: 11px;
-  font-weight: 700;
-  white-space: nowrap;
-  cursor: pointer;
-}
-.notion-global-refresh button:hover:not(:disabled) {
-  background: #fff;
-}
-.notion-global-refresh button:disabled {
-  opacity: .7;
-  cursor: wait;
-}
-.notion-global-refresh span {
+.header-refresh-control > span[role="status"] {
   position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  width: max-content;
   max-width: 240px;
-  margin-top: 58px;
-  color: #ffb4a8;
-  font-size: 9px;
+  color: var(--color-negative);
+  font-size: var(--font-xs);
   line-height: 1.3;
 }
 
@@ -295,6 +306,7 @@
   }
 
   .app-shell > .content {
+    width: 100%;
     margin-left: 0 !important;
     padding: max(16px, env(safe-area-inset-top))
       max(16px, env(safe-area-inset-right))
@@ -306,7 +318,7 @@
     padding: 0 !important;
   }
 
-  .app-shell .page-header {
+  .app-shell .page-header:not(.portfolio-page-header) {
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
     align-items: flex-start;
@@ -330,14 +342,16 @@
   .app-shell .page-header .freshness {
     display: none;
   }
-  .app-shell .page-header .notion-global-refresh button {
-    padding: 8px 11px;
-    font-size: 11px;
-  }
   .app-shell .page-header h1 {
     max-width: 270px;
     font-size: clamp(1.65rem, 6vw, 2rem);
     line-height: 1.15;
+  }
+  .app-shell .portfolio-page-header {
+    margin-bottom: 14px;
+  }
+  .app-shell .portfolio-header-actions {
+    gap: 6px;
   }
   .mobile-nav {
     position: fixed;

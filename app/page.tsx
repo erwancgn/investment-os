@@ -14,8 +14,9 @@ const NotionAnalyses = lazy(() => import("./components/notion-analyses").then(mo
 const NotionWatchlist = lazy(() => import("./components/notion-watchlist").then(module => ({ default: module.NotionWatchlist })));
 const NotionIntegrity = lazy(() => import("./components/notion-integrity").then(module => ({ default: module.NotionIntegrity })));
 import { NotionGlobalRefresh } from "./components/notion-global-refresh";
+import { NotionDocumentRefresh } from "./components/notion-document-refresh";
 import { NotionBackgroundSync } from "./components/notion-background-sync";
-import { GlassChrome, SectionHeader } from "./components/ui-primitives";
+import { ActionButton, GlassChrome, SectionHeader } from "./components/ui-primitives";
 
 const DocumentView = lazy(() => import("./components/document-view").then(module => ({ default: module.DocumentView })));
 const loadingView = <div className="detail-loading" role="status" aria-live="polite">Chargement…</div>;
@@ -75,14 +76,45 @@ function AccountMenu({ onOpenManagement }: { onOpenManagement: () => void }) {
 }
 
 function Header({ title, eyebrow, onOpenManagement }: { title: string; eyebrow: string; onOpenManagement: () => void }) {
-  return <SectionHeader className="page-header" heading="h1" eyebrow={eyebrow} title={title} actions={<><div className="header-account-tools"><NotionGlobalRefresh/><AccountMenu onOpenManagement={onOpenManagement}/></div></>} />;
+  return <SectionHeader className="page-header" heading="h1" eyebrow={eyebrow} title={title} actions={<><div className="header-account-tools"><NotionDocumentRefresh/><NotionGlobalRefresh/><AccountMenu onOpenManagement={onOpenManagement}/></div></>} />;
+}
+
+function formatMarketFreshness(quoteAsOf?: string | null) {
+  if (!quoteAsOf) return "Dernier marché —";
+  const date = new Date(quoteAsOf);
+  if (Number.isNaN(date.getTime())) return "Dernier marché —";
+  const day = date.toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit" });
+  const time = date.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
+  return `Dernier marché ${day} à ${time}`;
+}
+
+function PortfolioHeader({
+  quoteAsOf,
+  loading,
+  onRefresh,
+  onOpenManagement,
+}: {
+  quoteAsOf?: string | null;
+  loading: boolean;
+  onRefresh: () => void;
+  onOpenManagement: () => void;
+}) {
+  return <header className="page-header portfolio-page-header">
+    <div className="portfolio-header-title-row"><h1>Portefeuille</h1><AccountMenu onOpenManagement={onOpenManagement}/></div>
+    <div className="portfolio-header-actions">
+      <NotionDocumentRefresh/>
+      <NotionGlobalRefresh/>
+      <ActionButton compact onClick={onRefresh} disabled={loading} title="Rafraîchir les cours et recalculer le portefeuille" ariaLabel="Rafraîchir les cours et recalculer le portefeuille">{loading ? "Actualisation…" : "Actualiser"}</ActionButton>
+    </div>
+    <p className="portfolio-header-market">{formatMarketFreshness(quoteAsOf)}</p>
+  </header>;
 }
 
 function Portfolio({ openCompany, onOpenManagement }: { openCompany: (id?: string) => void; onOpenManagement: () => void }) {
   const { data, loading, error, refresh } = useClientResource<LivePortfolio>("/api/portfolio/live", true);
   const portfolio = data ?? null;
   return <>
-    <Header eyebrow="Vue consolidée" title="Portefeuille" onOpenManagement={onOpenManagement} />
+    <PortfolioHeader quoteAsOf={portfolio?.quoteAsOf} loading={loading} onRefresh={() => void refresh()} onOpenManagement={onOpenManagement} />
     {error && portfolio && <p className="resource-error" role="status">{error} Les dernières données chargées restent affichées.</p>}
     <LivePortfolioDashboard data={portfolio} loading={loading} error={error} onRefresh={() => void refresh()} openCompany={openCompany} beforeDiagnostic={<TargetAllocation data={portfolio}/>}/>
     <NotionSyncStatus />

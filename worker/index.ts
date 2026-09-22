@@ -55,6 +55,78 @@ export function authorizeNotionMutation(request:Request,env:Pick<Env,"NOTION_SYN
 
 export { verifyNotionWebhookSignature };
 
+function authorizeOwnerPrivateBrowserMutation(request:Request):Response|null{
+  const url=new URL(request.url);
+  const origin=request.headers.get("origin");
+  const fetchSite=request.headers.get("sec-fetch-site");
+  const action=request.headers.get("x-investment-os-action");
+  if(origin!==url.origin||fetchSite&&fetchSite!=="same-origin"||action!=="notion-refresh"){
+    return Response.json({error:"Requête de mise à jour documentaire refusée."},{status:403,headers:{"cache-control":"no-store"}});
+  }
+  return null;
+}
+
+async function drainNotionPendingWork(db:D1Database,token:string,maximumSteps=12){
+  const stepLimit=Math.min(Math.max(maximumSteps,1),24);
+  let webhookState:{processed?:boolean;pending?:number;failed?:number}={};
+  let importState:{processed?:boolean;remaining?:number;failed?:number;needsFinalize?:boolean}={};
+  let steps=0;
+  let processedWebhooks=0;
+  let processedImports=0;
+
+  while(steps<stepLimit){
+    webhookState=await processNextNotionWebhookEvent(db,token);
+    importState=await processNextNotionImport(db,token,4);
+    if(webhookState.processed)processedWebhooks+=1;
+    if(importState.processed)processedImports+=1;
+    steps+=1;
+
+    const pendingWebhooks=Number(webhookState.pending??0);
+    const pendingImports=Number(importState.remaining??0);
+    if(pendingWebhooks===0&&pendingImports===0)break;
+    if(!webhookState.processed&&!importState.processed)break;
+  }
+
+  const pendingWebhooks=Number(webhookState.pending??0);
+  const failedWebhooks=Number(webhookState.failed??0);
+  const pendingImports=Number(importState.remaining??0);
+  const failedImports=Number(importState.failed??0);
+  const canFinalize=pendingWebhooks===0&&failedWebhooks===0&&pendingImports===0&&failedImports===0&&Boolean(importState.needsFinalize);
+
+  if(canFinalize){
+    const relations=await rebuildNotionRelations(db);
+    const links=await rebuildDocumentCompanyLinks(db);
+    const normalized=await normalizeStoredDocumentText(db);
+    const finalization=await finalizeNotionImports(db);
+    return {...importState,changed:processedWebhooks>0,pendingWebhooks,steps,processedWebhooks,processedImports,pendingImports,failedWebhooks,failedImports,needsFinalize:false,relations,links,normalized,finalization};
+  }
+
+  return {...importState,changed:processedWebhooks>0,pendingWebhooks,steps,processedWebhooks,processedImports,pendingImports,failedWebhooks,failedImports,needsFinalize:Boolean(importState.needsFinalize)};
+}
+
+async function launchNotionRefresh(env:Env,ctx:ExecutionContext,{forceScan=false}:{forceScan?:boolean}={}){
+  if(!env.NOTION_TOKEN)return Response.json({error:"NOTION_TOKEN n'est pas configuré."},{status:503});
+  const status=await notionStatus(env.DB,true);
+  const pendingWork=status.queue.remaining>0||status.webhook.pending>0||status.queue.needsFinalize;
+  const failedWork=status.queue.failed>0||status.webhook.failed>0;
+  const shouldScan=forceScan||!status.metadataCacheFresh||failedWork;
+  if(!shouldScan&&!pendingWork)return Response.json({accepted:false,skipped:true,reason:"notion-cache-fresh"},{headers:{"cache-control":"no-store"}});
+  const lock=await acquireNotionSyncLock(env.DB,90_000);
+  if(!lock.acquired)return Response.json({accepted:false,running:true},{status:202,headers:{"cache-control":"no-store"}});
+  const acceptedAt=new Date().toISOString();
+  ctx.waitUntil((async()=>{
+    try{
+      if(shouldScan)await syncNotionAllSources(env.DB,env.NOTION_TOKEN!,100,false);
+      await drainNotionPendingWork(env.DB,env.NOTION_TOKEN!,12);
+    }catch(error){
+      console.error("Background Notion sync failed",error);
+    }finally{
+      await releaseNotionSyncLock(env.DB,lock.owner);
+    }
+  })());
+  return Response.json({accepted:true,running:true,forceScan,acceptedAt},{status:202,headers:{"cache-control":"no-store"}});
+}
+
 // Image security config. SVG sources with .svg extension auto-skip the
 // optimization endpoint on the client side (served directly, no proxy).
 // To route SVGs through the optimizer (with security headers), set
@@ -88,14 +160,7 @@ const worker = {
         const recorded=await recordNotionWebhookEvent(env.DB,payload,rawBody);
         ctx.waitUntil((async()=>{
           try{
-            await processNextNotionWebhookEvent(env.DB,env.NOTION_TOKEN!);
-            const imported=await processNextNotionImport(env.DB,env.NOTION_TOKEN!,4);
-            if(imported.needsFinalize&&imported.remaining===0){
-              await rebuildNotionRelations(env.DB);
-              await rebuildDocumentCompanyLinks(env.DB);
-              await normalizeStoredDocumentText(env.DB);
-              await finalizeNotionImports(env.DB);
-            }
+            await drainNotionPendingWork(env.DB,env.NOTION_TOKEN!,12);
           }catch(error){console.error("Webhook Notion queued for retry",error);}
         })());
         return Response.json({...recorded,queued:true},{status:202,headers:{"cache-control":"no-store"}});
@@ -126,6 +191,14 @@ const worker = {
 
     if (url.pathname === "/api/notion/status" && request.method === "GET") {
       return Response.json(await notionStatus(env.DB, Boolean(env.NOTION_TOKEN)), { headers: { "cache-control": "no-store" } });
+    }
+
+    if(url.pathname==="/api/notion/refresh"&&request.method==="POST"){
+      const authorizationError=authorizeOwnerPrivateBrowserMutation(request);
+      if(authorizationError)return authorizationError;
+      // This route inherits the owner-private Sites perimeter used by all
+      // sensitive read APIs. The browser never receives NOTION_SYNC_AUTH_TOKEN.
+      return launchNotionRefresh(env,ctx,{forceScan:true});
     }
 
     if(url.pathname==="/api/notion/webhook-verification"&&request.method==="GET"){
@@ -222,16 +295,7 @@ const worker = {
       const authorizationError=authorizeNotionMutation(request,env);
       if(authorizationError)return authorizationError;
       if(!env.NOTION_TOKEN)return Response.json({error:"NOTION_TOKEN n'est pas configuré."},{status:503});
-      const webhook=await processNextNotionWebhookEvent(env.DB,env.NOTION_TOKEN);
-      const result=await processNextNotionImport(env.DB,env.NOTION_TOKEN,4);
-      if(result.needsFinalize&&result.remaining===0){
-        const relations=await rebuildNotionRelations(env.DB);
-        const links=await rebuildDocumentCompanyLinks(env.DB);
-        const normalized=await normalizeStoredDocumentText(env.DB);
-        const finalization=await finalizeNotionImports(env.DB);
-        return Response.json({...result,changed:webhook.processed,pendingWebhooks:webhook.pending??0,needsFinalize:false,relations,links,normalized,finalization},{headers:{"cache-control":"no-store"}});
-      }
-      return Response.json({...result,changed:webhook.processed,pendingWebhooks:webhook.pending??0},{headers:{"cache-control":"no-store"}});
+      return Response.json(await drainNotionPendingWork(env.DB,env.NOTION_TOKEN,1),{headers:{"cache-control":"no-store"}});
     }
 
     if (url.pathname === "/api/notion/sync-background" && request.method === "POST") {
@@ -239,26 +303,8 @@ const worker = {
       if(authorizationError)return authorizationError;
       if (!env.NOTION_TOKEN) return Response.json({ error: "NOTION_TOKEN n'est pas configuré." }, { status: 503 });
       const body = await request.json().catch(() => ({})) as { forceFull?: boolean };
-      const forceFull = Boolean(body.forceFull) || url.searchParams.get("force") === "1";
-      const status=await notionStatus(env.DB,true);
-      const cacheFresh=!forceFull&&status.metadataCacheFresh;
-      if (cacheFresh) return Response.json({ accepted: false, skipped: true, reason: "notion-cache-fresh" }, { headers: { "cache-control": "no-store" } });
-      const lock = await acquireNotionSyncLock(env.DB, 90_000);
-      if (!lock.acquired) return Response.json({ accepted: false, running: true }, { status: 202 });
-      ctx.waitUntil((async () => {
-        try {
-          // Only metadata is discovered here. Voluminous block trees are
-          // consumed through the durable import queue in bounded requests.
-          await syncNotionAllSources(env.DB,env.NOTION_TOKEN!,100,false);
-        } catch (error) {
-          // The per-source sync state keeps the actionable error. The launch
-          // request itself has already returned, so never reject waitUntil.
-          console.error("Background Notion sync failed", error);
-        } finally {
-          await releaseNotionSyncLock(env.DB, lock.owner);
-        }
-      })());
-      return Response.json({ accepted: true, running: true, forceFull }, { status: 202, headers: { "cache-control": "no-store" } });
+      const forceScan = Boolean(body.forceFull) || url.searchParams.get("force") === "1";
+      return launchNotionRefresh(env,ctx,{forceScan});
     }
 
     if (url.pathname === "/api/notion/sync-portfolio" && request.method === "POST") {

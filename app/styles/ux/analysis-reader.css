@@ -339,20 +339,6 @@
 }
 
 @media (max-width: 760px) {
-  .live-dashboard-head {
-    flex-wrap: wrap;
-  }
-  .live-dashboard-head span:first-child {
-    flex: 1 1 100%;
-  }
-  .live-dashboard-head span:nth-child(2) {
-    flex: 1 1 auto;
-    margin-left: 0;
-  }
-  .live-dashboard-head button {
-    margin-left: auto;
-  }
-
   .portfolio-main-grid {
     display: block;
   }

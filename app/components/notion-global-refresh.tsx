@@ -1,11 +1,12 @@
 "use client";
 
 import { useState } from "react";
+import { ActionButton } from "./ui-primitives";
 
 /**
  * App refresh is deliberately separate from Notion refresh: it only asks the
  * PWA for the latest published shell/features and never changes the Notion
- * snapshot. The Notion button lives in the source-document panel.
+ * snapshot. Document refresh is handled by the adjacent dedicated control.
  */
 export function NotionGlobalRefresh() {
   const [running, setRunning] = useState(false);
@@ -42,10 +43,10 @@ export function NotionGlobalRefresh() {
   };
 
   return (
-    <div className="notion-global-refresh">
-      <button type="button" onClick={refresh} disabled={running} title="Charger la dernière version de l’app">
-        {running ? progress ?? "Mise à jour…" : "↻ Maj app"}
-      </button>
+    <div className="header-refresh-control">
+      <ActionButton compact onClick={refresh} disabled={running} title="Charger la dernière version de l’app" ariaLabel="Mettre à jour l’application">
+        {running ? progress ?? "Mise à jour…" : "Maj app"}
+      </ActionButton>
       {error && <span role="status">{error}</span>}
     </div>
   );
