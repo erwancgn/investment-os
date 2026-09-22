@@ -26,7 +26,7 @@ export function NotionBackgroundSync() {
   return (
     <div className="notion-background-sync" role="status" aria-live="polite" aria-atomic="true">
       <span className="notion-background-sync-dot" />
-      <span>Mises à jour Notion reçues par webhook signé</span>
+      <span>Données Notion mises à jour</span>
     </div>
   );
 }
