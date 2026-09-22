@@ -166,18 +166,24 @@ export function ActionButton({
   className = "",
   compact = false,
   ariaLabel,
+  title,
+  disabled = false,
 }: {
   children: ReactNode;
   onClick: () => void;
   className?: string;
   compact?: boolean;
   ariaLabel?: string;
+  title?: string;
+  disabled?: boolean;
 }) {
   return (
     <button
       type="button"
       className={`ui-action-button${compact ? " ui-action-button--compact" : ""} ${className}`.trim()}
       aria-label={ariaLabel}
+      title={title}
+      disabled={disabled}
       onClick={onClick}
     >
       <span>{children}</span>
