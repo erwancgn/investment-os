@@ -87,10 +87,10 @@ async function drainNotionPendingWork(db:D1Database,token:string,maximumSteps=12
     const links=await rebuildDocumentCompanyLinks(db);
     const normalized=await normalizeStoredDocumentText(db);
     const finalization=await finalizeNotionImports(db);
-    return {steps,processedWebhooks,processedImports,pendingWebhooks,pendingImports,failedWebhooks,failedImports,needsFinalize:false,relations,links,normalized,finalization};
+    return {...importState,changed:processedWebhooks>0,pendingWebhooks,steps,processedWebhooks,processedImports,pendingImports,failedWebhooks,failedImports,needsFinalize:false,relations,links,normalized,finalization};
   }
 
-  return {steps,processedWebhooks,processedImports,pendingWebhooks,pendingImports,failedWebhooks,failedImports,needsFinalize:Boolean(importState.needsFinalize)};
+  return {...importState,changed:processedWebhooks>0,pendingWebhooks,steps,processedWebhooks,processedImports,pendingImports,failedWebhooks,failedImports,needsFinalize:Boolean(importState.needsFinalize)};
 }
 
 // Image security config. SVG sources with .svg extension auto-skip the
