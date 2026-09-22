@@ -124,17 +124,54 @@ test('signed Notion webhook payloads remain verifiable', async () => {
   assert.equal(await verifyNotionWebhookSignature(body, `${signature}00`, secret), false);
 });
 
-test('browser Notion surfaces expose only read access and no mutation secret', async () => {
+test('browser Notion surfaces never expose server mutation secrets or internal sync routes', async () => {
   const files = [
     'app/page.tsx',
     'app/components/notion-background-sync.tsx',
     'app/components/notion-sync-status.tsx',
+    'app/components/notion-document-refresh.tsx',
     'app/lib/notion-sync-client.ts',
   ];
   for (const file of files) {
     const source = await readFile(new URL(`../${file}`, import.meta.url), 'utf8');
     assert.doesNotMatch(source, /NOTION_SYNC_AUTH_TOKEN|NOTION_TOKEN|verificationToken/);
-    assert.doesNotMatch(source, /fetch\([^\n]*\/api\/notion\/(?:sync|import-next|sync-background|sync-portfolio|sync-all)/);
-    assert.doesNotMatch(source, /method:\s*["']POST["']/);
+    assert.doesNotMatch(source, /\/api\/notion\/(?:sync|import-next|sync-background|sync-portfolio|sync-all)/);
   }
+  const client = await readFile(new URL('../app/lib/notion-sync-client.ts', import.meta.url), 'utf8');
+  assert.match(client, /fetch\(["']\/api\/notion\/refresh["']/);
+  assert.match(client, /x-investment-os-action["']:\s*["']notion-refresh/);
+});
+
+test('manual document refresh is same-origin only and never needs the server sync secret in the browser', async () => {
+  const { default: worker } = await loadWorker();
+  const crossOrigin = await worker.fetch(
+    new Request('https://investment-os.test/api/notion/refresh', {
+      method: 'POST',
+      headers: { origin: 'https://example.test', 'sec-fetch-site': 'cross-site', 'x-investment-os-action': 'notion-refresh' },
+    }),
+    {},
+    { waitUntil() {}, passThroughOnException() {} },
+  );
+  assert.equal(crossOrigin.status, 403);
+
+  const missingAction = await worker.fetch(
+    new Request('https://investment-os.test/api/notion/refresh', {
+      method: 'POST',
+      headers: { origin: 'https://investment-os.test', 'sec-fetch-site': 'same-origin' },
+    }),
+    {},
+    { waitUntil() {}, passThroughOnException() {} },
+  );
+  assert.equal(missingAction.status, 403);
+
+  const sameOrigin = await worker.fetch(
+    new Request('https://investment-os.test/api/notion/refresh', {
+      method: 'POST',
+      headers: { origin: 'https://investment-os.test', 'sec-fetch-site': 'same-origin', 'x-investment-os-action': 'notion-refresh' },
+    }),
+    {},
+    { waitUntil() {}, passThroughOnException() {} },
+  );
+  assert.equal(sameOrigin.status, 503);
+  assert.doesNotMatch(await sameOrigin.text(), /NOTION_SYNC_AUTH_TOKEN|server-secret/);
 });
