@@ -6,7 +6,7 @@ import { ActionButton } from "./ui-primitives";
 /**
  * App refresh is deliberately separate from Notion refresh: it only asks the
  * PWA for the latest published shell/features and never changes the Notion
- * snapshot. The Notion button lives in the source-document panel.
+ * snapshot. Document refresh is handled by the adjacent dedicated control.
  */
 export function NotionGlobalRefresh() {
   const [running, setRunning] = useState(false);
