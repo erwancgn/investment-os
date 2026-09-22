@@ -175,3 +175,17 @@ test('manual document refresh is same-origin only and never needs the server syn
   assert.equal(sameOrigin.status, 503);
   assert.doesNotMatch(await sameOrigin.text(), /NOTION_SYNC_AUTH_TOKEN|server-secret/);
 });
+
+test('refresh controls keep distinct responsibilities', async () => {
+  const [documentRefresh, appRefresh, portfolioDashboard] = await Promise.all([
+    readFile(new URL('../app/components/notion-document-refresh.tsx', import.meta.url), 'utf8'),
+    readFile(new URL('../app/components/notion-global-refresh.tsx', import.meta.url), 'utf8'),
+    readFile(new URL('../app/components/live-portfolio-dashboard.tsx', import.meta.url), 'utf8'),
+  ]);
+  assert.match(documentRefresh, /requestBrowserNotionRefresh/);
+  assert.doesNotMatch(documentRefresh, /serviceWorker|\/api\/portfolio\/live/);
+  assert.match(appRefresh, /serviceWorker/);
+  assert.doesNotMatch(appRefresh, /\/api\/notion\//);
+  assert.match(portfolioDashboard, /Rafraîchir les cours et recalculer le portefeuille/);
+  assert.doesNotMatch(portfolioDashboard, /requestBrowserNotionRefresh|serviceWorker/);
+});
