@@ -1,13 +1,13 @@
 {
   "version": 3,
-  "capturedAt": "2026-09-22",
-  "scope": "app CSS governance audit after Portfolio header consolidation",
+  "capturedAt": "2026-09-23",
+  "scope": "app CSS governance audit after mobile Portfolio header and target allocation refinement",
   "thresholds": {
-    "exactRepeatedSelectors": 173,
+    "exactRepeatedSelectors": 171,
     "directPropertyConflicts": 0,
-    "responsiveVariants": 132,
+    "responsiveVariants": 131,
     "strictRedundantDeclarations": 1,
-    "additiveExtensions": 40,
+    "additiveExtensions": 39,
     "repeatedTokens": 0,
     "conflictingTokens": 0,
     "importantDeclarations": 222,

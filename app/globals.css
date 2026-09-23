@@ -538,8 +538,6 @@ input, select { font-size: 16px; }
 .ui-progress-track--neutral .ui-progress-fill { background: var(--color-text-muted) !important; }
 .target-progress-bar.ui-progress-track--positive .ui-progress-fill { background: linear-gradient(90deg, var(--ui-progress-positive), #62d98a) !important; }
 .target-progress-bar.ui-progress-track--warning .ui-progress-fill { background: linear-gradient(90deg, var(--ui-progress-warning), #ffcc66) !important; }
-.target-progress-bar.ui-progress-track--positive + .target-progress-copy { color: var(--ui-progress-positive); }
-.target-progress-bar.ui-progress-track--warning + .target-progress-copy { color: var(--ui-progress-warning); }
 
 .ui-control-group { display: inline-flex; align-items: center; gap: 8px; min-width: 0; }
 .ui-control { display: inline-flex; align-items: center; justify-content: center; min-width: 0; min-height: var(--ui-control-hit-height); height: var(--ui-control-hit-height); padding: 0; border: 0; border-radius: var(--ui-control-radius); background: transparent; color: inherit; font-size: 11px; line-height: 1; white-space: nowrap; cursor: pointer; transition: background 160ms ease, border-color 160ms ease, color 160ms ease; }

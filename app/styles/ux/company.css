@@ -1,7 +1,7 @@
 /* Company sheet composition and company-specific layout. */
 /* Company sheet — compact identity, one current document, history on demand. */
 .generic-company-detail {
-  
+
   margin: 0 auto;
 }
 .generic-company-hero {
@@ -60,7 +60,7 @@
   padding: var(--space-6);
 }
 .company-research-overview {
-  
+
 }
 .company-research-overview h2 {
   margin: 0 0 var(--space-3);
@@ -113,7 +113,7 @@
   font-size: 9px;
 }
 .company-history-details > summary b {
-  
+
   font-size: var(--font-xs);
 }
 .company-history-details[open] > summary {

@@ -4,7 +4,7 @@
   margin: 0 0 var(--space-4);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
-  
+
   overflow: hidden;
 }
 .watch-theme-filter > summary {
@@ -14,7 +14,7 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--space-4);
-  
+
   font-size: var(--font-xs);
   list-style: none;
   cursor: pointer;
@@ -23,7 +23,7 @@
   display: none;
 }
 .watch-theme-filter > summary strong {
-  
+
   font-size: var(--font-xs);
 }
 .watch-theme-filter[open] > summary {
@@ -277,8 +277,8 @@
   padding: 7px;
   border: 1px solid var(--surface-stroke);
   border-radius: var(--radius-sm);
-  
-  
+
+
   text-decoration: none;
 }
 .research-reference > span {
@@ -294,11 +294,11 @@
   white-space: nowrap;
 }
 .research-reference.available:hover {
-  
-  
+
+
 }
 .research-reference.available > strong {
-  
+
 }
 .research-reference.missing {
   opacity: .42;
@@ -346,5 +346,5 @@
   white-space: normal;
 }
 .analysis-score-cell {
-  
+
 }

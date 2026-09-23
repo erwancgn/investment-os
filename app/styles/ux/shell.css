@@ -158,18 +158,9 @@
 }
 .app-shell .page-header:not(.portfolio-page-header) {
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   justify-content: space-between;
   gap: var(--space-5);
-}
-.header-account-tools {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex: 0 0 auto;
-}
-.page-header .header-account-tools {
-  margin-left: var(--space-2);
 }
 .app-shell .portfolio-page-header {
   display: grid;
@@ -186,11 +177,23 @@
   min-width: 0;
 }
 .portfolio-header-actions {
-  display: flex;
-  align-items: center;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: stretch;
   gap: 8px;
-  flex-wrap: nowrap;
+  width: min(100%, 720px);
   min-width: 0;
+}
+.portfolio-header-actions .header-refresh-control,
+.portfolio-header-actions .header-refresh-control > .ui-action-button,
+.portfolio-header-actions > .ui-action-button {
+  width: 100%;
+  min-width: 0;
+}
+.portfolio-header-actions .ui-action-button-visual {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .portfolio-header-market {
   margin: 0;
@@ -330,14 +333,11 @@
   }
   .app-shell .page-header .ui-section-header-actions {
     width: auto;
-    align-self: end;
+    align-self: center;
     justify-content: flex-end;
     flex-wrap: nowrap;
     gap: 8px;
-    margin-bottom: 2px;
-  }
-  .app-shell .page-header .header-account-tools {
-    margin-left: 0;
+    margin-bottom: 0;
   }
   .app-shell .page-header .freshness {
     display: none;
@@ -352,6 +352,7 @@
   }
   .app-shell .portfolio-header-actions {
     gap: 6px;
+    width: 100%;
   }
   .mobile-nav {
     position: fixed;

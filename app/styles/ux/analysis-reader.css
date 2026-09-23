@@ -1,7 +1,7 @@
 /* Analysis reader composition and responsive reading layout. */
 /* Analysis reader — one content owner; generic Notion primitives stay in globals.css. */
 .universal-analysis-reader {
-  
+
   margin: 0 auto;
   padding-bottom: 70px;
 }
@@ -183,7 +183,7 @@
   cursor: pointer;
 }
 .section-document-button:hover {
-  
+
 }
 .relation-list {
   display: flex;
@@ -199,8 +199,8 @@
   padding: 8px 10px;
   border: 1px solid var(--color-border);
   border-radius: 7px;
-  
-  
+
+
   text-decoration: none;
 }
 .relation-chip span {
@@ -270,8 +270,8 @@
   padding: 0;
   border: 0;
   border-radius: 0;
-  
-  
+
+
 }
 .decision-template-head {
   display: flex;
@@ -400,7 +400,7 @@
   .allocation-panel .panel-head h2 {
     font-size: 20px;
   }
-  
+
 
   .allocation-row {
     grid-template-columns: minmax(0, 1fr) 92px;
@@ -675,7 +675,7 @@
 
   .generic-company-detail,
   .universal-analysis-reader {
-    
+
     margin-inline: 0;
     overflow: visible;
   }
@@ -849,7 +849,7 @@
 
   .universal-analysis-layout,
   .universal-analysis-page {
-    
+
     margin-inline: 0 !important;
   }
 

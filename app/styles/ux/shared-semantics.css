@@ -57,14 +57,17 @@
   border-color: var(--color-border) !important;
 }
 .pnl-badge.positive-pnl {
-  background: rgba(52, 199, 89, 0.12) !important;
+  background: transparent !important;
   color: var(--color-positive) !important;
 }
 .pnl-badge.negative-pnl {
-  background: rgba(215, 0, 21, 0.1) !important;
+  background: transparent !important;
   color: var(--color-negative) !important;
 }
-.pnl-badge.neutral,
+.pnl-badge.neutral {
+  background: transparent;
+  color: var(--color-text-secondary);
+}
 .signal {
   background: rgba(60, 60, 67, 0.08) !important;
   color: var(--color-text-secondary) !important;
@@ -202,8 +205,7 @@
 .analysis-stats strong,
 .company-metrics strong,
 .trajectory-progress strong,
-.target-list article > span,
-.target-list article > b,
+.target-row strong,
 table {
   font-variant-numeric: tabular-nums lining-nums;
 }
@@ -258,11 +260,6 @@ table {
   grid-row: 1 / span 2;
   align-self: center;
 }
-.target-progress-bar {
-  width: 100%;
-  margin-top: 7px;
-}
-
 .theme-cloud,
 .trajectory-switch {
   align-items: center;
@@ -370,25 +367,6 @@ table {
   text-align: center;
 }
 
-/* Trajectory rows use colour as status: reached, or materially above target. */
-.target-outside-status {
-  display: block;
-  margin-top: 7px;
-  color: var(--ui-progress-warning);
-  font-size: 11px;
-  font-weight: 700;
-  line-height: 1.25;
-}
-
-.target-progress-copy {
-  display: grid;
-  gap: 2px;
-  margin-top: 5px;
-  color: var(--color-text-secondary);
-  font-size: 10px;
-  line-height: 1.25;
-}
-
 /* The total is informational, not a button or status badge. */
 .target-total {
   padding: 7px 10px;
@@ -448,81 +426,66 @@ table {
   color: var(--color-negative) !important;
 }
 
-/* Trajectory rows are the same quiet, ruled table surface as live positions.
-   The title and its bar share one column; both have matching horizontal
-   breathing room, while weight and target amount stay aligned at the right. */
 .target-list {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0 28px;
-  margin-inline: 0;
+  margin-top: 12px;
   border-top: 1px solid var(--color-border);
 }
 
-.target-list article {
-  grid-template-columns: minmax(0, 1fr) 72px 96px;
-  gap: 9px;
-  min-height: 68px;
-  padding: 14px 16px;
-  align-items: center;
-  font-size: 10px;
-}
-
-.target-list article > div {
-  display: flex;
-  flex-direction: column;
+.target-row {
+  grid-template-columns: minmax(0, 1fr) max-content;
+  min-height: var(--ui-control-hit-height);
   align-items: stretch;
-  justify-content: center;
-  gap: 8px;
+  gap: 8px 12px;
+  font-size: 11px;
+}
+
+.target-row .asset-name {
+  align-items: stretch;
+}
+
+.target-row .asset-name > div {
+  display: grid;
+  align-content: space-between;
+}
+
+.target-row-heading {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 2px 7px;
   min-width: 0;
 }
 
-.target-list article > div > strong {
-  min-width: 0;
-  overflow: hidden;
+.target-row-heading small {
+  white-space: nowrap;
+}
+
+.target-value-toggle {
+  display: grid;
+  align-content: space-between;
+  justify-items: end;
+  min-width: var(--ui-control-hit-height);
+  min-height: var(--ui-control-hit-height);
+  padding: 0;
+  border: 0;
+  background: transparent;
   color: var(--color-text);
-  font-size: inherit;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.target-list article > div > .ui-progress-track {
-  width: 100%;
-  margin-top: 0;
-}
-
-.target-list article > span:nth-last-child(2),
-.target-list article > b {
-  width: auto;
-  padding-right: 0;
-  justify-self: end;
-  align-self: center;
+  font: inherit;
   text-align: right;
-  white-space: nowrap;
+  cursor: pointer;
 }
-.target-list article > span:nth-last-child(2) {
-  color: var(--color-accent);
-  font-size: 9px;
-}
-.target-list article > b {
-  font-size: 10px;
+
+.target-value-toggle:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+  border-radius: 4px;
 }
 
 @media (max-width: 760px) {
-  .target-list article {
-    grid-template-columns: minmax(0, 1fr) 54px 78px;
-    gap: 9px;
-    min-height: 48px;
-    padding-inline: 14px;
-    font-size: 12px;
-  }
-
-  .target-list {
-    grid-template-columns: 1fr;
-  }
-  .target-list article > span:nth-last-child(2),
-  .target-list article > b {
-    font-size: 12px;
+  .target-row {
+    min-height: 0;
+    padding: 12px 0;
   }
 }
 

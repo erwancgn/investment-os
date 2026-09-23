@@ -26,13 +26,13 @@
 .portfolio-overview-main > div:first-child > span {
   display: block;
   margin-top: var(--space-3);
-  
+
   font-size: var(--font-sm);
 }
 .portfolio-overview-main > div:first-child > strong {
   display: block;
   margin: 3px 0 2px;
-  
+
   font-size: var(--font-2xl);
   line-height: 1.1;
   letter-spacing: -1.1px;
@@ -46,7 +46,7 @@
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 .portfolio-kpis > span {
-  
+
   padding: 4px var(--space-5);
   border-left: 1px solid var(--color-border);
   display: grid;
@@ -55,16 +55,16 @@
   gap: 4px;
 }
 .portfolio-kpis small {
-  
+
   font-size: 10px;
 }
 .portfolio-kpis strong {
-  
+
   font-size: var(--font-lg);
   line-height: 1.25;
 }
 .portfolio-kpis b {
-  
+
   font-size: 10px;
   font-weight: 500;
 }
@@ -85,7 +85,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 10px;
-  
+
   cursor: pointer;
 }
 .portfolio-scope-switch button span {
@@ -150,9 +150,6 @@
 .allocation-row:last-child {
   border-bottom: 0;
 }
-.allocation-row.clickable:hover {
-  background: rgba(27, 57, 46, 0.45);
-}
 .position-open {
   position: absolute;
   inset: 0;
@@ -174,6 +171,7 @@
 .asset-name > div {
   display: flex;
   flex-direction: column;
+  flex: 1;
   min-width: 0;
 }
 .asset-dot {
@@ -190,7 +188,7 @@
 }
 .asset-name strong {
   display: block;
-  
+
   font-size: 11px;
   font-weight: 700;
   line-height: 1.3;
@@ -217,12 +215,12 @@
 .weights strong,
 .position-value strong,
 .position-quote strong {
-  
+
   font-size: 10px;
 }
 .position-value small,
 .position-quote small {
-  
+
   text-transform: uppercase;
   letter-spacing: 0.45px;
 }
@@ -234,7 +232,7 @@
   align-items: flex-end;
   justify-content: center;
   gap: 2px;
-  
+
   min-height: var(--ui-control-hit-height);
   padding: 0;
   border: 0;
@@ -243,13 +241,13 @@
   font: inherit;
   font-size: 9px;
   font-weight: 700;
-  
+
   cursor: pointer;
 }
 .pnl-badge strong {
   font-size: inherit;
   line-height: 1.1;
-  
+
 }
 
 .side-stack {

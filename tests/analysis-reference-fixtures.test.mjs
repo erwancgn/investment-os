@@ -224,6 +224,7 @@ test("portfolio refresh uses structured properties without downloading page bloc
 test("trajectory reads both targets from Notion and keeps active positions outside target visible", async () => {
   const dataSource = await readFile(dataUrl, "utf8");
   const targetSource = await readFile(new URL("../app/components/target-allocation.tsx", import.meta.url), "utf8");
+  const fixtureSource = await readFile(new URL("../stories/reference-fixtures.ts", import.meta.url), "utf8");
   assert.match(dataSource, /propertyValue\(p,"Target Weight 10k"\)/);
   assert.match(dataSource, /propertyValue\(p,"Target Weight"\)/);
   assert.match(dataSource, /target10kWeight/);
@@ -237,11 +238,18 @@ test("trajectory reads both targets from Notion and keeps active positions outsi
   assert.match(targetSource, /Hors cible/);
   assert.match(targetSource, /currentAmount\/amount\*100/);
   assert.match(targetSource, /visualCompletion=completion==null\?null:Math\.min\(100/);
-  assert.match(targetSource, /progressCopy=completion==null/);
-  assert.match(targetSource, /<span>\{eur0\.format\(currentAmount \?\? 0\)\} actuels<\/span>/);
-  assert.match(targetSource, /<span>\{completion\.toFixed\(1\)\}% de la cible<\/span>/);
-  assert.match(targetSource, /target-progress-copy/);
+  assert.match(targetSource, /className="target-list" role="list"/);
+  assert.match(targetSource, /className="allocation-row target-row"/);
+  assert.match(targetSource, /className="asset-name"/);
+  assert.match(targetSource, /className="target-value-toggle"/);
+  assert.match(targetSource, /targetValueDisplay==="weight"\?`\$\{weight\}%`:eur0\.format\(amount\)/);
+  assert.match(targetSource, /currentAmount\/data\.totals\.marketValueEur\*100/);
+  assert.match(targetSource, /outsideWeight\.toFixed\(1\)\}%.*Hors cible/s);
   assert.match(targetSource, /completion>110&&surplus>targetValue\*\.005/);
+  assert.doesNotMatch(targetSource, /au-dessus de la cible|cible atteinte|construction en cours|Valeur actuelle/);
+  assert.doesNotMatch(targetSource, /className="position-value"|className="position-quote"/);
+  assert.match(fixtureSource, /targetAllocationStates/);
+  assert.match(fixtureSource, /targetId: "target-outside"/);
   assert.doesNotMatch(targetSource, /portfolio-target/);
   assert.doesNotMatch(targetSource, /fetch\("\/api\/portfolio\/live/);
 });
