@@ -3,7 +3,7 @@ import { createContext, useContext, useEffect, useLayoutEffect, useRef, useState
 
 import { preloadResource } from "./client-resource";
 
-export const tabIds = ["portfolio", "watchlist", "companies", "analyses", "research", "gestion"] as const;
+export const tabIds = ["portfolio", "companies", "gestion"] as const;
 export type Tab = typeof tabIds[number];
 type Route = { tab: Tab; company: string | null; document: string | null; key: string };
 type Position = { y: number; focus: HTMLElement | null };
@@ -27,7 +27,7 @@ export function useAppNavigation() {
     for (const map of [positions.current, views.current]) if (map.size > 100) map.delete(map.keys().next().value!);
   };
   const apply = (next: Route) => {
-    const endpoint = next.document ? `/api/analyses/${encodeURIComponent(next.document)}` : next.company ? `/api/companies/${encodeURIComponent(next.company)}` : ({portfolio:"/api/portfolio/live",companies:"/api/companies",watchlist:"/api/watchlist",analyses:"/api/analyses",gestion:"/api/notion/integrity",research:""})[next.tab];
+    const endpoint = next.document ? `/api/analyses/${encodeURIComponent(next.document)}` : next.company ? `/api/companies/${encodeURIComponent(next.company)}` : ({portfolio:"/api/portfolio/live",companies:"/api/companies",gestion:"/api/notion/integrity"})[next.tab];
     if (endpoint) preloadResource(endpoint);
     current.current = next;
     setVisited(previous => previous.includes(next.tab) ? previous : [...previous, next.tab]);
@@ -37,15 +37,26 @@ export function useAppNavigation() {
     history.scrollRestoration = "manual";
     const fromLocation = (): Route => {
       const params = new URLSearchParams(location.search);
-      const tab = params.get("tab") as Tab;
-      return { tab: tabIds.includes(tab) ? tab : "portfolio", company: params.get("company"), document: params.get("document"), key: history.state?.investmentKey ?? newKey() };
+      const requestedTab = params.get("tab") ?? "portfolio";
+      const legacyTab = ["watchlist", "analyses", "research"].includes(requestedTab);
+      const tab = legacyTab ? "companies" : tabIds.includes(requestedTab as Tab) ? requestedTab as Tab : "portfolio";
+      return { tab, company: params.get("company"), document: params.get("document"), key: history.state?.investmentKey ?? newKey() };
     };
     const frame = requestAnimationFrame(() => {
       const next = fromLocation();
-      history.replaceState({ ...history.state, investmentKey: next.key }, "");
+      const canonicalUrl = new URL(location.href);
+      canonicalUrl.searchParams.set("tab", next.tab);
+      history.replaceState({ ...history.state, investmentKey: next.key }, "", canonicalUrl);
       apply(next);
     });
-    const pop = () => { remember(); apply(fromLocation()); };
+    const pop = () => {
+      remember();
+      const next = fromLocation();
+      const canonicalUrl = new URL(location.href);
+      canonicalUrl.searchParams.set("tab", next.tab);
+      history.replaceState({ ...history.state, investmentKey: next.key }, "", canonicalUrl);
+      apply(next);
+    };
     window.addEventListener("popstate", pop);
     return () => { cancelAnimationFrame(frame); window.removeEventListener("popstate", pop); history.scrollRestoration = "auto"; };
   }, []);

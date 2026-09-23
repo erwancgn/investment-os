@@ -1,6 +1,5 @@
 import { getQuotes, type QuoteView } from "./quotes";
 import { documentCompanyLinks, documentPrimaryCompanyLinks, ensureRelationTable, normalizeNotionPageId, snapshotPlainText } from "./notion-sync";
-import { parseSearchTerms, rankSearchDocuments, searchSourceKeys, type SearchFreshness, type SearchIndexDocument, type SearchResult, type SearchSourceKey } from "./search-contract";
 
 type JsonRecord = Record<string, unknown>;
 type StoredDocument = { page_id: string; title: string; notion_url: string; properties_json: string };
@@ -77,7 +76,7 @@ function monitoringStatusFor(properties:JsonRecord):string {
 
 export type ResearchReferenceKind = "business"|"valuation"|"short"|"portfolio"|"memo";
 export type ResearchReference = { id:string; kind:ResearchReferenceKind; title:string; agent:string; score:string; verdict:string; confidence:string|null; status:string; date:string|null; lastEditedTime:string; notionUrl:string };
-export type CompanyListItem = { id:string; name:string; ticker:string; sector:string; industry:string; status:string; ownershipStatus:"Owned"|"Not owned"; watchlistMembership:boolean; monitoringStatus:string; decision:string; lifecycleStatus:string; businessScore:number|null; businessVerdict:string; researchStage:string; researchPriority:string; lastAnalysis:string|null; themes:string[]; country:string; currency:string; exchange:string; dataCompleteness:string; owned:boolean; notionUrl:string; researchReferences:ResearchReference[] };
+export type CompanyListItem = { id:string; name:string; ticker:string; sector:string; industry:string; ownershipStatus:"Owned"|"Not owned"; watchlistMembership:boolean; monitoringStatus:string; businessScore:number|null; businessVerdict:string; researchStage:string; researchPriority:string; lastAnalysis:string|null; themes:string[]; country:string; currency:string; exchange:string; dataCompleteness:string; notionUrl:string; researchReferences:ResearchReference[] };
 const referenceProperties:Record<ResearchReferenceKind,string>={business:"Current Business Analysis",valuation:"Current Valuation Analysis",short:"Current Short Analysis",portfolio:"Current Portfolio Analysis",memo:"Current Investment Memo"};
 function referenceKind(agent:string):ResearchReferenceKind|null { const value=agent.toLowerCase(); if(value.includes("business"))return "business";if(value.includes("valuation"))return "valuation";if(value.includes("short"))return "short";if(value.includes("portfolio"))return "portfolio";if(value.includes("memo"))return "memo";return null; }
 type ArchivePolicy = { archivedIds:Set<string>; activeIds:Set<string> };
@@ -165,14 +164,13 @@ export async function listCompanies(db: D1Database, includeReferences = true, co
   const ownedCompanyIds=activePortfolioCompanyIds(portfolioResult.results??[]);
   const watchlistRows=watchlistResult.results??[];
   const primaryLinks=context.primaryLinks ?? await documentPrimaryCompanyLinks(db);
-  const watchlistCompanyIds=new Set(watchlistRows.flatMap(row=>[...relationIds(props(row),["Company","Companies"]),...(primaryLinks.get(normalizeNotionPageId(row.page_id))??[])]));
-  const watchlistStateByCompany=new Map<string,{monitoringStatus:string;decision:string}>();
+  const watchlistCompanyIds=new Set(watchlistRows.flatMap(row=>relationIds(props(row),["Company","Companies"])));
+  const watchlistStateByCompany=new Map<string,string>();
   const conflictingWatchlistCompanyIds=new Set<string>();
   for(const row of watchlistRows){
     const p=props(row);
-    const state={monitoringStatus:monitoringStatusFor(p),decision:String(propertyValue(p,"Décision")??"")};
-    const explicitCompanyIds=relationIds(p,["Company","Companies"]);
-    const companyIds=explicitCompanyIds.length?explicitCompanyIds:(primaryLinks.get(normalizeNotionPageId(row.page_id))??[]);
+    const state=monitoringStatusFor(p);
+    const companyIds=relationIds(p,["Company","Companies"]);
     for(const companyId of companyIds){
       if(watchlistStateByCompany.has(companyId)){ conflictingWatchlistCompanyIds.add(companyId); watchlistStateByCompany.delete(companyId); }
       else if(!conflictingWatchlistCompanyIds.has(companyId)) watchlistStateByCompany.set(companyId,state);
@@ -187,11 +185,8 @@ export async function listCompanies(db: D1Database, includeReferences = true, co
   const analyses=analysisRows.map(row=>{const canonicalRow={...row,page_id:normalizeNotionPageId(row.page_id)};return {row:canonicalRow,doc:documentFromRow(canonicalRow,[],currentIds,policy),properties:props(row)};});
   return rows.filter(row => !context.companyId || normalizeNotionPageId(row.page_id) === context.companyId).map(row => {
     const p = props(row);
-    const sourceStatus=String(propertyValue(p,"Status")??"");
     const owned=ownedCompanyIds.has(normalizeNotionPageId(row.page_id));
     const watchlistMembership=watchlistCompanyIds.has(normalizeNotionPageId(row.page_id));
-    const watchlistState=watchlistStateByCompany.get(normalizeNotionPageId(row.page_id));
-    const status=sourceStatus;
     const companyAnalysisIds=allRelationIds(p);
     const related=analyses.filter(item=>{
       if(item.doc.archived)return false;
@@ -207,42 +202,38 @@ export async function listCompanies(db: D1Database, includeReferences = true, co
       const preferred=relationIds(p,[property]);
       const category=currentReferenceCategories[kind];
       const canonicalIds=canonicalIdsForCategory(canonical,row.page_id,category);
-      const candidate=related.find(item=>preferred.includes(normalizeNotionPageId(item.row.page_id)))
+      const candidate=kind === "memo"
+        ? related.find(item=>preferred.includes(normalizeNotionPageId(item.row.page_id))&&relationIds(item.properties,["Company","Companies"]).includes(normalizeNotionPageId(row.page_id))&&item.doc.status.trim().toLowerCase()==="validated"&&String(propertyValue(item.properties,"Agent")??"").trim().toLowerCase()==="investment memo")
+        : related.find(item=>preferred.includes(normalizeNotionPageId(item.row.page_id)))
         ?? related.find(item=>canonicalIds.has(normalizeNotionPageId(item.row.page_id)))
         ?? related.find(item=>referenceKind(item.doc.agent)===kind&&item.doc.status.toLowerCase()==="validated")
         ?? related.find(item=>referenceKind(item.doc.agent)===kind);
       if(!candidate)return[];
       return [{id:candidate.doc.id,kind,title:candidate.doc.title,agent:candidate.doc.agent,score:candidate.doc.score,verdict:candidate.doc.verdict,confidence:candidate.doc.confidence,status:candidate.doc.status,date:candidate.doc.date,lastEditedTime:candidate.doc.lastEditedTime,notionUrl:candidate.doc.notionUrl}];
     });
-    return { id:row.page_id, name:String(propertyValue(p,"Company") ?? row.title), ticker:String(propertyValue(p,"Ticker") ?? ""), sector:String(propertyValue(p,"Sector") ?? ""), industry:String(propertyValue(p,"Industry") ?? ""), status, ownershipStatus:owned ? "Owned" : "Not owned", watchlistMembership, monitoringStatus:watchlistState?.monitoringStatus ?? "", decision:watchlistState?.decision ?? "", lifecycleStatus:sourceStatus || "Unclassified", businessScore:numeric(propertyValue(p,"Business Score")), businessVerdict:String(propertyValue(p,"Business Verdict") ?? ""), researchStage:String(propertyValue(p,"Research Stage") ?? ""), researchPriority:String(propertyValue(p,"Research Priority") ?? ""), lastAnalysis:propertyValue(p,"Last Analysis") as string|null, themes:(propertyValue(p,"Themes") as string[]) ?? [], country:String(propertyValue(p,"Country") ?? ""), currency:String(propertyValue(p,"Currency") ?? ""), exchange:String(propertyValue(p,"Exchange") ?? ""), dataCompleteness:String(propertyValue(p,"Data Completeness") ?? ""), owned, notionUrl:row.notion_url, researchReferences };
+    return { id:row.page_id, name:String(propertyValue(p,"Company") ?? row.title), ticker:String(propertyValue(p,"Ticker") ?? ""), sector:String(propertyValue(p,"Sector") ?? ""), industry:String(propertyValue(p,"Industry") ?? ""), ownershipStatus:owned ? "Owned" : "Not owned", watchlistMembership, monitoringStatus:watchlistStateByCompany.get(normalizeNotionPageId(row.page_id)) ?? "", businessScore:numeric(propertyValue(p,"Business Score")), businessVerdict:String(propertyValue(p,"Business Verdict") ?? ""), researchStage:String(propertyValue(p,"Research Stage") ?? ""), researchPriority:String(propertyValue(p,"Research Priority") ?? ""), lastAnalysis:propertyValue(p,"Last Analysis") as string|null, themes:(propertyValue(p,"Themes") as string[]) ?? [], country:String(propertyValue(p,"Country") ?? ""), currency:String(propertyValue(p,"Currency") ?? ""), exchange:String(propertyValue(p,"Exchange") ?? ""), dataCompleteness:String(propertyValue(p,"Data Completeness") ?? ""), notionUrl:row.notion_url, researchReferences };
   });
 }
 
-export type WatchlistItem = { id:string; name:string; ticker:string; monitoringStatus:string; decision:string; conviction:string; analysisDate:string|null; themes:string[]; thesis:string; companyIds:string[]; ownershipStatus:"Owned"|"Not owned"; watchlistMembership:true; notionUrl:string };
-export type WatchlistData = { items:WatchlistItem[]; themes:string[] };
-export async function listWatchlist(db:D1Database):Promise<WatchlistData>{
-  const [watchlistResult,portfolioResult,companyResult]=await Promise.all([
+export type WatchlistRelationAudit = {
+  missingCompany: { id:string; name:string; notionUrl:string }[];
+  multipleCompanies: { id:string; name:string; notionUrl:string; companyIds:string[] }[];
+  duplicateCompanies: { id:string; name:string; notionUrl:string; watchlistIds:string[] }[];
+  statusWithoutWatchlist: { id:string; name:string; notionUrl:string }[];
+};
+export async function auditCompanyWatchlistRelations(db:D1Database):Promise<WatchlistRelationAudit>{
+  const [watchlistResult,companyResult]=await Promise.all([
     db.prepare("SELECT page_id,title,notion_url,properties_json FROM notion_documents WHERE source_key='watchlist' ORDER BY title COLLATE NOCASE").all<StoredDocument>(),
-    db.prepare("SELECT properties_json FROM notion_documents WHERE source_key='portfolio'").all<Pick<StoredDocument,"properties_json">>(),
-    db.prepare("SELECT page_id,title,notion_url,properties_json FROM notion_documents WHERE source_key='companies'").all<StoredDocument>(),
+    db.prepare("SELECT page_id,title,notion_url,properties_json FROM notion_documents WHERE source_key='companies' ORDER BY title COLLATE NOCASE").all<StoredDocument>(),
   ]);
-  const rows=watchlistResult.results??[];
-  const companyRows=companyResult.results??[];
-  const links=await documentPrimaryCompanyLinks(db);
-  const ownedCompanyIds=activePortfolioCompanyIds(portfolioResult.results??[]);
-  const companies=await listCompanies(db,true,{companyRows,portfolioRows:portfolioResult.results??[],primaryLinks:links});
-  const companyThemes=new Map(companyRows.map(row=>[normalizeNotionPageId(row.page_id),(propertyValue(props(row),"Themes") as string[])??[]]));
-  const companyById=new Map(companies.map(company=>[normalizeNotionPageId(company.id),company]));
-  const items: WatchlistItem[] = rows.map(row=>{
-    const p=props(row);
-    const relationIdsFromNotion=relationIds(p,["Company","Companies"]);
-    const linkedCompanies=links.get(normalizeNotionPageId(row.page_id))??[];
-    const companyIds=relationIdsFromNotion.length?relationIdsFromNotion:linkedCompanies;
-    const themes=[...new Set(companyIds.flatMap(id=>companyThemes.get(normalizeNotionPageId(id))??[]))];
-    const memo=companyIds.flatMap(id=>companyById.get(normalizeNotionPageId(id))?.researchReferences??[]).find(reference=>reference.kind==="memo");
-    return{id:row.page_id,name:String(propertyValue(p,"Société")??row.title),ticker:String(propertyValue(p,"Ticker")??""),monitoringStatus:monitoringStatusFor(p),decision:memo?.verdict??"",conviction:memo?.confidence??"",analysisDate:memo?.date??null,themes,thesis:String(propertyValue(p,"Thèse courte")??""),companyIds,ownershipStatus:companyIds.some(id=>ownedCompanyIds.has(normalizeNotionPageId(id))) ? "Owned" : "Not owned",watchlistMembership:true,notionUrl:row.notion_url};
-  });
-  return{items,themes:[...new Set(items.flatMap(item=>item.themes))].sort((a,b)=>a.localeCompare(b,"fr"))};
+  const watchlist=(watchlistResult.results??[]).map(row=>({row,companyIds:relationIds(props(row),["Company","Companies"])}));
+  const byCompany=new Map<string,typeof watchlist>();
+  for(const item of watchlist)for(const companyId of new Set(item.companyIds))byCompany.set(companyId,[...(byCompany.get(companyId)??[]),item]);
+  const missingCompany=watchlist.filter(item=>item.companyIds.length===0).map(({row})=>({id:row.page_id,name:row.title,notionUrl:row.notion_url}));
+  const multipleCompanies=watchlist.filter(item=>item.companyIds.length>1).map(({row,companyIds})=>({id:row.page_id,name:row.title,notionUrl:row.notion_url,companyIds}));
+  const duplicateCompanies=(companyResult.results??[]).flatMap(row=>{const id=normalizeNotionPageId(row.page_id);const linked=byCompany.get(id)??[];return linked.length>1?[{id:row.page_id,name:row.title,notionUrl:row.notion_url,watchlistIds:linked.map(item=>item.row.page_id)}]:[];});
+  const statusWithoutWatchlist=(companyResult.results??[]).filter(row=>String(propertyValue(props(row),"Status")??"").trim().toLowerCase()==="watchlist"&&!byCompany.has(normalizeNotionPageId(row.page_id))).map(row=>({id:row.page_id,name:row.title,notionUrl:row.notion_url}));
+  return{missingCompany,multipleCompanies,duplicateCompanies,statusWithoutWatchlist};
 }
 
 const quoteByPosition: Record<string,string> = { "Advantest":"advantest", "Air Liquide":"air", "Alphabet A":"googl", "Amazon":"amzn", "BE Semiconductor Industries":"besi", "Bitcoin":"btc", "BNP Easy S&P 500":"ese", "Lumentum Holdings":"lite", "Microsoft":"msft", "MSCI Global Semiconductor USD Acc":"sec0", "Nebius Group":"nbis", "NVIDIA":"nvda", "S&P Global":"spgi", "Schneider Electric":"su", "STMicroelectronics":"stm", "TSMC ADR":"tsm", "Uber Technologies":"uber", "Visa":"visa" };
@@ -276,7 +267,6 @@ export type EarningsRefreshItem = { key:"business"|"valuation"|"short"|"portfoli
 export type EarningsReviewFields = { fiscalPeriod:string|null; guidance:string|null; guidanceVsConsensus:string|null; confidence:string|null; refreshes:EarningsRefreshItem[] };
 export type CompanyDocument = { previewSummaryItems?:string[]; id:string; title:string; sourceKey:string; category:CompanySectionKey; agent:string; notionUrl:string; lastEditedTime:string; plainText:string; notionBlocks?:unknown[]; summary:string|null; handoffSummary:string|null; status:string; score:string; verdict:string; confidence:string|null; date:string|null; relations:RelationLink[]; archived:boolean; current:boolean; decision?:DecisionFields|null; earningsReview?:EarningsReviewFields|null };
 export type ResearchDocument = CompanyDocument & { companyName:string };
-export type DocumentSearchResponse = { query:string; terms:string[]; results:SearchResult[]; total:number; limit:number; offset:number; source:SearchSourceKey|"all"; freshness:SearchFreshness };
 export type CompanyDetail = CompanyListItem & { analyses:CompanyDocument[]; earnings:CompanyDocument[]; decisions:CompanyDocument[]; portfolioDocuments:CompanyDocument[]; archives:CompanyDocument[] };
 type StoredContentDocument = StoredDocument & { source_key:string; last_edited_time:string; plain_text:string; blocks_json?:string };
 function classifyDocument(sourceKey:string,title:string,plainText:string,properties:JsonRecord={}):CompanySectionKey {
@@ -468,85 +458,6 @@ export async function listResearchDocuments(db:D1Database):Promise<ResearchDocum
   const currentIds=currentDocumentIds(companyRows);
   const rows=documentResult.results??[];
  const policy=buildArchivePolicy(rows,companyRows,primaryLinks,currentIds); return rows.map(row=>{const doc=documentFromRow(row,relations.get(row.page_id)??[],currentIds,policy);return {...doc,companyName:documentCompanyLabel(row,companies,owners,primaryLinks)};}); }
-
-type SearchStoredDocument = StoredContentDocument & { synced_at:string };
-const searchableSourceSet=new Set<string>(searchSourceKeys);
-const contentSearchSources=new Set<string>(["analyses","earnings","decisions","portfolio"]);
-
-/**
- * Search remains schema-free while the corpus is small: D1 filters the full
- * snapshots with an accent-folded expression, then the shared deterministic
- * ranker orders only the matching rows. No document body is sent to the client.
- */
-export async function searchResearchDocuments(db:D1Database,query:string,options:{source?:string;freshness?:string;limit?:number;offset?:number}={}):Promise<DocumentSearchResponse>{
-  const terms=parseSearchTerms(query);
-  const source:SearchSourceKey|"all"=searchableSourceSet.has(String(options.source))?options.source as SearchSourceKey:"all";
-  const freshness:SearchFreshness=options.freshness==="archives"||options.freshness==="all"?options.freshness:"current";
-  const limit=Math.min(Math.max(Number(options.limit??20),1),50);
-  const offset=Math.min(Math.max(Number(options.offset??0),0),500);
-  if(!terms.length)return{query,terms,results:[],total:0,limit,offset,source,freshness};
-
-  const sqlFolding:[string,string][]=[
-    ["é","e"],["è","e"],["ê","e"],["ë","e"],["É","e"],["È","e"],["Ê","e"],["Ë","e"],
-    ["à","a"],["â","a"],["ä","a"],["À","a"],["Â","a"],["Ä","a"],
-    ["î","i"],["ï","i"],["Î","i"],["Ï","i"],["ô","o"],["ö","o"],["Ô","o"],["Ö","o"],
-    ["ù","u"],["û","u"],["ü","u"],["Ù","u"],["Û","u"],["Ü","u"],["ç","c"],["Ç","c"],
-  ];
-  const foldSql=(column:string)=>sqlFolding.reduce((expression,[from,to])=>`REPLACE(${expression},'${from}','${to}')`,`LOWER(COALESCE(${column},''))`);
-  const searchable=foldSql("plain_text");
-  const clauses=terms.map(()=>`${searchable} LIKE ?`);
-  const bindings:unknown[]=terms.map(term=>`%${term}%`);
-  if(source!=="all"){
-    clauses.push("source_key = ?");
-    bindings.push(source);
-  }
-  const candidates=(await db.prepare(`SELECT page_id,title,source_key,notion_url,last_edited_time,plain_text,properties_json,synced_at
-    FROM notion_documents WHERE ${clauses.join(" AND ")} ORDER BY last_edited_time DESC LIMIT 500`)
-    .bind(...bindings).all<SearchStoredDocument>()).results??[];
-
-  const [companies,primaryLinks,companyRows,policyRows]=await Promise.all([
-    listCompanies(db,false),
-    documentPrimaryCompanyLinks(db),
-    db.prepare("SELECT page_id,title,notion_url,properties_json FROM notion_documents WHERE source_key='companies'").all<StoredDocument>().then(result=>result.results??[]),
-    db.prepare("SELECT page_id,title,source_key,notion_url,last_edited_time,SUBSTR(plain_text,1,700) AS plain_text,properties_json FROM notion_documents WHERE source_key IN ('analyses','earnings','decisions','portfolio')").all<StoredContentDocument>().then(result=>result.results??[]),
-  ]);
-  const currentIds=currentDocumentIds(companyRows);
-  const owners=canonicalOwners(currentCompanyDocumentLinks(companyRows));
-  const policy=buildArchivePolicy(policyRows,companyRows,primaryLinks,currentIds);
-  const companyNames=new Map(companies.map(company=>[normalizeNotionPageId(company.id),company.name]));
-  const companyIdSet=new Set(companyRows.map(company=>normalizeNotionPageId(company.page_id)));
-
-  const indexDocuments:SearchIndexDocument[]=candidates.flatMap(row=>{
-    if(!searchableSourceSet.has(row.source_key))return[];
-    const sourceKey=row.source_key as SearchSourceKey;
-    const rowId=normalizeNotionPageId(row.page_id);
-    const properties=props(row);
-    const status=String(propertyValue(properties,"Status")??"");
-    const sourceFreshness=String(propertyValue(properties,"Source Freshness")??propertyValue(properties,"Data Status")??"").trim().toLowerCase();
-    const validated=status.trim().toLowerCase()==="validated";
-    const contentDocument=contentSearchSources.has(sourceKey);
-    const archived=contentDocument?policy.archivedIds.has(rowId):explicitlyArchived(row);
-    const current=contentDocument?(policy.activeIds.has(rowId)||sourceFreshness==="current"&&validated)&&!archived:!archived;
-    const linkedIds=sourceKey==="companies"?[rowId]:[...new Set([...(primaryLinks.get(rowId)??[]),...allRelationIds(properties).filter(id=>companyIdSet.has(id))])];
-    const companyName=sourceKey==="companies"
-      ?companyRowName(row)
-      :linkedIds.map(id=>companyNames.get(normalizeNotionPageId(id))).filter(Boolean).join(", ")||documentCompanyLabel(row,companies,owners,primaryLinks);
-    const companyId=linkedIds[0]?normalizeNotionPageId(linkedIds[0]):null;
-    const category=classifyDocument(sourceKey,row.title,row.plain_text,properties);
-    const destination=contentDocument?"document":(sourceKey==="companies"||(sourceKey==="watchlist"&&companyId))?"company":"notion";
-    const agent=contentDocument?agentFor(category,sourceKey):sourceKey==="companies"?"Compagnie":sourceKey==="watchlist"?"Watchlist":"Source";
-    return[{
-      id:row.page_id,sourceKey,title:row.title,companyName:companyName||"Non relié",companyId,category,
-      agent,notionUrl:row.notion_url,lastEditedTime:row.last_edited_time,
-      date:displayProperty(properties,["Analysis Date","Date","Decision Date","Earnings Date"]),status,
-      verdict:displayProperty(properties,["Verdict","Business Verdict","Action","Decision"])??"",
-      plainText:row.plain_text,current,validated,archived,destination,
-    } satisfies SearchIndexDocument];
-  });
-  const ranked=rankSearchDocuments(indexDocuments,query);
-  const filtered=ranked.filter(result=>freshness==="all"||freshness==="archives"?freshness==="all"||result.archived:!result.archived);
-  return{query,terms,results:filtered.slice(offset,offset+limit),total:filtered.length,limit,offset,source,freshness};
-}
 
 export async function getResearchDocument(db:D1Database,pageId:string):Promise<ResearchDocument|null>{
   const canonicalPageId=normalizeNotionPageId(pageId);

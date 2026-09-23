@@ -6,7 +6,7 @@ type ProgressTone = "accent" | "positive" | "neutral" | "warning";
 type SurfaceTag = "div" | "article" | "section" | "aside" | "header" | "nav" | "details" | "button" | "label" | "span";
 type SurfaceRole = "primary" | "secondary" | "glass";
 export type BadgeTone = "neutral" | "accent" | "positive" | "warning" | "negative";
-type DiscoveryCardKind = "company" | "analysis" | "watchlist";
+type DiscoveryCardKind = "company";
 
 type SurfaceProps = HTMLAttributes<HTMLElement> & {
   children: ReactNode;
@@ -197,20 +197,6 @@ export function ActionButton({
   );
 }
 
-export function DiscoveryAction({
-  children,
-  onClick,
-  ariaLabel,
-  className = "",
-}: {
-  children: ReactNode;
-  onClick: () => void;
-  ariaLabel: string;
-  className?: string;
-}) {
-  return <button type="button" className={`ui-discovery-action ${className}`.trim()} aria-label={ariaLabel} onClick={onClick}><span className="ui-discovery-action-visual">{children}</span></button>;
-}
-
 export function BackButton({
   onBack,
   ariaLabel = "Retour",
@@ -315,12 +301,14 @@ export function Tabs<T extends string>({
   value,
   onChange,
   ariaLabel,
+  panelId,
   className = "",
 }: {
   options: Array<{ value: T; label: ReactNode; count?: ReactNode }>;
   value: T;
   onChange: (value: T) => void;
   ariaLabel: string;
+  panelId?: string;
   className?: string;
 }) {
   return (
@@ -336,7 +324,7 @@ export function Tabs<T extends string>({
     }}>
       {options.map((option) => {
         const selected = option.value === value;
-        return <button type="button" role="tab" aria-selected={selected} tabIndex={selected ? 0 : -1} className={selected ? "is-active" : ""} key={option.value} onClick={() => onChange(option.value)}>{option.label}{option.count != null && <span>{option.count}</span>}</button>;
+        return <button type="button" role="tab" aria-selected={selected} aria-controls={panelId} tabIndex={selected ? 0 : -1} className={selected ? "is-active" : ""} key={option.value} onClick={() => onChange(option.value)}>{option.label}{option.count != null && <span>{option.count}</span>}</button>;
       })}
     </div>
   );
@@ -409,7 +397,12 @@ export function DisclosureSurface({
 }) {
   return (
     <Surface as="details" surface={level} className={`ui-disclosure-surface ${className}`.trim()}>
-      <summary className={summaryClassName}>{summary}</summary>
+      <summary className={summaryClassName}>
+        {summary}
+        <svg className="ui-disclosure-chevron" viewBox="0 0 12 12" aria-hidden="true" focusable="false">
+          <path d="m3.5 4.5 2.5 2.5 2.5-2.5" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" />
+        </svg>
+      </summary>
       <div className="ui-disclosure-body">{children}</div>
     </Surface>
   );

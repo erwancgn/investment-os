@@ -8,7 +8,6 @@ import {
   CompactControl,
   DataTable,
   DisclosureSurface,
-  DiscoveryAction,
   DiscoveryCard,
   FilterBar,
   MetadataGrid,
@@ -105,16 +104,6 @@ export const ReferencePage: Story = {
             <p>EXM · Software · Technology</p>
             <Badge tone="positive">Owned</Badge>
           </DiscoveryCard>
-          <DiscoveryCard kind="watchlist">
-            <div className="storybook-discovery-head"><div><strong>AMD</strong><Badge>Monitoring</Badge><p>AMD</p></div><DiscoveryAction ariaLabel="Open AMD" onClick={() => undefined}><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4.5 11.5 11.5 4.5M6 4.5h5.5V10" /></svg></DiscoveryAction></div>
-            <p>Radar content keeps its signals, themes and thesis inside the same shell.</p>
-            <div className="storybook-inline"><Badge>Monitoring</Badge><Badge>AI</Badge><Badge>Semiconductors</Badge></div>
-          </DiscoveryCard>
-          <DiscoveryCard kind="analysis">
-            <strong>Example Corp — Valuation Check</strong>
-            <p>Analysis cards share the same outer surface while keeping their own information hierarchy.</p>
-            <Badge tone="positive">Current</Badge>
-          </DiscoveryCard>
         </div>
 
         <div className="storybook-stack">
@@ -146,7 +135,7 @@ export const DataDisplay: Story = {
 export const ContentStates: Story = {
   render: () => (
     <div className="storybook-stack">
-      <DiscoveryCard as="article" kind="company"><h3>Discovery card</h3><p>Shared content container for companies and watchlist items.</p></DiscoveryCard>
+      <DiscoveryCard as="article" kind="company"><h3>Discovery card</h3><p>Shared content container for the company directory.</p></DiscoveryCard>
       <DisclosureSurface level="primary" summary="Traceability"><p>Expandable secondary content stays inside the same surface hierarchy.</p></DisclosureSurface>
       <AsyncState title="No data in this state" description="The production empty and error presentation remains explicit." />
     </div>

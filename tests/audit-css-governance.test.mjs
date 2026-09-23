@@ -21,9 +21,8 @@ test("the audit keeps generated primitives and scoped state selectors out of orp
   for (const className of [
     "ui-surface--primary",
     "ui-badge--warning",
-    "ui-discovery-card--watchlist",
+    "ui-discovery-card--company",
     "analysis-scenario-base",
-    "decision-reject",
     "notion-table-two-column",
     "research-score-cell",
     "error",
@@ -54,9 +53,9 @@ test("production and Storybook import the same public CSS entry", async () => {
 
 test("responsive contexts are canonicalized before conflict classification", async () => {
   const result = await auditCssGovernance({ compare: false });
-  const analysisRow = result.findings.repeatedSelectors.find(item => item.selector === ".analysis-list-row");
+  const analysisRow = result.findings.repeatedSelectors.find(item => item.selector === ".company-directory .company-list-row");
 
-  assert.ok(analysisRow, "analysis-list-row should remain a tracked repeated selector");
+  assert.ok(analysisRow, "company-list-row should remain a tracked repeated selector");
   assert.ok(analysisRow.contexts.includes("@media (max-width:760px)"));
   assert.equal(analysisRow.contexts.some(context => context.includes("max-width: 760px")), false);
   assert.deepEqual(result.findings.propertyConflicts, []);

@@ -1,8 +1,6 @@
 import { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { NotionAnalyses } from "../app/components/notion-analyses";
 import { NotionCompanies } from "../app/components/notion-companies";
-import { NotionWatchlist } from "../app/components/notion-watchlist";
 import {
   ActionButton,
   AsyncState,
@@ -10,7 +8,6 @@ import {
   Badge,
   CompactControl,
   DataTable,
-  DiscoveryAction,
   DiscoveryCard,
   DisclosureSurface,
   FilterBar,
@@ -26,7 +23,7 @@ import {
   Surface,
   Tabs,
 } from "../app/components/ui-primitives";
-import { analysesData, company, watchlist } from "./reference-fixtures";
+import { company } from "./reference-fixtures";
 import { frame } from "./reference-frame";
 
 const meta = {
@@ -89,7 +86,6 @@ export const Overview: Story = {
               <CompactControl variant="icon" ariaLabel="Sort" onClick={() => undefined}>{arrow}</CompactControl>
               <ActionButton onClick={() => undefined}>Open reference</ActionButton>
               <BackButton onBack={() => undefined} />
-              <DiscoveryAction ariaLabel="Open discovery item" onClick={() => undefined}>{arrow}</DiscoveryAction>
             </div>
           </div>
         </section>
@@ -114,14 +110,12 @@ export const Overview: Story = {
           <h2 id="discovery-heading">Discovery cards</h2>
           <div className="storybook-stack">
             <DiscoveryCard kind="company"><strong>Example Corp</strong><p>EXM · Software · Technology</p><Badge tone="positive">Owned</Badge></DiscoveryCard>
-            <DiscoveryCard kind="watchlist"><div className="storybook-discovery-head"><div><strong>AMD</strong><Badge>Monitoring</Badge><p>AMD</p></div><DiscoveryAction ariaLabel="Open AMD" onClick={() => undefined}>{arrow}</DiscoveryAction></div><p>Radar card content keeps signals, themes and thesis in the production shell.</p><div className="storybook-inline"><Badge>AI</Badge><Badge>Semiconductors</Badge></div></DiscoveryCard>
-            <DiscoveryCard kind="analysis"><strong>Example Corp — Valuation</strong><p>Analysis card with the shared discovery shell.</p><Badge tone="positive">Current</Badge></DiscoveryCard>
           </div>
         </section>
 
         <section className="storybook-reference-section" aria-labelledby="screens-heading">
           <h2 id="screens-heading">Reference screens</h2>
-          <p className="storybook-caption">Company, Radar, Analysis, Portfolio and Reader are separate stories and mount production screens with synthetic fixtures.</p>
+          <p className="storybook-caption">Entreprises, Portfolio, Company and Reader mount production screens with synthetic fixtures.</p>
         </section>
       </div>
     );
@@ -149,14 +143,6 @@ export const ProductionVisualReview: Story = {
       <section className="storybook-reference-section" aria-labelledby="review-companies">
         <h2 id="review-companies">Companies · production · 390px</h2>
         {frame(<NotionCompanies initialData={{ companies: [company] }} openCompany={() => undefined} />)}
-      </section>
-      <section className="storybook-reference-section" aria-labelledby="review-radar">
-        <h2 id="review-radar">Radar · production · 390px</h2>
-        {frame(<NotionWatchlist initialData={watchlist} openCompany={() => undefined} />)}
-      </section>
-      <section className="storybook-reference-section" aria-labelledby="review-analyses">
-        <h2 id="review-analyses">Analyses · production · 390px</h2>
-        {frame(<NotionAnalyses initialData={analysesData} />)}
       </section>
     </div>
   ),

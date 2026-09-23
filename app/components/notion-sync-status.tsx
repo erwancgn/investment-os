@@ -16,7 +16,7 @@ type SyncStatus = {
 };
 
 const orderedSources:{key:SourceKey;label:string}[]=[
-  {key:"companies",label:"Compagnies"},{key:"analyses",label:"Analyses"},{key:"earnings",label:"Earnings"},
+  {key:"companies",label:"Entreprises"},{key:"analyses",label:"Analyses"},{key:"earnings",label:"Earnings"},
   {key:"portfolio",label:"Portfolio"},{key:"watchlist",label:"Watchlist"},{key:"decisions",label:"Décisions"},{key:"sources",label:"Sources"},
 ];
 

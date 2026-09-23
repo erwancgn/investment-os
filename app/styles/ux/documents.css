@@ -181,10 +181,6 @@
   -webkit-text-fill-color: var(--color-text) !important;
 }
 
-.analysis-load-more {
-  margin-top: var(--space-4);
-}
-
 /* Notion is the content source; these wrappers only provide rhythm, not a
    second white card around an already card-based document. */
 .company-section-block,
@@ -287,16 +283,6 @@
   max-width: 100%;
   overflow-wrap: anywhere;
 }
-.research-reference > strong {
-  min-width: 0;
-  max-width: 100%;
-  display: block;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  font-size: 11px;
-  line-height: 1.25;
-}
 .latest-analysis-metadata {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
@@ -326,14 +312,6 @@
   font-size: 11px;
   font-weight: 500;
   line-height: 1.35;
-}
-
-@media (max-width: 760px) {
-  .analysis-list-row .analysis-verdict-cell {
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2;
-  }
 }
 
 /* Shared nested liquid-glass surfaces. The analysis page itself remains the

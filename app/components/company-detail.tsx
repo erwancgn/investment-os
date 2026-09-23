@@ -246,7 +246,9 @@ export function CompanyDetail({ companyId, close, initialData }: { companyId: st
       </>
     );
   const isMemo = (doc: CompanyDocument) => doc.sourceKey === "analyses" && (doc.category === "synthese" || /investment memo|mémo cio/i.test(`${doc.agent} ${doc.title}`));
-  const grouped = (key: CompanyTab) => allDocuments.filter((doc) => key === "analyses" || (key === "memo" ? isMemo(doc) : doc.category === key && !isMemo(doc)));
+  const currentMemo = data.researchReferences.find(reference => reference.kind === "memo");
+  const normalizeId = (id: string) => id.replaceAll("-", "").toLowerCase();
+  const grouped = (key: CompanyTab) => allDocuments.filter((doc) => key === "analyses" || (key === "memo" ? Boolean(currentMemo && normalizeId(doc.id) === normalizeId(currentMemo.id)) : doc.category === key && !isMemo(doc)));
   const archivedByCategory = (key: CompanyTab) => (data.archives ?? []).filter((doc) => key === "analyses" || (key === "memo" ? isMemo(doc) : doc.category === key && !isMemo(doc)));
   const title = data.name;
   const latest = allDocuments[0];
@@ -280,9 +282,10 @@ export function CompanyDetail({ companyId, close, initialData }: { companyId: st
           </div>
         </div>
         <div className="company-decision generic-company-status">
-          <small>{data.watchlistMembership ? "Étape de suivi" : "État d’investissement"}</small>
-          <strong>{data.watchlistMembership ? data.monitoringStatus || "Non renseignée" : data.ownershipStatus}</strong>
-          <span>{data.watchlistMembership ? `Decision : ${data.decision || "Non renseignée"}` : data.researchStage || "Recherche à compléter"}</span>
+          {data.watchlistMembership && <><small>Étape de suivi Watchlist</small><strong>{data.monitoringStatus || "Non renseignée"}</strong></>}
+          <small>Décision CIO · mémo Current validé</small>
+          <strong>{currentMemo?.verdict || "Pas de décision CIO"}</strong>
+          <span>{currentMemo ? `Mémo validé · ${formatAnalysisDate(currentMemo.date || currentMemo.lastEditedTime)}` : "Aucun mémo Current validé relié à cette entreprise."}</span>
         </div>
       </PrimaryBlock>
       <Tabs

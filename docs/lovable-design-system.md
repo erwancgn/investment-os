@@ -26,7 +26,7 @@ vérité.
 | Surfaces | `--surface-canvas`, `--surface-primary`, `--surface-secondary`, `--surface-glass`, `--surface-glass-fallback`, `--surface-stroke`, `--surface-stroke-strong`, `--surface-highlight`, `--surface-blur` | `Surface` et ses wrappers déterminent la hiérarchie primaire, secondaire et glass. |
 | Rayons | `--radius-sm`, `--radius-md`, `--radius-lg`, `--radius-pill` | Les rayons sont choisis par rôle ; une nouvelle valeur locale doit être justifiée dans le contrat. |
 | Ombres | `--surface-shadow`, `--surface-shadow-glass`, `--shadow-panel` | Une surface ne redéfinit pas son ombre localement pour corriger une divergence visuelle. |
-| Contrôles | `--control-height`, `--ui-control-height`, `--ui-control-hit-height`, `--ui-control-contained-height`, `--ui-control-radius`, `--ui-discovery-action-visual-size`, `--ui-progress-track`, `--ui-progress-accent`, `--ui-progress-positive`, `--ui-progress-warning`, `--ui-progress-height` | Les contrôles compacts, les segments et les actions utilisent ces tokens communs ; le hit target peut être supérieur à la hauteur visuelle. |
+| Contrôles | `--control-height`, `--ui-control-height`, `--ui-control-hit-height`, `--ui-control-contained-height`, `--ui-control-radius`, `--ui-progress-track`, `--ui-progress-accent`, `--ui-progress-positive`, `--ui-progress-warning`, `--ui-progress-height` | Les contrôles compacts, les segments et les actions utilisent ces tokens communs ; le hit target peut être supérieur à la hauteur visuelle. |
 
 La police et les couleurs visibles dans Lovable doivent donc être comparées à ces
 tokens de l’application actuelle. Lovable n’introduit pas de valeur concurrente :
@@ -47,13 +47,13 @@ documentée `852fd99aae56a16aeaa47163aca3b426d8784b1d`.
 - L'arbitrage Discovery Card est validé : le shell partagé de production est aligné
   avec la référence Lovable pour le padding, la taille de titre, le rayon et l'ombre.
 - L'alignement est porté par le contrat partagé `.ui-discovery-card` et les variables
-  locales de `.ui-surface` ; aucune variante Company, Radar ou Analysis n'ajoute
-  d'override visuel propre.
+  locales de `.ui-surface` ; la liste Entreprises n'ajoute
+  pas d'override visuel propre.
 - Le titre Discovery est désormais un rôle typographique sémantique partagé ; les
   signaux, métadonnées, badges et textes secondaires restent visuellement subordonnés.
 - La recherche et son compteur restent côte à côte au viewport mobile de référence.
 - Les filtres visibles restent en pills jusqu'à six choix ; les taxonomies plus larges
-  ou dynamiques utilisent `DisclosureSurface`, comme les thèmes du Radar.
+  dynamiques utilisent `DisclosureSurface` lorsque l’écran les expose.
 - Les synthèses KPI restent compactes : jusqu'à trois `StatCard` sur une ligne, puis
   2 × 2 pour quatre et 3 × 2 pour cinq ou six avant de basculer le surplus en détail.
 
@@ -66,7 +66,7 @@ lint, audit CSS de gouvernance, typecheck, couverture Storybook, build Storybook
 La revue mobile à 390 px confirme :
 - SearchField et compteur côte à côte ;
 - jusqu'à six filtres visibles sous forme de pills ;
-- les taxonomies larges représentées par `DisclosureSurface`, avec Thèmes Radar comme cas canonique ;
+- les taxonomies larges représentées par `DisclosureSurface`, dans la page Entreprises ;
 - trois `StatCard` compactes sur une ligne ;
 - la hiérarchie typographique des `DiscoveryCard`, avec titre sémantique 15 px et contenus secondaires inférieurs ;
 - les cas longs `Advanced Micro Devices — Long Reference Name` et `Lumentum Holdings — Optical Networking and Datacenter Infrastructure` sans collision avec badges, métadonnées ou actions.
@@ -82,8 +82,7 @@ il ne remplace pas les composants React de production du checkout.
 
 Les valeurs visuelles restent dans les tokens canoniques nommés ; cette table ne
 recopie aucune valeur CSS. Une ligne correspond à un contrat visuel ; `DiscoveryCard`
-apparaît donc trois fois pour documenter explicitement ses variantes `company`,
-`watchlist` et `analysis`, sans créer trois exports React.
+porte le shell partagé de la liste Entreprises.
 
 | Référence Lovable | Export React | Classe racine | Story / états vérifiés |
 |---|---|---|---|
@@ -92,17 +91,14 @@ apparaît donc trois fois pour documenter explicitement ses variantes `company`,
 | Segmented filters | `SegmentedControl` | `.ui-control-group` | `Controls`, `Design System/Overview` / actif, contenu, clavier |
 | Compact select / icon | `CompactControl` | `.ui-compact-control` | `Controls`, `Design System/Overview`, Portfolio / select, icon, disabled |
 | Text action | `ActionButton` | `.ui-action-button` | `Controls`, `Design System/Overview` / normal, compact, focus |
-| Discovery affordance | `DiscoveryAction` | `.ui-discovery-action` | `Controls`, `Design System/Overview`, Radar / icon-only, accessible label |
 | Back navigation | `BackButton` | `.ui-back-button` | `Controls`, Reader / normal, focus, accessible label |
 | Badge / state | `Badge` | `.ui-badge` | `Badges / States`, `Design System/Overview` / neutral, accent, positive, warning, negative |
 | Search toolbar | `SearchField` | `.ui-search-toolbar` | `Controls`, `Design System/Overview`, screen stories / empty, query, count |
 | Section heading | `SectionHeader` | `.ui-section-header` | `Controls`, `Design System/Overview`, screen stories / h1, h2, metadata |
 | Filter container | `FilterBar` | `.ui-filter-bar` | `Controls`, `Design System/Overview`, screen stories / labelled group |
 | Tabs | `Tabs` | `.ui-tabs` | `Controls`, Company / active, arrow navigation, Home/End |
-| KPI card | `StatCard` | `.ui-stat-card` | `Data display`, `Design System/Overview`, Analyses / normal, long value |
-| Company discovery card | `DiscoveryCard` | `.ui-discovery-card--company` | Companies, `Design System/Overview`, `Design System/ProductionVisualReview` / normal, long, empty |
-| Radar discovery card | `DiscoveryCard` | `.ui-discovery-card--watchlist` | Radar, `Design System/Overview`, `Design System/ProductionVisualReview` / decision, themes, thesis |
-| Analysis discovery card | `DiscoveryCard` | `.ui-discovery-card--analysis` | Analyses, `Design System/Overview`, `Design System/ProductionVisualReview` / current, long, empty |
+| KPI card | `StatCard` | `.ui-stat-card` | `Data display`, `Design System/Overview`, Company / normal, long value |
+| Company directory card | `DiscoveryCard` | `.ui-discovery-card--company` | Entreprises, `Design System/Overview`, `Design System/ProductionVisualReview` / normal, long, no memo |
 | Async state | `AsyncState` | `.ui-async-state` | `Badges / States`, screen state stories / empty, loading, error |
 | Primary block | `PrimaryBlock` | `.ui-surface--primary` | Surfaces, `Design System/Overview`, screen stories / semantic wrapper |
 | Secondary block | `SecondaryBlock` | `.ui-surface--secondary` | Surfaces, `Design System/Overview`, Reader / nested content |

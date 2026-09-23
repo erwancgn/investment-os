@@ -25,25 +25,6 @@
   align-items: center;
   gap: var(--space-2);
 }
-.storybook-discovery-head {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 12px;
-}
-.storybook-discovery-head > div {
-  min-width: 0;
-}
-.storybook-discovery-head strong,
-.storybook-discovery-head .ui-badge {
-  margin-right: 8px;
-}
-.storybook-discovery-head p {
-  margin: 4px 0 0;
-  color: var(--color-text-muted);
-  font-size: var(--font-xs);
-}
-
 .storybook-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));

@@ -80,7 +80,6 @@
   --ui-control-height: 40px;
   --ui-control-hit-height: 44px;
   --ui-control-contained-height: 34px;
-  --ui-discovery-action-visual-size: 32px;
   --ui-control-radius: 999px;
 
   /* Mobile-only layout values are global tokens because their consumers are
@@ -421,31 +420,12 @@ input, select { font-size: 16px; }
   min-width: 0;
   padding: 14px;
 }
-.ui-discovery-card--company:hover,
-.ui-discovery-card--analysis:hover { background: color-mix(in srgb, var(--color-accent) 4.5%, var(--surface-primary)); }
-.ui-discovery-card--analysis:focus-visible, .ui-discovery-card--company:focus-visible, .ui-discovery-card--watchlist:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 3px; }
-.ui-discovery-card--company .company-logo,
-.ui-discovery-card--watchlist .company-logo,
-.ui-discovery-card--analysis .analysis-title > span { box-sizing: border-box; width: 40px; height: 40px; flex: 0 0 40px; display: grid; place-items: center; border: 1px solid var(--surface-stroke); border-radius: var(--radius-md); background: var(--surface-secondary); color: var(--color-text-secondary); font-size: var(--font-xs); font-weight: 700; }
-.company-identity-copy,
-.analysis-title-copy { display: flex; flex-direction: column; min-width: 0; }
-.company-identity-copy > div,
-.analysis-title-copy > div,
-.watch-card-title { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: start; gap: 8px; min-width: 0; }
-.ui-discovery-card--company .company-identity-copy > div > strong,
-.ui-discovery-card--analysis .analysis-title-copy > div > strong,
-.ui-discovery-card--watchlist .watch-card-title h3 { min-width: 0; margin: 0; display: -webkit-box; overflow: hidden; -webkit-box-orient: vertical; -webkit-line-clamp: 2; white-space: normal; overflow-wrap: anywhere; color: var(--color-text); font-size: var(--font-discovery-title); font-weight: 700; line-height: 1.2; }
-.ui-discovery-card--company .company-identity-copy .ui-badge,
-.ui-discovery-card--analysis .analysis-title-copy .ui-badge,
-.ui-discovery-card--watchlist .watch-card-title .ui-badge { justify-self: end; flex: 0 0 auto; }
-.watch-signal-row small { color: var(--color-text-muted); font-size: var(--font-xs); font-weight: 500; text-transform: uppercase; letter-spacing: 0.7px; }
-.watch-signal-row strong { color: var(--color-text); font-size: var(--font-sm); font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.watch-signal-row > span { min-width: 0; display: flex; flex-direction: column; gap: 3px; }
-.ui-discovery-action { display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex: 0 0 44px; padding: 0; border: 0; border-radius: 999px; background: transparent; color: var(--color-text-muted); cursor: pointer; }
-.ui-discovery-action-visual { display: inline-flex; align-items: center; justify-content: center; width: var(--ui-discovery-action-visual-size); height: var(--ui-discovery-action-visual-size); flex: 0 0 var(--ui-discovery-action-visual-size); border-radius: 999px; }
-.ui-discovery-action svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
-.ui-discovery-action:hover .ui-discovery-action-visual, .ui-discovery-action:focus-visible .ui-discovery-action-visual { background: var(--surface-secondary); color: var(--color-text); }
-.ui-discovery-action:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
+.ui-discovery-card--company:hover { background: color-mix(in srgb, var(--color-accent) 4.5%, var(--surface-primary)); }
+.ui-discovery-card--company:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 3px; }
+.ui-discovery-card--company .company-logo { box-sizing: border-box; width: 40px; height: 40px; flex: 0 0 40px; display: grid; place-items: center; border: 1px solid var(--surface-stroke); border-radius: var(--radius-md); background: var(--surface-secondary); color: var(--color-text-secondary); font-size: var(--font-xs); font-weight: 700; }
+.company-identity-copy { display: flex; flex-direction: column; min-width: 0; }
+.company-identity-copy > div { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: start; gap: 8px; min-width: 0; }
+.ui-discovery-card--company .company-identity-copy > div > strong { min-width: 0; margin: 0; display: -webkit-box; overflow: hidden; -webkit-box-orient: vertical; -webkit-line-clamp: 2; white-space: normal; overflow-wrap: anywhere; color: var(--color-text); font-size: var(--font-discovery-title); font-weight: 700; line-height: 1.2; }
 .ui-async-state { display: flex; flex-direction: column; gap: 8px; padding: var(--space-5); }
 .ui-async-state > strong { color: var(--color-text); font-size: var(--font-md); }
 .ui-async-state > span { color: var(--color-text-muted); font-size: var(--font-sm); line-height: 1.5; }
@@ -678,10 +658,6 @@ input, select { font-size: 16px; }
   .ui-control { min-width: 0; min-height: var(--ui-control-hit-height); height: var(--ui-control-hit-height); font-size: 12px; }
   .ui-control-visual { min-width: 68px; padding-inline: 14px; }
   .ui-control-group { gap: 7px; }
-  .company-filter-bar { flex-wrap: nowrap; overflow-x: auto; margin-right: -12px; padding-right: 12px; scrollbar-width: none; }
-  .company-filter-bar::-webkit-scrollbar { display: none; }
-  .company-filter-bar > .company-filter-controls { flex: 0 0 auto; width: max-content; }
-  .company-filter-controls .ui-control { flex: 0 0 auto; }
 }
 
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
@@ -737,6 +713,8 @@ input, select { font-size: 16px; }
 }
 
 .ui-disclosure-surface > summary::-webkit-details-marker { display: none; }
+.ui-disclosure-chevron { width: 16px; height: 16px; flex: 0 0 auto; color: var(--color-text-muted); transform: rotate(-90deg); transition: transform 160ms ease; }
+.ui-disclosure-surface[open] > summary .ui-disclosure-chevron { transform: rotate(0deg); }
 .ui-disclosure-surface > summary span { min-width: 0; display: flex; flex-direction: column; gap: 3px; }
 .ui-disclosure-surface > summary strong { color: var(--color-text); font-size: var(--font-sm); }
 .ui-disclosure-surface > summary small { color: var(--color-text-muted); font-size: 10px; }

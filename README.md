@@ -4,19 +4,17 @@ Investment OS est une PWA mobile-first de suivi et de recherche d'investissement
 
 ## Objectif produit
 
-L'application permet de consulter le portefeuille, les positions, le PRU, les plus-values et les cotations en EUR ; comparer le portefeuille aux trajectoires 10 k€ et 25 k€ ; suivre les sociétés et la watchlist ; consulter les analyses Business, Valuation, Short Seller, Portfolio Fit, Memo et Earnings ; rechercher dans les documents ; afficher la version actuelle et conserver les historiques ; contrôler la qualité des relations et la fraîcheur des données.
+L'application permet de consulter le portefeuille, les positions, le PRU, les plus-values et les cotations en EUR ; comparer le portefeuille aux trajectoires 10 k€ et 25 k€ ; explorer la base Companies dans une page Entreprises avec les vues Toutes, Détenues et Watchlist ; consulter les analyses depuis chaque fiche et ouvrir leurs liens profonds ; contrôler la qualité des relations et la fraîcheur des données.
 
 ## Schéma fonctionnel
 
 ~~~mermaid
 flowchart TD
   U[Utilisateur] --> P[Portfolio]
-  U --> C[Compagnies]
-  U --> A[Analyses]
-  U --> W[Watchlist]
+  U --> C[Entreprises]
   U --> G[Gestion]
   P --> Q[Cotations live]
-  C --> D[Fiche société]
+  C --> D[Fiche entreprise]
   D --> R[Analyse actuelle par type]
   D --> H[Historique et archives]
   G --> S[État de synchronisation]
@@ -30,7 +28,7 @@ flowchart TD
 | Analyse actuelle | Une seule analyse Current est affichée par société et par type. |
 | Fraîcheur | Source Freshness = Current et Status = Validated sont prioritaires ; à statut équivalent, la version au last_edited_time le plus récent est retenue. |
 | Archives | Les versions précédentes restent consultables sans remplacer la version actuelle. |
-| Relations | Les relations Notion et l'index D1 many-to-many relient les documents aux sociétés ; une mention secondaire ne devient pas la société principale. |
+| Relations | Les vues Watchlist utilisent la relation Notion Company explicite, par identifiant de page canonique ; une mention secondaire ne détermine jamais l'appartenance. Chaque entrée Watchlist doit avoir une Company, et une Company au plus. |
 | Owned | Une société est détenue si une position Portfolio est Active avec une quantité strictement positive. |
 | Portefeuille | Portfolio est synchronisé en priorité ; les quantités, statuts, PRU et trajectoires sont reflétés après synchronisation. |
 | Cotations | Yahoo Finance (query2 puis query1) est essayé avant Google Finance ; le dernier cours valide est conservé avec sa provenance et ses horodatages. |
@@ -56,7 +54,7 @@ flowchart LR
 | app/lib/notion-sync.ts | Découverte, comparaison des versions, file d'import, pagination, reprise et reconstruction des relations. |
 | D1 | Snapshots, états de synchronisation, verrous, file d'import, événements webhook, relations et cache des cotations. |
 | app/components/ | Rendu des écrans, états de chargement/erreur et rafraîchissements. |
-| app/lib/investment-data.ts | Projection des snapshots D1 en modèles portefeuille, sociétés, analyses et watchlist. |
+| app/lib/investment-data.ts | Projection des snapshots D1 en modèles portefeuille, entreprises et documents ; audit des relations Watchlist. |
 
 ## Synchronisation Notion, TTL et webhook
 
@@ -87,7 +85,10 @@ Les verrous sont séparés par source afin qu'une analyse lente ne bloque pas le
 | POST /api/notion/sync-all | Réconciliation serveur de toutes les sources, protégée par `NOTION_SYNC_AUTH_TOKEN`. |
 | POST /api/notion/webhook/<secret> | Réception et mise en file des événements Notion. |
 | GET /api/notion/webhook-verification | Route désactivée ; aucun jeton n'est exposé. |
-| GET /api/companies, /api/analyses, /api/archives, /api/watchlist | Données projetées pour l'interface. |
+| GET /api/companies | Liste de la base Companies avec appartenance au portefeuille actif, relations Watchlist et références Current. |
+| GET /api/companies/:id | Fiche entreprise et analyses liées. |
+| GET /api/analyses/:id | Document complet ouvert depuis une fiche ou un lien profond. |
+| GET /api/notion/integrity | Audit en lecture seule des documents et relations Watchlist ↔ Company. |
 | GET /api/quotes | Cotations avec cache, provenance et fallback fournisseur. |
 
 ## Fraîcheur, performance et robustesse

@@ -1,38 +1,4 @@
 /* Discovery lists, filters and comparable list-card composition. */
-/* Discovery lists — stable identities and compact, comparable signals. */
-.watch-theme-filter {
-  margin: 0 0 var(--space-4);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-
-  overflow: hidden;
-}
-.watch-theme-filter > summary {
-  min-height: 44px;
-  padding: 8px var(--space-4);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-4);
-
-  font-size: var(--font-xs);
-  list-style: none;
-  cursor: pointer;
-}
-.watch-theme-filter > summary::-webkit-details-marker {
-  display: none;
-}
-.watch-theme-filter > summary strong {
-
-  font-size: var(--font-xs);
-}
-.watch-theme-filter[open] > summary {
-  border-bottom: 1px solid var(--color-border);
-}
-.watch-theme-filter .theme-cloud {
-  margin: 0;
-  padding: var(--space-3);
-}
 .account-menu {
   position: relative;
 }
@@ -113,120 +79,36 @@
   font-size: 10px;
   line-height: 1.35;
 }
-.ui-discovery-card--watchlist,
-.company-list-row,
-.analysis-list-row {
+.company-list-row {
   content-visibility: auto;
   contain-intrinsic-size: auto 96px;
 }
-.watchlist-overview {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: var(--space-3);
-  margin-bottom: var(--space-4);
-}
-.watchlist-overview > div {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  column-gap: var(--space-2);
-  padding: var(--space-3) var(--space-4);
-}
-.watchlist-overview .eyebrow {
-  grid-column: 1 / -1;
-  margin: 0 0 5px;
-}
-.watchlist-overview strong {
-  color: var(--color-accent);
-  font-size: var(--font-xl);
-}
-.watchlist-overview span {
-  align-self: end;
-  padding-bottom: 3px;
-  color: var(--color-text-muted);
-  font-size: var(--font-xs);
-}
-.notion-watch-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 15px;
-}
-.watch-theme-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 5px;
-  margin-top: var(--space-3);
-}
-.watch-decision {
-  margin: 0;
-  padding: 0;
-  border: 0;
-  border-radius: 0;
-  background: transparent;
-  color: var(--color-text);
-  font-size: var(--font-sm);
-  font-weight: 700;
-  line-height: 1.25;
-}
-.decision-hold-off,
-.decision-reject {
-  color: var(--color-text);
-}
-.watch-card-head {
-  display: grid;
-  grid-template-columns: 40px minmax(0, 1fr) auto;
-  gap: var(--space-3);
-  align-items: start;
-}
-.watch-card-identity {
-  min-width: 0;
-}
-.watch-card-identity small {
-  display: block;
-  margin-top: 3px;
-  color: var(--color-text-muted);
-  font-size: var(--font-xs);
-}
-.watch-signal-row {
-  margin: var(--space-4) 0 var(--space-2);
-  padding-top: var(--space-3);
-  border-top: 1px solid var(--color-border);
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  align-items: start;
-  gap: var(--space-3);
-}
-.ui-discovery-card--watchlist .watch-thesis {
-  min-height: 0;
-  display: -webkit-box;
-  overflow: hidden;
-  margin: 0 0 var(--space-4);
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 3;
-  color: var(--color-text-secondary);
-  font-size: var(--font-sm);
-  line-height: 1.5;
-}
 
-.research-company-table .table-head,
-.research-company-table .company-list-row {
+.company-directory .table-head,
+.company-directory .company-list-row {
   display: grid;
-  grid-template-columns: minmax(180px, 1.3fr) minmax(390px, 2.4fr) .55fr .65fr 26px;
+  grid-template-columns: minmax(180px, 1.3fr) minmax(390px, 2.4fr) .55fr .65fr;
   align-items: center;
   gap: 14px;
 }
-.research-company-table .table-head {
+.company-filter-disclosure {
+  margin-bottom: var(--space-4);
+}
+.company-directory .table-head {
   padding: 12px 18px;
   font-size: 8px;
   text-transform: uppercase;
   letter-spacing: 1px;
 }
-.research-company-table .company-list-row {
+.company-directory .company-list-row {
   position: relative;
+  grid-template-areas: "identity references state date";
   min-height: 73px;
   padding: 12px 18px;
   cursor: default;
 }
 .company-state-tags {
+  grid-area: state;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -237,11 +119,13 @@
   min-width: 0;
   overflow: hidden;
   color: var(--color-text-muted);
-  font-size: 8px;
+  font-size: 10px;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 .company-identity-button {
+  grid-area: identity;
+  width: 100%;
   min-width: 0;
   min-height: var(--ui-control-hit-height);
   display: flex;
@@ -254,21 +138,33 @@
   text-align: left;
   cursor: pointer;
 }
+.company-identity-button:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+.company-open-arrow {
+  flex: 0 0 auto;
+  margin-left: auto;
+  color: var(--color-text-muted);
+  font-size: var(--font-lg);
+}
 .company-identity-copy > small {
   margin-top: 4px;
   overflow: hidden;
   color: var(--color-text-secondary);
-  font-size: 8px;
+  font-size: 11px;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.research-reference-grid {
+.company-reference-grid {
+  grid-area: references;
   min-width: 0;
   display: grid;
   grid-template-columns: repeat(5, minmax(62px, 1fr));
   gap: 5px;
 }
-.research-reference {
+.company-reference {
   display: flex;
   min-width: 0;
   min-height: var(--ui-control-hit-height);
@@ -277,74 +173,89 @@
   padding: 7px;
   border: 1px solid var(--surface-stroke);
   border-radius: var(--radius-sm);
-
-
   text-decoration: none;
 }
-.research-reference > span {
+.company-reference > span {
   color: var(--color-text-muted);
-  font-size: 7px;
+  font-size: 10px;
 }
-.research-reference > small {
+.company-reference > small {
   overflow: hidden;
   color: var(--color-text-muted);
-  font-size: 7px;
+  font-size: 9px;
   font-variant-numeric: tabular-nums;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.research-reference.available:hover {
-
-
+.company-reference.missing {
+  opacity: .72;
 }
-.research-reference.available > strong {
-
-}
-.research-reference.missing {
-  opacity: .42;
-}
-.research-company-table .date-cell {
+.company-directory .date-cell {
+  grid-area: date;
   display: flex;
   flex-direction: column;
 }
-.research-company-table .date-cell strong {
-  font-size: 9px;
+.company-directory .date-cell strong {
+  font-size: 11px;
 }
-.research-company-table .date-cell small {
+.company-directory .date-cell small {
   margin-top: 3px;
   color: var(--color-text-secondary);
-  font-size: 8px;
-}
-.row-arrow {
-  width: 44px;
-  min-height: 44px;
-  display: grid;
-  place-items: center;
-  padding: 0;
-  border: 0;
-  border-radius: 999px;
-  background: transparent;
-  color: var(--color-text-muted);
-  font-size: 18px;
-  line-height: 1;
-  cursor: pointer;
-}
-.row-arrow:hover,
-.row-arrow:focus-visible {
-  outline: none;
-  background: rgba(0, 122, 255, .06);
-  color: var(--color-accent);
+  font-size: 10px;
 }
 .company-identity-button:hover strong {
   color: var(--color-accent);
 }
-.analysis-list-row .analysis-verdict-cell {
-  min-width: 0;
-  overflow: hidden;
-  color: var(--color-text-secondary);
-  text-overflow: ellipsis;
-  white-space: normal;
+.company-identity-button:hover .company-open-arrow {
+  color: var(--color-accent);
 }
-.analysis-score-cell {
 
+@media (max-width: 760px) {
+  .company-filter-disclosure .ui-tabs {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    overflow: visible;
+  }
+  .company-filter-disclosure .ui-tabs button {
+    min-width: 0;
+    padding: 0 8px;
+    white-space: normal;
+  }
+  .company-directory .table-head {
+    display: none;
+  }
+  .company-directory .company-list-row {
+    width: 100%;
+    min-width: 0;
+    grid-template-areas: "identity identity" "state date" "references references";
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 12px;
+    margin-bottom: 10px;
+    padding: 15px;
+    contain-intrinsic-size: auto 280px;
+  }
+  .company-directory .company-state-tags small {
+    font-size: 11px;
+    white-space: normal;
+  }
+  .company-directory .date-cell {
+    align-items: flex-end;
+  }
+  .company-directory .company-reference-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .company-directory .company-reference {
+    flex: 1 1 100px;
+    min-width: 0;
+    padding: 8px;
+  }
+  .company-directory .company-reference > span,
+  .company-directory .company-reference > small {
+    font-size: 10px;
+  }
+  .company-directory .company-reference > strong {
+    font-size: 12px;
+  }
 }

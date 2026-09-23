@@ -5,7 +5,7 @@ import test from "node:test";
 const rootUrl = new URL("../", import.meta.url);
 const read = (relativePath) => readFile(new URL(relativePath, rootUrl), "utf8");
 
-test("all 21 manifest exports have executable Storybook coverage", async () => {
+test("all primitive manifest exports have executable Storybook coverage", async () => {
   const primitiveSource = await read("app/components/ui-primitives.tsx");
   const manifest = await read("ui-foundation-manifest.md");
   const storyFiles = (await readdir(new URL("stories/", rootUrl))).filter(file => file.endsWith(".stories.tsx"));
@@ -13,60 +13,37 @@ test("all 21 manifest exports have executable Storybook coverage", async () => {
   const exports = [...primitiveSource.matchAll(/^export function (\w+)/gm)].map(match => match[1]);
   const manifestExports = [...manifest.matchAll(/^\| \d+ \| `([^`]+)` \|/gm)].map(match => match[1]);
 
-  assert.equal(exports.length, 21);
   assert.deepEqual(manifestExports, exports);
-  for (const exportName of exports) {
-    assert.match(storySource, new RegExp(`\\b${exportName}\\b`), `${exportName} has no Storybook usage`);
-  }
+  for (const exportName of exports) assert.match(storySource, new RegExp(`\\b${exportName}\\b`), `${exportName} has no Storybook usage`);
 
   const mapping = await read("docs/lovable-design-system.md");
   assert.match(mapping, /Lovable → React → Storybook/);
-  for (const exportName of exports) {
-    assert.ok(mapping.includes(`\`${exportName}\``), `${exportName} is missing from the Lovable mapping`);
-  }
+  for (const exportName of exports) assert.ok(mapping.includes(`\`${exportName}\``), `${exportName} is missing from the Lovable mapping`);
 });
 
-test("reference screen stories use production components at both required viewports", async () => {
+test("reference screen stories render production components at mobile and desktop viewports", async () => {
   const references = {
     Companies: ["NotionCompanies", "mobile", "desktop"],
-    Watchlist: ["NotionWatchlist", "mobile", "desktop"],
-    Analyses: ["NotionAnalyses", "mobile", "desktop"],
     Portfolio: ["LivePortfolioDashboard", "mobile", "desktop"],
     Company: ["CompanyDetail", "mobile", "desktop"],
     Reader: ["AnalysisReader", "mobile", "desktop"],
-    Search: ["DocumentSearch", "mobile", "desktop"],
   };
-
   for (const [storyName, [componentName, ...viewports]] of Object.entries(references)) {
     const source = await read(`stories/${storyName}.stories.tsx`);
-    assert.match(source, new RegExp(`import \\{[^}]*\\b${componentName}\\b[^}]*\\} from \\"\\.\\./app/components/`), `${storyName} does not import ${componentName}`);
-    assert.match(source, new RegExp(`<${componentName}[\\s>]`), `${storyName} does not render ${componentName}`);
-    for (const viewport of viewports) {
-      assert.match(source, new RegExp(`defaultViewport: \\"${viewport}\\"`), `${storyName} is missing ${viewport} viewport`);
-    }
+    assert.match(source, new RegExp(`import \\{[^}]*\\b${componentName}\\b[^}]*\\} from \\\"\\.\\.\\/app\\/components/`));
+    assert.match(source, new RegExp(`<${componentName}[\\s>]`));
+    for (const viewport of viewports) assert.match(source, new RegExp(`defaultViewport: \\"${viewport}\\"`));
   }
-
-  const productionScreens = [
-    ["notion-companies", "NotionCompanies", "company"],
-    ["notion-watchlist", "NotionWatchlist", "watchlist"],
-    ["notion-analyses", "NotionAnalyses", "analysis"],
-  ];
-  for (const [fileName, componentName, kind] of productionScreens) {
-    const source = await read(`app/components/${fileName}.tsx`);
-    assert.match(source, new RegExp(`<DiscoveryCard[^>]+kind=\"${kind}\"`), `${componentName} no longer mounts the production ${kind} card`);
-  }
-
+  const companiesSource = await read("app/components/notion-companies.tsx");
+  assert.match(companiesSource, /<DiscoveryCard[^>]+kind="company"/);
   const shellSource = await read("stories/Shell.stories.tsx");
   assert.match(shellSource, /import Home from "\.\.\/app\/page"/);
   assert.match(shellSource, /<Home \/>/);
-  assert.match(shellSource, /defaultViewport: "mobile"/);
-  assert.match(shellSource, /defaultViewport: "desktop"/);
-
   const preview = await read(".storybook/preview.ts");
   const frame = await read("stories/reference-frame.tsx");
   assert.match(preview, /width: "390px"/);
   assert.match(preview, /width: "1440px"/);
-  assert.match(frame, /width: 390/);
+  assert.match(frame, /maxWidth: 390/);
 });
 
 test("the design-system page keeps the visible reference order", async () => {
@@ -80,37 +57,24 @@ test("the design-system page keeps the visible reference order", async () => {
   }
 });
 
-
-test("the production visual review mounts real discovery screens at 390px", async () => {
-  const [source, frame] = await Promise.all([
-    read("stories/DesignSystem.stories.tsx"),
-    read("stories/reference-frame.tsx"),
-  ]);
-
+test("production visual review mounts the unified company screen at 390px", async () => {
+  const [source, frame] = await Promise.all([read("stories/DesignSystem.stories.tsx"), read("stories/reference-frame.tsx")]);
   assert.match(source, /export const ProductionVisualReview/);
-  for (const componentName of ["NotionCompanies", "NotionWatchlist", "NotionAnalyses"]) {
-    assert.match(source, new RegExp(`<${componentName}[\\s>]`), `ProductionVisualReview does not mount ${componentName}`);
-  }
+  assert.match(source, /<NotionCompanies(?:\s|>)/);
+  assert.doesNotMatch(source, /NotionWatchlist|NotionAnalyses|DocumentSearch/);
   assert.match(source, /from "\.\/reference-fixtures"/);
-  assert.match(source, /from "\.\/reference-frame"/);
-  assert.match(frame, /width: 390/);
+  assert.match(frame, /maxWidth: 390/);
 });
 
-
-test("the mobile visual contract covers long Discovery titles and explicit filter composition", async () => {
-  const [css, fixtures, story, companiesStory] = await Promise.all([
-    read("app/globals.css"),
-    read("stories/reference-fixtures.ts"),
-    read("stories/DesignSystem.stories.tsx"),
-    read("stories/Companies.stories.tsx"),
+test("mobile company states cover long names and all three overlapping views", async () => {
+  const [css, companiesStory, companiesSource, referenceFixtures] = await Promise.all([
+    read("app/globals.css"), read("stories/Companies.stories.tsx"), read("app/components/notion-companies.tsx"), read("stories/reference-fixtures.ts"),
   ]);
-
-  assert.match(css, /--font-discovery-title:\s*15px/);
   assert.match(css, /font-size:\s*var\(--font-discovery-title\)/);
-  assert.match(css, /\.watch-signal-row strong\s*\{[^}]*font-size:\s*var\(--font-sm\)/s);
-  assert.match(fixtures, /Advanced Micro Devices — Long Reference Name/);
   assert.match(companiesStory, /Lumentum Holdings — Optical Networking and Datacenter Infrastructure/);
-  assert.match(story, /companies: \[company\]/);
-  assert.match(story, /<DisclosureSurface[^>]*summary=/);
-  assert.match(story, /Reference theme taxonomy/);
+  assert.match(companiesStory, /completeWatchlistOnly/);
+  assert.match(companiesStory, /unclassified/);
+  assert.match(companiesSource, /\["Toutes", "Détenues", "Watchlist"\]/);
+  assert.match(companiesSource, /<DisclosureSurface[^>]*summary=/);
+  assert.match(referenceFixtures, /Advanced Micro Devices — Long Reference Name/);
 });

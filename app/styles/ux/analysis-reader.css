@@ -324,9 +324,6 @@
   .portfolio-main-grid {
     grid-template-columns: 1fr;
   }
-  .notion-watch-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
   .sector-panel .donut-wrap {
     justify-content: flex-start;
   }
@@ -490,119 +487,6 @@
   }
   .notion-sync-panel {
     margin-top: 10px;
-  }
-
-  .watchlist-overview {
-    display: flex;
-    overflow-x: auto;
-    margin-right: -15px;
-    padding-right: 15px;
-  }
-  .watchlist-overview > .ui-surface {
-    min-width: 165px;
-  }
-  .watch-status-filters {
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    margin-right: -15px;
-    padding-right: 15px;
-    scroll-snap-type: x mandatory;
-  }
-  .watch-status-filters button {
-    flex: 0 0 auto;
-    scroll-snap-align: start;
-  }
-  .watch-theme-filter {
-    margin-bottom: 12px;
-  }
-  .watch-theme-filter > summary {
-    min-height: 46px;
-  }
-  .watch-theme-filter .theme-cloud {
-    flex-wrap: wrap;
-    padding: 10px 12px;
-    overflow-x: visible;
-  }
-  .notion-watch-grid {
-    grid-template-columns: 1fr;
-  }
-  .ui-discovery-card--watchlist .watch-thesis {
-    -webkit-line-clamp: 2;
-    font-size: 12px;
-    line-height: 1.5;
-  }
-  .research-company-table .table-head {
-    display: none;
-  }
-  .research-company-table .company-list-row {
-    width: 100%;
-    min-width: 0;
-    grid-template-columns: minmax(0, 1fr) auto;
-    gap: 13px;
-    margin-bottom: 10px;
-    padding: 15px;
-  }
-  .research-company-table .company-identity-button {
-    grid-column: 1;
-    grid-row: 1;
-  }
-  .research-company-table .research-reference-grid {
-    grid-column: 1 / -1;
-    grid-row: 2;
-    grid-template-columns: repeat(5, minmax(104px, 1fr));
-    overflow-x: auto;
-  }
-  .research-company-table .research-reference {
-    min-width: 104px;
-    padding: 8px 6px;
-  }
-  .research-company-table .research-reference > span,
-  .research-company-table .research-reference > small {
-    font-size: 8px;
-  }
-  .research-company-table .research-reference > strong {
-    font-size: 12px;
-  }
-  .research-company-table .company-list-row > div:nth-of-type(2) {
-    grid-column: 1;
-    grid-row: 3;
-  }
-  .research-company-table .date-cell {
-    grid-column: 1;
-    grid-row: 4;
-  }
-  .company-identity-copy > small,
-  .research-company-table .date-cell small {
-    font-size: 11px;
-  }
-  .research-company-table .row-arrow {
-    grid-column: 2;
-    grid-row: 1 / span 4;
-  }
-  .analysis-list-row {
-    grid-template-columns: minmax(0, 1fr) auto;
-    gap: 7px 12px;
-    min-height: 0;
-    padding: 14px;
-  }
-  .analysis-list-row .analysis-title {
-    grid-column: 1 / -1;
-  }
-  .analysis-list-row .analysis-verdict-cell {
-    grid-column: 1;
-    grid-row: 2;
-    padding-top: 3px;
-    font-size: 12px;
-  }
-  .analysis-list-row .analysis-freshness {
-    grid-column: 2;
-    grid-row: 2;
-    justify-self: end;
-  }
-  .analysis-list-row .analysis-score-cell {
-    grid-column: 2;
-    grid-row: 3;
-    justify-self: end;
   }
 
   .generic-company-main {

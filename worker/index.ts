@@ -3,7 +3,7 @@ import { handleImageOptimization, DEFAULT_DEVICE_SIZES, DEFAULT_IMAGE_SIZES } fr
 import handler from "vinext/server/app-router-entry";
 import { getQuotes, instruments } from "../app/lib/quotes";
 import { acquireNotionSourceSyncLock, acquireNotionSyncLock, notionSources, notionStatus, syncNotionAllSources, syncNotionSource, rebuildDocumentCompanyLinks, rebuildNotionRelations, normalizeStoredDocumentText, documentCompanyLinks, finalizeNotionImports, processNextNotionImport, processNextNotionWebhookEvent, recordNotionWebhookEvent, configureNotionWebhook, notionWebhookVerificationToken, releaseNotionSourceSyncLock, releaseNotionSyncLock, type NotionSourceKey } from "../app/lib/notion-sync";
-import { getCompanyDetail, getLivePortfolio, getResearchDocument, listCompanies, listResearchDocuments, listWatchlist, searchResearchDocuments } from "../app/lib/investment-data";
+import { auditCompanyWatchlistRelations, getCompanyDetail, getLivePortfolio, getResearchDocument, listCompanies, listResearchDocuments } from "../app/lib/investment-data";
 
 import { companyPreview } from "../app/lib/company-preview";
 
@@ -209,41 +209,21 @@ const worker = {
       return Response.json({companies:await listCompanies(env.DB)},{headers:{"cache-control":"no-store"}});
     }
 
-    if (url.pathname === "/api/watchlist" && request.method === "GET") {
-      return Response.json(await listWatchlist(env.DB),{headers:{"cache-control":"no-store"}});
-    }
-
     if (url.pathname.startsWith("/api/companies/") && request.method === "GET") {
       const companyId=decodeURIComponent(url.pathname.slice("/api/companies/".length));
       const company=await getCompanyDetail(env.DB,companyId);
       return company?Response.json({company:companyPreview(company)},{headers:{"cache-control":"no-store"}}):Response.json({error:"Compagnie introuvable"},{status:404});
     }
 
-    if (url.pathname === "/api/analyses" && request.method === "GET") {
-      const documents=await listResearchDocuments(env.DB);
-      return Response.json({documents,counts:{total:documents.length,active:documents.filter(item=>!item.archived).length,archived:documents.filter(item=>item.archived).length,analyses:documents.filter(item=>item.sourceKey==="analyses"&&!item.archived).length,earnings:documents.filter(item=>item.sourceKey==="earnings"&&!item.archived).length,portfolio:documents.filter(item=>item.sourceKey==="portfolio"&&!item.archived).length,decisions:documents.filter(item=>item.sourceKey==="decisions"&&!item.archived).length}},{headers:{"cache-control":"no-store"}});
-    }
-
-    if (url.pathname === "/api/archives" && request.method === "GET") {
-      const documents=await listResearchDocuments(env.DB);
-      const archived=documents.filter(item=>item.archived);
-      return Response.json({documents:archived,count:archived.length},{headers:{"cache-control":"no-store"}});
-    }
-
     if (url.pathname === "/api/notion/integrity" && request.method === "GET") {
-      const [companies,documents,companyLinks,watchlist]=await Promise.all([listCompanies(env.DB),listResearchDocuments(env.DB),documentCompanyLinks(env.DB),listWatchlist(env.DB)]);
+      const [companies,documents,companyLinks,watchlistAudit]=await Promise.all([listCompanies(env.DB),listResearchDocuments(env.DB),documentCompanyLinks(env.DB),auditCompanyWatchlistRelations(env.DB)]);
       const orphanDocuments=documents.filter(document=>document.companyName==="Non relié");
       const multiCompanyDocuments=documents.filter(document=>new Set(companyLinks.get(document.id)??[]).size>1);
       const missingCurrent=companies.filter(company=>company.researchReferences.length<5);
       const archived=documents.filter(document=>document.archived);
       const currentAudit=companies.map(company=>({id:company.id,name:company.name,owned:company.ownershipStatus==="Owned",watchlist:company.watchlistMembership,resolved:company.researchReferences.map(reference=>reference.kind),missing:["business","valuation","short","portfolio","memo"].filter(kind=>!company.researchReferences.some(reference=>reference.kind===kind))}));
       const watchlistCurrent=currentAudit.filter(item=>item.watchlist);
-      const watchlistMissingCompany=watchlist.items.filter(item=>item.companyIds.length===0);
-      const watchlistMultipleCompanies=watchlist.items.filter(item=>item.companyIds.length>1);
-      const companyOccurrences=new Map<string,number>();
-      for(const item of watchlist.items)for(const companyId of new Set(item.companyIds))companyOccurrences.set(companyId,(companyOccurrences.get(companyId)??0)+1);
-      const duplicateWatchlistCompanies=[...companyOccurrences.values()].filter(count=>count>1).length;
-      return Response.json({generatedAt:new Date().toISOString(),key:"canonical Notion page ID (UUID compact, title never used as identity)",counts:{companies:companies.length,documents:documents.length,activeDocuments:documents.length-archived.length,archivedDocuments:archived.length,relationEdges:documents.reduce((sum,document)=>sum+document.relations.length,0),orphanDocuments:orphanDocuments.length,multiCompanyDocuments:multiCompanyDocuments.length,missingCurrent:missingCurrent.length,watchlistCompanies:watchlistCurrent.length,watchlistMissingCompany:watchlistMissingCompany.length,watchlistMultipleCompanies:watchlistMultipleCompanies.length,duplicateWatchlistCompanies},orphanDocuments:orphanDocuments.slice(0,50).map(document=>({id:document.id,title:document.title,companyName:document.companyName,sourceKey:document.sourceKey,notionUrl:document.notionUrl})),multiCompanyDocuments:multiCompanyDocuments.slice(0,50).map(document=>({id:document.id,title:document.title,companyName:document.companyName,notionUrl:document.notionUrl})),missingCurrent:missingCurrent.slice(0,50).map(company=>({id:company.id,name:company.name,notionUrl:company.notionUrl})),watchlistIssues:{missingCompany:watchlistMissingCompany.map(item=>({id:item.id,name:item.name,notionUrl:item.notionUrl})),multipleCompanies:watchlistMultipleCompanies.map(item=>({id:item.id,name:item.name,notionUrl:item.notionUrl}))},currentAudit,currentAuditWatchlist:watchlistCurrent},{headers:{"cache-control":"private, no-store"}});
+      return Response.json({generatedAt:new Date().toISOString(),key:"canonical Notion page ID (UUID compact, title never used as identity)",counts:{companies:companies.length,ownedCompanies:currentAudit.filter(item=>item.owned).length,documents:documents.length,activeDocuments:documents.length-archived.length,archivedDocuments:archived.length,relationEdges:documents.reduce((sum,document)=>sum+document.relations.length,0),orphanDocuments:orphanDocuments.length,multiCompanyDocuments:multiCompanyDocuments.length,missingCurrent:missingCurrent.length,watchlistCompanies:watchlistCurrent.length,watchlistMissingCompany:watchlistAudit.missingCompany.length,watchlistMultipleCompanies:watchlistAudit.multipleCompanies.length,duplicateWatchlistCompanies:watchlistAudit.duplicateCompanies.length,watchlistStatusWithoutEntry:watchlistAudit.statusWithoutWatchlist.length},orphanDocuments:orphanDocuments.slice(0,50).map(document=>({id:document.id,title:document.title,companyName:document.companyName,sourceKey:document.sourceKey,notionUrl:document.notionUrl})),multiCompanyDocuments:multiCompanyDocuments.slice(0,50).map(document=>({id:document.id,title:document.title,companyName:document.companyName,notionUrl:document.notionUrl})),missingCurrent:missingCurrent.slice(0,50).map(company=>({id:company.id,name:company.name,notionUrl:company.notionUrl})),watchlistIssues:{...watchlistAudit,missingCompany:watchlistAudit.missingCompany.slice(0,50),multipleCompanies:watchlistAudit.multipleCompanies.slice(0,50),duplicateCompanies:watchlistAudit.duplicateCompanies.slice(0,50),statusWithoutWatchlist:watchlistAudit.statusWithoutWatchlist.slice(0,50)},currentAudit,currentAuditWatchlist:watchlistCurrent},{headers:{"cache-control":"private, no-store"}});
     }
 
     if (url.pathname.startsWith("/api/analyses/") && request.method === "GET") {
@@ -254,17 +234,6 @@ const worker = {
 
     if (url.pathname === "/api/portfolio/live" && request.method === "GET") {
       try{return Response.json(await getLivePortfolio(env.DB,url.searchParams.get("refresh")==="1",url.searchParams.get("refresh")!=="1"),{headers:{"cache-control":"no-store"}})}catch(error){return Response.json({error:error instanceof Error?error.message:"Calcul du portefeuille impossible"},{status:502})}
-    }
-
-    if (url.pathname === "/api/notion/search" && request.method === "GET") {
-      const query = (url.searchParams.get("q") ?? "").trim().slice(0, 160);
-      const result = await searchResearchDocuments(env.DB, query, {
-        source: url.searchParams.get("source") ?? "all",
-        freshness: url.searchParams.get("freshness") ?? "current",
-        limit: Number(url.searchParams.get("limit") ?? 20),
-        offset: Number(url.searchParams.get("offset") ?? 0),
-      });
-      return Response.json(result, { headers: { "cache-control": "no-store" } });
     }
 
     if (url.pathname === "/api/notion/sync" && request.method === "POST") {

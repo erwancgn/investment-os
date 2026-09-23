@@ -29,12 +29,12 @@ Les valeurs ne doivent pas être recopiées dans cette documentation. En cas de 
 2. Une surface de contenu de premier niveau utilise `primary` : carte métier, recherche, KPI, liste documentaire.
 3. `secondary` est réservé aux informations réellement imbriquées ou de soutien ; il ne doit pas servir à griser arbitrairement une carte de premier niveau.
 4. `glass` est réservé au chrome, à la navigation, aux menus flottants et aux surfaces qui se superposent au contenu.
-5. `DiscoveryCard` porte le shell Apple Light / Liquid Glass commun des cartes Companies, Radar et Analyses : un écran peut organiser son contenu interne, mais ne redéfinit pas localement fond, bordure, rayon ou ombre. Le shell partagé est aligné avec la référence Lovable validée et se configure via le contrat commun de surface, jamais via un override d'écran. Les informations réellement imbriquées peuvent utiliser de petites surfaces secondaires. Le hover/focus léger reste une interaction voulue.
+5. `DiscoveryCard` porte le shell Apple Light / Liquid Glass des lignes d’Entreprises. Un écran peut organiser son contenu interne, mais ne redéfinit pas localement fond, bordure, rayon ou ombre. Les informations réellement imbriquées peuvent utiliser de petites surfaces secondaires. Le hover/focus léger reste une interaction voulue.
 6. Le titre principal d’une DiscoveryCard peut occuper jusqu’à deux lignes dans une piste flexible `minmax(0, 1fr)`. Il utilise le token sémantique `--font-discovery-title`. Toute information interne secondaire reste typographiquement sous ce niveau : valeurs de signal au plus en `--font-sm`, métadonnées et labels en `--font-xs` ou plus petit. Les badges, statuts et actions occupent des pistes `auto` non réductibles : le titre ne peut ni les chevaucher ni leur prendre leur espace, et la carte conserve une hauteur intrinsèque.
-7. Le Radar conserve la hiérarchie visuelle validée dans Lovable : identité + statut + action, puis décision / ownership / confiance, thèmes, enfin thèse secondaire.
+7. La liste Entreprises montre l’identité, les badges Détenue et Watchlist, les cinq références actuelles et leur date. Le verdict CIO vient uniquement du mémo `Current Investment Memo` relié et `Validated` ; en son absence, la page affiche `Pas de décision CIO`.
 8. Toute action interactive conserve une zone cible d’au moins 44 × 44 px. Les contrôles compacts partagés utilisent `CompactControl` : leur zone interactive mesure 44 px de haut autour d’un visuel de 40 px, avec 18 px de gouttière horizontale de chaque côté. Le chevron reste discret (10 px, trait 1,25 px) et le bouton icône conserve un visuel 40 × 40 px avec une icône de 12 px. `ActionButton` est réservé aux actions verbales : il reste texte uniquement, reprend la même sobriété de surface que les contrôles compacts et réserve l’accent bleu aux états d’interaction.
 9. Un segmented control contenu conserve lui aussi une zone interactive de 44 px ; son conteneur visuel reste à 40 px avec 3 px d’inset uniforme et le segment actif à 34 px. Il est réservé aux bascules de mode compactes, pas aux taxonomies longues.
-10. Pour les filtres visibles, jusqu’à six choix utilisent des pills séparées via `SegmentedControl`. Au-delà de six choix, ou pour une taxonomie dynamique comme les thèmes, les choix sont placés dans une `DisclosureSurface` ; le Radar Thèmes est l’exemple canonique. Aucun comportement automatique basé sur le nombre d’options n’est caché dans la primitive : la composition reste explicite dans l’écran.
+10. `Tabs` pilote les vues Toutes, Détenues et Watchlist de la liste Entreprises, reliées à un `tabpanel`. Les filtres visibles jusqu'à six choix utilisent des pills via `SegmentedControl`. Aucun comportement automatique basé sur le nombre d’options n’est caché dans la primitive : la composition reste explicite dans l’écran.
 11. `SearchField` conserve recherche et compteur sur une seule ligne au viewport mobile de référence ; la recherche prend `minmax(0, 1fr)` et le compteur reste en `max-content`, avec une hauteur interactive commune.
 12. Une synthèse de `StatCard` affiche 1 à 3 KPI sur une ligne, 4 KPI en grille 2 × 2, et 5 à 6 KPI en grille 3 × 2. Au-delà de six KPI, le contenu n’est plus considéré comme une synthèse : les indicateurs prioritaires restent visibles et le complément passe dans un niveau de détail ou une disclosure.
 
@@ -56,9 +56,9 @@ La page Lovable de référence est un banc de comparaison mobile. Elle peut mont
 8. Pour le Portfolio, les modules UX sont propriétaires de la composition desktop/mobile des positions, de l’exposition et de Trajectoire. `globals.css` ne doit plus contenir d’ancienne grille Portfolio ou de mécanique de cible concurrente ; les surfaces Apple Light / Liquid Glass restent fournies par les primitives partagées.
 9. Pour le Shell, `GlassChrome` porte le matériau Liquid Glass de la sidebar et de la navigation mobile. les modules UX portent uniquement leur géométrie et la composition du branding, du header, du menu compte et de la bannière PWA ; `globals.css` ne redéfinit pas ces éléments métier.
 10. Pour les lecteurs Analyse / Memo, `globals.css` conserve uniquement les primitives documentaires génériques (`notion-page`, `DisclosureSurface`, surfaces). les modules UX sont les propriétaires de la composition du Reader : hero, largeur de lecture, TL;DR, sections, Decision Card, source disclosure et adaptations mobile.
-11. Pour la Recherche documentaire, `SearchField` et les classes `ui-search-*` restent des primitives dans `globals.css`. les modules UX sont les propriétaires du workspace, des filtres, résultats, états vide/sans résultat et adaptations mobile. L’ancienne classe `research-hero` ne fait plus partie du contrat de production.
+11. `SearchField` sert à chercher une entreprise par nom, ticker, secteur, industrie ou thème ; `globals.css` possède les primitives `ui-search-*` et le module Discovery porte le comportement responsive et l’état vide.
 12. L’ordre public reste `ux-foundations.css` puis `globals.css`. `ux-foundations.css` importe les modules UX dans l’ordre canonique documenté par `scripts/css-file-manifest.mjs`. Cet ordre ne doit pas servir de mécanisme de résolution des conflits : les modules UX possèdent la composition métier/responsive et `globals.css` les tokens/primitives. L’audit d’ownership doit rester à zéro chaîne de propriété `globals ↔ UX` et zéro chaîne concurrente entre modules.
-13. Pour Radar et Companies, les modules UX portent la composition des listes, résumés, références d’analyse et variantes responsive. `DiscoveryCard` reste propriétaire du shell visuel Apple Light / Liquid Glass ; les cinq références Company restent des surfaces secondaires et ne sont jamais dupliquées dans `globals.css`.
+13. Le module Discovery porte la composition de la liste Entreprises et ses références d’analyse. `DiscoveryCard` reste propriétaire du shell visuel Apple Light / Liquid Glass ; les cinq références restent accessibles sur mobile dans la carte sans rail horizontal.
 
 ## Gouvernance CSS et baseline de migration
 
@@ -67,16 +67,16 @@ La dette CSS est mesurée par `scripts/audit-css-governance.mjs`. Son périmètr
 `stories/storybook.css`. Le fichier agrégateur `ux-foundations.css` n'est volontairement pas
 compté comme une seconde source de règles.
 
-Après le Lot 9B, la consolidation du header Portfolio et l’ajustement des allocations cibles, la baseline versionnée est :
+Après la fusion Entreprises (suppression des écrans Radar, Analyses et Recherche), la baseline versionnée est :
 
-- 171 sélecteurs exacts répétés ;
+- 147 sélecteurs exacts répétés ;
 - 0 conflit direct ;
-- 131 variantes responsive ;
+- 115 variantes responsive ;
 - 1 redondance stricte intentionnelle ;
-- 39 extensions additives ;
+- 31 extensions additives ;
 - 0 token répété ou concurrent ;
-- 222 déclarations `!important` ;
-- 321 classes définies ;
+- 207 déclarations `!important` ;
+- 277 classes définies ;
 - 0 classe orpheline.
 
 `audit-css-ownership.mjs` complète la gouvernance en analysant les sélecteurs individuels même

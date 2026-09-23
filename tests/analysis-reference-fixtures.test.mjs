@@ -7,10 +7,9 @@ const fixtureUrl = new URL("../app/data/analysis-reference-fixtures.json", impor
 const rendererUrl = new URL("../app/lib/notion-renderer.ts", import.meta.url);
 const templateUrl = new URL("../app/data/analysis-template-registry.json", import.meta.url);
 const pageUrl = new URL("../app/page.tsx", import.meta.url);
-const searchUrl = new URL("../app/components/document-search.tsx", import.meta.url);
-const searchContractUrl = new URL("../app/lib/search-contract.ts", import.meta.url);
 const workerSourceUrl = new URL("../worker/index.ts", import.meta.url);
 const dataUrl = new URL("../app/lib/investment-data.ts", import.meta.url);
+const navigationUrl = new URL("../app/lib/app-navigation.tsx", import.meta.url);
 const syncUrl = new URL("../app/lib/notion-sync.ts", import.meta.url);
 const companyDetailUrl = new URL("../app/components/company-detail.tsx", import.meta.url);
 const liveHoldingSummaryUrl = new URL("../app/components/live-holding-summary.tsx", import.meta.url);
@@ -20,9 +19,7 @@ const presentationUrl = new URL("../app/lib/document-presentation.ts", import.me
 const presentationFixturesUrl = new URL("../app/data/document-presentation-fixtures.json", import.meta.url);
 const latestInfoUrl = new URL("../app/components/latest-info-card.tsx", import.meta.url);
 const notionTableUrl = new URL("../app/components/notion-table.tsx", import.meta.url);
-const watchlistUrl = new URL("../app/components/notion-watchlist.tsx", import.meta.url);
 const companiesUrl = new URL("../app/components/notion-companies.tsx", import.meta.url);
-const analysesUrl = new URL("../app/components/notion-analyses.tsx", import.meta.url);
 const uxUrls = uxCssFiles.map(file => new URL(`../${file}`, import.meta.url));
 const readUxSource = async () => (await Promise.all(uxUrls.map(url => readFile(url, "utf8")))).join("\n");
 const globalsUrl = new URL("../app/globals.css", import.meta.url);
@@ -32,7 +29,7 @@ const uiManifestUrl = new URL("../ui-foundation-manifest.md", import.meta.url);
 const primitiveStoriesUrl = new URL("../stories/UIPrimitives.stories.tsx", import.meta.url);
 const referenceFrameUrl = new URL("../stories/reference-frame.tsx", import.meta.url);
 const referenceStoryUrls = Object.fromEntries(
-  ["Watchlist", "Companies", "Analyses", "Company", "Portfolio"].map((name) => [name, new URL(`../stories/${name}.stories.tsx`, import.meta.url)]),
+  ["Companies", "Company", "Portfolio"].map((name) => [name, new URL(`../stories/${name}.stories.tsx`, import.meta.url)]),
 );
 const analysisPresentationUrl = new URL("../app/components/analysis-presentation.tsx", import.meta.url);
 const liveDashboardUrl = new URL("../app/components/live-portfolio-dashboard.tsx", import.meta.url);
@@ -267,52 +264,40 @@ test("company ownership is projected from active positive Portfolio positions", 
   assert.doesNotMatch(source, /owned:status\.toLowerCase\(\)\s*===\s*"owned"/);
 });
 
-test("canonical state projection keeps ownership and watchlist dimensions separate", async () => {
+test("company directory derives membership only from explicit Notion relations", async () => {
   const source = await readFile(dataUrl, "utf8");
-  assert.match(source, /function monitoringStatusFor/);
-  assert.match(source, /monitoringStatus:monitoringStatusFor\(p\)/);
-  assert.match(source, /ownershipStatus:owned \? "Owned" : "Not owned"/);
-  assert.match(source, /watchlistMembership/);
-  assert.match(source, /watchlistCompanyIds/);
-  assert.match(source, /companyThemes/);
-  assert.match(source, /const themes=\[\.\.\.new Set\(companyIds\.flatMap/);
-  assert.doesNotMatch(source, /function effectiveCompanyStatus/);
-});
-
-test("canonical UI consumes monitoring, decision and company themes independently", async () => {
-  const dataSource = await readFile(dataUrl, "utf8");
   const companiesSource = await readFile(companiesUrl, "utf8");
-  const watchlistSource = await readFile(watchlistUrl, "utf8");
-  const detailSource = await readFile(companyDetailUrl, "utf8");
-  assert.match(dataSource, /canonical==="To deepen"\)return "To analyse"/);
-  assert.match(dataSource, /legacy==="À approfondir"\)return "To analyse"/);
-  assert.match(dataSource, /items\.flatMap\(item=>item\.themes\)/);
-  assert.match(dataSource, /conflictingWatchlistCompanyIds/);
-  assert.match(dataSource, /watchlistStateByCompany\.delete\(companyId\)/);
-  assert.match(dataSource, /explicitCompanyIds\.length\?explicitCompanyIds/);
-  assert.match(dataSource, /relationIdsFromNotion\.length\?relationIdsFromNotion:linkedCompanies/);
-  assert.match(companiesSource, /item\.ownershipStatus/);
-  assert.match(companiesSource, /item\.watchlistMembership/);
-  assert.match(companiesSource, /item\.monitoringStatus/);
-  assert.doesNotMatch(companiesSource, /item\.status|item\.categories|item\.owned/);
-  assert.match(watchlistSource, /item\.monitoringStatus/);
-  assert.match(watchlistSource, /item\.themes/);
-  assert.match(watchlistSource, /item\.ownershipStatus/);
-  assert.doesNotMatch(watchlistSource, /item\.status|item\.categories/);
-  assert.match(detailSource, /data\.ownershipStatus/);
-  assert.match(detailSource, /data\.watchlistMembership/);
-  assert.match(detailSource, /data\.monitoringStatus/);
-  assert.match(detailSource, /data\.decision/);
-  assert.doesNotMatch(detailSource, /data\.owned/);
+  assert.match(source, /const watchlistCompanyIds=new Set\(watchlistRows\.flatMap\(row=>relationIds\(props\(row\),\["Company","Companies"\]\)\)\)/);
+  assert.match(source, /watchlistMembership/);
+  assert.match(source, /function activePortfolioCompanyIds/);
+  assert.match(companiesSource, /const companyFilters = \["Toutes", "Détenues", "Watchlist"\]/);
+  assert.doesNotMatch(companiesSource, /Not owned|Hors watchlist|Non classé/);
 });
 
-test("Notion integrity audits the actual watchlist membership and relation conflicts", async () => {
+test("browser history canonicalizes removed company tabs to Entreprises", async () => {
+  const source = await readFile(navigationUrl, "utf8");
+  assert.match(source, /\["watchlist", "analyses", "research"\]/);
+  assert.match(source, /const pop = \(\) => \{[\s\S]*canonicalUrl\.searchParams\.set\("tab", next\.tab\)[\s\S]*history\.replaceState/);
+});
+
+test("CIO verdict requires the linked Current validated Investment Memo", async () => {
+  const source = await readFile(dataUrl, "utf8");
+  const detailSource = await readFile(companyDetailUrl, "utf8");
+  assert.match(source, /kind === "memo"[\s\S]*preferred\.includes[\s\S]*relationIds\(item\.properties,\["Company","Companies"\]\)\.includes\(normalizeNotionPageId\(row\.page_id\)\)[\s\S]*status\.trim\(\)\.toLowerCase\(\)==="validated"[\s\S]*propertyValue\(item\.properties,"Agent"\)[\s\S]*investment memo/);
+  assert.match(detailSource, /Pas de décision CIO/);
+  assert.doesNotMatch(detailSource, /data\.decision\b/);
+});
+
+test("Notion integrity audits explicit Watchlist relation cardinality and inverse status", async () => {
+  const source = await readFile(dataUrl, "utf8");
   const workerSource = await readFile(workerSourceUrl, "utf8");
-  assert.match(workerSource, /currentAudit\.filter\(item=>item\.watchlist\)/);
-  assert.match(workerSource, /watchlistMissingCompany/);
-  assert.match(workerSource, /watchlistMultipleCompanies/);
-  assert.match(workerSource, /duplicateWatchlistCompanies/);
-  assert.doesNotMatch(workerSource, /currentAudit\.filter\(item=>!item\.owned\)/);
+  assert.match(source, /export async function auditCompanyWatchlistRelations/);
+  assert.match(source, /missingCompany/);
+  assert.match(source, /multipleCompanies/);
+  assert.match(source, /duplicateCompanies/);
+  assert.match(source, /statusWithoutWatchlist/);
+  assert.match(workerSource, /auditCompanyWatchlistRelations\(env\.DB\)/);
+  assert.doesNotMatch(workerSource, /listWatchlist/);
 });
 
 test("company detail stays dynamic instead of using the legacy Nebius cockpit", async () => {
@@ -351,48 +336,11 @@ test("two-column earnings tables prioritize result readability on mobile", async
   assert.match(uxSource, /table-layout: fixed !important/);
 });
 
-test("document search uses the server-side full-text endpoint", async () => {
-  const searchSource = await readFile(searchUrl, "utf8");
+test("removed top-level analysis and search APIs have no worker routes", async () => {
   const workerSource = await readFile(workerSourceUrl, "utf8");
-  assert.match(searchSource, /fetch\(`\/api\/notion\/search\?\$\{params\}`/);
-  assert.doesNotMatch(searchSource, /fetch\("\/api\/analyses"/);
-  assert.match(workerSource, /searchResearchDocuments\(env\.DB, query/);
-  assert.doesNotMatch(searchSource, /nebius-(business|valuation|short|portfolio|memo|earnings).json/);
-});
-
-test("full-text search is accent-insensitive, conjunctive and reads beyond 700 characters", async () => {
-  const { normalizeSearchText, rankSearchDocuments, searchExcerpt } = await import(searchContractUrl.href);
-  assert.equal(normalizeSearchText("Prépaiements & CoWoS"), "prepaiements cowos");
-  const longText = `${"socle ".repeat(150)}dilution maîtrisée par le free cash flow`;
-  const base = {
-    id: "current", sourceKey: "analyses", title: "Analyse actuelle", companyName: "TSMC", companyId: "company",
-    category: "valuation", agent: "Valuation Analyst", notionUrl: "https://www.notion.so/current",
-    lastEditedTime: "2026-08-29T12:00:00.000Z", date: "2026-08-29", status: "Validated", verdict: "Attractive",
-    current: true, validated: true, archived: false, destination: "document",
-  };
-  const results = rankSearchDocuments([
-    { ...base, plainText: longText },
-    { ...base, id: "partial", title: "Dilution seulement", plainText: "dilution", current: false, archived: true },
-  ], "dilution cash");
-  assert.deepEqual(results.map(result => result.id), ["current"]);
-  assert.match(results[0].excerpt, /dilution maîtrisée par le free cash flow/i);
-  assert.ok(longText.indexOf("dilution") > 700);
-  assert.match(searchExcerpt("Le Prépaiement protège la capacité.", ["prepaiement"]), /Prépaiement/);
-});
-
-test("current validated research ranks ahead of verbose archives", async () => {
-  const { highlightSearchText, rankSearchDocuments } = await import(searchContractUrl.href);
-  const shared = {
-    sourceKey: "analyses", title: "Analyse du ROIC", companyName: "NVIDIA", companyId: "company", category: "business",
-    agent: "Business Analyst", notionUrl: "https://www.notion.so/doc", lastEditedTime: "2026-08-29T12:00:00.000Z",
-    date: "2026-08-29", status: "Validated", verdict: "Excellent", destination: "document",
-  };
-  const results = rankSearchDocuments([
-    { ...shared, id: "archive", plainText: "ROIC ".repeat(80), current: false, validated: true, archived: true },
-    { ...shared, id: "current", plainText: "Le ROIC reste supérieur au WACC.", current: true, validated: true, archived: false },
-  ], "roic");
-  assert.equal(results[0].id, "current");
-  assert.ok(highlightSearchText("Prépaiement", ["prepaiement"]).some(part => part.match && part.text === "Prépaiement"));
+  assert.doesNotMatch(workerSource, /url\.pathname === "\/api\/(?:analyses|archives|watchlist)"/);
+  assert.doesNotMatch(workerSource, /url\.pathname === "\/api\/notion\/search"/);
+  assert.match(workerSource, /url\.pathname\.startsWith\("\/api\/analyses\/"\)/);
 });
 
 test("archive policy keeps one latest document per company and section", async () => {
@@ -497,7 +445,6 @@ test("Investment Memo CIO has a dedicated decision view without a numeric memo s
   const memoSource = await readFile(memoReaderUrl, "utf8");
   const readerSource = await readFile(analysisReaderUrl, "utf8");
   const companySource = await readFile(companyDetailUrl, "utf8");
-  const analysesSource = await readFile(analysesUrl, "utf8");
   assert.match(readerSource, /<InvestmentMemoReader/);
   assert.match(companySource, /\["memo", "Mémo CIO"\]/);
   assert.match(memoSource, /Decision Card/);
@@ -505,7 +452,7 @@ test("Investment Memo CIO has a dedicated decision view without a numeric memo s
   assert.match(memoSource, /État des quatre modules/);
   assert.match(memoSource, /!\/\^\(\?:score\|note\)/);
   assert.doesNotMatch(memoSource, /document\.score/);
-  assert.match(analysesSource, /item\.category === "business" \|\| item\.category === "valuation"/);
+  assert.doesNotMatch(await readFile(pageUrl, "utf8"), /AnalysisHub|NotionAnalyses/);
 });
 
 test("Notion tables use one adaptive reusable component", async () => {
@@ -540,24 +487,11 @@ test("research copy uses the shared readable text token", async () => {
   assert.match(uxSource, /latest-info-summary p,[\s\S]*\.decision-template-columns p/);
 });
 
-test("discovery lists keep stable identities and separate interactive targets", async () => {
-  const watchlistSource = await readFile(watchlistUrl, "utf8");
+test("company directory keeps stable identities and accessible row actions", async () => {
   const companiesSource = await readFile(companiesUrl, "utf8");
-  const analysesSource = await readFile(analysesUrl, "utf8");
-  const globalsSource = await readFile(globalsUrl, "utf8");
-  const uxSource = await readUxSource();
-
-  assert.doesNotMatch(watchlistSource, /accentFor/);
-  assert.match(watchlistSource, /kind="watchlist"/);
-  assert.doesNotMatch(watchlistSource, /watch-card-compact/);
-  assert.doesNotMatch(uxSource, /watch-card-compact/);
-  assert.doesNotMatch(uxSource, /watch-signal-row > span:first-child/);
-  assert.doesNotMatch(globalsSource, /0 8px 22px/);
-  assert.doesNotMatch(watchlistSource, /convictionScore/);
   assert.match(companiesSource, /company-identity-button/);
   assert.doesNotMatch(companiesSource, /role="button"/);
-  assert.match(analysesSource, /analysis-verdict-cell/);
-  assert.match(analysesSource, /analysis-freshness/);
+  assert.match(companiesSource, /company-list-row/);
 });
 
 test("Apple Light theme stays isolated from data and parser contracts", async () => {
@@ -609,29 +543,19 @@ test("shared UI primitives drive progress bars and segmented filters", async () 
   assert.match(uxSource, /\.pnl-badge\.positive-pnl[\s\S]*background: transparent !important/);
 });
 
-test("discovery surfaces use the shared design-system component layer", async () => {
+test("the company directory uses production discovery and search primitives", async () => {
   const primitiveSource = await readFile(uiPrimitivesUrl, "utf8");
   const companiesSource = await readFile(companiesUrl, "utf8");
-  const analysesSource = await readFile(analysesUrl, "utf8");
-  const watchlistSource = await readFile(watchlistUrl, "utf8");
   assert.match(primitiveSource, /export function SearchField/);
   assert.match(primitiveSource, /export function Badge/);
-  assert.match(primitiveSource, /export function SectionHeader/);
-  assert.match(primitiveSource, /export function FilterBar/);
   assert.match(primitiveSource, /export function Tabs/);
   assert.match(primitiveSource, /export function DiscoveryCard/);
-  assert.match(primitiveSource, /export function StatCard/);
-  assert.match(primitiveSource, /export function AsyncState/);
-  for (const source of [companiesSource, analysesSource, watchlistSource]) {
-    assert.match(source, /<SearchField/);
-  }
+  assert.match(companiesSource, /<SearchField/);
   assert.match(companiesSource, /<DiscoveryCard[^>]+kind="company"/);
-  assert.match(analysesSource, /<DiscoveryCard[^>]+kind="analysis"/);
-  assert.match(watchlistSource, /<DiscoveryCard[^>]+kind="watchlist"/);
-  assert.doesNotMatch(`${companiesSource}\n${analysesSource}\n${watchlistSource}`, /className="company-toolbar"|className="search-field"|className="company-count"|className="filter-row"/);
+  assert.match(companiesSource, /<Tabs/);
 });
 
-test("UI-2 keeps the 21-primitive manifest and fixed mobile reference states", async () => {
+test("UI-2 keeps the primitive manifest and unified company reference states", async () => {
   const primitiveSource = await readFile(uiPrimitivesUrl, "utf8");
   const manifest = await readFile(uiManifestUrl, "utf8");
   const primitiveStories = await readFile(primitiveStoriesUrl, "utf8");
@@ -642,24 +566,19 @@ test("UI-2 keeps the 21-primitive manifest and fixed mobile reference states", a
   const referenceStories = Object.values(referenceStorySources).join("\n");
   const exportedFunctions = primitiveSource.match(/^export function /gm) ?? [];
 
-  assert.equal(exportedFunctions.length, 21);
-  assert.equal((manifest.match(/^\| \d+ \| `[^`]+` \|/gm) ?? []).length, 21);
+  assert.equal(exportedFunctions.length, (manifest.match(/^\| \d+ \| `[^`]+` \|/gm) ?? []).length);
   assert.match(manifest, /ui-primitives\.tsx → ui-foundation-manifest\.md → Storybook → Lovable/);
   assert.match(primitiveStories, /export const Surfaces/);
   assert.match(primitiveStories, /export const Controls/);
-  assert.match(referenceFrame, /width: 390/);
-  for (const screen of ["Watchlist", "Companies", "Analyses"]) {
+  assert.match(referenceFrame, /maxWidth: 390/);
+  for (const screen of ["Companies"]) {
     assert.match(referenceStorySources[screen], new RegExp(`export const ${screen}:`));
     for (const state of ["Empty", "Loading", "Error"]) {
       assert.match(referenceStorySources[screen], new RegExp(`export const ${state}:`));
     }
   }
-  assert.match(referenceStories, /import \{ NotionAnalyses \} from "\.\.\/app\/components\/notion-analyses"/);
-  assert.match(referenceStories, /<NotionAnalyses initialData=\{analysesData\}/);
-  assert.match(referenceStories, /<NotionAnalyses initialData=\{emptyAnalysesData\}/);
-  assert.match(referenceStories, /<NotionAnalyses initialLoading \/>/);
-  assert.match(referenceStories, /<NotionAnalyses initialError=/);
-  assert.doesNotMatch(referenceStories, /function AnalysesReference/);
+  assert.match(referenceStories, /import \{ NotionCompanies \} from "\.\.\/app\/components\/notion-companies"/);
+  assert.match(referenceStories, /<NotionCompanies initialData=/);
   assert.match(referenceStories, /reference-fixtures/);
   assert.match(referenceStories, /reference-frame/);
 });
@@ -735,18 +654,12 @@ test("analysis section headings stay contained in their shared surface", async (
   assert.match(uxSource, /\.notion-page\.universal-analysis-page \.analysis-section > h2,[\s\S]*overflow-wrap: anywhere;/);
 });
 
-test("active discovery actions no longer depend on legacy button classes", async () => {
-  const watchlistSource = await readFile(watchlistUrl, "utf8");
-  const analysesSource = await readFile(analysesUrl, "utf8");
-  const uxSource = await readUxSource();
-
-  assert.match(watchlistSource, /<DiscoveryAction/);
-  assert.doesNotMatch(watchlistSource, /watch-card-action/);
-  assert.match(analysesSource, /<ActionButton className="analysis-load-more"/);
-  assert.doesNotMatch(watchlistSource, /card-link/);
-  assert.doesNotMatch(analysesSource, /primary-button/);
-  assert.doesNotMatch(uxSource, /\.primary-button/);
-  assert.doesNotMatch(uxSource, /\.card-link/);
+test("company list no longer includes Radar, analysis index or search page code", async () => {
+  const pageSource = await readFile(pageUrl, "utf8");
+  assert.doesNotMatch(pageSource, /NotionWatchlist|NotionAnalyses|DocumentSearch|Analyses|Recherche/);
+  for (const path of ["../app/components/notion-watchlist.tsx", "../app/components/notion-analyses.tsx", "../app/components/document-search.tsx", "../app/lib/search-contract.ts"]) {
+    assert.equal(await pathExists(new URL(path, import.meta.url)), false, `${path} should be removed`);
+  }
 });
 
 test("portfolio exposure keeps ETF look-through and exclusive primary themes", async () => {

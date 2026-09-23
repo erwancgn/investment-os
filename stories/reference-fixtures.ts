@@ -3,8 +3,6 @@ import type {
   CompanyDocument,
   CompanyListItem,
   LivePortfolio,
-  ResearchDocument,
-  WatchlistData,
 } from "../app/lib/investment-data";
 
 export const reference = {
@@ -27,12 +25,9 @@ export const company: CompanyListItem = {
   ticker: "AMD",
   sector: "Technology",
   industry: "Semiconductors and accelerated computing",
-  status: "Active",
   ownershipStatus: "Owned",
   watchlistMembership: true,
   monitoringStatus: "Monitoring",
-  decision: "Hold",
-  lifecycleStatus: "Current",
   businessScore: 82,
   businessVerdict: "Quality compounder",
   researchStage: "Current",
@@ -43,33 +38,10 @@ export const company: CompanyListItem = {
   currency: "USD",
   exchange: "NASDAQ",
   dataCompleteness: "Complete",
-  owned: true,
   notionUrl: "#",
   researchReferences: [reference],
 };
 
-export const watchlist: WatchlistData = {
-  themes: ["AI infrastructure", "Quality", "Data center"],
-  items: [
-    {
-      id: "watch-example",
-      name: company.name,
-      ticker: company.ticker,
-      monitoringStatus: "Monitoring",
-      decision: "Hold",
-      conviction: "High",
-      analysisDate: "2026-09-18",
-      themes: company.themes,
-      thesis: "Long deterministic thesis label covering AI infrastructure demand, data-center execution, valuation discipline, and the monitoring decision.",
-      companyIds: [company.id],
-      ownershipStatus: "Owned",
-      watchlistMembership: true,
-      notionUrl: "#",
-    },
-  ],
-};
-
-export const emptyWatchlist: WatchlistData = { themes: [], items: [] };
 export const emptyCompanies = { companies: [] };
 
 export const document: CompanyDocument = {
@@ -93,23 +65,6 @@ export const document: CompanyDocument = {
   archived: false,
   current: true,
 };
-
-export const analysisDocuments: ResearchDocument[] = [
-  { ...document, companyName: company.name },
-  {
-    ...document,
-    id: "doc-valuation",
-    companyName: company.name,
-    title: "Valuation discipline and upside case",
-    category: "valuation",
-    agent: "Fair Value",
-    score: "76",
-    verdict: "Attractive with discipline",
-  },
-];
-
-export const analysesData = { documents: analysisDocuments, counts: { analyses: 4, earnings: 2, portfolio: 1, decisions: 1 } };
-export const emptyAnalysesData = { documents: [], counts: {} };
 
 export const companyDetail: CompanyDetailData = {
   ...company,

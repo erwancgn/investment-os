@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import { AsyncState } from "../app/components/ui-primitives";
 
 export const frame = (children: ReactNode) => (
-  <div style={{ width: 390, minHeight: 844, overflow: "hidden" }}>
+  <div style={{ width: "100%", maxWidth: 390, minHeight: 844, overflow: "hidden" }}>
     <div className="app-shell">
       <section className="content" style={{ marginLeft: 0 }}>
         <div className="content-inner">{children}</div>

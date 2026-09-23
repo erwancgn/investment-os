@@ -30,10 +30,10 @@ export const dynamicClassRegistry = [
   },
   {
     id: "discovery-card-kind",
-    pattern: "^ui-discovery-card(?:--(?:company|analysis|watchlist))?$",
+    pattern: "^ui-discovery-card(?:--company)?$",
     source: "app/components/ui-primitives.tsx:DiscoveryCard",
     reason: "DiscoveryCard serializes its typed kind prop into a modifier class.",
-    values: ["ui-discovery-card--company", "ui-discovery-card--analysis", "ui-discovery-card--watchlist"],
+    values: ["ui-discovery-card--company"],
   },
   {
     id: "analysis-scenario",
@@ -41,13 +41,6 @@ export const dynamicClassRegistry = [
     source: "app/components/analysis-reader.tsx:AnalysisSection",
     reason: "The reader serializes the validated scenario value from the analysis document.",
     values: ["analysis-scenario-bear", "analysis-scenario-base", "analysis-scenario-bull"],
-  },
-  {
-    id: "watchlist-decision",
-    pattern: "^decision-(?:hold-off|reject)$",
-    source: "app/components/notion-watchlist.tsx:watch-decision",
-    reason: "The watchlist sanitizes the Notion decision into a CSS modifier; these are the styled variants defined in CSS.",
-    values: ["decision-hold-off", "decision-reject"],
   },
   {
     id: "company-reference-kind",
