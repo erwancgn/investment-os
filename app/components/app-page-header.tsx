@@ -49,7 +49,7 @@ function AccountMenu({ onOpenManagement }: { onOpenManagement: () => void }) {
   return <details className="account-menu"><summary className="avatar" aria-label="Compte Erwan"><span className="avatar-image" aria-hidden="true" style={{ backgroundImage: `url(${avatar})` }} /></summary><div className="account-menu-panel"><label className="account-menu-upload">Changer l’image<input type="file" accept="image/*" onChange={changeAvatar} /></label>{hasCustomAvatar && <button type="button" onClick={resetAvatar}>Réinitialiser l’image</button>}<button type="button" onClick={onOpenManagement}>⚙ Gestion Notion</button><small className="account-menu-note">Image enregistrée sur cet appareil</small></div></details>;
 }
 
-export function AppPageHeader({ title, eyebrow, onOpenManagement }: { title: string; eyebrow: string; onOpenManagement: () => void }) {
+export function AppPageHeader({ title, eyebrow, onOpenManagement }: { title: string; eyebrow?: string; onOpenManagement: () => void }) {
   return <SectionHeader className="page-header" heading="h1" eyebrow={eyebrow} title={title} actions={<AccountMenu onOpenManagement={onOpenManagement}/>} />;
 }
 

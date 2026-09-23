@@ -25,6 +25,7 @@ test("reference screen stories render production components at mobile and deskto
   const references = {
     Companies: ["NotionCompanies", "mobile", "desktop"],
     Portfolio: ["LivePortfolioDashboard", "mobile", "desktop"],
+    ThemeBaskets: ["ThemeBaskets", "mobile", "desktop"],
     Company: ["CompanyDetail", "mobile", "desktop"],
     Reader: ["AnalysisReader", "mobile", "desktop"],
   };
@@ -46,6 +47,27 @@ test("reference screen stories render production components at mobile and deskto
   assert.match(frame, /maxWidth: 390/);
 });
 
+test("mobile navigation presents three equal destinations with a selected blue indicator", async () => {
+  const [page, shellCss, discoveryCss] = await Promise.all([read("app/page.tsx"), read("app/styles/ux/shell.css"), read("app/styles/ux/discovery.css")]);
+  const tabList = page.match(/const tabs:[\s\S]*?\n\];/)?.[0] ?? "";
+  assert.match(tabList, /id: "portfolio"[\s\S]*id: "companies"[\s\S]*id: "themes"/);
+  assert.doesNotMatch(tabList, /gestion/);
+  assert.match(shellCss, /\.mobile-nav\s*\{[^}]*display:\s*flex;[^}]*gap:\s*clamp\(/s);
+  assert.match(shellCss, /\.mobile-nav button\s*\{[^}]*flex:\s*1 1 0;[^}]*min-height:\s*calc\(var\(--ui-control-hit-height\) \+ var\(--space-2\)\);[^}]*align-items:\s*center;[^}]*justify-content:\s*center;[^}]*padding:\s*clamp\(/s);
+  assert.match(shellCss, /\.mobile-nav button \.nav-icon,\s*\.mobile-nav button \.nav-icon svg\s*\{[^}]*width:\s*clamp\(26px,\s*7vw,\s*30px\)/s);
+  assert.match(shellCss, /\.mobile-nav button\.active::before\s*\{[^}]*background:\s*var\(--color-accent\)/s);
+  assert.match(shellCss, /inset:\s*auto max\(var\(--space-3\), env\(safe-area-inset-right\)\) max\(var\(--space-2\), env\(safe-area-inset-bottom\)\)/);
+  assert.doesNotMatch(shellCss, /\.app-shell \.page-header h1\s*\{[^}]*max-width:\s*\d+px/s);
+  const mobileNav = page.match(/<GlassChrome as="nav" className="mobile-nav"[\s\S]*?<\/GlassChrome>/)?.[0] ?? "";
+  assert.match(mobileNav, /aria-label=\{tab\.label\}/);
+  assert.match(mobileNav, /<NavigationIcon name=\{tab\.icon\}/);
+  assert.doesNotMatch(mobileNav, /<small>/);
+  assert.doesNotMatch(page, /eyebrow="(?:Univers d’investissement|Performance des paniers)"/);
+  assert.match(discoveryCss, /\.theme-basket-controls\s*\{[^}]*grid-template-columns:\s*minmax\(0,\s*1\.4fr\) minmax\(0,\s*\.85fr\) minmax\(0,\s*1\.1fr\)/s);
+  assert.match(discoveryCss, /\.theme-basket-controls \.ui-compact-control--select,\s*\.theme-basket-controls \.ui-action-button--compact\s*\{[^}]*width:\s*100%;[^}]*min-width:\s*0/s);
+  assert.doesNotMatch(discoveryCss, /theme-basket-controls[^}]*min-width:\s*112px/s);
+});
+
 test("the design-system page keeps the visible reference order", async () => {
   const source = await read("stories/DesignSystem.stories.tsx");
   const sections = ["Foundations", "Surfaces", "Controls", "Badges / States", "Data display", "Discovery cards", "Reference screens"];
@@ -55,6 +77,7 @@ test("the design-system page keeps the visible reference order", async () => {
     assert.ok(position > previous, `${section} is missing or out of order`);
     previous = position;
   }
+  assert.match(source, /Entreprises, Portfolio, Thèmes, Company and Reader mount production screens/);
 });
 
 test("production visual review mounts the unified company screen at 390px", async () => {

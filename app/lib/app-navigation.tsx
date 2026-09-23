@@ -3,7 +3,7 @@ import { createContext, useContext, useEffect, useLayoutEffect, useRef, useState
 
 import { preloadResource } from "./client-resource";
 
-export const tabIds = ["portfolio", "companies", "gestion"] as const;
+export const tabIds = ["portfolio", "companies", "themes", "gestion"] as const;
 export type Tab = typeof tabIds[number];
 type Route = { tab: Tab; company: string | null; document: string | null; key: string };
 type Position = { y: number; focus: HTMLElement | null };
@@ -27,7 +27,7 @@ export function useAppNavigation() {
     for (const map of [positions.current, views.current]) if (map.size > 100) map.delete(map.keys().next().value!);
   };
   const apply = (next: Route) => {
-    const endpoint = next.document ? `/api/analyses/${encodeURIComponent(next.document)}` : next.company ? `/api/companies/${encodeURIComponent(next.company)}` : ({portfolio:"/api/portfolio/live",companies:"/api/companies",gestion:"/api/notion/integrity"})[next.tab];
+    const endpoint = next.document ? `/api/analyses/${encodeURIComponent(next.document)}` : next.company ? `/api/companies/${encodeURIComponent(next.company)}` : ({portfolio:"/api/portfolio/live",companies:"/api/companies",themes:"/api/theme-baskets",gestion:"/api/notion/integrity"})[next.tab];
     if (endpoint) preloadResource(endpoint);
     current.current = next;
     setVisited(previous => previous.includes(next.tab) ? previous : [...previous, next.tab]);

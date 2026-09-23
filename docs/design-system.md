@@ -67,7 +67,7 @@ La dette CSS est mesurée par `scripts/audit-css-governance.mjs`. Son périmètr
 `stories/storybook.css`. Le fichier agrégateur `ux-foundations.css` n'est volontairement pas
 compté comme une seconde source de règles.
 
-Après la fusion Entreprises (suppression des écrans Radar, Analyses et Recherche), la baseline versionnée est :
+Après la fusion Entreprises et l’ajout de la page Paniers thématiques, la baseline versionnée est :
 
 - 147 sélecteurs exacts répétés ;
 - 0 conflit direct ;
@@ -76,7 +76,7 @@ Après la fusion Entreprises (suppression des écrans Radar, Analyses et Recherc
 - 31 extensions additives ;
 - 0 token répété ou concurrent ;
 - 207 déclarations `!important` ;
-- 277 classes définies ;
+- 297 classes définies ;
 - 0 classe orpheline.
 
 `audit-css-ownership.mjs` complète la gouvernance en analysant les sélecteurs individuels même

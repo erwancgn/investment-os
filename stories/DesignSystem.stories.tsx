@@ -115,7 +115,7 @@ export const Overview: Story = {
 
         <section className="storybook-reference-section" aria-labelledby="screens-heading">
           <h2 id="screens-heading">Reference screens</h2>
-          <p className="storybook-caption">Entreprises, Portfolio, Company and Reader mount production screens with synthetic fixtures.</p>
+          <p className="storybook-caption">Entreprises, Portfolio, Thèmes, Company and Reader mount production screens with synthetic fixtures.</p>
         </section>
       </div>
     );

@@ -12,6 +12,13 @@ export const quoteCache = sqliteTable("quote_cache", {
   validationFlags: text("validation_flags").notNull().default("[]"),
 });
 
+export const quoteHistoryCache = sqliteTable("quote_history_cache", {
+  providerSymbol: text("provider_symbol").primaryKey(),
+  currency: text("currency").notNull(),
+  historyJson: text("history_json").notNull(),
+  fetchedAt: text("fetched_at").notNull(),
+});
+
 export const notionDocuments = sqliteTable("notion_documents", {
   pageId: text("page_id").primaryKey(),
   sourceKey: text("source_key").notNull(),

@@ -1,4 +1,174 @@
 /* Discovery lists, filters and comparable list-card composition. */
+.theme-basket-page {
+  display: grid;
+  gap: var(--space-4);
+}
+.theme-basket-controls {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, .85fr) minmax(0, 1.1fr);
+  align-items: center;
+  gap: var(--space-2);
+  min-width: 0;
+}
+.theme-basket-controls .ui-compact-control--select,
+.theme-basket-controls .ui-action-button--compact {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+}
+.theme-basket-list {
+  display: grid;
+  gap: 1px;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-border);
+}
+.theme-basket-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  min-width: 0;
+  min-height: 72px;
+  padding: 12px 16px;
+  border: 0;
+  background: var(--surface-primary);
+  color: var(--color-text);
+  text-align: left;
+  cursor: pointer;
+}
+.theme-basket-item:hover,
+.theme-basket-item.is-selected {
+  background: var(--color-surface-active);
+}
+.theme-basket-item-copy {
+  display: grid;
+  min-width: 0;
+  gap: 3px;
+}
+.theme-basket-item-copy strong {
+  overflow: hidden;
+  font-size: var(--font-discovery-title);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.theme-basket-item-copy small,
+.theme-basket-detail-head small {
+  color: var(--color-text-muted);
+  font-size: var(--font-xs);
+}
+.theme-basket-return,
+.theme-basket-detail-return,
+.theme-basket-member-return {
+  flex: 0 0 auto;
+  font-variant-numeric: tabular-nums;
+}
+.theme-basket-return.is-positive,
+.theme-basket-detail-return.is-positive,
+.theme-basket-member-return.is-positive {
+  color: var(--color-positive);
+}
+.theme-basket-return.is-negative,
+.theme-basket-detail-return.is-negative,
+.theme-basket-member-return.is-negative {
+  color: var(--color-negative);
+}
+.theme-basket-return.is-neutral,
+.theme-basket-detail-return.is-neutral,
+.theme-basket-member-return.is-neutral {
+  color: var(--color-text-muted);
+}
+.theme-basket-detail {
+  display: grid;
+  gap: var(--space-4);
+  padding: var(--mobile-card-padding);
+}
+.theme-basket-detail-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+.theme-basket-detail-head h2 {
+  margin: 2px 0 4px;
+  font-size: clamp(var(--font-lg), 2vw, var(--font-xl));
+}
+.theme-basket-detail-head small {
+  display: block;
+}
+.theme-basket-detail-return {
+  font-size: clamp(var(--font-lg), 2vw, var(--font-xl));
+  font-weight: 700;
+}
+.theme-basket-chart {
+  display: grid;
+  gap: var(--space-2);
+  margin: 0;
+  padding: var(--space-3) 0 0;
+}
+.theme-basket-chart svg {
+  width: 100%;
+  height: clamp(124px, 20vw, 156px);
+  overflow: visible;
+}
+.theme-basket-chart path {
+  fill: none;
+  stroke: var(--color-accent);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.5;
+  vector-effect: non-scaling-stroke;
+}
+.theme-basket-chart figcaption {
+  display: flex;
+  justify-content: space-between;
+  color: var(--color-text-muted);
+  font-size: var(--font-xs);
+}
+.theme-basket-chart-empty {
+  padding: var(--space-5) 0;
+  color: var(--color-text-muted);
+  font-size: var(--font-sm);
+}
+.theme-basket-members {
+  display: grid;
+}
+.theme-basket-member {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: 58px;
+  border-top: 1px solid var(--color-border);
+}
+.theme-basket-company {
+  display: grid;
+  justify-items: start;
+  gap: 2px;
+  min-width: 0;
+  padding: 8px 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.theme-basket-company strong,
+.theme-basket-company small {
+  overflow: hidden;
+  max-width: 100%;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.theme-basket-company small {
+  color: var(--color-text-muted);
+  font-size: var(--font-xs);
+}
+.theme-basket-state {
+  margin-block: var(--space-3);
+}
+
 .account-menu {
   position: relative;
 }

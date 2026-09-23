@@ -6,6 +6,7 @@ import { acquireNotionSourceSyncLock, acquireNotionSyncLock, notionSources, noti
 import { auditCompanyWatchlistRelations, getCompanyDetail, getLivePortfolio, getResearchDocument, listCompanies, listResearchDocuments } from "../app/lib/investment-data";
 
 import { companyPreview } from "../app/lib/company-preview";
+import { getThemeBaskets, parseBasketOptions } from "../app/lib/theme-baskets";
 
 interface Env {
   ASSETS: Fetcher;
@@ -207,6 +208,11 @@ const worker = {
 
     if (url.pathname === "/api/companies" && request.method === "GET") {
       return Response.json({companies:await listCompanies(env.DB)},{headers:{"cache-control":"no-store"}});
+    }
+
+    if (url.pathname === "/api/theme-baskets" && request.method === "GET") {
+      try{return Response.json(await getThemeBaskets(env.DB,parseBasketOptions(url.searchParams)),{headers:{"cache-control":"no-store"}})}
+      catch(error){return Response.json({error:error instanceof Error?error.message:"Calcul des paniers impossible"},{status:502,headers:{"cache-control":"no-store"}})}
     }
 
     if (url.pathname.startsWith("/api/companies/") && request.method === "GET") {
