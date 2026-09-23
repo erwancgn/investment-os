@@ -1,4 +1,4 @@
-export type Currency="EUR"|"USD"|"JPY"|"GBP"|"SEK"|"KRW";
+export type Currency="EUR"|"USD"|"JPY"|"GBP"|"SEK"|"KRW"|"CHF";
 export type Instrument={id:string;name:string;yahooSymbol:string;googleSymbol?:string;expectedCurrency:Currency;exchangeTimezone:string};
 
 export type HistoricalPoint={date:string;close:number;adjustedClose:number};
@@ -14,7 +14,7 @@ export function yahooSymbolForTicker(ticker:string){
   return yahooSymbolsByTicker[canonical]??canonical;
 }
 
-const fxSymbols:Record<Exclude<Currency,"EUR">,string>={USD:"EURUSD=X",JPY:"EURJPY=X",GBP:"EURGBP=X",SEK:"EURSEK=X",KRW:"EURKRW=X"};
+const fxSymbols:Record<Exclude<Currency,"EUR">,string>={USD:"EURUSD=X",JPY:"EURJPY=X",GBP:"EURGBP=X",SEK:"EURSEK=X",KRW:"EURKRW=X",CHF:"EURCHF=X"};
 
 export function historicalPriceInEur(price:number,currency:Currency,eurPerCurrencyUnit:number){
   if(!Number.isFinite(price)||price<=0||!Number.isFinite(eurPerCurrencyUnit)||eurPerCurrencyUnit<=0)return null;
@@ -45,7 +45,8 @@ export const instruments:Record<string,Instrument>={
 const fxInstruments:Record<string,Instrument>={
   "fx-usd":{id:"fx-usd",name:"EUR/USD",yahooSymbol:"EURUSD=X",expectedCurrency:"USD",exchangeTimezone:"UTC"},
   "fx-jpy":{id:"fx-jpy",name:"EUR/JPY",yahooSymbol:"EURJPY=X",expectedCurrency:"JPY",exchangeTimezone:"UTC"},
-  "fx-gbp":{id:"fx-gbp",name:"EUR/GBP",yahooSymbol:"EURGBP=X",expectedCurrency:"GBP",exchangeTimezone:"UTC"}
+  "fx-gbp":{id:"fx-gbp",name:"EUR/GBP",yahooSymbol:"EURGBP=X",expectedCurrency:"GBP",exchangeTimezone:"UTC"},
+  "fx-chf":{id:"fx-chf",name:"EUR/CHF",yahooSymbol:"EURCHF=X",expectedCurrency:"CHF",exchangeTimezone:"UTC"}
 };
 const allInstruments={...instruments,...fxInstruments};
 
@@ -128,8 +129,10 @@ export async function fetchYahooHistory(symbol:string,range:"max"|"1mo"="max"):P
   if(!result||!meta)throw new Error(body.chart?.error?.description||"yahoo_history_empty");
   const providerSymbol=String(meta.symbol??"");
   if(providerSymbol.toUpperCase()!==symbol.toUpperCase())throw new Error(`yahoo_history_symbol_${providerSymbol||"missing"}`);
-  const currency=String(meta.currency??"") as Currency;
-  if(!["EUR","USD","JPY","GBP","SEK","KRW"].includes(currency))throw new Error(`yahoo_history_currency_${currency||"missing"}`);
+  const providerCurrency=String(meta.currency??"");
+  const currency=(providerCurrency==="GBp"?"GBP":providerCurrency) as Currency;
+  if(!["EUR","USD","JPY","GBP","SEK","KRW","CHF"].includes(currency))throw new Error(`yahoo_history_currency_${currency||"missing"}`);
+  const priceScale=providerCurrency==="GBp"?0.01:1;
   const timezone=String(meta.exchangeTimezoneName??"UTC");
   const quote=result.indicators?.quote?.[0]?.close??[];
   const adjusted=result.indicators?.adjclose?.[0]?.adjclose??[];
@@ -137,7 +140,7 @@ export async function fetchYahooHistory(symbol:string,range:"max"|"1mo"="max"):P
     const close=Number(quote[index]);
     const adjustedClose=Number(adjusted[index]);
     if(!Number.isFinite(close)||close<=0)return [];
-    return [{date:yahooMarketDate(timestamp,timezone),close,adjustedClose:Number.isFinite(adjustedClose)&&adjustedClose>0?adjustedClose:close}];
+    return [{date:yahooMarketDate(timestamp,timezone),close:close*priceScale,adjustedClose:(Number.isFinite(adjustedClose)&&adjustedClose>0?adjustedClose:close)*priceScale}];
   });
   if(!points.length)throw new Error("yahoo_history_no_prices");
   return {providerSymbol,currency,points,fetchedAt:new Date().toISOString()};

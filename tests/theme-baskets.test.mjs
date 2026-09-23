@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
-import { fetchYahooHistory, getCachedCompanyHistory, getCompanyHistory, yahooSymbolForTicker } from "../app/lib/quotes.ts";
+import { fetchYahooHistory, fxSymbolForCurrency, getCachedCompanyHistory, getCompanyHistory, yahooSymbolForTicker } from "../app/lib/quotes.ts";
 import { basketPeriods, buildThemeBaskets, parseBasketOptions } from "../app/lib/theme-baskets.ts";
 
 const company=(overrides={})=>({id:"one",name:"One",ticker:"ONE",sector:"Semiconductors",industry:"Semiconductors",ownershipStatus:"Owned",watchlistMembership:false,monitoringStatus:"",businessScore:null,businessVerdict:"",researchStage:"",researchPriority:"",lastAnalysis:null,themes:["AI Infrastructure"],country:"US",currency:"USD",exchange:"NASDAQ",dataCompleteness:"",notionUrl:"",researchReferences:[],...overrides});
@@ -16,6 +16,34 @@ test("Yahoo history reads adjusted closes, uses exchange-local dates and validat
   const previous=globalThis.fetch;
   globalThis.fetch=async()=>new Response(JSON.stringify({chart:{result:[{meta:{symbol:"TEST.PA",currency:"EUR",exchangeTimezoneName:"Europe/Paris"},timestamp:[1790064000],indicators:{quote:[{close:[20]}],adjclose:[{adjclose:[19.5]}]}}]}}));
   try{const result=await fetchYahooHistory("TEST.PA");assert.equal(result.currency,"EUR");assert.equal(result.points[0].adjustedClose,19.5);assert.match(result.points[0].date,/^2026-/);}finally{globalThis.fetch=previous;}
+});
+
+test("AMS OSRAM Swiss listing and CHF history are supported for EUR basket returns",async()=>{
+  const previous=globalThis.fetch;
+  globalThis.fetch=async url=>{
+    assert.match(String(url),/chart\/AMS\.SW\?/);
+    return new Response(JSON.stringify({chart:{result:[{meta:{symbol:"AMS.SW",currency:"CHF",exchangeTimezoneName:"Europe/Zurich"},timestamp:[1790064000],indicators:{quote:[{close:[10]}],adjclose:[{adjclose:[9.5]}]}}]}}));
+  };
+  try{
+    const result=await fetchYahooHistory("AMS.SW");
+    assert.equal(result.currency,"CHF");
+    assert.equal(fxSymbolForCurrency(result.currency),"EURCHF=X");
+  }finally{globalThis.fetch=previous;}
+});
+
+test("Yahoo pence-denominated UK prices normalize to pounds before FX conversion",async()=>{
+  const previous=globalThis.fetch;
+  globalThis.fetch=async url=>{
+    assert.match(String(url),/chart\/IQE\.L\?/);
+    return new Response(JSON.stringify({chart:{result:[{meta:{symbol:"IQE.L",currency:"GBp",exchangeTimezoneName:"Europe/London"},timestamp:[1790064000],indicators:{quote:[{close:[1250]}],adjclose:[{adjclose:[1000]}]}}]}}));
+  };
+  try{
+    const result=await fetchYahooHistory("IQE.L");
+    assert.equal(result.currency,"GBP");
+    assert.equal(result.points[0].close,12.5);
+    assert.equal(result.points[0].adjustedClose,10);
+    assert.equal(fxSymbolForCurrency(result.currency),"EURGBP=X");
+  }finally{globalThis.fetch=previous;}
 });
 
 test("history cache persists an initial series and subsequent reads do not fetch",async()=>{
