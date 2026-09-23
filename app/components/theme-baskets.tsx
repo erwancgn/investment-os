@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useClientResource } from "../lib/client-resource";
 import { basketPeriods, type BasketDimension, type BasketPeriod, type ThemeBasketResponse } from "../lib/theme-baskets";
 import { ActionButton, AsyncState, Badge, CompactControl, PrimaryBlock } from "./ui-primitives";
@@ -11,11 +11,35 @@ const dimensionOptions=[{value:"sector",label:"Secteurs"},{value:"theme",label:"
 const periodOptions=basketPeriods.map(value=>({value,label:periodLabels[value]}));
 
 function BasketChart({series,name,period}:{series:NonNullable<ThemeBasketResponse["selectedBasket"]>["series"];name:string;period:BasketPeriod}){
+  const [activeIndex,setActiveIndex]=useState<number|null>(null);
+  const svgRef=useRef<SVGSVGElement>(null);
   if(series.length<2)return <div className="theme-basket-chart-empty">Historique insuffisant pour tracer cette période.</div>;
   const values=series.map(point=>point.value);
   const min=Math.min(...values),max=Math.max(...values),spread=max-min||1;
-  const path=series.map((point,index)=>`${index===0?"M":"L"} ${(index/(series.length-1)*100).toFixed(2)} ${(32-(point.value-min)/spread*28).toFixed(2)}`).join(" ");
-  return <figure className="theme-basket-chart"><svg viewBox="0 0 100 36" preserveAspectRatio="none" role="img" aria-label={`Évolution du panier ${name} sur ${periodLabels[period]}`}><path d={path}/></svg><figcaption><span>{series[0].date}</span><span>{series.at(-1)?.date}</span></figcaption></figure>;
+  const pointX=(index:number)=>index/(series.length-1)*100;
+  const pointY=(value:number)=>32-(value-min)/spread*28;
+  const path=series.map((point,index)=>`${index===0?"M":"L"} ${pointX(index).toFixed(2)} ${pointY(point.value).toFixed(2)}`).join(" ");
+  const active=activeIndex===null?null:series[Math.min(activeIndex,series.length-1)];
+  const indexAt=(clientX:number)=>{
+    const rect=svgRef.current?.getBoundingClientRect();
+    if(!rect||!rect.width)return;
+    setActiveIndex(Math.round(Math.min(1,Math.max(0,(clientX-rect.left)/rect.width))*(series.length-1)));
+  };
+  const moveSelection=(direction:number)=>setActiveIndex(current=>current===null?(direction>0?0:series.length-1):Math.min(series.length-1,Math.max(0,current+direction)));
+  return <figure className="theme-basket-chart">
+    <svg ref={svgRef} viewBox="0 0 100 36" preserveAspectRatio="none" role="group" tabIndex={0} aria-label={`Courbe interactive du panier ${name}, ${periodLabels[period]}. Faites glisser le doigt ou utilisez les flèches gauche et droite pour lire une date et sa performance.`}
+      onPointerDown={event=>{event.currentTarget.setPointerCapture(event.pointerId);indexAt(event.clientX);}}
+      onPointerMove={event=>{if(event.pointerType==="mouse"||event.buttons>0||event.pointerType==="touch")indexAt(event.clientX);}}
+      onKeyDown={event=>{if(event.key==="ArrowLeft"){event.preventDefault();moveSelection(-1);}else if(event.key==="ArrowRight"){event.preventDefault();moveSelection(1);}else if(event.key==="Home"){event.preventDefault();setActiveIndex(0);}else if(event.key==="End"){event.preventDefault();setActiveIndex(series.length-1);}}}>
+      <rect className="theme-basket-chart-hit-area" x="0" y="0" width="100" height="36"/>
+      <path className="theme-basket-chart-line" d={path}/>
+      {active&&<><path className="theme-basket-chart-cursor" d={`M ${pointX(activeIndex!)} 2 V 34`}/><circle className="theme-basket-chart-point" cx={pointX(activeIndex!)} cy={pointY(active.value)} r="1.6"/></>}
+    </svg>
+    <div className="theme-basket-chart-reading" aria-live="polite">
+      {active?<><time dateTime={active.date}>{new Date(`${active.date}T12:00:00Z`).toLocaleDateString("fr-FR",{day:"2-digit",month:"short",year:"numeric",timeZone:"UTC"})}</time><strong className={active.value>100?"is-positive":active.value<100?"is-negative":"is-neutral"}>{percent(active.value-100)}</strong><span>depuis le début de la période</span></>:<span>Faites glisser le doigt sur la courbe pour lire la performance à une date donnée.</span>}
+    </div>
+    <figcaption><span>{series[0].date}</span><span>{series.at(-1)?.date}</span></figcaption>
+  </figure>;
 }
 
 export function ThemeBaskets({openCompany=()=>undefined,initialData}:{openCompany?:(companyId:string)=>void;initialData?:ThemeBasketResponse}){

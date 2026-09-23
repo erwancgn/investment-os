@@ -1,5 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
 import { fetchYahooHistory, getCachedCompanyHistory, getCompanyHistory, yahooSymbolForTicker } from "../app/lib/quotes.ts";
 import { basketPeriods, buildThemeBaskets, parseBasketOptions } from "../app/lib/theme-baskets.ts";
 
@@ -72,4 +73,16 @@ test("periods and API parameters are restricted to the supported selectors",()=>
   assert.deepEqual(basketPeriods,["1d","5d","1m","6m","YTD","1y","5y","max"]);
   assert.deepEqual(parseBasketOptions(new URLSearchParams("dimension=sector&period=5y&basket=Semiconductors&refresh=1")),{dimension:"sector",period:"5y",selectedName:"Semiconductors",refresh:true});
   assert.equal(parseBasketOptions(new URLSearchParams("dimension=invalid&period=all")).period,"1y");
+});
+
+test("theme basket chart supports touch and keyboard date scrubbing accessibly",async()=>{
+  const component=await readFile(new URL("../app/components/theme-baskets.tsx",import.meta.url),"utf8");
+  assert.match(component,/onPointerDown=\{event=>\{event\.currentTarget\.setPointerCapture\(event\.pointerId\);indexAt\(event\.clientX\);\}\}/);
+  assert.match(component,/onPointerMove=\{event=>\{if\(event\.pointerType==="mouse"\|\|event\.buttons>0\|\|event\.pointerType==="touch"\)indexAt\(event\.clientX\);\}\}/);
+  assert.match(component,/event\.key==="ArrowLeft"/);
+  assert.match(component,/event\.key==="ArrowRight"/);
+  assert.match(component,/event\.key==="Home"/);
+  assert.match(component,/event\.key==="End"/);
+  assert.match(component,/aria-live="polite"/);
+  assert.match(component,/<time dateTime=\{active\.date\}>/);
 });

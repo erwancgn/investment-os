@@ -111,8 +111,17 @@
   width: 100%;
   height: clamp(124px, 20vw, 156px);
   overflow: visible;
+  touch-action: pan-y;
+  cursor: crosshair;
+  user-select: none;
+  -webkit-user-select: none;
 }
-.theme-basket-chart path {
+.theme-basket-chart svg:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 4px;
+  border-radius: var(--radius-sm);
+}
+.theme-basket-chart-line {
   fill: none;
   stroke: var(--color-accent);
   stroke-linecap: round;
@@ -120,6 +129,36 @@
   stroke-width: 1.5;
   vector-effect: non-scaling-stroke;
 }
+.theme-basket-chart-hit-area {
+  fill: transparent;
+  pointer-events: all;
+}
+.theme-basket-chart-cursor {
+  fill: none;
+  stroke: var(--color-text-muted);
+  stroke-dasharray: 2 2;
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+.theme-basket-chart-point {
+  fill: var(--surface-primary);
+  stroke: var(--color-accent);
+  stroke-width: 2;
+  vector-effect: non-scaling-stroke;
+}
+.theme-basket-chart-reading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 8px;
+  min-height: 1.5em;
+  color: var(--color-text-muted);
+  font-size: var(--font-xs);
+  font-variant-numeric: tabular-nums;
+}
+.theme-basket-chart-reading strong.is-positive { color: var(--color-positive); }
+.theme-basket-chart-reading strong.is-negative { color: var(--color-negative); }
+.theme-basket-chart-reading strong.is-neutral { color: var(--color-text-muted); }
 .theme-basket-chart figcaption {
   display: flex;
   justify-content: space-between;
