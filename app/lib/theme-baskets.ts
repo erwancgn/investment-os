@@ -15,7 +15,7 @@ export const basketPeriods:BasketPeriod[]=["1d","5d","1m","6m","YTD","1y","5y","
 type CompanyPerformance={id:string;name:string;ticker:string;ownershipStatus:CompanyListItem["ownershipStatus"];sector:string;themes:string[];returnPercent:number|null};
 export type BasketSummary={name:string;returnPercent:number|null;memberCount:number;coveredCount:number;ownedCount:number;startDate:string|null;endDate:string|null};
 export type BasketDetail=BasketSummary&{series:{date:string;value:number}[];companies:CompanyPerformance[]};
-export type ThemeBasketResponse={generatedAt:string;dimension:BasketDimension;period:BasketPeriod;baskets:BasketSummary[];selectedBasket:BasketDetail|null;refreshErrors:string[]};
+export type ThemeBasketResponse={generatedAt:string;dimension:BasketDimension;period:BasketPeriod;baskets:(BasketSummary&{searchText:string})[];selectedBasket:BasketDetail|null;refreshErrors:string[]};
 
 type CompanySeries={company:CompanyListItem;eurPrices:Map<string,number>};
 const staleAfter=6*60*60*1000;
@@ -118,7 +118,7 @@ export function buildThemeBaskets(companies:CompanyListItem[],histories:Map<stri
     }
   }
   const details=[...byName.entries()].map(([name,items])=>basketFor(name,items,period)).sort((a,b)=>(b.returnPercent??-Infinity)-(a.returnPercent??-Infinity));
-  const baskets=details.map(item=>({name:item.name,returnPercent:item.returnPercent,memberCount:item.memberCount,coveredCount:item.coveredCount,ownedCount:item.ownedCount,startDate:item.startDate,endDate:item.endDate}));
+  const baskets=details.map(item=>({name:item.name,returnPercent:item.returnPercent,memberCount:item.memberCount,coveredCount:item.coveredCount,ownedCount:item.ownedCount,startDate:item.startDate,endDate:item.endDate,searchText:item.companies.map(company=>`${company.name} ${company.ticker}`).join(" ")}));
   const selectedBasket=details.find(item=>item.name===selectedName)??(selectedName?null:details[0]??null);
   return {baskets,selectedBasket};
 }

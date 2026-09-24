@@ -64,7 +64,7 @@ export function ThemeBaskets({openCompany=()=>undefined,initialData}:{openCompan
   const detailReturn=selected?.returnPercent??selectedSummary?.returnPercent??null;
   const searchTerm=search.trim().toLocaleLowerCase("fr-FR");
   const baskets=(view?.baskets??[])
-    .filter(basket=>(!searchTerm||basket.name.toLocaleLowerCase("fr-FR").includes(searchTerm))&&(ownershipFilter!=="owned"||basket.ownedCount>0))
+    .filter(basket=>(!searchTerm||`${basket.name} ${basket.searchText}`.toLocaleLowerCase("fr-FR").includes(searchTerm))&&(ownershipFilter!=="owned"||basket.ownedCount>0))
     .sort((a,b)=>sort==="name"?a.name.localeCompare(b.name,"fr"):sort==="members"?b.memberCount-a.memberCount||a.name.localeCompare(b.name,"fr"):(b.returnPercent??-Infinity)-(a.returnPercent??-Infinity));
 
   return <section className="theme-basket-page" aria-label="Performance des paniers d’entreprises">
@@ -80,7 +80,7 @@ export function ThemeBaskets({openCompany=()=>undefined,initialData}:{openCompan
     {view&&view.baskets.length>0&&<>
       <PrimaryBlock as="section" className="theme-basket-directory" aria-label={dimension==="theme"?"Répertoire des paniers par thème":"Répertoire des paniers par secteur"}>
         <header className="theme-basket-directory-head"><h2>Répertoire des paniers</h2><span>{loading?"Mise à jour · ":""}{baskets.length} / {view.baskets.length}</span></header>
-        <SearchField value={search} onChange={setSearch} placeholder="Rechercher un thème ou secteur" ariaLabel="Rechercher un panier"/>
+        <SearchField value={search} onChange={setSearch} placeholder="Panier, entreprise ou ticker…" ariaLabel="Rechercher un panier ou une entreprise"/>
         <div className="theme-basket-directory-controls">
           <CompactControl variant="select" ariaLabel="Trier les paniers" value={sort} options={sortOptions} onChange={setSort}/>
           <CompactControl variant="select" ariaLabel="Filtrer les paniers selon les sociétés détenues" value={ownershipFilter} options={ownershipOptions} onChange={setOwnershipFilter}/>

@@ -190,11 +190,13 @@
   cursor: crosshair;
   user-select: none;
   -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
 }
-.theme-basket-chart svg:focus-visible {
-  outline: 1px solid var(--color-border);
-  outline-offset: 2px;
-  border-radius: var(--radius-sm);
+.theme-basket-chart svg:focus {
+  outline: none;
+}
+.theme-basket-chart svg:focus-visible + .theme-basket-chart-reading {
+  color: var(--color-text);
 }
 .theme-basket-chart-line {
   fill: none;
