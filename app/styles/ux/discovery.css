@@ -16,13 +16,62 @@
   min-width: 0;
   max-width: 100%;
 }
-.theme-basket-list {
+.theme-basket-directory {
   display: grid;
-  gap: 1px;
-  overflow: hidden;
+  gap: var(--space-3);
+  padding: var(--mobile-card-padding);
+}
+.theme-basket-directory-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+.theme-basket-directory-head h2 {
+  margin: 0;
+  font-size: var(--font-md);
+}
+.theme-basket-directory-head > span {
+  color: var(--color-text-muted);
+  font-size: var(--font-xs);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.theme-basket-directory .ui-search-toolbar {
+  grid-template-columns: minmax(0, 1fr);
+  margin: 0;
+}
+.theme-basket-directory-controls {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-2);
+  min-width: 0;
+}
+.theme-basket-directory-controls .ui-compact-control--select {
+  width: 100%;
+  min-width: 0;
+}
+.theme-basket-list-scroll {
+  max-height: clamp(13.5rem, 42vh, 28rem);
+  overflow-y: auto;
+  overscroll-behavior: contain;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
   background: var(--color-border);
+  scrollbar-width: thin;
+  touch-action: pan-y;
+}
+.theme-basket-list {
+  display: grid;
+  gap: 1px;
+  background: var(--color-border);
+}
+.theme-basket-no-results {
+  margin: 0;
+  padding: var(--space-4);
+  background: var(--surface-primary);
+  color: var(--color-text-muted);
+  font-size: var(--font-sm);
 }
 .theme-basket-item {
   display: flex;
@@ -101,6 +150,32 @@
   font-size: clamp(var(--font-lg), 2vw, var(--font-xl));
   font-weight: 700;
 }
+.theme-basket-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  border-block: 1px solid var(--color-border);
+}
+.theme-basket-metrics > div {
+  display: grid;
+  gap: 2px;
+  padding: var(--space-3) var(--space-2);
+}
+.theme-basket-metrics > div + div {
+  border-inline-start: 1px solid var(--color-border);
+}
+.theme-basket-metrics strong {
+  font-size: var(--font-md);
+  font-variant-numeric: tabular-nums;
+}
+.theme-basket-metrics span {
+  color: var(--color-text-muted);
+  font-size: var(--font-xs);
+}
+.theme-basket-loading {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: var(--font-sm);
+}
 .theme-basket-chart {
   display: grid;
   gap: var(--space-2);
@@ -117,8 +192,8 @@
   -webkit-user-select: none;
 }
 .theme-basket-chart svg:focus-visible {
-  outline: 2px solid var(--color-accent);
-  outline-offset: 4px;
+  outline: 1px solid var(--color-border);
+  outline-offset: 2px;
   border-radius: var(--radius-sm);
 }
 .theme-basket-chart-line {

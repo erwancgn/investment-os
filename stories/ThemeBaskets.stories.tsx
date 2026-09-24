@@ -8,8 +8,13 @@ const sample:ThemeBasketResponse={
   generatedAt:"2026-09-23T09:00:00.000Z",dimension:"theme",period:"1y",refreshErrors:[],
   baskets:[
     {name:"AI Infrastructure",returnPercent:31.7,memberCount:7,coveredCount:7,ownedCount:3,startDate:"2025-09-23",endDate:"2026-09-22"},
+    {name:"Cloud Platforms",returnPercent:24.8,memberCount:6,coveredCount:6,ownedCount:2,startDate:"2025-09-23",endDate:"2026-09-22"},
     {name:"Semiconductors",returnPercent:22.4,memberCount:12,coveredCount:11,ownedCount:5,startDate:"2025-09-23",endDate:"2026-09-22"},
+    {name:"Power & Cooling",returnPercent:14.6,memberCount:8,coveredCount:7,ownedCount:2,startDate:"2025-09-23",endDate:"2026-09-22"},
+    {name:"Data Center Networking",returnPercent:9.3,memberCount:5,coveredCount:5,ownedCount:1,startDate:"2025-09-23",endDate:"2026-09-22"},
+    {name:"Automation",returnPercent:4.1,memberCount:9,coveredCount:8,ownedCount:2,startDate:"2025-09-23",endDate:"2026-09-22"},
     {name:"Optical Networking",returnPercent:-4.2,memberCount:4,coveredCount:4,ownedCount:1,startDate:"2025-09-23",endDate:"2026-09-22"},
+    {name:"Biotechnology",returnPercent:-12.8,memberCount:3,coveredCount:3,ownedCount:0,startDate:"2025-09-23",endDate:"2026-09-22"},
   ],
   selectedBasket:{
     name:"AI Infrastructure",returnPercent:31.7,memberCount:7,coveredCount:7,ownedCount:3,startDate:"2025-09-23",endDate:"2026-09-22",

@@ -119,7 +119,7 @@ export function buildThemeBaskets(companies:CompanyListItem[],histories:Map<stri
   }
   const details=[...byName.entries()].map(([name,items])=>basketFor(name,items,period)).sort((a,b)=>(b.returnPercent??-Infinity)-(a.returnPercent??-Infinity));
   const baskets=details.map(item=>({name:item.name,returnPercent:item.returnPercent,memberCount:item.memberCount,coveredCount:item.coveredCount,ownedCount:item.ownedCount,startDate:item.startDate,endDate:item.endDate}));
-  const selectedBasket=details.find(item=>item.name===selectedName)??null;
+  const selectedBasket=details.find(item=>item.name===selectedName)??(selectedName?null:details[0]??null);
   return {baskets,selectedBasket};
 }
 

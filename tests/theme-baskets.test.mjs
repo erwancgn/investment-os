@@ -69,6 +69,7 @@ test("basket is equal-weighted in EUR and reports ownership and coverage",()=>{
   assert.equal(result.selectedBasket.coveredCount,2);
   assert.equal(result.selectedBasket.ownedCount,1);
   assert.equal(result.selectedBasket.series.at(-1).value,100);
+  assert.equal(buildThemeBaskets(companies,histories,new Map([["USD",history("USD",[["2025-09-23",1],["2026-09-22",1]])]]),"theme","max").selectedBasket.name,"AI Infrastructure");
 });
 
 test("basket conversion uses historical EUR exchange rates",()=>{
