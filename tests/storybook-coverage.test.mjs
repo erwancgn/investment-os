@@ -47,10 +47,10 @@ test("reference screen stories render production components at mobile and deskto
   assert.match(frame, /maxWidth: 390/);
 });
 
-test("mobile navigation presents three equal destinations with a selected blue indicator", async () => {
+test("mobile navigation presents four equal destinations with a selected blue indicator", async () => {
   const [page, shellCss, discoveryCss] = await Promise.all([read("app/page.tsx"), read("app/styles/ux/shell.css"), read("app/styles/ux/discovery.css")]);
   const tabList = page.match(/const tabs:[\s\S]*?\n\];/)?.[0] ?? "";
-  assert.match(tabList, /id: "portfolio"[\s\S]*id: "companies"[\s\S]*id: "themes"/);
+  assert.match(tabList, /id: "portfolio"[\s\S]*id: "companies"[\s\S]*id: "themes"[\s\S]*id: "ia"/);
   assert.doesNotMatch(tabList, /gestion/);
   assert.match(shellCss, /\.mobile-nav\s*\{[^}]*display:\s*flex;[^}]*gap:\s*clamp\(/s);
   assert.match(shellCss, /\.mobile-nav button\s*\{[^}]*flex:\s*1 1 0;[^}]*min-height:\s*calc\(var\(--ui-control-hit-height\) \+ var\(--space-2\)\);[^}]*align-items:\s*center;[^}]*justify-content:\s*center;[^}]*padding:\s*clamp\(/s);
@@ -62,10 +62,23 @@ test("mobile navigation presents three equal destinations with a selected blue i
   assert.match(mobileNav, /aria-label=\{tab\.label\}/);
   assert.match(mobileNav, /<NavigationIcon name=\{tab\.icon\}/);
   assert.doesNotMatch(mobileNav, /<small>/);
+  assert.match(mobileNav, /tabs\.map\(tab/);
+  assert.match(page, /id: "ia", label: "Analyse IA"/);
   assert.doesNotMatch(page, /eyebrow="(?:Univers d’investissement|Performance des paniers)"/);
   assert.match(discoveryCss, /\.theme-basket-controls\s*\{[^}]*grid-template-columns:\s*minmax\(0,\s*1\.4fr\) minmax\(0,\s*\.85fr\) minmax\(0,\s*1\.1fr\)/s);
   assert.match(discoveryCss, /\.theme-basket-controls \.ui-compact-control--select,\s*\.theme-basket-controls \.ui-action-button--compact\s*\{[^}]*width:\s*100%;[^}]*min-width:\s*0/s);
   assert.doesNotMatch(discoveryCss, /theme-basket-controls[^}]*min-width:\s*112px/s);
+});
+
+test("AI launcher stays a dedicated screen and composes the shared UI primitives", async () => {
+  const [source, navigation] = await Promise.all([read("app/components/ai-analysis.tsx"), read("app/lib/app-navigation.tsx")]);
+  for (const primitive of ["AppPageHeader", "SearchField", "CompactControl", "PrimaryBlock", "DisclosureSurface", "ActionButton", "AsyncState"]) assert.match(source, new RegExp(`\\b${primitive}\\b`));
+  assert.match(source, /useClientResource<\{ companies: CompanyListItem\[\] \}>\("\/api\/companies"\)/);
+  assert.match(source, /createAiPrompt\(workflow, selected\.name, selected\.ticker\)/);
+  assert.match(source, /createChatGptUrl\(prompt\)/);
+  assert.match(source, /navigator\.clipboard\.writeText\(prompt\)/);
+  assert.match(navigation, /"ia"/);
+  assert.doesNotMatch(await read("app/components/notion-companies.tsx"), /chatgpt|ai-analysis/i);
 });
 
 test("the design-system page keeps the visible reference order", async () => {
