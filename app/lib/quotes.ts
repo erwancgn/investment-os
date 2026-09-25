@@ -136,7 +136,7 @@ function yahooMarketDate(timestamp:number,timeZone:string){
   return `${value("year")}-${value("month")}-${value("day")}`;
 }
 
-export async function fetchYahooHistory(symbol:string,range:"max"|"1mo"="max"):Promise<CachedHistory>{
+export async function fetchYahooHistory(symbol:string,range:"5y"|"1mo"="5y"):Promise<CachedHistory>{
   const url=`https://query2.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbol)}?interval=1d&range=${range}&includePrePost=false&includeAdjustedClose=true&events=div%2Csplits`;
   const response=await fetch(url,{headers:{accept:"application/json","user-agent":"Mozilla/5.0 InvestmentOS/1.0"},signal:timeout(9000)});
   if(!response.ok)throw new Error(`yahoo_history_${response.status}`);
@@ -168,13 +168,20 @@ export async function getCompanyHistory(ticker:string,db:D1Database,force=false)
   const cached=await readHistory(symbol,db);
   if(cached&&!force)return cached;
   const latest=cached?.points.at(-1)?.date;
-  const fetched=await fetchYahooHistory(symbol,cached?"1mo":"max");
+  const fetched=await fetchYahooHistory(symbol,cached&&hasYearOfDailyHistory(cached)?"1mo":"5y");
   const points=latest&&cached
     ? [...new Map([...cached.points,...fetched.points].map(point=>[point.date,point])).values()].sort((a,b)=>a.date.localeCompare(b.date))
     : fetched.points;
   const history={...fetched,points};
   await saveHistory(history,db);
   return history;
+}
+
+export function hasYearOfDailyHistory(history:CachedHistory){
+  const last=history.points.at(-1)?.date;
+  if(!last)return false;
+  const yearAgo=Date.parse(`${last}T00:00:00Z`)-365*86400000;
+  return history.points.filter(point=>Date.parse(`${point.date}T00:00:00Z`)>=yearAgo).length>=100;
 }
 
 export async function getCachedCompanyHistory(ticker:string,db:D1Database){

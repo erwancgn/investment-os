@@ -57,8 +57,17 @@ test("history cache persists an initial series and subsequent reads do not fetch
     };},
   };}};
   const previous=globalThis.fetch;let requests=0;
-  globalThis.fetch=async url=>{requests++;assert.match(String(url),/range=max/);return new Response(JSON.stringify({chart:{result:[{meta:{symbol:"NVDA",currency:"USD",exchangeTimezoneName:"America/New_York"},timestamp:[1790000000],indicators:{quote:[{close:[120]}],adjclose:[{adjclose:[119]}]}}]}}));};
+  globalThis.fetch=async url=>{requests++;assert.match(String(url),/range=5y/);return new Response(JSON.stringify({chart:{result:[{meta:{symbol:"NVDA",currency:"USD",exchangeTimezoneName:"America/New_York"},timestamp:[1790000000],indicators:{quote:[{close:[120]}],adjclose:[{adjclose:[119]}]}}]}}));};
   try{const first=await getCompanyHistory("NVDA",db);const cached=await getCachedCompanyHistory("NVDA",db);assert.equal(first.points[0].adjustedClose,119);assert.equal(cached.points[0].adjustedClose,119);await getCompanyHistory("NVDA",db);assert.equal(requests,1);}finally{globalThis.fetch=previous;}
+});
+
+test("monthly max cache is repaired with daily five-year history on refresh",async()=>{
+  const monthly=Array.from({length:18},(_,index)=>({date:`${2025+Math.floor(index/12)}-${String(index%12+1).padStart(2,"0")}-01`,close:100,adjustedClose:100}));
+  const rows=new Map([["BESI.AS",{provider_symbol:"BESI.AS",currency:"EUR",history_json:JSON.stringify(monthly),fetched_at:new Date().toISOString()}]]);
+  const db={prepare(sql){return{run:async()=>{},bind(...values){return{first:async()=>rows.get(values[0])??null,run:async()=>{if(sql.includes("INSERT INTO quote_history_cache"))rows.set(values[0],{provider_symbol:values[0],currency:values[1],history_json:values[2],fetched_at:values[3]});}};}};}};
+  const previous=globalThis.fetch;let requested="";
+  globalThis.fetch=async url=>{requested=String(url);return new Response(JSON.stringify({chart:{result:[{meta:{symbol:"BESI.AS",currency:"EUR",exchangeTimezoneName:"Europe/Amsterdam"},timestamp:[Date.parse("2025-09-24T12:00:00Z")/1000,Date.parse("2026-09-24T12:00:00Z")/1000],indicators:{quote:[{close:[100,150]}],adjclose:[{adjclose:[100,150]}]}}]}}));};
+  try{const result=await getCompanyHistory("BESI.AS",db,true);assert.match(requested,/range=5y/);assert.equal(result.points.find(point=>point.date==="2025-09-24")?.adjustedClose,100);assert.equal(result.points.find(point=>point.date==="2026-09-24")?.adjustedClose,150);}finally{globalThis.fetch=previous;}
 });
 
 test("basket is equal-weighted in EUR and reports ownership and coverage",()=>{
@@ -143,9 +152,9 @@ test("opening baskets reads cached history only and ignores untickered members",
     cache.get("EURO").fetched_at=new Date().toISOString();
     requests=0;
     await loadBaskets(db,{dimension:"theme",period:"1y",selectedName:"AI Infrastructure",refresh:true});
-    assert.equal(requests,0,"an automatic refresh keeps recent history without Yahoo calls");
+    assert.equal(requests,1,"an automatic refresh repairs an incomplete annual cache even if recently fetched");
     await loadBaskets(db,{dimension:"theme",period:"1y",selectedName:"AI Infrastructure",refresh:true,force:true});
-    assert.equal(requests,1,"the manual refresh forces a provider request");
+    assert.equal(requests,2,"the manual refresh forces a provider request");
     requests=0;
     const onlyUntickered={prepare(sql){return{
       run:async()=>({success:true}),

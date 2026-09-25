@@ -3,6 +3,7 @@ import {
   fxSymbolForCurrency,
   getCachedCompanyHistories,
   getCompanyHistory,
+  hasYearOfDailyHistory,
   historicalPriceInEur,
   yahooSymbolForTicker,
   type CachedHistory,
@@ -140,7 +141,7 @@ export async function getThemeBaskets(db:D1Database,options:{dimension:BasketDim
   const histories=new Map<string,CachedHistory>();
   cached.forEach((history,index)=>{if(history)histories.set(companies[index].id,history);});
   const shouldRefresh=Boolean(options.refresh);
-  const needsRefresh=(history:CachedHistory|undefined|null)=>Boolean(options.force)||!history||Date.now()-Date.parse(history.fetchedAt)>45*60_000;
+  const needsRefresh=(history:CachedHistory|undefined|null)=>Boolean(options.force)||!history||!hasYearOfDailyHistory(history)||Date.now()-Date.parse(history.fetchedAt)>45*60_000;
   const currencies=[...new Set(companies.map(company=>company.currency.toUpperCase()).filter((currency):currency is Currency=>supportedCurrencies.includes(currency as Currency)).concat(cached.filter((history):history is CachedHistory=>Boolean(history)).map(history=>history.currency).filter((currency):currency is Currency=>currency!=="EUR")))];
   const fxHistories=new Map<Currency,CachedHistory>();
   await mapLimited(currencies,3,async(currency)=>{
