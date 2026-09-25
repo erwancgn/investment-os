@@ -55,11 +55,9 @@ export function AiAnalysis({ onOpenManagement }: { onOpenManagement: () => void 
         <h2>2. Choisir un workflow</h2>
         <CompactControl variant="select" value={workflow} options={aiWorkflows.map(item => ({ value: item.command, label: item.label }))} onChange={setWorkflow} ariaLabel="Workflow d’analyse" />
       </div>
-      <PrimaryBlock as="section" className="ai-chatgpt-card" aria-label="Ouvrir l’analyse dans ChatGPT">
-        <div className="ai-chatgpt-brand"><Image src="/chatgpt-favicon.ico" alt="" width={36} height={36} unoptimized/><span><strong>Ouvrir dans ChatGPT</strong><small>Le prompt sera préparé, puis vous pourrez le relire et l’envoyer.</small></span></div>
-        <a className="ai-chatgpt-link" href={openUrl ?? undefined} aria-disabled={!openUrl} onClick={event => { if (!openUrl) event.preventDefault(); }}>Ouvrir dans ChatGPT <span aria-hidden="true">↗</span></a>
-        <small className="ai-logo-attribution">ChatGPT est un produit d’OpenAI.</small>
-      </PrimaryBlock>
+      <a className="ai-chatgpt-launcher" href={openUrl ?? undefined} role={openUrl?undefined:"link"} tabIndex={openUrl?undefined:0} aria-label={openUrl?"Préparer le prompt et ouvrir une conversation dans ChatGPT":"Sélectionnez une compagnie pour ouvrir ChatGPT"} aria-disabled={!openUrl} title={openUrl?"Ouvrir dans ChatGPT":"Sélectionnez une compagnie"} onClick={event => { if (!openUrl) event.preventDefault(); }} onKeyDown={event => { if (!openUrl&&(event.key==="Enter"||event.key===" ")) event.preventDefault(); }}>
+        <Image src="/chatgpt-favicon.ico" alt="" width={44} height={44} unoptimized/>
+      </a>
       <ActionButton onClick={() => void copyPrompt()} disabled={!prompt}>{copied ? "Prompt copié" : "Copier le prompt"}</ActionButton>
       {copyError && <p className="ai-copy-error" role="status">Copie impossible dans ce navigateur. Ouvrez le prompt ci-dessous et copiez-le manuellement.</p>}
       <DisclosureSurface summary={<span>Voir le prompt</span>} className="ai-prompt-preview">{prompt || <span>Sélectionnez une compagnie pour afficher le prompt.</span>}</DisclosureSurface>

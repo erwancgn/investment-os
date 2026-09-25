@@ -18,7 +18,7 @@ const sample:ThemeBasketResponse={
   ],
   selectedBasket:{
     name:"AI Infrastructure",returnPercent:31.7,memberCount:7,coveredCount:7,ownedCount:3,startDate:"2025-09-23",endDate:"2026-09-22",
-    series:[{date:"2025-09-23",value:100},{date:"2025-12-31",value:114},{date:"2026-03-31",value:108},{date:"2026-06-30",value:126},{date:"2026-09-22",value:131.7}],
+    series:[{date:"2025-09-23",value:100},{date:"2025-12-31",value:94},{date:"2026-03-31",value:108},{date:"2026-06-30",value:96},{date:"2026-09-22",value:131.7}],
     companies:[
       {id:"nvda",name:"NVIDIA",ticker:"NVDA",ownershipStatus:"Owned",sector:"Semiconductors",themes:["AI Infrastructure"],returnPercent:48.4},
       {id:"avgo",name:"Broadcom",ticker:"AVGO",ownershipStatus:"Not owned",sector:"Semiconductors",themes:["AI Infrastructure"],returnPercent:26.1},

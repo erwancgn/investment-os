@@ -14,12 +14,6 @@
   color: var(--color-text);
   font-size: var(--font-md);
 }
-.ai-chatgpt-brand {
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  gap: var(--space-3);
-}
 .ai-selected-company {
   display: flex;
   min-height: 64px;
@@ -28,15 +22,12 @@
   gap: var(--space-3);
   padding: var(--space-4);
 }
-.ai-selected-company > span,
-.ai-chatgpt-brand > span {
+.ai-selected-company > span {
   display: grid;
   min-width: 0;
   gap: 4px;
 }
 .ai-selected-company small,
-.ai-chatgpt-brand small,
-.ai-logo-attribution,
 .ai-field-hint {
   color: var(--color-text-muted);
   font-size: var(--font-xs);
@@ -70,40 +61,24 @@
   color: var(--color-text-muted);
   font-size: var(--font-xs);
 }
-.ai-chatgpt-card {
-  display: grid;
-  gap: var(--space-4);
-  padding: var(--space-5);
-}
-.ai-chatgpt-brand img {
-  flex: 0 0 auto;
-  width: 36px;
-  height: 36px;
-  object-fit: contain;
-}
-.ai-chatgpt-link {
+.ai-chatgpt-launcher {
   display: flex;
-  min-height: 48px;
+  width: 56px;
+  min-height: 56px;
+  justify-self: center;
   align-items: center;
   justify-content: center;
-  gap: var(--space-2);
-  border-radius: var(--radius-md);
-  background: var(--color-accent);
-  color: white;
-  font-weight: 650;
+  border-radius: 50%;
+  color: var(--color-text);
   text-decoration: none;
 }
-.ai-chatgpt-link:focus-visible,
+.ai-chatgpt-launcher:focus-visible,
 .ai-company-results button:focus-visible {
   outline: 2px solid var(--color-accent);
   outline-offset: 2px;
 }
-.ai-chatgpt-link[aria-disabled="true"] {
+.ai-chatgpt-launcher[aria-disabled="true"] {
   opacity: .48;
-  pointer-events: none;
-}
-.ai-logo-attribution {
-  justify-self: end;
 }
 .ai-prompt-preview {
   overflow-wrap: anywhere;

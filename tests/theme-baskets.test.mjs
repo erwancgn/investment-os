@@ -1,6 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
+import { build } from "esbuild";
 import { fetchYahooHistory, fxSymbolForCurrency, getCachedCompanyHistory, getCompanyHistory, yahooSymbolForTicker } from "../app/lib/quotes.ts";
 import { basketPeriods, buildThemeBaskets, parseBasketOptions } from "../app/lib/theme-baskets.ts";
 
@@ -83,7 +84,7 @@ test("basket conversion uses historical EUR exchange rates",()=>{
 
 test("all requested windows calculate from available daily points",()=>{
   const item=company();
-  const data=history("EUR",[["2019-01-02",50],["2021-09-20",75],["2024-09-20",80],["2025-09-22",100],["2025-12-31",105],["2026-01-02",106],["2026-09-21",120],["2026-09-22",122]]);
+  const data=history("EUR",[["2019-01-02",50],["2021-09-20",75],["2024-09-20",80],["2025-08-21",99],["2025-09-22",100],["2025-12-31",105],["2026-01-02",106],["2026-03-20",109],["2026-08-21",115],["2026-09-15",116],["2026-09-16",117],["2026-09-17",118],["2026-09-18",119],["2026-09-21",120],["2026-09-22",122]]);
   for(const period of basketPeriods){
     const result=buildThemeBaskets([item],new Map([[item.id,data]]),new Map(),"theme",period,"AI Infrastructure");
     assert.equal(result.selectedBasket.coveredCount,1,`${period} coverage`);
@@ -97,6 +98,65 @@ test("companies without usable history remain visible and lower basket coverage"
   assert.equal(result.selectedBasket.memberCount,2);
   assert.equal(result.selectedBasket.coveredCount,1);
   assert.equal(result.selectedBasket.companies.find(item=>item.id==="missing").returnPercent,null);
+});
+
+test("an IPO after the requested one-year start is not assigned a pre-listing return",()=>{
+  const companies=[company({id:"listed",name:"Listed",ticker:"LISTED"}),company({id:"spacex",name:"SpaceX",ticker:"SPCX",ownershipStatus:"Not owned"})];
+  const histories=new Map([
+    ["listed",history("EUR",[["2025-09-22",100],["2026-09-22",110]])],
+    ["spacex",history("USD",[["2026-06-12",200],["2026-09-22",260]])],
+  ]);
+  const result=buildThemeBaskets(companies,histories,new Map([ ["USD",history("USD",[["2026-06-12",1],["2026-09-22",1]])] ]),"theme","1y","AI Infrastructure").selectedBasket;
+  assert.equal(result.memberCount,2);
+  assert.equal(result.coveredCount,1);
+  assert.equal(result.companies.find(item=>item.id==="spacex").returnPercent,null);
+});
+
+test("opening baskets reads cached history only and ignores untickered members",async()=>{
+  const bundle=await build({entryPoints:["app/lib/theme-baskets.ts"],bundle:true,write:false,platform:"node",format:"esm"});
+  const {getThemeBaskets:loadBaskets}=await import("data:text/javascript;base64,"+Buffer.from(bundle.outputFiles[0].text).toString("base64"));
+  const asProperty=(type,value)=>({type,[type]:value});
+  const documents=[
+    {page_id:"euro",title:"Euro Co",notion_url:"",properties_json:JSON.stringify({Company:asProperty("title",[{plain_text:"Euro Co"}]),Ticker:asProperty("rich_text",[{plain_text:"EURO"}]),Sector:asProperty("select",{name:"Software"}),Themes:asProperty("multi_select",[{name:"AI Infrastructure"}])})},
+    {page_id:"untickered",title:"SpaceX",notion_url:"",properties_json:JSON.stringify({Company:asProperty("title",[{plain_text:"SpaceX"}]),Ticker:asProperty("rich_text",[]),Sector:asProperty("select",{name:"Software"}),Themes:asProperty("multi_select",[{name:"AI Infrastructure"}])})},
+  ];
+  const cache=new Map([["EURO",{provider_symbol:"EURO",currency:"EUR",history_json:JSON.stringify([{date:"2025-09-22",close:100,adjustedClose:100},{date:"2026-09-22",close:120,adjustedClose:120}]),fetched_at:"2026-09-22T00:00:00.000Z"}]]);
+  const db={prepare(sql){return{
+    run:async()=>({success:true}),
+    all:async()=>({results:sql.includes("source_key='companies'")?documents:[]}),
+    bind(...values){return{first:async()=>sql.includes("quote_history_cache")?cache.get(values[0])??null:null,run:async()=>({success:true})};},
+  };}};
+  const previous=globalThis.fetch;let requests=0;globalThis.fetch=async()=>{requests++;throw Error("unexpected network request");};
+  try{
+    const result=await loadBaskets(db,{dimension:"theme",period:"1y",selectedName:"AI Infrastructure"});
+    assert.equal(requests,0);
+    assert.equal(result.selectedBasket.returnPercent,20);
+    assert.equal(result.selectedBasket.memberCount,2);
+    assert.equal(result.selectedBasket.coveredCount,1);
+    assert.equal(result.selectedBasket.companies.find(item=>item.id==="untickered").returnPercent,null);
+    const failedRefresh=await loadBaskets(db,{dimension:"theme",period:"1y",selectedName:"AI Infrastructure",refresh:true});
+    assert.equal(requests,1);
+    assert.equal(failedRefresh.selectedBasket.returnPercent,20,"one failed quote must not publish a partially refreshed basket");
+    assert.ok(failedRefresh.refreshErrors.length>0);
+    requests=0;
+    const onlyUntickered={prepare(sql){return{
+      run:async()=>({success:true}),
+      all:async()=>({results:sql.includes("source_key='companies'")?[documents[1]]:[]}),
+      bind(...values){return{first:async()=>cache.get(values[0])??null,run:async()=>({success:true})};},
+    };}};
+    const untickeredRefresh=await loadBaskets(onlyUntickered,{dimension:"theme",period:"1y",selectedName:"AI Infrastructure",refresh:true});
+    assert.equal(requests,0,"an untickered-only basket needs neither Yahoo history nor FX");
+    assert.equal(untickeredRefresh.selectedBasket.returnPercent,null);
+  }finally{globalThis.fetch=previous;}
+});
+
+test("stale FX is not silently applied to a current equity history",()=>{
+  const item=company();
+  const histories=new Map([[item.id,history("USD",[["2026-09-15",100],["2026-09-22",110]])]]);
+  const fx=new Map([["USD",history("USD",[["2026-09-01",1],["2026-09-02",1]])]]);
+  const result=buildThemeBaskets([item],histories,fx,"theme","1m","AI Infrastructure").selectedBasket;
+  assert.equal(result.coveredCount,0);
+  assert.equal(result.returnPercent,null);
 });
 
 test("periods and API parameters are restricted to the supported selectors",()=>{
@@ -115,4 +175,21 @@ test("theme basket chart supports touch and keyboard date scrubbing accessibly",
   assert.match(component,/event\.key==="End"/);
   assert.match(component,/aria-live="polite"/);
   assert.match(component,/<time dateTime=\{active\.date\}>/);
+  assert.match(component,/theme-basket-chart-zero/);
+  assert.match(component,/theme-basket-chart-area-positive/);
+  assert.match(component,/theme-basket-chart-area-negative/);
+  assert.match(component,/theme-basket-chart-axis/);
+  assert.match(component,/theme-basket-chart-date/);
+  assert.match(component,/theme-basket-chart-tooltip/);
+  assert.match(component,/Date\.parse\(`\$\{point\.date\}T12:00:00Z`\)/);
+  assert.match(component,/minValue<0&&maxValue>0\?\[maxValue,0,minValue\]/);
+  assert.match(component,/middleTime=firstTime\+timeSpan\/2/);
+  assert.match(component,/left:`clamp\(4\.5rem,/);
+  assert.match(component,/autoRefreshStarted\.current=true;lastRefreshAt\.current=Date\.now\(\);void refresh\(\)/);
+  assert.match(component,/if\(view&&!autoRefreshStarted\.current\)/);
+  assert.match(component,/Au \{selected\?\.endDate/);
+  assert.match(component,/document\.visibilityState!=="visible"/);
+  assert.match(component,/getClientRects\(\)\.length/);
+  assert.match(component,/setInterval\(refreshIfDue,45\*60\*1000\)/);
+  assert.match(component,/Date\.now\(\)-lastRefreshAt\.current<45\*60\*1000/);
 });

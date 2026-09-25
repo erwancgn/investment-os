@@ -71,11 +71,19 @@ test("mobile navigation presents four equal destinations with a selected blue in
 });
 
 test("AI launcher stays a dedicated screen and composes the shared UI primitives", async () => {
-  const [source, navigation] = await Promise.all([read("app/components/ai-analysis.tsx"), read("app/lib/app-navigation.tsx")]);
+  const [source, navigation, styles] = await Promise.all([read("app/components/ai-analysis.tsx"), read("app/lib/app-navigation.tsx"), read("app/styles/ux/workspaces.css")]);
   for (const primitive of ["AppPageHeader", "SearchField", "CompactControl", "PrimaryBlock", "DisclosureSurface", "ActionButton", "AsyncState"]) assert.match(source, new RegExp(`\\b${primitive}\\b`));
   assert.match(source, /useClientResource<\{ companies: CompanyListItem\[\] \}>\("\/api\/companies"\)/);
   assert.match(source, /createAiPrompt\(workflow, selected\.name, selected\.ticker\)/);
   assert.match(source, /createChatGptUrl\(prompt\)/);
+  assert.match(source, /className="ai-chatgpt-launcher"[^>]*aria-label=\{openUrl\?/);
+  assert.match(source, /aria-disabled=\{!openUrl\}/);
+  assert.match(source, /tabIndex=\{openUrl\?undefined:0\}/);
+  assert.match(source, /event\.key==="Enter"\|\|event\.key===" "/);
+  assert.match(source, /<Image src="\/chatgpt-favicon\.ico" alt=""/);
+  assert.doesNotMatch(source, /ai-chatgpt-card|ai-chatgpt-brand|ai-logo-attribution/);
+  assert.match(styles, /\.ai-chatgpt-launcher:focus-visible/);
+  assert.doesNotMatch(styles, /\.ai-chatgpt-card|\.ai-chatgpt-brand|\.ai-logo-attribution/);
   assert.match(source, /navigator\.clipboard\.writeText\(prompt\)/);
   assert.match(navigation, /"ia"/);
   assert.doesNotMatch(await read("app/components/notion-companies.tsx"), /chatgpt|ai-analysis/i);

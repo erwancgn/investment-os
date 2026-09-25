@@ -16,31 +16,58 @@ function BasketChart({series,name,period}:{series:NonNullable<ThemeBasketRespons
   const [activeIndex,setActiveIndex]=useState<number|null>(null);
   const svgRef=useRef<SVGSVGElement>(null);
   if(series.length<2)return <div className="theme-basket-chart-empty">Historique insuffisant pour tracer cette période.</div>;
-  const values=series.map(point=>point.value);
-  const min=Math.min(...values),max=Math.max(...values),spread=max-min||1;
-  const pointX=(index:number)=>index/(series.length-1)*100;
-  const pointY=(value:number)=>32-(value-min)/spread*28;
-  const path=series.map((point,index)=>`${index===0?"M":"L"} ${pointX(index).toFixed(2)} ${pointY(point.value).toFixed(2)}`).join(" ");
+  const left=14,right=99,top=4,bottom=40;
+  const returns=series.map(point=>point.value-100);
+  const timestamps=series.map(point=>Date.parse(`${point.date}T12:00:00Z`));
+  const firstTime=timestamps[0],timeSpan=Math.max(1,timestamps.at(-1)!-firstTime);
+  const min=Math.min(0,...returns),max=Math.max(0,...returns),spread=max-min||1,padding=spread*.08;
+  const minValue=min===0&&max===0?-1:Math.min(0,min-padding),maxValue=min===0&&max===0?1:Math.max(0,max+padding);
+  const pointX=(index:number)=>left+(timestamps[index]-firstTime)/timeSpan*(right-left);
+  const pointY=(value:number)=>bottom-(value-minValue)/(maxValue-minValue)*(bottom-top);
+  const points=series.map((point,index)=>({x:pointX(index),y:pointY(point.value-100),value:point.value-100}));
+  const path=points.map((point,index)=>`${index===0?"M":"L"} ${point.x.toFixed(2)} ${point.y.toFixed(2)}`).join(" ");
+  const zeroY=pointY(0);
+  const areas=(positive:boolean)=>points.slice(1).flatMap((point,index)=>{
+    const previous=points[index],abovePrevious=previous.value>=0,abovePoint=point.value>=0;
+    if(abovePrevious===abovePoint){if(abovePrevious!==positive)return [];return [`M ${previous.x} ${zeroY} L ${previous.x} ${previous.y} L ${point.x} ${point.y} L ${point.x} ${zeroY} Z`];}
+    const crossX=previous.x+(point.x-previous.x)*(-previous.value)/(point.value-previous.value);
+    const cross=`${crossX} ${zeroY}`;
+    return positive
+      ? abovePrevious?[`M ${previous.x} ${zeroY} L ${previous.x} ${previous.y} L ${cross} Z`]:[`M ${cross} L ${point.x} ${point.y} L ${point.x} ${zeroY} Z`]
+      : abovePrevious?[`M ${cross} L ${point.x} ${point.y} L ${point.x} ${zeroY} Z`]:[`M ${previous.x} ${zeroY} L ${previous.x} ${previous.y} L ${cross} Z`];
+  }).join(" ");
+  const ticks=minValue<0&&maxValue>0?[maxValue,0,minValue]:maxValue>0?[maxValue,maxValue/2,0]:[0,minValue/2,minValue];
+  const middleTime=firstTime+timeSpan/2;
+  const middleIndex=timestamps.reduce((closest,timestamp,index)=>Math.abs(timestamp-middleTime)<Math.abs(timestamps[closest]-middleTime)?index:closest,0);
+  const dates=[...new Set([0,middleIndex,series.length-1])];
+  const formatDate=(date:string,year=false)=>new Date(`${date}T12:00:00Z`).toLocaleDateString("fr-FR",{day:"numeric",month:"short",...(year?{year:"numeric"}:{}),timeZone:"UTC"});
   const active=activeIndex===null?null:series[Math.min(activeIndex,series.length-1)];
   const indexAt=(clientX:number)=>{
     const rect=svgRef.current?.getBoundingClientRect();
     if(!rect||!rect.width)return;
-    setActiveIndex(Math.round(Math.min(1,Math.max(0,(clientX-rect.left)/rect.width))*(series.length-1)));
+    const plotRatio=((clientX-rect.left)/rect.width-left/100)/((right-left)/100);
+    const target=left+Math.min(1,Math.max(0,plotRatio))*(right-left);
+    setActiveIndex(points.reduce((closest,point,index)=>Math.abs(point.x-target)<Math.abs(points[closest].x-target)?index:closest,0));
   };
   const moveSelection=(direction:number)=>setActiveIndex(current=>current===null?(direction>0?0:series.length-1):Math.min(series.length-1,Math.max(0,current+direction)));
   return <figure className="theme-basket-chart">
-    <svg ref={svgRef} viewBox="0 0 100 36" preserveAspectRatio="none" role="group" tabIndex={0} aria-label={`Courbe interactive du panier ${name}, ${periodLabels[period]}. Faites glisser le doigt ou utilisez les flèches gauche et droite pour lire une date et sa performance.`}
+    <div className="theme-basket-chart-plot">
+    <svg ref={svgRef} viewBox="0 0 100 52" preserveAspectRatio="none" role="group" tabIndex={0} aria-label={`Courbe interactive du panier ${name}, ${periodLabels[period]}. Faites glisser le doigt ou utilisez les flèches gauche et droite pour lire une date et sa performance.`}
+      onFocus={()=>{if(activeIndex===null)setActiveIndex(0);}}
       onPointerDown={event=>{event.currentTarget.setPointerCapture(event.pointerId);indexAt(event.clientX);}}
       onPointerMove={event=>{if(event.pointerType==="mouse"||event.buttons>0||event.pointerType==="touch")indexAt(event.clientX);}}
       onKeyDown={event=>{if(event.key==="ArrowLeft"){event.preventDefault();moveSelection(-1);}else if(event.key==="ArrowRight"){event.preventDefault();moveSelection(1);}else if(event.key==="Home"){event.preventDefault();setActiveIndex(0);}else if(event.key==="End"){event.preventDefault();setActiveIndex(series.length-1);}}}>
-      <rect className="theme-basket-chart-hit-area" x="0" y="0" width="100" height="36"/>
+      {ticks.map((tick,index)=><g className="theme-basket-chart-axis" key={`y-${index}`}><line x1={left} x2={right} y1={pointY(tick)} y2={pointY(tick)}/><text x="0" y={pointY(tick)+1}>{tick===0?"0":new Intl.NumberFormat("fr-FR",{maximumFractionDigits:1}).format(tick)} %</text></g>)}
+      {dates.map(index=><text className="theme-basket-chart-date" key={series[index].date} x={pointX(index)} y="49" textAnchor={index===0?"start":index===series.length-1?"end":"middle"}>{formatDate(series[index].date,index===0||index===series.length-1)}</text>)}
+      <line className="theme-basket-chart-zero" x1={left} x2={right} y1={zeroY} y2={zeroY}/>
+      <path className="theme-basket-chart-area-positive" d={areas(true)}/><path className="theme-basket-chart-area-negative" d={areas(false)}/>
+      <rect className="theme-basket-chart-hit-area" x={left} y={top} width={right-left} height={bottom-top}/>
       <path className="theme-basket-chart-line" d={path}/>
-      {active&&<><path className="theme-basket-chart-cursor" d={`M ${pointX(activeIndex!)} 2 V 34`}/><circle className="theme-basket-chart-point" cx={pointX(activeIndex!)} cy={pointY(active.value)} r="1.6"/></>}
+      {active&&<><path className="theme-basket-chart-cursor" d={`M ${pointX(activeIndex!)} ${top} V ${bottom}`}/><circle className="theme-basket-chart-point" cx={pointX(activeIndex!)} cy={pointY(active.value-100)} r="1.45"/></>}
     </svg>
-    <div className="theme-basket-chart-reading" aria-live="polite">
-      {active?<><time dateTime={active.date}>{new Date(`${active.date}T12:00:00Z`).toLocaleDateString("fr-FR",{day:"2-digit",month:"short",year:"numeric",timeZone:"UTC"})}</time><strong className={active.value>100?"is-positive":active.value<100?"is-negative":"is-neutral"}>{percent(active.value-100)}</strong><span>depuis le début de la période</span></>:<span>Faites glisser le doigt sur la courbe pour lire la performance à une date donnée.</span>}
+    {active&&<output className="theme-basket-chart-tooltip" data-placement={pointY(active.value-100)<12?"below":"above"} style={{left:`clamp(4.5rem, ${pointX(activeIndex!)}%, calc(100% - 4.5rem))`,top:`${pointY(active.value-100)/52*100}%`}}><time dateTime={active.date}>{formatDate(active.date,true)}</time><strong className={active.value>100?"is-positive":active.value<100?"is-negative":"is-neutral"}>{percent(active.value-100)}</strong></output>}
     </div>
-    <figcaption><span>{series[0].date}</span><span>{series.at(-1)?.date}</span></figcaption>
+    <output className="theme-basket-chart-reading" aria-live="polite">{active?`${formatDate(active.date,true)} · ${percent(active.value-100)}`:`Courbe interactive : ${name}, ${periodLabels[period]}. Utilisez le toucher ou les flèches pour lire une date et sa performance.`}</output>
   </figure>;
 }
 
@@ -56,8 +83,23 @@ export function ThemeBaskets({openCompany=()=>undefined,initialData}:{openCompan
   const url=`/api/theme-baskets?${query.toString()}`;
   const {data,error,loading,refresh}=useClientResource<ThemeBasketResponse>(url,true,initialData===undefined);
   const [retainedView,setRetainedView]=useState(initialData);
+  const pageRef=useRef<HTMLElement>(null);
+  const autoRefreshStarted=useRef(false);
+  const lastRefreshAt=useRef(0);
   useEffect(()=>{if(data)setRetainedView(data);},[data]);
   const view=data??retainedView??initialData;
+  useEffect(()=>{if(view&&!autoRefreshStarted.current){autoRefreshStarted.current=true;lastRefreshAt.current=Date.now();void refresh();}},[view,refresh]);
+  useEffect(()=>{
+    const refreshIfDue=()=>{
+      if(document.visibilityState!=="visible"||!pageRef.current?.getClientRects().length||!view||loading||Date.now()-lastRefreshAt.current<45*60*1000)return;
+      lastRefreshAt.current=Date.now();
+      void refresh();
+    };
+    const interval=window.setInterval(refreshIfDue,45*60*1000);
+    window.addEventListener("focus",refreshIfDue);
+    document.addEventListener("visibilitychange",refreshIfDue);
+    return()=>{window.clearInterval(interval);window.removeEventListener("focus",refreshIfDue);document.removeEventListener("visibilitychange",refreshIfDue);};
+  },[loading,refresh,view]);
   const requestedBasketName=selectedName||view?.selectedBasket?.name||"";
   const selected=view?.selectedBasket?.name===requestedBasketName?view.selectedBasket:null;
   const selectedSummary=view?.baskets.find(basket=>basket.name===requestedBasketName);
@@ -67,11 +109,11 @@ export function ThemeBaskets({openCompany=()=>undefined,initialData}:{openCompan
     .filter(basket=>(!searchTerm||`${basket.name} ${basket.searchText}`.toLocaleLowerCase("fr-FR").includes(searchTerm))&&(ownershipFilter!=="owned"||basket.ownedCount>0))
     .sort((a,b)=>sort==="name"?a.name.localeCompare(b.name,"fr"):sort==="members"?b.memberCount-a.memberCount||a.name.localeCompare(b.name,"fr"):(b.returnPercent??-Infinity)-(a.returnPercent??-Infinity));
 
-  return <section className="theme-basket-page" aria-label="Performance des paniers d’entreprises">
+  return <section ref={pageRef} className="theme-basket-page" aria-label="Performance des paniers d’entreprises">
     <div className="theme-basket-controls">
       <CompactControl variant="select" ariaLabel="Regrouper les paniers par" value={dimension} options={dimensionOptions} onChange={value=>{setDimension(value as BasketDimension);setSelectedName("");}}/>
       <CompactControl variant="select" ariaLabel="Période de performance" value={period} options={periodOptions} onChange={value=>setPeriod(value as BasketPeriod)}/>
-      <ActionButton compact onClick={()=>void refresh()} disabled={loading} ariaLabel="Actualiser les cours des paniers">Actualiser</ActionButton>
+      <ActionButton compact onClick={()=>{lastRefreshAt.current=Date.now();void refresh();}} disabled={loading} ariaLabel="Actualiser les cours des paniers">Actualiser</ActionButton>
     </div>
     {error&&view&&<p className="resource-error" role="status">{error} Les dernières données chargées restent affichées.</p>}
     {!view&&loading?<AsyncState title="Chargement des paniers…" description="Lecture des cours historiques en cache." className="theme-basket-state"/>:null}
@@ -96,7 +138,7 @@ export function ThemeBaskets({openCompany=()=>undefined,initialData}:{openCompan
         </div>
       </PrimaryBlock>
       {requestedBasketName?<PrimaryBlock as="section" className="theme-basket-detail" aria-label={`Panier ${requestedBasketName}`}>
-        <header className="theme-basket-detail-head"><div><p className="eyebrow">Panier {dimension==="theme"?"thématique":"sectoriel"}</p><h2>{requestedBasketName}</h2><small>{selected?.startDate??selectedSummary?.startDate??"—"} → {selected?.endDate??selectedSummary?.endDate??"—"}</small></div><strong className={`theme-basket-detail-return${detailReturn==null?" is-neutral":detailReturn>=0?" is-positive":" is-negative"}`}>{percent(detailReturn)}</strong></header>
+        <header className="theme-basket-detail-head"><div><p className="eyebrow">Panier {dimension==="theme"?"thématique":"sectoriel"}</p><h2>{requestedBasketName}</h2><small>Au {selected?.endDate??selectedSummary?.endDate??"—"} · période depuis le {selected?.startDate??selectedSummary?.startDate??"—"} · clôtures locales · historique {selected?.coveredCount??selectedSummary?.coveredCount??0}/{selected?.memberCount??selectedSummary?.memberCount??0}</small></div><strong className={`theme-basket-detail-return${detailReturn==null?" is-neutral":detailReturn>=0?" is-positive":" is-negative"}`}>{percent(detailReturn)}</strong></header>
         {selected?<>
         <div className="theme-basket-metrics" aria-label="Résumé du panier">
           <div><strong>{selected.memberCount}</strong><span>Entreprises</span></div>

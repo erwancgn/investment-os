@@ -28,6 +28,18 @@ test('failed refresh retains the previous data and retry clears the error', asyn
   assert.equal(cache.snapshot('/portfolio').error, '');
 });
 
+test('background basket refresh keeps the cached snapshot until refresh=1 fails or completes', async () => {
+  let fail = false; const urls = [];
+  const cache = createResourceCache(async url => { urls.push(url); if (fail) throw Error('offline'); return json({ generatedAt: 'cached', selectedBasket: { returnPercent: 12 } }); });
+  await cache.read('/api/theme-baskets?dimension=theme&period=1y');
+  fail = true;
+  await cache.read('/api/theme-baskets?dimension=theme&period=1y', true, true);
+  const snapshot = cache.snapshot('/api/theme-baskets?dimension=theme&period=1y');
+  assert.deepEqual(urls, ['/api/theme-baskets?dimension=theme&period=1y', '/api/theme-baskets?dimension=theme&period=1y&refresh=1']);
+  assert.equal(snapshot.data.selectedBasket.returnPercent, 12, 'failed refresh leaves the dated D1 response visible');
+  assert.equal(snapshot.error, 'offline');
+});
+
 test('Notion invalidation during a pending request discards the obsolete response', async () => {
   const pending = deferred(); let calls = 0;
   const cache = createResourceCache(async () => ++calls === 1 ? pending.promise : json({ revision: 2 }));

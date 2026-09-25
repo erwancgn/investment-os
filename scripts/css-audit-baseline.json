@@ -1,7 +1,7 @@
 {
   "version": 3,
-  "capturedAt": "2026-09-24",
-  "scope": "app CSS governance audit after the Basket directory interaction update",
+  "capturedAt": "2026-09-25",
+  "scope": "app CSS governance audit after the Basket chart and AI launcher update",
   "thresholds": {
     "exactRepeatedSelectors": 147,
     "directPropertyConflicts": 0,
@@ -11,7 +11,7 @@
     "repeatedTokens": 0,
     "conflictingTokens": 0,
     "importantDeclarations": 207,
-    "definedClasses": 320,
+    "definedClasses": 324,
     "orphanClasses": 0
   }
 }

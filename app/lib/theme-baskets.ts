@@ -18,8 +18,12 @@ export type BasketDetail=BasketSummary&{series:{date:string;value:number}[];comp
 export type ThemeBasketResponse={generatedAt:string;dimension:BasketDimension;period:BasketPeriod;baskets:(BasketSummary&{searchText:string})[];selectedBasket:BasketDetail|null;refreshErrors:string[]};
 
 type CompanySeries={company:CompanyListItem;eurPrices:Map<string,number>};
-const staleAfter=6*60*60*1000;
 const normalized=(value:string)=>value.trim().replace(/\s+/g," ");
+const maxCarryForwardDays=5;
+
+function withinDays(later:string,earlier:string,maximum=maxCarryForwardDays){
+  return Date.parse(`${later}T00:00:00Z`)-Date.parse(`${earlier}T00:00:00Z`)<=maximum*86400000;
+}
 
 function membership(company:CompanyListItem,dimension:BasketDimension){
   if(dimension==="sector")return [normalized(company.sector)||"Autres"];
@@ -49,15 +53,11 @@ function pointAtOrBefore<T extends {date:string}>(points:T[],date:string){
   return result<0?null:points[result];
 }
 
-function fxAtOrBefore(points:HistoricalPoint[],date:string){
-  const point=pointAtOrBefore(points,date);
-  return point?.adjustedClose??null;
-}
-
 function companyPricesInEur(history:CachedHistory,fxHistory:CachedHistory|null){
   const prices=new Map<string,number>();
   for(const point of history.points){
-    const fx=history.currency==="EUR"?1:fxHistory?fxAtOrBefore(fxHistory.points,point.date):null;
+    const fxPoint=history.currency==="EUR"?null:fxHistory?pointAtOrBefore(fxHistory.points,point.date):null;
+    const fx=history.currency==="EUR"?1:fxPoint&&withinDays(point.date,fxPoint.date)?fxPoint.adjustedClose:null;
     if(fx==null)continue;
     const eur=historicalPriceInEur(point.adjustedClose,history.currency,fx);
     if(eur!=null)prices.set(point.date,eur);
@@ -79,7 +79,7 @@ function basketFor(name:string,series:CompanySeries[],period:BasketPeriod):Baske
     const points=[...item.eurPrices.entries()].sort(([a],[b])=>a.localeCompare(b)).map(([date,value])=>({date,close:value,adjustedClose:value}));
     const base=pointAtOrBefore(points,baseDate);
     const end=pointAtOrBefore(points,endDate);
-    if(!base||!end||base.date===end.date)return [];
+    if(!base||!end||base.date===end.date||!withinDays(baseDate,base.date)||!withinDays(endDate,end.date))return [];
     return [{item,points,baseDate:base.date,baseValue:base.adjustedClose,returnPercent:(end.adjustedClose/base.adjustedClose-1)*100}];
   });
   const dates=[baseDate,...new Set(prepared.flatMap(item=>item.points.filter(point=>point.date>=baseDate&&point.date<=endDate).map(point=>point.date)))].sort();
@@ -123,9 +123,9 @@ export function buildThemeBaskets(companies:CompanyListItem[],histories:Map<stri
   return {baskets,selectedBasket};
 }
 
-async function mapLimited<T,R>(items:T[],limit:number,run:(item:T)=>Promise<R>):Promise<R[]>{
+async function mapLimited<T,R>(items:T[],limit:number,run:(item:T,index:number)=>Promise<R>):Promise<R[]>{
   const results=new Array<R>(items.length);let next=0;
-  await Promise.all(Array.from({length:Math.min(limit,items.length)},async()=>{while(true){const index=next++;if(index>=items.length)return;results[index]=await run(items[index]);}}));
+  await Promise.all(Array.from({length:Math.min(limit,items.length)},async()=>{while(true){const index=next++;if(index>=items.length)return;results[index]=await run(items[index],index);}}));
   return results;
 }
 
@@ -133,18 +133,19 @@ export async function getThemeBaskets(db:D1Database,options:{dimension:BasketDim
   const {listCompanies}=await import("./investment-data.ts");
   const companies=await listCompanies(db,false);
   const refreshErrors:string[]=[];
-  const histories=new Map<string,CachedHistory>();
   const cached=await Promise.all(companies.map(company=>company.ticker?getCachedCompanyHistory(company.ticker,db):Promise.resolve(null)));
-  const shouldRefresh=Boolean(options.refresh)||cached.some(history=>!history||Date.now()-Date.parse(history.fetchedAt)>staleAfter);
+  const histories=new Map<string,CachedHistory>();
+  cached.forEach((history,index)=>{if(history)histories.set(companies[index].id,history);});
+  // The first response is always built from the local D1 snapshot. The browser
+  // requests refresh=1 after rendering; only that explicit path may wait on Yahoo.
+  const shouldRefresh=Boolean(options.refresh);
   const loaded=shouldRefresh
-    ? await mapLimited(companies,3,async(company)=>{
+    ? await mapLimited(companies,3,async(company,index)=>{
       if(!company.ticker)return null;
-      const index=companies.indexOf(company);
-      const needsRefresh=Boolean(options.refresh)||!cached[index]||Date.now()-Date.parse(cached[index]!.fetchedAt)>staleAfter;
-      if(!needsRefresh)return cached[index];
       try{return await getCompanyHistory(company.ticker,db,true);}catch(error){refreshErrors.push(`${company.name}: ${error instanceof Error?error.message:"échec Yahoo"}`);return cached[index];}
     })
     : cached;
+  histories.clear();
   loaded.forEach((history,index)=>{if(history)histories.set(companies[index].id,history);});
   const currencies=[...new Set([...histories.values()].map(history=>history.currency).filter((currency):currency is Currency=>currency!=="EUR"))];
   const fxHistories=new Map<Currency,CachedHistory>();
@@ -156,6 +157,20 @@ export async function getThemeBaskets(db:D1Database,options:{dimension:BasketDim
       if(fx)fxHistories.set(currency,fx);
     }catch(error){refreshErrors.push(`${currency}/EUR: ${error instanceof Error?error.message:"échec Yahoo"}`);}
   });
+  // Never publish a partly refreshed index: on any provider/FX failure, rebuild
+  // from the exact D1 snapshot that was available before this refresh began.
+  if(shouldRefresh&&refreshErrors.length){
+    histories.clear();
+    cached.forEach((history,index)=>{if(history)histories.set(companies[index].id,history);});
+    fxHistories.clear();
+    const cachedCurrencies=[...new Set([...histories.values()].map(history=>history.currency).filter((currency):currency is Currency=>currency!=="EUR"))];
+    await mapLimited(cachedCurrencies,3,async(currency)=>{
+      const symbol=fxSymbolForCurrency(currency);
+      if(!symbol)return;
+      const fx=await getCachedCompanyHistory(symbol,db);
+      if(fx)fxHistories.set(currency,fx);
+    });
+  }
   const calculated=buildThemeBaskets(companies,histories,fxHistories,options.dimension,options.period,options.selectedName);
   return {generatedAt:new Date().toISOString(),dimension:options.dimension,period:options.period,...calculated,refreshErrors};
 }
