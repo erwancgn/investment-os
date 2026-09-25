@@ -1,7 +1,8 @@
 "use client";
 
-import { Activity, lazy, Suspense } from "react";
+import { Activity, lazy, Suspense, useEffect, useRef } from "react";
 import { useClientResource, useResourceLifecycle } from "./lib/client-resource";
+import { scheduleThemeBasketWarmup } from "./lib/theme-basket-warmup";
 import { OpenAnalysisContext, useAppNavigation, type Tab } from "./lib/app-navigation";
 import type { LivePortfolio } from "./lib/investment-data";
 import { LivePortfolioDashboard } from "./components/live-portfolio-dashboard";
@@ -43,6 +44,12 @@ function Header({ title, onOpenManagement }: { title: string; onOpenManagement: 
 function Portfolio({ openCompany, onOpenManagement }: { openCompany: (id?: string) => void; onOpenManagement: () => void }) {
   const { data, loading, error, refresh } = useClientResource<LivePortfolio>("/api/portfolio/live", true);
   const portfolio = data ?? null;
+  const basketWarmupStarted = useRef(false);
+  useEffect(() => {
+    if (loading || !portfolio || portfolio.refreshPending || basketWarmupStarted.current) return;
+    basketWarmupStarted.current = true;
+    scheduleThemeBasketWarmup();
+  }, [loading, portfolio]);
   return <>
     <PortfolioPageHeader quoteAsOf={portfolio?.quoteAsOf} loading={loading} onRefresh={() => void refresh()} onOpenManagement={onOpenManagement} />
     {error && portfolio && <p className="resource-error" role="status">{error} Les dernières données chargées restent affichées.</p>}

@@ -5,6 +5,12 @@ import { readBrowserNotionStatus } from "./notion-sync-client";
 
 const cache = createResourceCache();
 export function preloadResource(url: string) { void cache.read(url); }
+export async function refreshResource(url: string) {
+  await cache.read(url, true);
+  const error = cache.snapshot(url).error;
+  if (error) throw new Error(error);
+}
+export function resourceSnapshot<T>(url: string) { return cache.snapshot<T>(url); }
 export async function readNotionStatus() {
   await cache.read("/api/notion/status");
   return cache.snapshot<{ configured?: boolean }>("/api/notion/status").data;

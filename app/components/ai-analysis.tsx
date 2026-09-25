@@ -56,7 +56,8 @@ export function AiAnalysis({ onOpenManagement }: { onOpenManagement: () => void 
         <CompactControl variant="select" value={workflow} options={aiWorkflows.map(item => ({ value: item.command, label: item.label }))} onChange={setWorkflow} ariaLabel="Workflow d’analyse" />
       </div>
       <a className="ai-chatgpt-launcher" href={openUrl ?? undefined} role={openUrl?undefined:"link"} tabIndex={openUrl?undefined:0} aria-label={openUrl?"Préparer le prompt et ouvrir une conversation dans ChatGPT":"Sélectionnez une compagnie pour ouvrir ChatGPT"} aria-disabled={!openUrl} title={openUrl?"Ouvrir dans ChatGPT":"Sélectionnez une compagnie"} onClick={event => { if (!openUrl) event.preventDefault(); }} onKeyDown={event => { if (!openUrl&&(event.key==="Enter"||event.key===" ")) event.preventDefault(); }}>
-        <Image src="/chatgpt-favicon.ico" alt="" width={66} height={66} unoptimized/>
+        <Image src="/openai-mark.svg" alt="" width={90} height={90} unoptimized/>
+        <span className="ai-chatgpt-hint">Ouvrir le prompt dans ChatGPT <span aria-hidden="true">↗</span></span>
       </a>
       <ActionButton onClick={() => void copyPrompt()} disabled={!prompt}>{copied ? "Prompt copié" : "Copier le prompt"}</ActionButton>
       {copyError && <p className="ai-copy-error" role="status">Copie impossible dans ce navigateur. Ouvrez le prompt ci-dessous et copiez-le manuellement.</p>}

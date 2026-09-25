@@ -80,9 +80,11 @@ test("AI launcher stays a dedicated screen and composes the shared UI primitives
   assert.match(source, /aria-disabled=\{!openUrl\}/);
   assert.match(source, /tabIndex=\{openUrl\?undefined:0\}/);
   assert.match(source, /event\.key==="Enter"\|\|event\.key===" "/);
-  assert.match(source, /<Image src="\/chatgpt-favicon\.ico" alt=""/);
+  assert.match(source, /<Image src="\/openai-mark\.svg" alt="" width=\{90\} height=\{90\}/);
+  assert.match(source, /Ouvrir le prompt dans ChatGPT/);
   assert.doesNotMatch(source, /ai-chatgpt-card|ai-chatgpt-brand|ai-logo-attribution/);
   assert.match(styles, /\.ai-chatgpt-launcher:focus-visible/);
+  assert.match(styles, /\.ai-chatgpt-hint/);
   assert.doesNotMatch(styles, /\.ai-chatgpt-card|\.ai-chatgpt-brand|\.ai-logo-attribution/);
   assert.match(source, /navigator\.clipboard\.writeText\(prompt\)/);
   assert.match(navigation, /"ia"/);

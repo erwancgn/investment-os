@@ -1,8 +1,15 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {getQuotes} from '../app/lib/quotes.ts';
+import {getQuotes, hasYearOfDailyHistory} from '../app/lib/quotes.ts';
 const cached=(currency,price)=>({provider:'yahoo-query2',provider_symbol:'test',native_price:price,native_currency:currency,previous_close:price,market_time:new Date().toISOString(),fetched_at:new Date(Date.now()-600000).toISOString(),validation_flags:'[]'});
 const dbFor=rows=>({prepare(){return {run:async()=>{},bind(id){return {first:async()=>rows[id]??null,run:async()=>{}}}}}});
+test('a recent IPO with complete daily data is accepted without demanding a year of quotes',()=>{
+ const today=new Date('2026-09-24T12:00:00Z');
+ const points=Array.from({length:75},(_,index)=>{const date=new Date(today.getTime()-index*86400000).toISOString().slice(0,10);return{date,close:100,adjustedClose:100}}).reverse();
+ assert.equal(hasYearOfDailyHistory({providerSymbol:'SPCX',currency:'USD',points,fetchedAt:today.toISOString()}),true);
+ const monthly=Array.from({length:6},(_,index)=>{const date=new Date(Date.UTC(2025,index,1)).toISOString().slice(0,10);return{date,close:100,adjustedClose:100}});
+ assert.equal(hasYearOfDailyHistory({providerSymbol:'OLD',currency:'USD',points:monthly,fetchedAt:today.toISOString()}),false,'sparse legacy history stays eligible for daily repair');
+});
 test('expired cache renders converted values without external requests',async()=>{
  const previous=globalThis.fetch;globalThis.fetch=()=>{throw Error('unexpected network')};
  try {const [q]=await getQuotes(['nvda'],false,dbFor({nvda:cached('USD',120),'fx-usd':cached('USD',1.2)}),true);assert.equal(q.eurPrice,100);assert.equal(q.freshness,'stale');assert.ok(q.warnings.some(w=>w.includes('cache_refresh_needed')));}finally{globalThis.fetch=previous;}

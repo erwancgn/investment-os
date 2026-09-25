@@ -179,9 +179,12 @@ export async function getCompanyHistory(ticker:string,db:D1Database,force=false)
 
 export function hasYearOfDailyHistory(history:CachedHistory){
   const last=history.points.at(-1)?.date;
-  if(!last)return false;
+  const first=history.points[0]?.date;
+  if(!last||!first)return false;
   const yearAgo=Date.parse(`${last}T00:00:00Z`)-365*86400000;
-  return history.points.filter(point=>Date.parse(`${point.date}T00:00:00Z`)>=yearAgo).length>=100;
+  const recentPoints=history.points.filter(point=>Date.parse(`${point.date}T00:00:00Z`)>=yearAgo).length;
+  const historySpan=Date.parse(`${last}T00:00:00Z`)-Date.parse(`${first}T00:00:00Z`);
+  return recentPoints>=100||(recentPoints>=20&&historySpan<365*86400000);
 }
 
 export async function getCachedCompanyHistory(ticker:string,db:D1Database){
