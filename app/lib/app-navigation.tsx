@@ -27,7 +27,7 @@ export function useAppNavigation() {
     for (const map of [positions.current, views.current]) if (map.size > 100) map.delete(map.keys().next().value!);
   };
   const apply = (next: Route) => {
-    const endpoint = next.document ? `/api/analyses/${encodeURIComponent(next.document)}` : next.company ? `/api/companies/${encodeURIComponent(next.company)}` : ({portfolio:"/api/portfolio/live",companies:"/api/companies",themes:"/api/theme-baskets",ia:null,gestion:"/api/notion/integrity"})[next.tab];
+    const endpoint = next.document ? `/api/analyses/${encodeURIComponent(next.document)}` : next.company ? `/api/companies/${encodeURIComponent(next.company)}` : ({portfolio:"/api/portfolio/live",companies:"/api/companies",themes:"/api/theme-baskets?dimension=theme&period=1y",ia:null,gestion:"/api/notion/integrity"})[next.tab];
     if (endpoint) preloadResource(endpoint);
     current.current = next;
     setVisited(previous => previous.includes(next.tab) ? previous : [...previous, next.tab]);
