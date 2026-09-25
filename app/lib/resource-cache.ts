@@ -1,6 +1,6 @@
 export type ResourceSnapshot<T> = { data?: T; loading: boolean; error: string; updatedAt: number };
 export const emptyResource = { loading: true, error: "", updatedAt: 0 };
-type Entry = { revision: number; snapshot: ResourceSnapshot<unknown>; listeners: Set<() => void>; promise?: Promise<void>; controller?: AbortController; dirty?: boolean; refreshQuery?: boolean };
+type Entry = { revision: number; snapshot: ResourceSnapshot<unknown>; listeners: Set<() => void>; promise?: Promise<void>; controller?: AbortController; dirty?: boolean; refreshQuery?: boolean | "force" };
 
 // Session memory only: private API responses never enter persistent browser storage.
 export function createResourceCache(fetcher: typeof fetch = fetch) {
@@ -29,11 +29,11 @@ export function createResourceCache(fetcher: typeof fetch = fetch) {
       notify(entry);
     });
   }
-  function read(url: string, force = false, refreshQuery = false): Promise<void> {
+  function read(url: string, force = false, refreshQuery: boolean | "force" = false): Promise<void> {
     const entry = entryFor(url);
     if (entry.promise) {
-      if (refreshQuery && !entry.refreshQuery) entry.dirty = true;
-      entry.refreshQuery ||= refreshQuery;
+      if (refreshQuery && (!entry.refreshQuery || refreshQuery === "force" && entry.refreshQuery !== "force")) entry.dirty = true;
+      entry.refreshQuery = refreshQuery === "force" ? "force" : entry.refreshQuery || refreshQuery;
       return entry.promise;
     }
     if (!force && Date.now() - entry.snapshot.updatedAt < 60_000) return Promise.resolve();
@@ -48,7 +48,7 @@ export function createResourceCache(fetcher: typeof fetch = fetch) {
     notify(entry);
     entry.promise = Promise.resolve().then(async () => {
       try {
-        const response = await fetcher(url + (refreshQuery ? `${url.includes("?") ? "&" : "?"}refresh=1` : ""), { cache: "no-store", signal: controller.signal });
+        const response = await fetcher(url + (refreshQuery ? `${url.includes("?") ? "&" : "?"}refresh=1${refreshQuery === "force" ? "&force=1" : ""}` : ""), { cache: "no-store", signal: controller.signal });
         if (!isCurrent()) return;
         if (response.status === 401 || response.status === 403) {
           clear("Session expirée. Reconnecte-toi pour actualiser les données.");

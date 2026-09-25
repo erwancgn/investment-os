@@ -67,6 +67,6 @@ export function useClientResource<T>(url: string, refreshQuery = false, enabled 
   useEffect(() => {
     if (enabled && url === "/api/portfolio/live" && (snapshot.data as { refreshPending?: boolean } | undefined)?.refreshPending) void cache.read(url, true, true);
   }, [enabled, url, snapshot.data]);
-  const refresh = useCallback(() => enabled ? cache.read(url, true, refreshQuery) : Promise.resolve(), [enabled, url, refreshQuery]);
+  const refresh = useCallback((forceProvider = false) => enabled ? cache.read(url, true, refreshQuery && forceProvider ? "force" : refreshQuery) : Promise.resolve(), [enabled, url, refreshQuery]);
   return { ...snapshot, refresh };
 }

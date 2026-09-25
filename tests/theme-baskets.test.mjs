@@ -121,10 +121,11 @@ test("opening baskets reads cached history only and ignores untickered members",
     {page_id:"untickered",title:"SpaceX",notion_url:"",properties_json:JSON.stringify({Company:asProperty("title",[{plain_text:"SpaceX"}]),Ticker:asProperty("rich_text",[]),Sector:asProperty("select",{name:"Software"}),Themes:asProperty("multi_select",[{name:"AI Infrastructure"}])})},
   ];
   const cache=new Map([["EURO",{provider_symbol:"EURO",currency:"EUR",history_json:JSON.stringify([{date:"2025-09-22",close:100,adjustedClose:100},{date:"2026-09-22",close:120,adjustedClose:120}]),fetched_at:"2026-09-22T00:00:00.000Z"}]]);
+  let historyReads=0;
   const db={prepare(sql){return{
     run:async()=>({success:true}),
     all:async()=>({results:sql.includes("source_key='companies'")?documents:[]}),
-    bind(...values){return{first:async()=>sql.includes("quote_history_cache")?cache.get(values[0])??null:null,run:async()=>({success:true})};},
+    bind(...values){return{first:async()=>sql.includes("quote_history_cache")?cache.get(values[0])??null:null,all:async()=>{historyReads++;return{results:values.map(value=>cache.get(value)).filter(Boolean)};},run:async()=>({success:true})};},
   };}};
   const previous=globalThis.fetch;let requests=0;globalThis.fetch=async()=>{requests++;throw Error("unexpected network request");};
   try{
@@ -133,20 +134,58 @@ test("opening baskets reads cached history only and ignores untickered members",
     assert.equal(result.selectedBasket.returnPercent,20);
     assert.equal(result.selectedBasket.memberCount,2);
     assert.equal(result.selectedBasket.coveredCount,1);
+    assert.equal(historyReads,1,"a single D1 query loads equity and FX histories");
     assert.equal(result.selectedBasket.companies.find(item=>item.id==="untickered").returnPercent,null);
     const failedRefresh=await loadBaskets(db,{dimension:"theme",period:"1y",selectedName:"AI Infrastructure",refresh:true});
     assert.equal(requests,1);
     assert.equal(failedRefresh.selectedBasket.returnPercent,20,"one failed quote must not publish a partially refreshed basket");
     assert.ok(failedRefresh.refreshErrors.length>0);
+    cache.get("EURO").fetched_at=new Date().toISOString();
+    requests=0;
+    await loadBaskets(db,{dimension:"theme",period:"1y",selectedName:"AI Infrastructure",refresh:true});
+    assert.equal(requests,0,"an automatic refresh keeps recent history without Yahoo calls");
+    await loadBaskets(db,{dimension:"theme",period:"1y",selectedName:"AI Infrastructure",refresh:true,force:true});
+    assert.equal(requests,1,"the manual refresh forces a provider request");
     requests=0;
     const onlyUntickered={prepare(sql){return{
       run:async()=>({success:true}),
       all:async()=>({results:sql.includes("source_key='companies'")?[documents[1]]:[]}),
-      bind(...values){return{first:async()=>cache.get(values[0])??null,run:async()=>({success:true})};},
+      bind(...values){return{first:async()=>cache.get(values[0])??null,all:async()=>({results:values.map(value=>cache.get(value)).filter(Boolean)}),run:async()=>({success:true})};},
     };}};
     const untickeredRefresh=await loadBaskets(onlyUntickered,{dimension:"theme",period:"1y",selectedName:"AI Infrastructure",refresh:true});
     assert.equal(requests,0,"an untickered-only basket needs neither Yahoo history nor FX");
     assert.equal(untickeredRefresh.selectedBasket.returnPercent,null);
+  }finally{globalThis.fetch=previous;}
+});
+
+test("one Yahoo failure retains its cached company while other basket histories update",async()=>{
+  const bundle=await build({entryPoints:["app/lib/theme-baskets.ts"],bundle:true,write:false,platform:"node",format:"esm"});
+  const {getThemeBaskets:loadBaskets}=await import("data:text/javascript;base64,"+Buffer.from(bundle.outputFiles[0].text).toString("base64"));
+  const documents=["A","B"].map(ticker=>({page_id:ticker,title:ticker,notion_url:"",properties_json:JSON.stringify({Company:{type:"title",title:[{plain_text:ticker}]},Ticker:{type:"rich_text",rich_text:[{plain_text:ticker}]},Themes:{type:"multi_select",multi_select:[{name:"AI Infrastructure"}]}})}));
+  const dates=["2025-09-22","2026-09-22"];
+  const row=(symbol,end)=>({provider_symbol:symbol,currency:"EUR",history_json:JSON.stringify(dates.map((date,index)=>({date,close:index?end:100,adjustedClose:index?end:100}))),fetched_at:"2026-09-22T00:00:00.000Z"});
+  const cache=new Map([["A",row("A",110)],["B",row("B",100)]]);
+  const db={prepare(sql){return{
+    run:async()=>({success:true}),
+    all:async()=>({results:sql.includes("source_key='companies'")?documents:[]}),
+    bind(...values){return{
+      first:async()=>cache.get(values[0])??null,
+      all:async()=>({results:values.map(value=>cache.get(value)).filter(Boolean)}),
+      run:async()=>{if(sql.includes("INSERT INTO quote_history_cache"))cache.set(values[0],{provider_symbol:values[0],currency:values[1],history_json:values[2],fetched_at:values[3]});return{success:true};},
+    };},
+  };}};
+  const previous=globalThis.fetch;
+  globalThis.fetch=async url=>{
+    if(String(url).includes("/A?"))throw Error("Yahoo A unavailable");
+    return new Response(JSON.stringify({chart:{result:[{meta:{symbol:"B",currency:"EUR",exchangeTimezoneName:"UTC"},timestamp:[Date.parse("2026-09-22T12:00:00Z")/1000],indicators:{quote:[{close:[120]}],adjclose:[{adjclose:[120]}]}}]}}));
+  };
+  try{
+    const result=await loadBaskets(db,{dimension:"theme",period:"1y",selectedName:"AI Infrastructure",refresh:true});
+    assert.equal(result.refreshErrors.length,1);
+    assert.equal(result.selectedBasket.coveredCount,2);
+    assert.equal(result.selectedBasket.returnPercent,15);
+    assert.ok(Math.abs(result.selectedBasket.companies.find(item=>item.id==="A").returnPercent-10)<1e-9);
+    assert.ok(Math.abs(result.selectedBasket.companies.find(item=>item.id==="B").returnPercent-20)<1e-9);
   }finally{globalThis.fetch=previous;}
 });
 
@@ -161,7 +200,7 @@ test("stale FX is not silently applied to a current equity history",()=>{
 
 test("periods and API parameters are restricted to the supported selectors",()=>{
   assert.deepEqual(basketPeriods,["1d","5d","1m","6m","YTD","1y","5y","max"]);
-  assert.deepEqual(parseBasketOptions(new URLSearchParams("dimension=sector&period=5y&basket=Semiconductors&refresh=1")),{dimension:"sector",period:"5y",selectedName:"Semiconductors",refresh:true});
+  assert.deepEqual(parseBasketOptions(new URLSearchParams("dimension=sector&period=5y&basket=Semiconductors&refresh=1&force=1")),{dimension:"sector",period:"5y",selectedName:"Semiconductors",refresh:true,force:true});
   assert.equal(parseBasketOptions(new URLSearchParams("dimension=invalid&period=all")).period,"1y");
 });
 

@@ -98,12 +98,29 @@ async function readHistory(symbol:string,db?:D1Database):Promise<CachedHistory|n
   if(!db)return null;
   await ensureHistoryTable(db);
   const row=await db.prepare("SELECT provider_symbol,currency,history_json,fetched_at FROM quote_history_cache WHERE provider_symbol = ?").bind(symbol).first<{provider_symbol:string;currency:string;history_json:string;fetched_at:string}>();
+  return parseHistoryRow(row);
+}
+
+function parseHistoryRow(row:{provider_symbol:string;currency:string;history_json:string;fetched_at:string}|null):CachedHistory|null{
   if(!row)return null;
   try{
     const points=JSON.parse(row.history_json) as HistoricalPoint[];
     if(!Array.isArray(points))return null;
     return {providerSymbol:row.provider_symbol,currency:row.currency as Currency,points,fetchedAt:row.fetched_at};
   }catch{return null;}
+}
+
+export async function getCachedCompanyHistories(tickers:string[],db:D1Database):Promise<Map<string,CachedHistory>>{
+  const symbols=[...new Set(tickers.filter(Boolean).map(yahooSymbolForTicker))];
+  if(!symbols.length)return new Map();
+  await ensureHistoryTable(db);
+  const histories=new Map<string,CachedHistory>();
+  for(let start=0;start<symbols.length;start+=16){
+    const batch=symbols.slice(start,start+16);
+    const rows=(await db.prepare(`SELECT provider_symbol,currency,history_json,fetched_at FROM quote_history_cache WHERE provider_symbol IN (${batch.map(()=>"?").join(",")})`).bind(...batch).all<{provider_symbol:string;currency:string;history_json:string;fetched_at:string}>()).results??[];
+    for(const row of rows){const history=parseHistoryRow(row);if(history)histories.set(row.provider_symbol,history);}
+  }
+  return histories;
 }
 
 async function saveHistory(history:CachedHistory,db?:D1Database){

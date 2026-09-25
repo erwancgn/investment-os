@@ -40,6 +40,14 @@ test('background basket refresh keeps the cached snapshot until refresh=1 fails 
   assert.equal(snapshot.error, 'offline');
 });
 
+test('basket manual refresh forces Yahoo without changing portfolio refresh URLs', async () => {
+  const urls = [];
+  const cache = createResourceCache(async url => { urls.push(url); return json({ ok: true }); });
+  await cache.read('/api/theme-baskets?period=1y', true, 'force');
+  await cache.read('/api/portfolio/live', true, true);
+  assert.deepEqual(urls, ['/api/theme-baskets?period=1y&refresh=1&force=1', '/api/portfolio/live?refresh=1']);
+});
+
 test('Notion invalidation during a pending request discards the obsolete response', async () => {
   const pending = deferred(); let calls = 0;
   const cache = createResourceCache(async () => ++calls === 1 ? pending.promise : json({ revision: 2 }));

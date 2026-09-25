@@ -1,12 +1,12 @@
 import type { CompanyListItem } from "./investment-data.ts";
 import {
   fxSymbolForCurrency,
-  getCachedCompanyHistory,
+  getCachedCompanyHistories,
   getCompanyHistory,
   historicalPriceInEur,
+  yahooSymbolForTicker,
   type CachedHistory,
   type Currency,
-  type HistoricalPoint,
 } from "./quotes.ts";
 
 export type BasketDimension="sector"|"theme";
@@ -129,48 +129,46 @@ async function mapLimited<T,R>(items:T[],limit:number,run:(item:T,index:number)=
   return results;
 }
 
-export async function getThemeBaskets(db:D1Database,options:{dimension:BasketDimension;period:BasketPeriod;selectedName?:string;refresh?:boolean}) :Promise<ThemeBasketResponse>{
+export async function getThemeBaskets(db:D1Database,options:{dimension:BasketDimension;period:BasketPeriod;selectedName?:string;refresh?:boolean;force?:boolean}) :Promise<ThemeBasketResponse>{
   const {listCompanies}=await import("./investment-data.ts");
   const companies=await listCompanies(db,false);
   const refreshErrors:string[]=[];
-  const cached=await Promise.all(companies.map(company=>company.ticker?getCachedCompanyHistory(company.ticker,db):Promise.resolve(null)));
+  const supportedCurrencies:Currency[]=["USD","JPY","GBP","SEK","KRW","CHF"];
+  const fxSymbols=supportedCurrencies.map(currency=>fxSymbolForCurrency(currency)!).filter(Boolean);
+  const cachedBySymbol=await getCachedCompanyHistories([...companies.map(company=>company.ticker),...fxSymbols],db);
+  const cached=companies.map(company=>company.ticker?cachedBySymbol.get(yahooSymbolForTicker(company.ticker))??null:null);
   const histories=new Map<string,CachedHistory>();
   cached.forEach((history,index)=>{if(history)histories.set(companies[index].id,history);});
-  // The first response is always built from the local D1 snapshot. The browser
-  // requests refresh=1 after rendering; only that explicit path may wait on Yahoo.
   const shouldRefresh=Boolean(options.refresh);
-  const loaded=shouldRefresh
-    ? await mapLimited(companies,3,async(company,index)=>{
-      if(!company.ticker)return null;
-      try{return await getCompanyHistory(company.ticker,db,true);}catch(error){refreshErrors.push(`${company.name}: ${error instanceof Error?error.message:"échec Yahoo"}`);return cached[index];}
-    })
-    : cached;
-  histories.clear();
-  loaded.forEach((history,index)=>{if(history)histories.set(companies[index].id,history);});
-  const currencies=[...new Set([...histories.values()].map(history=>history.currency).filter((currency):currency is Currency=>currency!=="EUR"))];
+  const needsRefresh=(history:CachedHistory|undefined|null)=>Boolean(options.force)||!history||Date.now()-Date.parse(history.fetchedAt)>45*60_000;
+  const currencies=[...new Set(companies.map(company=>company.currency.toUpperCase()).filter((currency):currency is Currency=>supportedCurrencies.includes(currency as Currency)).concat(cached.filter((history):history is CachedHistory=>Boolean(history)).map(history=>history.currency).filter((currency):currency is Currency=>currency!=="EUR")))];
   const fxHistories=new Map<Currency,CachedHistory>();
   await mapLimited(currencies,3,async(currency)=>{
     const symbol=fxSymbolForCurrency(currency);
     if(!symbol)return;
-    try{
-      const fx=shouldRefresh?await getCompanyHistory(symbol,db,true):await getCachedCompanyHistory(symbol,db);
-      if(fx)fxHistories.set(currency,fx);
-    }catch(error){refreshErrors.push(`${currency}/EUR: ${error instanceof Error?error.message:"échec Yahoo"}`);}
+    const cachedFx=cachedBySymbol.get(symbol);
+    if(!shouldRefresh||!needsRefresh(cachedFx)){if(cachedFx)fxHistories.set(currency,cachedFx);return;}
+    try{fxHistories.set(currency,await getCompanyHistory(symbol,db,true));}
+    catch(error){if(cachedFx)fxHistories.set(currency,cachedFx);refreshErrors.push(`${currency}/EUR: ${error instanceof Error?error.message:"échec Yahoo"}`);}
   });
-  // Never publish a partly refreshed index: on any provider/FX failure, rebuild
-  // from the exact D1 snapshot that was available before this refresh began.
-  if(shouldRefresh&&refreshErrors.length){
-    histories.clear();
-    cached.forEach((history,index)=>{if(history)histories.set(companies[index].id,history);});
-    fxHistories.clear();
-    const cachedCurrencies=[...new Set([...histories.values()].map(history=>history.currency).filter((currency):currency is Currency=>currency!=="EUR"))];
-    await mapLimited(cachedCurrencies,3,async(currency)=>{
-      const symbol=fxSymbolForCurrency(currency);
-      if(!symbol)return;
-      const fx=await getCachedCompanyHistory(symbol,db);
-      if(fx)fxHistories.set(currency,fx);
-    });
-  }
+  const prioritized=options.selectedName?[...companies].sort((a,b)=>Number(membership(b,options.dimension).includes(options.selectedName!))-Number(membership(a,options.dimension).includes(options.selectedName!))):companies;
+  const loaded=shouldRefresh
+    ? await mapLimited(prioritized,3,async(company)=>{
+      if(!company.ticker)return null;
+      const cachedHistory=cachedBySymbol.get(yahooSymbolForTicker(company.ticker));
+      if(!needsRefresh(cachedHistory))return cachedHistory!;
+      try{return await getCompanyHistory(company.ticker,db,true);}catch(error){refreshErrors.push(`${company.name}: ${error instanceof Error?error.message:"échec Yahoo"}`);return cachedBySymbol.get(yahooSymbolForTicker(company.ticker))??null;}
+    })
+    : cached;
+  histories.clear();
+  loaded.forEach((history,index)=>{if(history)histories.set((shouldRefresh?prioritized:companies)[index].id,history);});
+  // Cold histories may reveal a currency absent from Notion; fetch its FX before calculating.
+  if(shouldRefresh)await mapLimited([...new Set([...histories.values()].map(history=>history.currency).filter((currency):currency is Currency=>currency!=="EUR"&&!fxHistories.has(currency)))],3,async(currency)=>{
+    const symbol=fxSymbolForCurrency(currency);
+    if(!symbol)return;
+    try{fxHistories.set(currency,await getCompanyHistory(symbol,db,true));}
+    catch(error){const fallback=cachedBySymbol.get(symbol);if(fallback)fxHistories.set(currency,fallback);refreshErrors.push(`${currency}/EUR: ${error instanceof Error?error.message:"échec Yahoo"}`);}
+  });
   const calculated=buildThemeBaskets(companies,histories,fxHistories,options.dimension,options.period,options.selectedName);
   return {generatedAt:new Date().toISOString(),dimension:options.dimension,period:options.period,...calculated,refreshErrors};
 }
@@ -180,5 +178,5 @@ export function parseBasketOptions(params:URLSearchParams){
   const validPeriods=new Set<string>(basketPeriods);
   const requestedPeriod=params.get("period")??"1y";
   const period=(validPeriods.has(requestedPeriod)?requestedPeriod:"1y") as BasketPeriod;
-  return {dimension,period,selectedName:params.get("basket")??undefined,refresh:params.get("refresh")==="1"} as const;
+  return {dimension,period,selectedName:params.get("basket")??undefined,refresh:params.get("refresh")==="1",force:params.get("force")==="1"} as const;
 }

@@ -63,8 +63,8 @@
 }
 .ai-chatgpt-launcher {
   display: flex;
-  width: 56px;
-  min-height: 56px;
+  width: 84px;
+  min-height: 84px;
   justify-self: center;
   align-items: center;
   justify-content: center;

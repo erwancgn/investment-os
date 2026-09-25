@@ -81,13 +81,27 @@ export function ThemeBaskets({openCompany=()=>undefined,initialData}:{openCompan
   const query=new URLSearchParams({dimension,period});
   if(selectedName)query.set("basket",selectedName);
   const url=`/api/theme-baskets?${query.toString()}`;
-  const {data,error,loading,refresh}=useClientResource<ThemeBasketResponse>(url,true,initialData===undefined);
-  const [retainedView,setRetainedView]=useState(initialData);
+  const {data,error,loading,refresh,updatedAt}=useClientResource<ThemeBasketResponse>(url,true,initialData===undefined);
+  const [polledView,setPolledView]=useState<{url:string;data:ThemeBasketResponse;receivedAt:number}|null>(null);
   const pageRef=useRef<HTMLElement>(null);
   const autoRefreshStarted=useRef(false);
   const lastRefreshAt=useRef(0);
-  useEffect(()=>{if(data)setRetainedView(data);},[data]);
-  const view=data??retainedView??initialData;
+  const view=polledView?.url===url&&polledView.receivedAt>updatedAt?polledView.data:data??polledView?.data??initialData;
+  useEffect(()=>{
+    if(!loading||!view)return;
+    let cancelled=false,inFlight=false;
+    const readUpdatedCache=async()=>{
+      if(inFlight||document.visibilityState!=="visible"||!pageRef.current?.getClientRects().length)return;
+      inFlight=true;
+      try{
+        const response=await fetch(`${url}&snapshot=1`,{cache:"no-store"});
+        if(response.ok){const snapshot=await response.json() as ThemeBasketResponse;if(!cancelled)setPolledView({url,data:snapshot,receivedAt:Date.now()});}
+      }catch{/* The displayed snapshot remains available while offline. */}
+      finally{inFlight=false;}
+    };
+    const interval=window.setInterval(()=>void readUpdatedCache(),2500);
+    return()=>{cancelled=true;window.clearInterval(interval);};
+  },[loading,url,view]);
   useEffect(()=>{if(view&&!autoRefreshStarted.current){autoRefreshStarted.current=true;lastRefreshAt.current=Date.now();void refresh();}},[view,refresh]);
   useEffect(()=>{
     const refreshIfDue=()=>{
@@ -113,9 +127,10 @@ export function ThemeBaskets({openCompany=()=>undefined,initialData}:{openCompan
     <div className="theme-basket-controls">
       <CompactControl variant="select" ariaLabel="Regrouper les paniers par" value={dimension} options={dimensionOptions} onChange={value=>{setDimension(value as BasketDimension);setSelectedName("");}}/>
       <CompactControl variant="select" ariaLabel="Période de performance" value={period} options={periodOptions} onChange={value=>setPeriod(value as BasketPeriod)}/>
-      <ActionButton compact onClick={()=>{lastRefreshAt.current=Date.now();void refresh();}} disabled={loading} ariaLabel="Actualiser les cours des paniers">Actualiser</ActionButton>
+      <ActionButton compact onClick={()=>{lastRefreshAt.current=Date.now();void refresh(true);}} disabled={loading} ariaLabel="Actualiser les cours des paniers">Actualiser</ActionButton>
     </div>
     {error&&view&&<p className="resource-error" role="status">{error} Les dernières données chargées restent affichées.</p>}
+    {view&&view.refreshErrors.length>0&&<p className="resource-error" role="status">Actualisation partielle : {view.refreshErrors.length} cours indisponible{view.refreshErrors.length>1?"s":""}. Les performances affichées utilisent les historiques disponibles.</p>}
     {!view&&loading?<AsyncState title="Chargement des paniers…" description="Lecture des cours historiques en cache." className="theme-basket-state"/>:null}
     {!view&&error?<AsyncState title="Paniers indisponibles" description={error} className="theme-basket-state"/>:null}
     {view&&view.baskets.length===0?<AsyncState title="Aucun panier disponible" description="Les sociétés doivent avoir un ticker et une classification pour apparaître." className="theme-basket-state"/>:null}
