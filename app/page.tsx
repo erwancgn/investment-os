@@ -42,7 +42,7 @@ function Header({ title, onOpenManagement }: { title: string; onOpenManagement: 
   return <AppPageHeader title={title} onOpenManagement={onOpenManagement}/>;
 }
 
-function Portfolio({ openCompany, onOpenManagement, personal }: { openCompany: (id?: string) => void; onOpenManagement: () => void; personal: boolean }) {
+function Portfolio({ openCompany, onOpenManagement }: { openCompany: (id?: string) => void; onOpenManagement: () => void }) {
   const { data, loading, error, refresh } = useClientResource<LivePortfolio>("/api/portfolio/live", true);
   const portfolio = data ?? null;
   const basketWarmupStarted = useRef(false);
@@ -55,7 +55,6 @@ function Portfolio({ openCompany, onOpenManagement, personal }: { openCompany: (
     <PortfolioPageHeader quoteAsOf={portfolio?.quoteAsOf} loading={loading} onRefresh={() => void refresh()} onOpenManagement={onOpenManagement} />
     {error && portfolio && <p className="resource-error" role="status">{error} Les dernières données chargées restent affichées.</p>}
     <LivePortfolioDashboard data={portfolio} loading={loading} error={error} onRefresh={() => void refresh()} openCompany={openCompany} beforeDiagnostic={<TargetAllocation data={portfolio}/>}/>
-    {personal && <NotionSyncStatus />}
   </>;
 }
 
@@ -67,7 +66,7 @@ function Themes({ onOpenManagement }: { onOpenManagement: () => void }) {
   return <><Header title="Thèmes" onOpenManagement={onOpenManagement}/><ThemeBaskets/></>;
 }
 
-function Gestion({ onOpenManagement }: { onOpenManagement: () => void }) { return <><Header title="Gestion" onOpenManagement={onOpenManagement}/><NotionIntegrity/></>; }
+function Gestion({ onOpenManagement }: { onOpenManagement: () => void }) { return <><Header title="Gestion" onOpenManagement={onOpenManagement}/><NotionSyncStatus/><NotionIntegrity/></>; }
 
 export default function Home(){
   useResourceLifecycle();
@@ -79,7 +78,7 @@ export default function Home(){
   const scrollToTop = () => window.scrollTo({ top: 0, behavior: "smooth" });
   const onTabIconDoubleClick = (tab: Tab) => active === tab && !selectedCompany && !route.document ? scrollToTop : undefined;
   const content = (tab: Tab) => ({
-    portfolio: <Portfolio openCompany={id => { if (id) openCompany(id); }} onOpenManagement={onOpenManagement} personal={session.scope === "personal"} />,
+    portfolio: <Portfolio openCompany={id => { if (id) openCompany(id); }} onOpenManagement={onOpenManagement} />,
     companies: <Companies openCompany={openCompany} onOpenManagement={onOpenManagement} />,
     themes: <Themes onOpenManagement={onOpenManagement} />,
     ia: <AiAnalysis onOpenManagement={onOpenManagement} />,
