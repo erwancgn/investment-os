@@ -52,6 +52,113 @@ test('all Notion mutation routes reject anonymous browser requests', async () =>
   }
 });
 
+test('anonymous callers always use the demo scope, even with a forged personal cookie', async () => {
+  const { default: worker } = await loadWorker();
+  const db = new Proxy({}, { get() { throw new Error('private D1 access attempted'); } });
+  const env = { DB: db };
+  const ctx = { waitUntil() {}, passThroughOnException() {} };
+
+  const session = await worker.fetch(new Request('https://investment-os.test/api/session', {
+    headers: { cookie: 'investment-os-scope=personal' },
+  }), env, ctx);
+  assert.equal(session.status, 200);
+  assert.deepEqual(await session.json(), { scope: 'demo', canAccessPersonal: false });
+
+  const personalSelection = await worker.fetch(new Request('https://investment-os.test/api/session', {
+    method: 'POST',
+    headers: { origin: 'https://investment-os.test', 'content-type': 'application/json' },
+    body: JSON.stringify({ scope: 'personal' }),
+  }), env, ctx);
+  assert.equal(personalSelection.status, 403);
+  assert.doesNotMatch(await personalSelection.text(), /owner@|personal/);
+
+  const portfolio = await worker.fetch(new Request('https://investment-os.test/api/portfolio/live', {
+    headers: { cookie: 'investment-os-scope=personal' },
+  }), env, ctx);
+  assert.equal(portfolio.status, 200);
+  const portfolioBody = await portfolio.json();
+  assert.ok(portfolioBody.positions.every(position => position.id.startsWith('demo-')));
+  assert.doesNotMatch(JSON.stringify(portfolioBody), /notion\.so\/[0-9a-f-]{32,}/i);
+
+  const privateId = await worker.fetch(new Request('https://investment-os.test/api/analyses/known-private-page-id', {
+    headers: { cookie: 'investment-os-scope=personal' },
+  }), env, ctx);
+  assert.equal(privateId.status, 404);
+  assert.doesNotMatch(await privateId.text(), /known-private-page-id/);
+
+  const status = await worker.fetch(new Request('https://investment-os.test/api/notion/status', {
+    headers: { cookie: 'investment-os-scope=personal' },
+  }), env, ctx);
+  assert.equal(status.status, 200);
+  assert.deepEqual(await status.json(), { configured: false });
+
+  const refresh = await worker.fetch(new Request('https://investment-os.test/api/notion/refresh', {
+    method: 'POST',
+    headers: { origin: 'https://investment-os.test', 'sec-fetch-site': 'same-origin', 'x-investment-os-action': 'notion-refresh', cookie: 'investment-os-scope=personal' },
+  }), env, ctx);
+  assert.equal(refresh.status, 403);
+
+  const quotes = await worker.fetch(new Request('https://investment-os.test/api/quotes?assets=nvda', {
+    headers: { cookie: 'investment-os-scope=personal' },
+  }), env, ctx);
+  assert.equal(quotes.status, 403);
+});
+
+test('owner identity comes only from the Sites authenticated email header plus server configuration', async () => {
+  const { default: worker } = await loadWorker();
+  const ctx = { waitUntil() {}, passThroughOnException() {} };
+  const request = new Request('https://investment-os.test/api/session', {
+    headers: { 'oai-authenticated-user-email': ' Owner@Example.Test ' },
+  });
+
+  const untrustedHeaderOnly = await worker.fetch(new Request('https://investment-os.test/api/session', {
+    headers: { 'x-forwarded-email': 'owner@example.test', cookie: 'investment-os-scope=personal' },
+  }), { OWNER_EMAIL: 'owner@example.test' }, ctx);
+  assert.deepEqual(await untrustedHeaderOnly.json(), { scope: 'demo', canAccessPersonal: false });
+
+  const configured = await worker.fetch(request, { OWNER_EMAIL: 'owner@example.test' }, ctx);
+  assert.deepEqual(await configured.json(), { scope: 'demo', canAccessPersonal: true });
+
+  const explicitlyPersonal = await worker.fetch(new Request('https://investment-os.test/api/session', {
+    headers: {
+      'oai-authenticated-user-email': 'owner@example.test',
+      cookie: 'investment-os-scope=personal',
+    },
+  }), { OWNER_EMAIL: 'owner@example.test' }, ctx);
+  assert.deepEqual(await explicitlyPersonal.json(), { scope: 'personal', canAccessPersonal: true });
+
+  const mismatched = await worker.fetch(request, { OWNER_EMAIL: 'someone-else@example.test' }, ctx);
+  assert.deepEqual(await mismatched.json(), { scope: 'demo', canAccessPersonal: false });
+});
+
+test('image optimizer cannot proxy API routes or arbitrary static paths', async () => {
+  const { default: worker } = await loadWorker();
+  let assetFetches = 0;
+  const response = await worker.fetch(new Request('https://investment-os.test/_vinext/image?url=%2Fapi%2Fportfolio%2Flive&w=640&q=75'), {
+    ASSETS: { fetch: async () => { assetFetches += 1; return new Response('private'); } },
+    IMAGES: { input() { throw new Error('image transform must not run'); } },
+  }, { waitUntil() {}, passThroughOnException() {} });
+  assert.equal(response.status, 404);
+  assert.equal(assetFetches, 0);
+});
+
+test('owner must explicitly select personal scope and the preference is an HttpOnly cookie', async () => {
+  const { default: worker } = await loadWorker();
+  const ctx = { waitUntil() {}, passThroughOnException() {} };
+  const response = await worker.fetch(new Request('https://investment-os.test/api/session', {
+    method: 'POST',
+    headers: {
+      origin: 'https://investment-os.test',
+      'content-type': 'application/json',
+      'oai-authenticated-user-email': 'owner@example.test',
+    },
+    body: JSON.stringify({ scope: 'personal' }),
+  }), { OWNER_EMAIL: 'owner@example.test' }, ctx);
+  assert.equal(response.status, 200);
+  assert.equal(response.headers.get('set-cookie'), 'investment-os-scope=personal; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=2592000');
+  assert.deepEqual(await response.json(), { scope: 'personal', canAccessPersonal: true });
+});
+
 test('all Notion mutation routes reject an incorrect bearer token', async () => {
   const { default: worker } = await loadWorker();
   for (const path of mutationPaths) {
@@ -142,7 +249,7 @@ test('browser Notion surfaces never expose server mutation secrets or internal s
   assert.match(client, /x-investment-os-action["']:\s*["']notion-refresh/);
 });
 
-test('manual document refresh is same-origin only and never needs the server sync secret in the browser', async () => {
+test('manual document refresh requires owner scope and remains same-origin only', async () => {
   const { default: worker } = await loadWorker();
   const crossOrigin = await worker.fetch(
     new Request('https://investment-os.test/api/notion/refresh', {
@@ -172,7 +279,7 @@ test('manual document refresh is same-origin only and never needs the server syn
     {},
     { waitUntil() {}, passThroughOnException() {} },
   );
-  assert.equal(sameOrigin.status, 503);
+  assert.equal(sameOrigin.status, 403);
   assert.doesNotMatch(await sameOrigin.text(), /NOTION_SYNC_AUTH_TOKEN|server-secret/);
 });
 

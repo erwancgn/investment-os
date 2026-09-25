@@ -149,6 +149,7 @@ export function InvestmentMemoReader({
   companyName: string;
   onBack: () => void;
 }) {
+  const isDemo = document.id.startsWith("demo-");
   const [openedAt] = React.useState(() => Date.now());
   const blocks = React.useMemo(() => parseNotionDocument(
     document.plainText,
@@ -313,14 +314,14 @@ export function InvestmentMemoReader({
               <>
                 <span>
                   <strong>Sources et traçabilité</strong>
-                  <small>Document CIO synchronisé depuis Notion</small>
+                  <small>{isDemo ? "Exemple fictif de démonstration" : "Document CIO synchronisé depuis Notion"}</small>
                 </span>
                 <b>Afficher</b>
               </>
             }
           >
             <div className="analysis-source-body">
-              {document.relations.length > 0 && (
+              {!isDemo && document.relations.length > 0 && (
                 <div className="relation-list">
                   {document.relations.map((relation) => (
                     <a
@@ -336,14 +337,14 @@ export function InvestmentMemoReader({
                   ))}
                 </div>
               )}
-              <a
+              {!isDemo && <a
                 className="notion-original"
                 href={document.notionUrl}
                 target="_blank"
                 rel="noreferrer"
               >
                 Comparer avec Notion ↗
-              </a>
+              </a>}
             </div>
           </DisclosureSurface>
         </PrimaryBlock>

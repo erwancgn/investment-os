@@ -77,7 +77,7 @@ function decisionValue(key: keyof DecisionFields, value: string | null) {
   return value;
 }
 
-function DecisionTemplate({ decision }: { decision: DecisionFields }) {
+function DecisionTemplate({ decision, isDemo }: { decision: DecisionFields; isDemo: boolean }) {
   const keys: (keyof DecisionFields)[] = ["action", "account", "instrumentType", "currentWeight", "maximumWeight", "maximumEntryPrice", "nextReview", "confidence", "outcome"];
   const blocks = [
 
@@ -98,7 +98,7 @@ function DecisionTemplate({ decision }: { decision: DecisionFields }) {
           <p className="eyebrow">Decision Card</p>
           <h2>Cadre de décision</h2>
         </div>
-        <span className="decision-template-badge">Notion · structuré</span>
+        <span className="decision-template-badge">{isDemo ? "Document démo structuré" : "Notion · structuré"}</span>
       </div>
       <MetadataGrid
         className="decision-facts"
@@ -135,6 +135,7 @@ export function AnalysisReader({ document, companyName, onBack }: { document: An
 }
 
 function StandardAnalysisReader({ document, companyName, onBack }: { document: AnalysisDoc; companyName: string; onBack: () => void }) {
+  const isDemo = document.id.startsWith("demo-");
   const blocks = React.useMemo(() => parseNotionDocument(document.plainText, document.title, document.notionBlocks), [document]);
   const presentation = documentPresentation(blocks, document.summary ?? "", { category: document.category, handoffSummary: document.handoffSummary });
   const headings = blocks.filter((block): block is Extract<Block, { type: "heading" }> => block.type === "heading" && block.level <= 2 && !isSummaryHeading(block.text));
@@ -166,7 +167,7 @@ function StandardAnalysisReader({ document, companyName, onBack }: { document: A
             <Badge>{document.agent}</Badge>
             {document.current && <Badge tone="positive">Current</Badge>}
             <Badge tone={document.status.toLowerCase().includes("valid") || document.status.toLowerCase().includes("act") ? "positive" : "warning"} className="status-badge">
-              {document.status || "Snapshot Notion"}
+              {document.status || (isDemo ? "Démo" : "Snapshot Notion")}
             </Badge>
           </>
         }
@@ -208,7 +209,7 @@ function StandardAnalysisReader({ document, companyName, onBack }: { document: A
                 <span>
                   <strong>Document source et sommaire</strong>
                   <small>
-                    {blocks.length} blocs Notion structurés · {headings.length} section{headings.length > 1 ? "s" : ""}
+                    {isDemo ? `${blocks.length} blocs fictifs` : `${blocks.length} blocs Notion structurés`} · {headings.length} section{headings.length > 1 ? "s" : ""}
                   </small>
                 </span>
                 <b>Afficher</b>
@@ -227,7 +228,7 @@ function StandardAnalysisReader({ document, companyName, onBack }: { document: A
                   <span className="toc-empty">Document sans titres de section</span>
                 )}
               </nav>
-              {document.relations.length > 0 && (
+              {!isDemo && document.relations.length > 0 && (
                 <div className="relation-list">
                   {document.relations.map((relation) => (
                     <a className={`relation-chip ${relation.property.toLowerCase() === "sources" ? "relation-source" : ""}`} href={relation.url} target="_blank" rel="noreferrer" key={`${relation.property}-${relation.id}`}>
@@ -237,12 +238,10 @@ function StandardAnalysisReader({ document, companyName, onBack }: { document: A
                   ))}
                 </div>
               )}
-              <a className="notion-original" href={document.notionUrl} target="_blank" rel="noreferrer">
-                Ouvrir le document original ↗
-              </a>
+              {!isDemo && <a className="notion-original" href={document.notionUrl} target="_blank" rel="noreferrer">Ouvrir le document original ↗</a>}
             </div>
           </DisclosureSurface>
-          {document.sourceKey === "decisions" && document.decision && <DecisionTemplate decision={document.decision} />}
+          {document.sourceKey === "decisions" && document.decision && <DecisionTemplate decision={document.decision} isDemo={isDemo} />}
           {blocks.map((block, index) => {
             if (presentation.hiddenIndexes.has(index)) return null;
             if (block.type === "heading") {
@@ -278,10 +277,8 @@ function StandardAnalysisReader({ document, companyName, onBack }: { document: A
             return <NotionTable key={index} rows={block.rows} header={block.header ?? true} renderCell={inline} />;
           })}
           <footer className="notion-page-footer">
-            <span>Fin du document synchronisé</span>
-            <a href={document.notionUrl} target="_blank" rel="noreferrer">
-              Comparer avec Notion ↗
-            </a>
+            <span>{isDemo ? "Fin du document de démonstration" : "Fin du document synchronisé"}</span>
+            {!isDemo && <a href={document.notionUrl} target="_blank" rel="noreferrer">Comparer avec Notion ↗</a>}
           </footer>
         </PrimaryBlock>
       </div>

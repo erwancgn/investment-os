@@ -2,15 +2,18 @@
 
 import { useMemo, useState } from "react";
 import Image from "next/image";
-import { useClientResource } from "../lib/client-resource";
+import { useAppSession, useClientResource } from "../lib/client-resource";
 import type { CompanyListItem } from "../lib/investment-data";
-import { aiWorkflows, createAiPrompt, createChatGptUrl } from "../lib/ai-prompt.js";
+import { aiWorkflows, createAiPrompt, createChatGptUrl, demoAiCompanies } from "../lib/ai-prompt.js";
 import { AppPageHeader } from "./app-page-header";
 import { ActionButton, AsyncState, CompactControl, DisclosureSurface, PrimaryBlock, SearchField } from "./ui-primitives";
 
 export function AiAnalysis({ onOpenManagement }: { onOpenManagement: () => void }) {
   const { data, loading, error } = useClientResource<{ companies: CompanyListItem[] }>("/api/companies");
-  const companies = useMemo(() => data?.companies ?? [], [data]);
+  const session = useAppSession();
+  const companies = useMemo(() => session.scope === "demo" ? demoAiCompanies : data?.companies ?? [], [data, session.scope]);
+  const companiesLoading = session.scope !== "demo" && loading && !data;
+  const companiesError = session.scope !== "demo" && error && !data;
   const [query, setQuery] = useState("");
   const [selectedId, setSelectedId] = useState("");
   const [workflow, setWorkflow] = useState(aiWorkflows[0].command);
@@ -22,7 +25,7 @@ export function AiAnalysis({ onOpenManagement }: { onOpenManagement: () => void 
     if (!normalized) return [];
     return companies.filter(company => `${company.name} ${company.ticker}`.toLowerCase().includes(normalized)).slice(0, 6);
   }, [companies, query]);
-  const prompt = selected ? createAiPrompt(workflow, selected.name, selected.ticker) : "";
+  const prompt = selected ? createAiPrompt(workflow, selected.name, selected.ticker, session.scope) : "";
   const openUrl = prompt ? createChatGptUrl(prompt) : undefined;
 
   const copyPrompt = async () => {
@@ -47,8 +50,8 @@ export function AiAnalysis({ onOpenManagement }: { onOpenManagement: () => void 
           <span><strong>{selected.name}</strong><small>{selected.ticker || "Sans ticker"}</small></span>
           <ActionButton compact onClick={() => { setSelectedId(""); setQuery(""); }}>Changer</ActionButton>
         </PrimaryBlock> : <>
-          <SearchField value={query} onChange={setQuery} placeholder="Nom ou ticker…" ariaLabel="Rechercher une compagnie" count={loading && !data ? "Chargement…" : `${companies.length} compagnies`} />
-          {loading && !data ? <AsyncState title="Chargement des compagnies…" description="Lecture de la base Companies." /> : error && !data ? <AsyncState title="Base Companies indisponible" description={error} /> : companies.length === 0 ? <AsyncState title="Aucune compagnie disponible" description="La base Companies ne contient encore aucune société." /> : matches.length > 0 ? <PrimaryBlock className="ai-company-results"><ul>{matches.map(company => <li key={company.id}><button type="button" onClick={() => { setSelectedId(company.id); setQuery(""); }}>{company.name}<span>{company.ticker || "Sans ticker"}</span></button></li>)}</ul></PrimaryBlock> : query.trim() ? <AsyncState title="Aucune compagnie trouvée" description="Essayez un autre nom ou ticker." /> : <p className="ai-field-hint">Recherchez par nom ou ticker.</p>}
+          <SearchField value={query} onChange={setQuery} placeholder="Nom ou ticker…" ariaLabel="Rechercher une compagnie" count={companiesLoading ? "Chargement…" : `${companies.length} compagnies`} />
+          {companiesLoading ? <AsyncState title="Chargement des compagnies…" description="Lecture de la base Companies." /> : companiesError ? <AsyncState title="Base Companies indisponible" description={error} /> : companies.length === 0 ? <AsyncState title="Aucune compagnie disponible" description="La base Companies ne contient encore aucune société." /> : matches.length > 0 ? <PrimaryBlock className="ai-company-results"><ul>{matches.map(company => <li key={company.id}><button type="button" onClick={() => { setSelectedId(company.id); setQuery(""); }}>{company.name}<span>{company.ticker || "Sans ticker"}</span></button></li>)}</ul></PrimaryBlock> : query.trim() ? <AsyncState title="Aucune compagnie trouvée" description="Essayez un autre nom ou ticker." /> : <p className="ai-field-hint">Recherchez par nom ou ticker.</p>}
         </>}
       </div>
       <div className="ai-analysis-field">

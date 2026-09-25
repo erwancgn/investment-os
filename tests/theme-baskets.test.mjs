@@ -300,7 +300,11 @@ test("theme basket chart supports touch and keyboard date scrubbing accessibly",
   assert.match(component,/view\?\.details\.find\(item=>item\.name===requestedBasketName\)/);
   assert.doesNotMatch(component,/snapshot=1|setInterval\(\(\)=>void readUpdatedCache,2500\)/);
   assert.match(component,/refreshThemeBasketCache\(force\)/);
-  assert.match(component,/Au \{selected\?\.endDate/);
+  assert.match(component,/Période d’exemple/);
+  assert.match(component,/clôtures locales/);
+  assert.match(component,/company\.id\.startsWith\("demo-"\)/);
+  assert.match(component,/<Badge>Données fictives<\/Badge>/);
+  assert.match(component,/isDemo\?"exemples":"historiques"/);
   assert.match(component,/document\.visibilityState!=="visible"/);
   assert.match(component,/getClientRects\(\)\.length/);
   assert.match(component,/setInterval\(refreshIfDue,45\*60\*1000\)/);

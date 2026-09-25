@@ -9,6 +9,7 @@ const eur0 = new Intl.NumberFormat("fr-FR",{style:"currency",currency:"EUR",maxi
 export function TargetAllocation({ data }: { data: LivePortfolio | null }){
   const [trajectory,setTrajectory]=useState<10|25>(25);
   const [targetValueDisplay,setTargetValueDisplay]=useState<"weight"|"amount">("weight");
+  const isDemo = Boolean(data && (data.positions.some(position=>position.id.startsWith("demo-")) || data.targetLines.some(line=>line.id.startsWith("demo-"))));
   const targetValue=trajectory*1000;
   const currentValue=data?.totals?.marketValueEur??null;
   const progress=currentValue==null?null:Math.min(100,Math.max(0,currentValue/targetValue*100));
@@ -33,7 +34,7 @@ export function TargetAllocation({ data }: { data: LivePortfolio | null }){
   const coherent=total!=null&&Math.abs(total-100)<.001;
   const totalLabel=total==null?"Cible indisponible":coherent?`${total.toFixed(total%1?1:0)}%`:`Cible incomplète · ${total.toFixed(total%1?1:0)}%`;
   return <PrimaryBlock as="section" className="target-allocation">
-    <div className="panel-head"><div><p className="eyebrow">Cible issue de Notion Portfolio</p><h2>{trajectory===25?"Destination structurelle 25 000 €":"Cible 10 000 €"}</h2></div><div className="trajectory-switch"><SegmentedControl options={[{value:"25",label:"25k"},{value:"10",label:"10k"}]} value={String(trajectory) as "10"|"25"} onChange={value=>setTrajectory(Number(value) as 10|25)} ariaLabel="Choisir la trajectoire"/><span className={`target-total ${total!=null&&!coherent?"target-total-warning":""}`}>{totalLabel}</span></div></div>
+    <div className="panel-head"><div><p className="eyebrow">{isDemo?"Objectif fictif · démonstration":"Cible issue de Notion Portfolio"}</p><h2>{trajectory===25?"Destination structurelle 25 000 €":"Cible 10 000 €"}</h2></div><div className="trajectory-switch"><SegmentedControl options={[{value:"25",label:"25k"},{value:"10",label:"10k"}]} value={String(trajectory) as "10"|"25"} onChange={value=>setTrajectory(Number(value) as 10|25)} ariaLabel="Choisir la trajectoire"/><span className={`target-total ${total!=null&&!coherent?"target-total-warning":""}`}>{totalLabel}</span></div></div>
     <SecondaryBlock className="trajectory-progress"><ProgressBar value={progress} tone="accent" label="Progression vers la cible"/><div><span>{progress==null?"Calcul en cours…":`${progress.toFixed(1)}% du chemin`}</span><span>{remaining==null?"Actualisation des cours en cours…":`${eur0.format(remaining)} restants via apports + performance`}</span></div></SecondaryBlock>
     <p className="target-policy">{trajectory===25?"Piloter la destination des prochains 1 000 €, selon la valorisation. Les légers dépassements intermédiaires ne déclenchent pas de vente.":"Ancienne cible conservée comme point de passage et historique de décision."}</p>
     <div className="target-list" role="list" aria-label="Répartition de la destination structurelle">{lines.map(({line,weight,amount,currentAmount})=>{

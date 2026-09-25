@@ -4,6 +4,38 @@ import { createResourceCache, emptyResource, type ResourceSnapshot } from "./res
 import { readBrowserNotionStatus } from "./notion-sync-client";
 
 const cache = createResourceCache();
+export type AppScope = "demo" | "personal";
+type SessionState = { scope: AppScope; canAccessPersonal: boolean; ready: boolean };
+let sessionState: SessionState = { scope: "demo", canAccessPersonal: false, ready: false };
+const sessionListeners = new Set<() => void>();
+const publishSession = (next: SessionState) => { sessionState = next; sessionListeners.forEach(listener => listener()); };
+let sessionPromise: Promise<void> | undefined;
+let sessionLoaded = false;
+export function useAppSession() {
+  const state = useSyncExternalStore(listener => { sessionListeners.add(listener); return () => sessionListeners.delete(listener); }, () => sessionState, () => ({ scope: "demo", canAccessPersonal: false, ready: false }));
+  useEffect(() => { void loadAppSession(); }, []);
+  return state;
+}
+export function loadAppSession() {
+  if (sessionLoaded) return Promise.resolve();
+  if (sessionPromise) return sessionPromise;
+  sessionPromise = fetch("/api/session", { cache: "no-store" }).then(async response => {
+    if (!response.ok) throw new Error("Session unavailable");
+    const body = await response.json() as { scope?: unknown; canAccessPersonal?: unknown };
+    publishSession({ scope: body.scope === "personal" ? "personal" : "demo", canAccessPersonal: body.canAccessPersonal === true, ready: true });
+    sessionLoaded = true;
+  }).catch(() => { publishSession({ scope: "demo", canAccessPersonal: false, ready: true }); sessionLoaded = true; }).finally(() => { sessionPromise = undefined; });
+  return sessionPromise;
+}
+export async function switchAppScope(scope: AppScope) {
+  if (scope === "personal" && !sessionState.canAccessPersonal) return;
+  const response = await fetch("/api/session", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ scope }), cache: "no-store" });
+  if (!response.ok) throw new Error("Changement d’espace refusé.");
+  const body = await response.json() as { scope?: unknown; canAccessPersonal?: unknown };
+  if ((body.scope === "personal" ? "personal" : "demo") !== scope) throw new Error("Espace demandé indisponible.");
+  cache.clear();
+  window.location.reload();
+}
 export function preloadResource(url: string) { void cache.read(url); }
 export async function refreshResource(url: string) {
   await cache.read(url, true);

@@ -7,6 +7,7 @@ import { auditCompanyWatchlistRelations, getCompanyDetail, getLivePortfolio, get
 
 import { companyPreview } from "../app/lib/company-preview";
 import { getThemeBaskets, parseBasketOptions } from "../app/lib/theme-baskets";
+import { getDemoCompanies, getDemoCompanyDetail, getDemoLivePortfolio, getDemoResearchDocument, getDemoThemeBaskets } from "../app/lib/demo-data";
 
 interface Env {
   ASSETS: Fetcher;
@@ -14,6 +15,8 @@ interface Env {
   NOTION_TOKEN?: string;
   NOTION_WEBHOOK_SETUP_SECRET?: string;
   NOTION_SYNC_AUTH_TOKEN?: string;
+  /** Email address of the Site owner, set as a private runtime variable. */
+  OWNER_EMAIL?: string;
   IMAGES: {
     input(stream: ReadableStream): {
       transform(options: Record<string, unknown>): {
@@ -55,6 +58,37 @@ export function authorizeNotionMutation(request:Request,env:Pick<Env,"NOTION_SYN
 }
 
 export { verifyNotionWebhookSignature };
+
+const SCOPE_COOKIE = "investment-os-scope";
+type AppScope = "demo" | "personal";
+
+/**
+ * Sites injects this identity header after authenticating a visitor. Never use
+ * a browser supplied scope or cookie as proof of identity; the cookie only
+ * remembers the owner's UI preference.
+ */
+export function hasOwnerIdentity(request: Request, env: Pick<Env, "OWNER_EMAIL">): boolean {
+  const configuredOwner = env.OWNER_EMAIL?.trim().toLowerCase();
+  const authenticatedEmail = request.headers.get("oai-authenticated-user-email")?.trim().toLowerCase();
+  return Boolean(configuredOwner && authenticatedEmail && configuredOwner === authenticatedEmail);
+}
+
+function requestedScope(request: Request, owner: boolean): AppScope {
+  if (!owner) return "demo";
+  const preference = request.headers.get("cookie")?.split(";").map((part) => {
+    const [name, ...value] = part.trim().split("=");
+    return name === SCOPE_COOKIE ? value.join("=") : undefined;
+  }).find((value) => value !== undefined);
+  return preference === "personal" ? "personal" : "demo";
+}
+
+function scopeCookie(scope: AppScope): string {
+  return `${SCOPE_COOKIE}=${scope}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=2592000`;
+}
+
+function privateScopeDenied(): Response {
+  return Response.json({ error: "Cette ressource est réservée à l'espace personnel." }, { status: 403, headers: { "cache-control": "private, no-store" } });
+}
 
 function authorizeOwnerPrivateBrowserMutation(request:Request):Response|null{
   const url=new URL(request.url);
@@ -137,6 +171,27 @@ async function launchNotionRefresh(env:Env,ctx:ExecutionContext,{forceScan=false
 const worker = {
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
     const url = new URL(request.url);
+    const owner = hasOwnerIdentity(request, env);
+    const scope = requestedScope(request, owner);
+
+    if (url.pathname === "/api/session" && request.method === "GET") {
+      return Response.json({ scope, canAccessPersonal: owner }, { headers: { "cache-control": "private, no-store", "vary": "cookie, oai-authenticated-user-email" } });
+    }
+
+    if (url.pathname === "/api/session" && request.method === "POST") {
+      if (request.headers.get("origin") !== url.origin || request.headers.get("sec-fetch-site") === "cross-site") {
+        return Response.json({ error: "Requête de session refusée." }, { status: 403, headers: { "cache-control": "no-store" } });
+      }
+      const body = await request.json().catch(() => ({})) as { scope?: unknown };
+      if (body.scope !== "demo" && body.scope !== "personal") {
+        return Response.json({ error: "Espace demandé invalide." }, { status: 400, headers: { "cache-control": "no-store" } });
+      }
+      if (body.scope === "personal" && !owner) return privateScopeDenied();
+      const nextScope = body.scope as AppScope;
+      const headers = new Headers({ "cache-control": "private, no-store", "vary": "cookie, oai-authenticated-user-email" });
+      if (owner) headers.append("set-cookie", scopeCookie(nextScope));
+      return Response.json({ scope: nextScope, canAccessPersonal: owner }, { headers });
+    }
 
     if(url.pathname.startsWith("/api/notion/webhook/")&&request.method==="POST"){
       if(!env.NOTION_TOKEN||!env.NOTION_WEBHOOK_SETUP_SECRET)return Response.json({error:"Webhook Notion non configuré"},{status:503});
@@ -173,7 +228,14 @@ const worker = {
     if (url.pathname === "/_vinext/image") {
       const allowedWidths = [...DEFAULT_DEVICE_SIZES, ...DEFAULT_IMAGE_SIZES];
       return handleImageOptimization(request, {
-        fetchAsset: (path) => env.ASSETS.fetch(new Request(new URL(path, request.url))),
+        fetchAsset: (path) => {
+          let decodedPath: string;
+          try { decodedPath = decodeURIComponent(path); } catch { return Promise.resolve(new Response(null, { status: 404 })); }
+          // Only the two public SVG brand assets are legitimate local image
+          // sources. The optimizer cannot be used to probe API or user files.
+          if (decodedPath !== "/openai-mark.svg" && decodedPath !== "/favicon.svg") return Promise.resolve(new Response(null, { status: 404 }));
+          return env.ASSETS.fetch(new Request(new URL(decodedPath, request.url)));
+        },
         transformImage: async (body, { width, format, quality }) => {
           const result = await env.IMAGES.input(body).transform(width > 0 ? { width } : {}).output({ format, quality });
           return result.response();
@@ -182,19 +244,22 @@ const worker = {
     }
 
     if (url.pathname === "/api/quotes") {
+      if (!owner || scope !== "personal") return privateScopeDenied();
       const raw=(url.searchParams.get("assets")||"").split(",").filter(Boolean);
       const ids=[...new Set(raw)].filter(id=>id in instruments).slice(0,20);
       if(!ids.length)return Response.json({error:"Aucun actif valide"},{status:400});
       const force=url.searchParams.get("refresh")==="1";
       const quotes=await getQuotes(ids,force,env.DB);
-      return Response.json({generatedAt:new Date().toISOString(),quotes:Object.fromEntries(quotes.map(q=>[q.assetId,q])),partial:quotes.some(q=>q.nativePrice===null)},{headers:{"cache-control":"no-store"}});
+      return Response.json({generatedAt:new Date().toISOString(),quotes:Object.fromEntries(quotes.map(q=>[q.assetId,q])),partial:quotes.some(q=>q.nativePrice===null)},{headers:{"cache-control":"private, no-store"}});
     }
 
     if (url.pathname === "/api/notion/status" && request.method === "GET") {
-      return Response.json(await notionStatus(env.DB, Boolean(env.NOTION_TOKEN)), { headers: { "cache-control": "no-store" } });
+      if (!owner || scope !== "personal") return Response.json({ configured: false }, { headers: { "cache-control": "no-store" } });
+      return Response.json(await notionStatus(env.DB, Boolean(env.NOTION_TOKEN)), { headers: { "cache-control": "private, no-store" } });
     }
 
     if(url.pathname==="/api/notion/refresh"&&request.method==="POST"){
+      if (!owner || scope !== "personal") return privateScopeDenied();
       const authorizationError=authorizeOwnerPrivateBrowserMutation(request);
       if(authorizationError)return authorizationError;
       // This route inherits the owner-private Sites perimeter used by all
@@ -207,21 +272,32 @@ const worker = {
     }
 
     if (url.pathname === "/api/companies" && request.method === "GET") {
-      return Response.json({companies:await listCompanies(env.DB)},{headers:{"cache-control":"no-store"}});
+      if (scope === "demo") return Response.json(getDemoCompanies(), { headers: { "cache-control": "no-store" } });
+      if (!owner) return privateScopeDenied();
+      return Response.json({companies:await listCompanies(env.DB)},{headers:{"cache-control":"private, no-store"}});
     }
 
     if (url.pathname === "/api/theme-baskets" && request.method === "GET") {
-      try{return Response.json(await getThemeBaskets(env.DB,parseBasketOptions(url.searchParams)),{headers:{"cache-control":"no-store"}})}
+      const options = parseBasketOptions(url.searchParams);
+      if (scope === "demo") return Response.json(getDemoThemeBaskets(options), { headers: { "cache-control": "no-store" } });
+      if (!owner) return privateScopeDenied();
+      try{return Response.json(await getThemeBaskets(env.DB,options),{headers:{"cache-control":"private, no-store"}})}
       catch(error){return Response.json({error:error instanceof Error?error.message:"Calcul des paniers impossible"},{status:502,headers:{"cache-control":"no-store"}})}
     }
 
     if (url.pathname.startsWith("/api/companies/") && request.method === "GET") {
       const companyId=decodeURIComponent(url.pathname.slice("/api/companies/".length));
+      if (scope === "demo") {
+        const company = getDemoCompanyDetail(companyId);
+        return company ? Response.json({ company: companyPreview(company.company) }, { headers: { "cache-control": "no-store" } }) : Response.json({ error: "Compagnie introuvable" }, { status: 404, headers: { "cache-control": "no-store" } });
+      }
+      if (!owner) return privateScopeDenied();
       const company=await getCompanyDetail(env.DB,companyId);
-      return company?Response.json({company:companyPreview(company)},{headers:{"cache-control":"no-store"}}):Response.json({error:"Compagnie introuvable"},{status:404});
+      return company?Response.json({company:companyPreview(company)},{headers:{"cache-control":"private, no-store"}}):Response.json({error:"Compagnie introuvable"},{status:404,headers:{"cache-control":"private, no-store"}});
     }
 
     if (url.pathname === "/api/notion/integrity" && request.method === "GET") {
+      if (!owner || scope !== "personal") return privateScopeDenied();
       const [companies,documents,companyLinks,watchlistAudit]=await Promise.all([listCompanies(env.DB),listResearchDocuments(env.DB),documentCompanyLinks(env.DB),auditCompanyWatchlistRelations(env.DB)]);
       const orphanDocuments=documents.filter(document=>document.companyName==="Non relié");
       const multiCompanyDocuments=documents.filter(document=>new Set(companyLinks.get(document.id)??[]).size>1);
@@ -234,12 +310,19 @@ const worker = {
 
     if (url.pathname.startsWith("/api/analyses/") && request.method === "GET") {
       const pageId=decodeURIComponent(url.pathname.slice("/api/analyses/".length));
+      if (scope === "demo") {
+        const document = getDemoResearchDocument(pageId);
+        return document ? Response.json(document, { headers: { "cache-control": "no-store" } }) : Response.json({ error: "Analyse introuvable" }, { status: 404, headers: { "cache-control": "no-store" } });
+      }
+      if (!owner) return privateScopeDenied();
       const document=await getResearchDocument(env.DB,pageId);
-      return document?Response.json({document},{headers:{"cache-control":"no-store"}}):Response.json({error:"Analyse introuvable"},{status:404});
+      return document?Response.json({document},{headers:{"cache-control":"private, no-store"}}):Response.json({error:"Analyse introuvable"},{status:404,headers:{"cache-control":"private, no-store"}});
     }
 
     if (url.pathname === "/api/portfolio/live" && request.method === "GET") {
-      try{return Response.json(await getLivePortfolio(env.DB,url.searchParams.get("refresh")==="1",url.searchParams.get("refresh")!=="1"),{headers:{"cache-control":"no-store"}})}catch(error){return Response.json({error:error instanceof Error?error.message:"Calcul du portefeuille impossible"},{status:502})}
+      if (scope === "demo") return Response.json(getDemoLivePortfolio(), { headers: { "cache-control": "no-store" } });
+      if (!owner) return privateScopeDenied();
+      try{return Response.json(await getLivePortfolio(env.DB,url.searchParams.get("refresh")==="1",url.searchParams.get("refresh")!=="1"),{headers:{"cache-control":"private, no-store"}})}catch(error){return Response.json({error:error instanceof Error?error.message:"Calcul du portefeuille impossible"},{status:502,headers:{"cache-control":"private, no-store"}})}
     }
 
     if (url.pathname === "/api/notion/sync" && request.method === "POST") {
@@ -330,6 +413,12 @@ const worker = {
       } finally {
         await releaseNotionSyncLock(env.DB, lock.owner);
       }
+    }
+
+    // Do not fall through unknown API paths to the framework router. The
+    // Worker owns the data API namespace and unknown routes must stay closed.
+    if (url.pathname.startsWith("/api/")) {
+      return Response.json({ error: "Route API introuvable." }, { status: 404, headers: { "cache-control": "no-store" } });
     }
 
     return handler.fetch(request, env, ctx);

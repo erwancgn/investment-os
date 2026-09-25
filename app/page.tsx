@@ -16,6 +16,7 @@ import { NotionSyncStatus } from "./components/notion-sync-status";
 const NotionIntegrity = lazy(() => import("./components/notion-integrity").then(module => ({ default: module.NotionIntegrity })));
 import { NotionBackgroundSync } from "./components/notion-background-sync";
 import { GlassChrome } from "./components/ui-primitives";
+import { useAppSession } from "./lib/client-resource";
 
 const DocumentView = lazy(() => import("./components/document-view").then(module => ({ default: module.DocumentView })));
 const loadingView = <div className="detail-loading" role="status" aria-live="polite">Chargement…</div>;
@@ -41,7 +42,7 @@ function Header({ title, onOpenManagement }: { title: string; onOpenManagement: 
   return <AppPageHeader title={title} onOpenManagement={onOpenManagement}/>;
 }
 
-function Portfolio({ openCompany, onOpenManagement }: { openCompany: (id?: string) => void; onOpenManagement: () => void }) {
+function Portfolio({ openCompany, onOpenManagement, personal }: { openCompany: (id?: string) => void; onOpenManagement: () => void; personal: boolean }) {
   const { data, loading, error, refresh } = useClientResource<LivePortfolio>("/api/portfolio/live", true);
   const portfolio = data ?? null;
   const basketWarmupStarted = useRef(false);
@@ -54,7 +55,7 @@ function Portfolio({ openCompany, onOpenManagement }: { openCompany: (id?: strin
     <PortfolioPageHeader quoteAsOf={portfolio?.quoteAsOf} loading={loading} onRefresh={() => void refresh()} onOpenManagement={onOpenManagement} />
     {error && portfolio && <p className="resource-error" role="status">{error} Les dernières données chargées restent affichées.</p>}
     <LivePortfolioDashboard data={portfolio} loading={loading} error={error} onRefresh={() => void refresh()} openCompany={openCompany} beforeDiagnostic={<TargetAllocation data={portfolio}/>}/>
-    <NotionSyncStatus />
+    {personal && <NotionSyncStatus />}
   </>;
 }
 
@@ -70,6 +71,7 @@ function Gestion({ onOpenManagement }: { onOpenManagement: () => void }) { retur
 
 export default function Home(){
   useResourceLifecycle();
+  const session = useAppSession();
   const { route, visited, navigate, openCompany, openAnalysis, back } = useAppNavigation();
   const active = route.tab;
   const selectedCompany = route.company;
@@ -77,13 +79,14 @@ export default function Home(){
   const scrollToTop = () => window.scrollTo({ top: 0, behavior: "smooth" });
   const onTabIconDoubleClick = (tab: Tab) => active === tab && !selectedCompany && !route.document ? scrollToTop : undefined;
   const content = (tab: Tab) => ({
-    portfolio: <Portfolio openCompany={id => { if (id) openCompany(id); }} onOpenManagement={onOpenManagement} />,
+    portfolio: <Portfolio openCompany={id => { if (id) openCompany(id); }} onOpenManagement={onOpenManagement} personal={session.scope === "personal"} />,
     companies: <Companies openCompany={openCompany} onOpenManagement={onOpenManagement} />,
     themes: <Themes onOpenManagement={onOpenManagement} />,
     ia: <AiAnalysis onOpenManagement={onOpenManagement} />,
-    gestion: <Gestion onOpenManagement={onOpenManagement} />,
+    gestion: session.scope === "personal" ? <Gestion onOpenManagement={onOpenManagement} /> : <Companies openCompany={openCompany} onOpenManagement={onOpenManagement} />,
   })[tab];
-  return <OpenAnalysisContext value={openAnalysis}><main className="app-shell"><NotionBackgroundSync/><GlassChrome as="aside" className="sidebar"><div className="brand"><InvestmentLogo/><div><strong>Investment</strong><span>OS</span></div></div><nav>{tabs.map(tab=><button key={tab.id} onClick={()=>navigate(tab.id)} aria-current={active===tab.id ? "page" : undefined} className={active===tab.id?"active":""}><span className="nav-icon" onDoubleClick={onTabIconDoubleClick(tab.id)}><NavigationIcon name={tab.icon}/></span>{tab.label}</button>)}</nav><div className="sidebar-bottom"><div className="sync-card snapshot-mode"><span>◆</span><div><strong>Notion</strong><small>Snapshots documentaires</small></div><i/></div></div></GlassChrome><section className="content"><div className="content-inner">{visited.length === 0 && loadingView}{visited.map(tab => <Activity key={tab} mode={!selectedCompany && !route.document && active===tab ? "visible" : "hidden"}><div data-view={tab}><Suspense fallback={loadingView}>{content(tab)}</Suspense></div></Activity>)}
+  const visibleTabs = session.scope === "personal" ? tabs : tabs.filter(tab => tab.id !== "gestion");
+  return <OpenAnalysisContext value={openAnalysis}><main className="app-shell">{session.scope === "personal" && <NotionBackgroundSync/>}<GlassChrome as="aside" className="sidebar"><div className="brand"><InvestmentLogo/><div><strong>Investment</strong><span>OS</span></div></div><nav>{visibleTabs.map(tab=><button key={tab.id} onClick={()=>navigate(tab.id)} aria-current={active===tab.id ? "page" : undefined} className={active===tab.id?"active":""}><span className="nav-icon" onDoubleClick={onTabIconDoubleClick(tab.id)}><NavigationIcon name={tab.icon}/></span>{tab.label}</button>)}</nav><div className="sidebar-bottom">{session.scope === "personal" && <div className="sync-card snapshot-mode"><span>◆</span><div><strong>Notion</strong><small>Snapshots documentaires</small></div><i/></div>}</div></GlassChrome><section className="content"><div className="content-inner">{visited.length === 0 && loadingView}{visited.map(tab => <Activity key={tab} mode={!selectedCompany && !route.document && active===tab ? "visible" : "hidden"}><div data-view={tab}><Suspense fallback={loadingView}>{content(tab)}</Suspense></div></Activity>)}
 {selectedCompany && <Activity key={selectedCompany} mode={route.document ? "hidden" : "visible"}><div><Suspense fallback={loadingView}><CompanyDetail companyId={selectedCompany} close={back}/></Suspense></div></Activity>}
-{route.document && <Suspense fallback={loadingView}><DocumentView key={route.document} id={route.document} onBack={back}/></Suspense>}</div></section><GlassChrome as="nav" className="mobile-nav" aria-label="Navigation principale">{tabs.map(tab=><button key={tab.id} onClick={()=>navigate(tab.id)} aria-label={tab.label} aria-current={active===tab.id ? "page" : undefined} className={active===tab.id?"active":""}><span className="nav-icon" onDoubleClick={onTabIconDoubleClick(tab.id)}><NavigationIcon name={tab.icon}/></span></button>)}</GlassChrome></main></OpenAnalysisContext>
+{route.document && <Suspense fallback={loadingView}><DocumentView key={route.document} id={route.document} onBack={back}/></Suspense>}</div></section><GlassChrome as="nav" className="mobile-nav" aria-label="Navigation principale">{visibleTabs.map(tab=><button key={tab.id} onClick={()=>navigate(tab.id)} aria-label={tab.label} aria-current={active===tab.id ? "page" : undefined} className={active===tab.id?"active":""}><span className="nav-icon" onDoubleClick={onTabIconDoubleClick(tab.id)}><NavigationIcon name={tab.icon}/></span></button>)}</GlassChrome></main></OpenAnalysisContext>
 }

@@ -4,16 +4,22 @@ import { useEffect, useState, type ChangeEvent } from "react";
 import { ActionButton, SectionHeader } from "./ui-primitives";
 import { NotionDocumentRefresh } from "./notion-document-refresh";
 import { NotionGlobalRefresh } from "./notion-global-refresh";
+import { switchAppScope, useAppSession } from "../lib/client-resource";
 
 export function InvestmentLogo() {
   return <div className="brand-mark" aria-hidden="true"><span /><span /><span /></div>;
 }
 
 function AccountMenu({ onOpenManagement }: { onOpenManagement: () => void }) {
-  const [avatar, setAvatar] = useState("/avatar-profile.jpeg");
+  const session = useAppSession();
+  const isPersonal = session.scope === "personal";
+  const [scopeError, setScopeError] = useState("");
+  const changeScope = (scope: "demo" | "personal") => { setScopeError(""); void switchAppScope(scope).catch(() => setScopeError("Changement d’espace impossible. Réessaie.")); };
+  const [avatar, setAvatar] = useState("");
   const [hasCustomAvatar, setHasCustomAvatar] = useState(false);
 
   useEffect(() => {
+    if (!isPersonal) { setAvatar(""); setHasCustomAvatar(false); return; }
     try {
       const stored = window.localStorage.getItem("investment-os:profile-image");
       if (stored) {
@@ -24,7 +30,7 @@ function AccountMenu({ onOpenManagement }: { onOpenManagement: () => void }) {
         return () => window.cancelAnimationFrame(frame);
       }
     } catch { /* Local storage may be unavailable in private browsing. */ }
-  }, []);
+  }, [isPersonal]);
 
   const changeAvatar = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -42,11 +48,11 @@ function AccountMenu({ onOpenManagement }: { onOpenManagement: () => void }) {
 
   const resetAvatar = () => {
     try { window.localStorage.removeItem("investment-os:profile-image"); } catch { /* Ignore unavailable local storage. */ }
-    setAvatar("/avatar-profile.jpeg");
+    setAvatar("");
     setHasCustomAvatar(false);
   };
 
-  return <details className="account-menu"><summary className="avatar" aria-label="Compte Erwan"><span className="avatar-image" aria-hidden="true" style={{ backgroundImage: `url(${avatar})` }} /></summary><div className="account-menu-panel"><label className="account-menu-upload">Changer l’image<input type="file" accept="image/*" onChange={changeAvatar} /></label>{hasCustomAvatar && <button type="button" onClick={resetAvatar}>Réinitialiser l’image</button>}<button type="button" onClick={onOpenManagement}>⚙ Gestion Notion</button><small className="account-menu-note">Image enregistrée sur cet appareil</small></div></details>;
+  return <details className="account-menu"><summary className="avatar" aria-label={isPersonal ? "Compte personnel" : "Compte démo"}><span className="avatar-image" aria-hidden="true" style={isPersonal ? { backgroundImage: `url(${avatar})` } : undefined}>{isPersonal ? null : "D"}</span></summary><div className="account-menu-panel">{session.canAccessPersonal && !isPersonal && <button type="button" onClick={() => changeScope("personal")}>Espace personnel</button>}{isPersonal && <><label className="account-menu-upload">Changer l’image<input type="file" accept="image/*" onChange={changeAvatar} /></label>{hasCustomAvatar && <button type="button" onClick={resetAvatar}>Réinitialiser l’image</button>}<button type="button" onClick={() => changeScope("demo")}>Espace démo</button><button type="button" onClick={onOpenManagement}>⚙ Gestion Notion</button><small className="account-menu-note">Image enregistrée sur cet appareil</small></>}{!isPersonal && <small className="account-menu-note">Espace démo</small>}{scopeError && <small className="account-menu-note" role="status">{scopeError}</small>}</div></details>;
 }
 
 export function AppPageHeader({ title, eyebrow, onOpenManagement }: { title: string; eyebrow?: string; onOpenManagement: () => void }) {
@@ -64,6 +70,7 @@ export function PortfolioPageHeader({
   onRefresh: () => void;
   onOpenManagement: () => void;
 }) {
+  const session = useAppSession();
   const marketFreshness = (() => {
     if (!quoteAsOf) return "Dernier marché —";
     const date = new Date(quoteAsOf);
@@ -72,14 +79,14 @@ export function PortfolioPageHeader({
     const time = date.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
     return `Dernier marché ${day} à ${time}`;
   })();
+  const refreshAction = session.scope === "personal" ? onRefresh : () => window.location.reload();
 
   return <header className="page-header portfolio-page-header">
     <div className="portfolio-header-title-row"><h1>Portefeuille</h1><AccountMenu onOpenManagement={onOpenManagement}/></div>
     <div className="portfolio-header-actions">
-      <NotionDocumentRefresh/>
-      <NotionGlobalRefresh/>
-      <ActionButton compact onClick={onRefresh} disabled={loading} title="Rafraîchir les cours et recalculer le portefeuille" ariaLabel="Rafraîchir les cours et recalculer le portefeuille">{loading ? "Actualisation…" : "Actualiser"}</ActionButton>
+      {session.scope === "personal" && <><NotionDocumentRefresh/><NotionGlobalRefresh/></>}
+      <ActionButton compact onClick={refreshAction} disabled={session.scope === "personal" && loading} title={session.scope === "personal" ? "Rafraîchir les cours et recalculer le portefeuille" : "Recharger la démonstration"} ariaLabel={session.scope === "personal" ? "Rafraîchir les cours et recalculer le portefeuille" : "Recharger la démonstration"}>{session.scope === "personal" ? loading ? "Actualisation…" : "Actualiser" : "Recharger la démo"}</ActionButton>
     </div>
-    <p className="portfolio-header-market">{marketFreshness}</p>
+    {session.scope === "personal" && <p className="portfolio-header-market">{marketFreshness}</p>}
   </header>;
 }

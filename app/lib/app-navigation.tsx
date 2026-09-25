@@ -1,7 +1,7 @@
 "use client";
 import { createContext, useContext, useEffect, useLayoutEffect, useRef, useState } from "react";
 
-import { preloadResource } from "./client-resource";
+import { preloadResource, useAppSession } from "./client-resource";
 
 export const tabIds = ["portfolio", "companies", "themes", "ia", "gestion"] as const;
 export type Tab = typeof tabIds[number];
@@ -15,6 +15,7 @@ const initial: Route = { tab: "portfolio", company: null, document: null, key: "
 const viewKey = (route: Route) => `${route.tab}/${route.company ?? ""}/${route.document ?? ""}`;
 
 export function useAppNavigation() {
+  const session = useAppSession();
   const [route, setRoute] = useState<Route>(initial);
   const [visited, setVisited] = useState<Tab[]>([]);
   const current = useRef(route);
@@ -34,12 +35,14 @@ export function useAppNavigation() {
     setRoute(next);
   };
   useEffect(() => {
+    if (!session.ready) return;
     history.scrollRestoration = "manual";
     const fromLocation = (): Route => {
       const params = new URLSearchParams(location.search);
       const requestedTab = params.get("tab") ?? "portfolio";
       const legacyTab = ["watchlist", "analyses", "research"].includes(requestedTab);
-      const tab = legacyTab ? "companies" : tabIds.includes(requestedTab as Tab) ? requestedTab as Tab : "portfolio";
+      const parsedTab = legacyTab ? "companies" : tabIds.includes(requestedTab as Tab) ? requestedTab as Tab : "portfolio";
+      const tab = parsedTab === "gestion" && session.scope !== "personal" ? "companies" : parsedTab;
       return { tab, company: params.get("company"), document: params.get("document"), key: history.state?.investmentKey ?? newKey() };
     };
     const frame = requestAnimationFrame(() => {
@@ -59,7 +62,7 @@ export function useAppNavigation() {
     };
     window.addEventListener("popstate", pop);
     return () => { cancelAnimationFrame(frame); window.removeEventListener("popstate", pop); history.scrollRestoration = "auto"; };
-  }, []);
+  }, [session.ready, session.scope]);
   useLayoutEffect(() => {
     const position = positions.current.get(route.key) ?? views.current.get(viewKey(route));
     let pending = true;
@@ -85,7 +88,7 @@ export function useAppNavigation() {
   }, [route]);
   const move = (next: Omit<Route, "key">, replace = false) => {
     remember();
-    const destination = { ...next, key: newKey() };
+    const destination = { ...next, tab: next.tab === "gestion" && session.scope !== "personal" ? "companies" : next.tab, key: newKey() };
     const url = new URL(location.href);
     for (const name of ["tab", "company", "document"] as const) {
       if (destination[name]) url.searchParams.set(name, destination[name]!); else url.searchParams.delete(name);

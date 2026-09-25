@@ -13,7 +13,7 @@
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "typecheck": "tsc --noEmit --pretty false",
-    "test": "npm run typecheck && npm run build && node --test tests/ai-prompt.test.mjs tests/rendered-html.test.mjs tests/analysis-reference-fixtures.test.mjs tests/cio-summary-routing.test.mjs tests/performance.test.mjs tests/notion-security.test.mjs tests/quotes-startup.test.mjs tests/theme-baskets.test.mjs tests/theme-basket-warmup.test.mjs tests/audit-css-governance.test.mjs tests/audit-css-ownership.test.mjs tests/storybook-coverage.test.mjs",
+    "test": "npm run typecheck && npm run build && node --test tests/ai-prompt.test.mjs tests/demo-data.test.mjs tests/resource-cache-scope.test.mjs tests/rendered-html.test.mjs tests/analysis-reference-fixtures.test.mjs tests/cio-summary-routing.test.mjs tests/performance.test.mjs tests/notion-security.test.mjs tests/quotes-startup.test.mjs tests/theme-baskets.test.mjs tests/theme-basket-warmup.test.mjs tests/audit-css-governance.test.mjs tests/audit-css-ownership.test.mjs tests/storybook-coverage.test.mjs",
     "validate:artifact": "bash scripts/validate-artifact.sh",
     "lint": "bash scripts/sites-env.sh -- eslint . --ignore-pattern dist --ignore-pattern .next --ignore-pattern storybook-static",
     "audit:css": "node scripts/audit-dead-css.mjs",

@@ -78,14 +78,15 @@ function DocumentHistory({ docs, title, detail, label, onOpen }: { docs: Company
   );
 }
 
-function DocumentSection({ section, docs, archives = [], onOpen }: { section: CompanyTab; docs: CompanyDocument[]; archives?: CompanyDocument[]; onOpen: (doc: CompanyDocument) => void }) {
+function DocumentSection({ section, docs, archives = [], onOpen, demo = false }: { section: CompanyTab; docs: CompanyDocument[]; archives?: CompanyDocument[]; onOpen: (doc: CompanyDocument) => void; demo?: boolean }) {
   const featured = docs[0];
+  const isDemo = demo || (featured?.id ?? archives[0]?.id ?? "").startsWith("demo-");
   if (!featured)
     return (
       <section className="company-section-block">
-        <SectionHeader eyebrow="Base Notion" title={sectionTitles[section]} description="Aucun document courant de cette catégorie n’est relié à cette entreprise." meta={<span className="analysis-total">0 courant</span>} />
+        <SectionHeader eyebrow={isDemo ? "Données de démonstration" : "Base Notion"} title={sectionTitles[section]} description={isDemo ? "Aucun document de démonstration de cette catégorie n’est relié à cette entreprise." : "Aucun document courant de cette catégorie n’est relié à cette entreprise."} meta={<span className="analysis-total">0 courant</span>} />
         <PrimaryBlock as="article" className="company-empty-section">
-          <strong>Section prête à accueillir les données Notion</strong>
+          <strong>{isDemo ? "Section de démonstration" : "Section prête à accueillir les données Notion"}</strong>
           <span>Le contenu principal apparaîtra dès qu’une analyse Current sera importée et reliée.</span>
         </PrimaryBlock>
         <DocumentHistory docs={archives} title={`${archives.length} version${archives.length > 1 ? "s" : ""} archivée${archives.length > 1 ? "s" : ""}`} detail="Historique encore accessible" label="Archive" onOpen={onOpen} />
@@ -94,12 +95,12 @@ function DocumentSection({ section, docs, archives = [], onOpen }: { section: Co
   const additionalCurrent = docs.slice(1);
   return (
     <section className={`company-section-block section-${section}`}>
-      <SectionHeader eyebrow={`Base Notion · ${featured.agent}`} title={sectionTitles[section]} description="La version courante la plus récente est affichée. Les versions précédentes restent accessibles sous la fiche." meta={<span className="analysis-total">1 principale</span>} />
+      <SectionHeader eyebrow={isDemo ? `Démonstration · ${featured.agent}` : `Base Notion · ${featured.agent}`} title={sectionTitles[section]} description={isDemo ? "Exemple fictif de la version courante. Les versions précédentes de démonstration restent accessibles sous la fiche." : "La version courante la plus récente est affichée. Les versions précédentes restent accessibles sous la fiche."} meta={<span className="analysis-total">1 principale</span>} />
       <LatestInfoCard document={featured} eyebrow="Analyse courante" onOpen={() => onOpen(featured)} />
-      <DocumentHistory docs={additionalCurrent} title={`${additionalCurrent.length} autre${additionalCurrent.length > 1 ? "s" : ""} document${additionalCurrent.length > 1 ? "s" : ""} courant${additionalCurrent.length > 1 ? "s" : ""}`} detail="Documents reliés à la même catégorie dans Notion" label="Current" onOpen={onOpen} />
+      <DocumentHistory docs={additionalCurrent} title={`${additionalCurrent.length} autre${additionalCurrent.length > 1 ? "s" : ""} document${additionalCurrent.length > 1 ? "s" : ""} courant${additionalCurrent.length > 1 ? "s" : ""}`} detail={isDemo ? "Documents fictifs de cette catégorie" : "Documents reliés à la même catégorie dans Notion"} label="Current" onOpen={onOpen} />
       <DocumentHistory docs={archives} title={`${archives.length} ancienne${archives.length > 1 ? "s" : ""} version${archives.length > 1 ? "s" : ""}`} detail="Historique archivé de cette entreprise" label="Archive" onOpen={onOpen} />
       <DisclosureSurface level="primary" className="company-traceability" summary="Source et traçabilité">
-        <p>Le contenu vient du snapshot Notion relié à la fiche Companies canonique. Le titre de l’entreprise n’est jamais utilisé comme clé de rapprochement.</p>
+        <p>{isDemo ? "Contenu fictif relié à cette entreprise de démonstration." : "Le contenu vient du snapshot Notion relié à la fiche Companies canonique. Le titre de l’entreprise n’est jamais utilisé comme clé de rapprochement."}</p>
       </DisclosureSurface>
     </section>
   );
@@ -161,15 +162,16 @@ function EarningsReviewCard({ document, onOpen }: { document: CompanyDocument; o
   );
 }
 
-function EarningsSection({ docs, archives, onOpen }: { docs: CompanyDocument[]; archives: CompanyDocument[]; onOpen: (doc: CompanyDocument) => void }) {
+function EarningsSection({ docs, archives, onOpen, demo = false }: { docs: CompanyDocument[]; archives: CompanyDocument[]; onOpen: (doc: CompanyDocument) => void; demo?: boolean }) {
   const featured = docs[0];
-  if (!featured) return <DocumentSection section="earnings" docs={docs} archives={archives} onOpen={onOpen} />;
+  if (!featured) return <DocumentSection section="earnings" docs={docs} archives={archives} onOpen={onOpen} demo={demo} />;
+  const isDemo = demo || featured.id.startsWith("demo-");
   const additional = docs.slice(1);
   return (
     <section className="company-section-block section-earnings">
-      <SectionHeader eyebrow="Base Notion · Earnings" title="Earnings" description="La dernière publication analysée et son routage vers les cinq modules Investment OS." meta={<span className="analysis-total">1 principale</span>} />
+      <SectionHeader eyebrow={isDemo ? "Démonstration · Earnings" : "Base Notion · Earnings"} title="Earnings" description={isDemo ? "Exemple fictif de publication et de routage vers les cinq modules Investment OS." : "La dernière publication analysée et son routage vers les cinq modules Investment OS."} meta={<span className="analysis-total">1 principale</span>} />
       <EarningsReviewCard document={featured} onOpen={onOpen} />
-      <DocumentHistory docs={additional} title={`${additional.length} autre${additional.length > 1 ? "s" : ""} review${additional.length > 1 ? "s" : ""}`} detail="Autres publications courantes reliées" label="Current" onOpen={onOpen} />
+      <DocumentHistory docs={additional} title={`${additional.length} autre${additional.length > 1 ? "s" : ""} review${additional.length > 1 ? "s" : ""}`} detail={isDemo ? "Autres publications de démonstration" : "Autres publications courantes reliées"} label="Current" onOpen={onOpen} />
       <DocumentHistory docs={archives} title={`${archives.length} publication${archives.length > 1 ? "s" : ""} précédente${archives.length > 1 ? "s" : ""}`} detail="Historique Earnings de cette entreprise" label="Historique" onOpen={onOpen} />
     </section>
   );
@@ -251,6 +253,7 @@ export function CompanyDetail({ companyId, close, initialData }: { companyId: st
   const grouped = (key: CompanyTab) => allDocuments.filter((doc) => key === "analyses" || (key === "memo" ? Boolean(currentMemo && normalizeId(doc.id) === normalizeId(currentMemo.id)) : doc.category === key && !isMemo(doc)));
   const archivedByCategory = (key: CompanyTab) => (data.archives ?? []).filter((doc) => key === "analyses" || (key === "memo" ? isMemo(doc) : doc.category === key && !isMemo(doc)));
   const title = data.name;
+  const isDemo = data.id.startsWith("demo-");
   const latest = allDocuments[0];
   const businessDocs = grouped("business");
   const valuationDocs = grouped("valuation");
@@ -314,7 +317,7 @@ export function CompanyDetail({ companyId, close, initialData }: { companyId: st
             />
             <StatCard label="Analyses courantes" value={allDocuments.length} detail={`${businessDocs.length} business · ${valuationDocs.length} valorisation`} />
             <StatCard label="Couverture analyses" value={`${data.researchReferences.length}/5`} detail="Business · Valorisation · Short · PF Fit · Mémo" />
-            <StatCard className="company-date" label="Dernière mise à jour" value={shortDate(data.lastAnalysis || latest?.lastEditedTime || null)} detail={latest?.agent || "Notion"} />
+            <StatCard className="company-date" label="Dernière mise à jour" value={shortDate(data.lastAnalysis || latest?.lastEditedTime || null)} detail={latest?.agent || (isDemo ? "Démo" : "Notion")} />
           </section>
           <section className="company-main-grid company-summary-grid">
             {latest ? (
@@ -330,7 +333,7 @@ export function CompanyDetail({ companyId, close, initialData }: { companyId: st
               <p className="eyebrow">Couverture de recherche</p>
               <h2>Analyses disponibles</h2>
               {researchHighlights.length ? <ResearchCoverage items={researchHighlights} onOpen={openDocument} /> : <p className="generic-empty">Aucune analyse courante reliée.</p>}
-              <DisclosureSurface level="primary" className="company-notion-details" summary="Informations Notion">
+              <DisclosureSurface level="primary" className="company-notion-details" summary={isDemo ? "Informations de démonstration" : "Informations Notion"}>
                 <div className="quality-row">
                   <span>Ticker</span>
                   <strong>{data.ticker || "—"}</strong>
@@ -347,9 +350,7 @@ export function CompanyDetail({ companyId, close, initialData }: { companyId: st
                   <span>Qualité des données</span>
                   <strong>{completenessLabel(data.dataCompleteness)}</strong>
                 </div>
-                <a className="notion-link" href={data.notionUrl} target="_blank" rel="noreferrer">
-                  Voir la fiche source ↗
-                </a>
+                {!isDemo && <a className="notion-link" href={data.notionUrl} target="_blank" rel="noreferrer">Voir la fiche source ↗</a>}
               </DisclosureSurface>
             </section>
           </section>
@@ -357,7 +358,7 @@ export function CompanyDetail({ companyId, close, initialData }: { companyId: st
       )}
       {section === "portfolio" && (
         <>
-          <DocumentSection section="portfolio" docs={grouped("portfolio")} archives={archivedByCategory("portfolio")} onOpen={openDocument} />
+          <DocumentSection section="portfolio" docs={grouped("portfolio")} archives={archivedByCategory("portfolio")} onOpen={openDocument} demo={isDemo} />
           {data.ownershipStatus !== "Owned" && (
             <PrimaryBlock as="article" className="company-empty-section">
               <strong>Cette entreprise n’est pas détenue actuellement</strong>
@@ -366,13 +367,11 @@ export function CompanyDetail({ companyId, close, initialData }: { companyId: st
           )}
         </>
       )}
-      {section === "earnings" && <EarningsSection docs={grouped("earnings")} archives={archivedByCategory("earnings")} onOpen={openDocument} />}
-      {section !== "synthese" && section !== "portfolio" && section !== "earnings" && <DocumentSection section={section} docs={grouped(section)} archives={archivedByCategory(section)} onOpen={openDocument} />}
+      {section === "earnings" && <EarningsSection docs={grouped("earnings")} archives={archivedByCategory("earnings")} onOpen={openDocument} demo={isDemo} />}
+      {section !== "synthese" && section !== "portfolio" && section !== "earnings" && <DocumentSection section={section} docs={grouped(section)} archives={archivedByCategory(section)} onOpen={openDocument} demo={isDemo} />}
       <footer className="company-detail-footer">
-        <span>Fiche construite depuis les données Notion importées, sans réécriture du contenu source.</span>
-        <a href={data.notionUrl} target="_blank" rel="noreferrer">
-          Ouvrir dans Notion ↗
-        </a>
+        <span>{isDemo ? "Fiche fictive fournie à titre de démonstration." : "Fiche construite depuis les données Notion importées, sans réécriture du contenu source."}</span>
+        {!isDemo && <a href={data.notionUrl} target="_blank" rel="noreferrer">Ouvrir dans Notion ↗</a>}
       </footer>
     </div>
   );

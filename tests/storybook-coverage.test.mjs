@@ -62,7 +62,7 @@ test("mobile navigation presents four equal destinations with a selected blue in
   assert.match(mobileNav, /aria-label=\{tab\.label\}/);
   assert.match(mobileNav, /<NavigationIcon name=\{tab\.icon\}/);
   assert.doesNotMatch(mobileNav, /<small>/);
-  assert.match(mobileNav, /tabs\.map\(tab/);
+  assert.match(mobileNav, /visibleTabs\.map\(tab/);
   assert.match(page, /id: "ia", label: "Analyse IA"/);
   assert.doesNotMatch(page, /eyebrow="(?:Univers d’investissement|Performance des paniers)"/);
   assert.match(discoveryCss, /\.theme-basket-controls\s*\{[^}]*grid-template-columns:\s*minmax\(0,\s*1\.4fr\) minmax\(0,\s*\.85fr\) minmax\(0,\s*1\.1fr\)/s);
@@ -74,7 +74,7 @@ test("AI launcher stays a dedicated screen and composes the shared UI primitives
   const [source, navigation, styles] = await Promise.all([read("app/components/ai-analysis.tsx"), read("app/lib/app-navigation.tsx"), read("app/styles/ux/workspaces.css")]);
   for (const primitive of ["AppPageHeader", "SearchField", "CompactControl", "PrimaryBlock", "DisclosureSurface", "ActionButton", "AsyncState"]) assert.match(source, new RegExp(`\\b${primitive}\\b`));
   assert.match(source, /useClientResource<\{ companies: CompanyListItem\[\] \}>\("\/api\/companies"\)/);
-  assert.match(source, /createAiPrompt\(workflow, selected\.name, selected\.ticker\)/);
+  assert.match(source, /createAiPrompt\(workflow, selected\.name, selected\.ticker, session\.scope\)/);
   assert.match(source, /createChatGptUrl\(prompt\)/);
   assert.match(source, /className="ai-chatgpt-launcher"[^>]*aria-label=\{openUrl\?/);
   assert.match(source, /aria-disabled=\{!openUrl\}/);
