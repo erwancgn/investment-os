@@ -46,7 +46,9 @@ const fxInstruments:Record<string,Instrument>={
   "fx-usd":{id:"fx-usd",name:"EUR/USD",yahooSymbol:"EURUSD=X",expectedCurrency:"USD",exchangeTimezone:"UTC"},
   "fx-jpy":{id:"fx-jpy",name:"EUR/JPY",yahooSymbol:"EURJPY=X",expectedCurrency:"JPY",exchangeTimezone:"UTC"},
   "fx-gbp":{id:"fx-gbp",name:"EUR/GBP",yahooSymbol:"EURGBP=X",expectedCurrency:"GBP",exchangeTimezone:"UTC"},
-  "fx-chf":{id:"fx-chf",name:"EUR/CHF",yahooSymbol:"EURCHF=X",expectedCurrency:"CHF",exchangeTimezone:"UTC"}
+  "fx-chf":{id:"fx-chf",name:"EUR/CHF",yahooSymbol:"EURCHF=X",expectedCurrency:"CHF",exchangeTimezone:"UTC"},
+  "fx-sek":{id:"fx-sek",name:"EUR/SEK",yahooSymbol:"EURSEK=X",expectedCurrency:"SEK",exchangeTimezone:"UTC"},
+  "fx-krw":{id:"fx-krw",name:"EUR/KRW",yahooSymbol:"EURKRW=X",expectedCurrency:"KRW",exchangeTimezone:"UTC"}
 };
 const allInstruments={...instruments,...fxInstruments};
 
