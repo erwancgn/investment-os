@@ -485,6 +485,23 @@ test("standard analyses and CIO memo reuse the shared hero and fact grid", async
   assert.match(uxSource, /\.analysis-structured-value > span \+ span/);
 });
 
+test("standard analysis hero keeps all unique metadata without a duplicate grid", async () => {
+  const [source, memoSource] = await Promise.all([readFile(analysisReaderUrl, "utf8"), readFile(memoReaderUrl, "utf8")]);
+  const standardReader = source.slice(source.indexOf("function StandardAnalysisReader"));
+  assert.match(standardReader, /<Badge>\{document\.agent\}<\/Badge>/);
+  assert.match(standardReader, /<Badge tone=\{document\.status/);
+  assert.match(standardReader, /companyName\} · \{shortDate\(document\.date \|\| document\.lastEditedTime\)\}/);
+  assert.match(standardReader, /detail: scored && document\.score \? document\.score : undefined/);
+  assert.match(standardReader, /\{ label: "Score", value: document\.score \}/);
+  assert.match(standardReader, /outcome=\{outcome\}/);
+  assert.match(standardReader, /className="analysis-source-details"/);
+  assert.match(standardReader, /Ouvrir le document original/);
+  assert.doesNotMatch(standardReader, /Métadonnées de l’analyse|const metadata =/);
+  assert.match(source.slice(0, source.indexOf("function StandardAnalysisReader")), /<MetadataGrid/);
+  assert.match(memoSource, /className="memo-decision-card"/);
+  assert.match(memoSource, /<AnalysisFactGrid/);
+});
+
 test("Investment Memo CIO has a dedicated decision view without a numeric memo score", async () => {
   const memoSource = await readFile(memoReaderUrl, "utf8");
   const readerSource = await readFile(analysisReaderUrl, "utf8");
@@ -502,16 +519,44 @@ test("Investment Memo CIO has a dedicated decision view without a numeric memo s
 test("Notion tables use one adaptive reusable component", async () => {
   const tableSource = await readFile(notionTableUrl, "utf8");
   const readerSource = await readFile(analysisReaderUrl, "utf8");
+  const memoSource = await readFile(memoReaderUrl, "utf8");
   const globalsSource = await readFile(globalsUrl, "utf8");
   assert.match(tableSource, /export function NotionTable/);
   assert.match(tableSource, /--notion-columns/);
   assert.match(tableSource, /Tableau défilable horizontalement/);
   assert.match(tableSource, /notion-table-wide/);
   assert.match(readerSource, /<NotionTable/);
+  assert.match(memoSource, /<NotionTable/);
+  assert.doesNotMatch(memoSource, /surfaceForCompact=\{false\}/);
   assert.match(globalsSource, /\.notion-table \{[\s\S]*table-layout: fixed/);
   assert.match(globalsSource, /\.notion-table-wrap \{[\s\S]*overflow-x: hidden/);
   assert.match(globalsSource, /\.notion-table-wrap-scrollable \{ overflow-x: auto; \}/);
   assert.match(globalsSource, /\.notion-table-wide \{[\s\S]*min-width: max\(100%, calc\(var\(--notion-columns\) \* 148px\)\)/);
+});
+
+test("analysis disclosures use the company width while keeping prose readable", async () => {
+  const [readerCss, companyCss, documentsCss, tableSource, analysisSource] = await Promise.all([
+    readFile(new URL("../app/styles/ux/analysis-reader.css", import.meta.url), "utf8"),
+    readFile(new URL("../app/styles/ux/company.css", import.meta.url), "utf8"),
+    readFile(new URL("../app/styles/ux/documents.css", import.meta.url), "utf8"),
+    readFile(notionTableUrl, "utf8"),
+    readFile(analysisReaderUrl, "utf8"),
+  ]);
+  assert.match(readerCss, /\.notion-page\.universal-analysis-page \{[\s\S]*width: 100%;[\s\S]*max-width: 100%;/);
+  assert.match(readerCss, /\.analysis-section-group-content \{[^}]*width: 100%;[^}]*max-width: none;/);
+  assert.match(readerCss, /\.notion-page\.universal-analysis-page \.analysis-section-group-content > p \{[^}]*max-width: 76ch;[^}]*margin: 14px auto;/);
+  assert.match(readerCss, /\.notion-page\.universal-analysis-page \.analysis-section-group-content > ul,[\s\S]*max-width: 74ch;[\s\S]*margin: 12px auto 20px;/);
+  assert.match(tableSource, /surfaceForCompact = true/);
+  assert.match(tableSource, /if \(!scrollable && !surfaceForCompact\) return <div \{\.\.\.wrapperProps\}>\{table\}<\/div>/);
+  assert.match(tableSource, /return <SecondaryBlock \{\.\.\.wrapperProps\}>\{table\}<\/SecondaryBlock>/);
+  assert.match(analysisSource, /surfaceForCompact=\{false\}/);
+  assert.doesNotMatch(readerCss, /analysis-section-group-content \.notion-table-wrap/);
+  assert.match(readerCss, /\.analysis-scenario-cards, \.analysis-threshold-grid \{[^}]*repeat\(auto-fit, minmax\(min\(100%, 240px\), 1fr\)\)/);
+  assert.match(readerCss, /@media \(max-width: 760px\) \{[\s\S]*?\.analysis-threshold-grid \{\s*grid-template-columns: minmax\(0, 1fr\);/);
+  assert.match(companyCss, /\.generic-company-detail > \.detail-navigation \{[\s\S]*position: sticky;[\s\S]*top:/);
+  assert.doesNotMatch(companyCss, /\.generic-company-detail > \.detail-navigation \{[^}]*position: fixed;/);
+  const mobileCopyRule = documentsCss.match(/\.universal-analysis-page \.analysis-section-group-content > p,[\s\S]*?\{([^}]*)\}/)?.[1] ?? "";
+  assert.doesNotMatch(mobileCopyRule, /(?:width|max-width):\s*100%/);
 });
 
 test("company summaries are segmented for a scannable mobile preview", async () => {
@@ -826,4 +871,31 @@ test("global surfaces use white content materials and shell has no blue radial c
   assert.match(globalsSource, /--surface-canvas:\s*#fff/i);
   assert.match(globalsSource, /--surface-secondary:\s*(?:var\([^)]*,\s*)?#fff/i);
   assert.doesNotMatch(shellSource, /radial-gradient\(circle at 90%/);
+});
+
+test("embedded company analysis fetches its full document instead of rendering the stripped company preview", async () => {
+  const [companySource, panelSource, previewSource] = await Promise.all([
+    readFile(companyDetailUrl, "utf8"),
+    readFile(new URL("../app/components/company-analysis-document.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/lib/company-preview.ts", import.meta.url), "utf8"),
+  ]);
+  assert.match(previewSource, /plainText: "", notionBlocks: undefined/);
+  assert.match(companySource, /<CompanyAnalysisDocument key=\{selectedDocument.id\} preview=\{selectedDocument\}/);
+  assert.match(panelSource, /\/api\/analyses\/\$\{encodeURIComponent\(preview.id\)\}/);
+  assert.match(panelSource, /const document = hasFullPreview \? preview : data\?\.document/);
+  assert.match(panelSource, /<AnalysisReader document=\{document\} companyName=\{companyName\} embedded/);
+  assert.doesNotMatch(panelSource, /<AnalysisReader document=\{preview\}/);
+  assert.match(panelSource, /Document indisponible/);
+  assert.match(panelSource, /Réessayer/);
+});
+
+test("the company back button returns to the Companies list regardless of visited analyses", async () => {
+  const [pageSource, navigationSource, companyCss, shellCss] = await Promise.all([readFile(pageUrl, "utf8"), readFile(navigationUrl, "utf8"), readFile(new URL("../app/styles/ux/company.css", import.meta.url), "utf8"), readFile(new URL("../app/styles/ux/shell.css", import.meta.url), "utf8")]);
+  assert.match(pageSource, /CompanyDetail companyId=\{selectedCompany\}[\s\S]*close=\{\(\) => navigate\("companies"\)\}/);
+  assert.match(navigationSource, /navigate: \(tab: Tab\) => \{ if \(tab !== route.tab \|\| route.company \|\| route.document\) move\(\{ tab, company: null, document: null \}\)/);
+  assert.match(pageSource, /DocumentView key=\{route.document\} id=\{route.document\} onBack=\{back\}/);
+  assert.match(companyCss, /\.generic-company-detail > \.detail-navigation \{[\s\S]*position: sticky;[\s\S]*z-index: 40;/);
+  assert.match(companyCss, /safe-area-inset-top/);
+  assert.doesNotMatch(companyCss, /--company-back-left|(?:^|[;{])\s*left\s*:/m);
+  assert.doesNotMatch(shellCss, /--company-back-left/);
 });

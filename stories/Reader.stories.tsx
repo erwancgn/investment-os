@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { AnalysisReader } from "../app/components/analysis-reader";
-import { desktopFrame, frame } from "./reference-frame";
+import { desktopFrame, frame, tabletFrame } from "./reference-frame";
 import { completeReferenceDocuments, document } from "./reference-fixtures";
 
 const memoDocument = {
@@ -40,6 +40,7 @@ type Story = StoryObj<typeof meta>;
 
 export const Reader: Story = { render: () => frame(<AnalysisReader document={document} companyName="Advanced Micro Devices" onBack={() => undefined} />) };
 export const ReaderDesktop: Story = { parameters: { viewport: { defaultViewport: "desktop" } }, render: () => desktopFrame(<AnalysisReader document={document} companyName="Advanced Micro Devices" onBack={() => undefined} />) };
+export const ReaderTablet: Story = { parameters: { viewport: { defaultViewport: "tablet" } }, render: () => tabletFrame(<AnalysisReader document={document} companyName="Advanced Micro Devices" onBack={() => undefined} />) };
 
 
 export const Memo: Story = { parameters: { viewport: { defaultViewport: "mobile" } }, render: () => frame(<AnalysisReader document={memoDocument} companyName="Advanced Micro Devices" onBack={() => undefined} />) };
@@ -69,3 +70,4 @@ const denseMatrixDocument = {
 };
 
 export const DenseMatrix: Story = { render: () => frame(<AnalysisReader document={denseMatrixDocument} companyName="Entreprise de référence" onBack={() => undefined} />) };
+export const DenseMatrixDesktop: Story = { parameters: { viewport: { defaultViewport: "desktop" } }, render: () => desktopFrame(<AnalysisReader document={denseMatrixDocument} companyName="Entreprise de référence" onBack={() => undefined} />) };

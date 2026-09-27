@@ -123,6 +123,19 @@ test('company preview retains the exact late TLDR while removing full report bod
   assert.ok(JSON.stringify(result).length < JSON.stringify(company).length / 20);
 });
 
+test('company previews remain lightweight while their analysis ids resolve to complete demo documents', async () => {
+  const bundled = await build({ entryPoints: ['app/lib/company-preview.ts'], bundle: true, write: false, platform: 'node', format: 'esm' });
+  const { companyPreview } = await import('data:text/javascript;base64,' + Buffer.from(bundled.outputFiles[0].text).toString('base64'));
+  const { getDemoCompanyDetail, getDemoResearchDocument } = await import('../app/lib/demo-data.ts');
+  const company = companyPreview(getDemoCompanyDetail('demo-lumagrid').company);
+  for (const preview of company.analyses) {
+    assert.equal(preview.plainText, '');
+    const full = getDemoResearchDocument(preview.id)?.document;
+    assert.ok(full?.plainText.length > 0, `full document missing for ${preview.id}`);
+    assert.equal(full.id, preview.id);
+  }
+});
+
 test('service worker caches static assets only and never substitutes HTML for failed assets', async () => {
   const handlers = {}; const stored = new Map(); let calls = 0;
   const scope = {

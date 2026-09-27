@@ -35,6 +35,17 @@ test("reference screen stories render production components at mobile and deskto
     assert.match(source, new RegExp(`<${componentName}[\\s>]`));
     for (const viewport of viewports) assert.match(source, new RegExp(`defaultViewport: \\"${viewport}\\"`));
   }
+  const [readerStory, companyStory, previewConfig, referenceFrame] = await Promise.all([
+    read("stories/Reader.stories.tsx"),
+    read("stories/Company.stories.tsx"),
+    read(".storybook/preview.ts"),
+    read("stories/reference-frame.tsx"),
+  ]);
+  assert.match(readerStory, /export const ReaderTablet[\s\S]*defaultViewport: "tablet"[\s\S]*tabletFrame/);
+  assert.match(readerStory, /export const DenseMatrix/);
+  assert.match(companyStory, /export const EmbeddedValuationTablet[\s\S]*defaultViewport: "tablet"[\s\S]*tabletFrame/);
+  assert.match(previewConfig, /tablet: \{ name: "Tablet", styles: \{ width: "768px"/);
+  assert.match(referenceFrame, /export const tabletFrame/);
   const companiesSource = await read("app/components/notion-companies.tsx");
   assert.match(companiesSource, /<DiscoveryCard[^>]+kind="company"/);
   const shellSource = await read("stories/Shell.stories.tsx");

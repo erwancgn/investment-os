@@ -6,7 +6,7 @@ import { LiveHoldingSummary } from "./live-holding-summary";
 import { useOpenAnalysis } from "../lib/app-navigation";
 import { useClientResource } from "../lib/client-resource";
 import { LatestInfoCard } from "./latest-info-card";
-import { AnalysisReader } from "./analysis-reader";
+import { CompanyAnalysisDocument } from "./company-analysis-document";
 import { BackButton, Badge, DisclosureSurface, MetadataGrid, PrimaryBlock, SecondaryBlock, SectionHeader, StatCard, Tabs, type BadgeTone } from "./ui-primitives";
 
 type CompanyTab = CompanySectionKey | "memo";
@@ -354,7 +354,7 @@ export function CompanyDetail({ companyId, selectedAnalysisId = null, close, ini
       {activeSection !== "synthese" && activeSection !== "analyses" && selectedDocument && sectionForDocument(selectedDocument) === activeSection && (
         <section className="company-section-block company-analysis-panel" aria-label={`${sectionTitles[activeSection]} · ${selectedDocument.title}`}>
           {activeSection === "earnings" && <EarningsReviewCard document={selectedDocument} />}
-          <AnalysisReader document={selectedDocument} companyName={title} embedded />
+          <CompanyAnalysisDocument key={selectedDocument.id} preview={selectedDocument} companyName={title} />
           <DocumentHistory docs={grouped(activeSection).filter(doc => doc.id !== selectedDocument.id)} title="Autres documents courants" detail="Autres versions reliées à cette catégorie" label="Current" onOpen={openDocument} />
           <DocumentHistory docs={archivedByCategory(activeSection)} title="Versions archivées" detail="Historique de cette catégorie" label="Archive" onOpen={openDocument} />
         </section>

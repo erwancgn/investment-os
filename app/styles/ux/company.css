@@ -2,6 +2,13 @@
 /* Company sheet — compact identity, one current document, history on demand. */
 .generic-company-detail {
   margin: 0 auto;
+  padding-top: 0;
+}
+.generic-company-detail > .detail-navigation {
+  position: sticky;
+  top: max(16px, calc(env(safe-area-inset-top) + 16px));
+  z-index: 40;
+  width: max-content;
 }
 .generic-company-hero {
   min-height: 108px;

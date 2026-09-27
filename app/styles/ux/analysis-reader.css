@@ -55,16 +55,16 @@
 }
 .notion-page.universal-analysis-page {
   width: 100%;
-  max-width: 900px;
+  max-width: 100%;
   min-width: 0;
-  margin: 0 auto;
-  padding: 38px 48px;
+  margin: 0;
+  padding: 24px 0;
 }
 .analysis-section-groups { display: grid; gap: 12px; margin-top: 24px; }
 .analysis-section-group { min-width: 0; scroll-margin-top: 72px; }
 .analysis-section-group .ui-disclosure-surface > summary { min-height: 56px; justify-content: space-between; gap: 16px; text-align: left; }
 .analysis-section-group .ui-disclosure-surface > summary > strong { flex: 1; font-size: var(--font-md); overflow-wrap: anywhere; }
-.analysis-section-group-content { max-width: var(--measure-copy); min-width: 0; margin-inline: auto; padding-block: 18px; text-align: left; }
+.analysis-section-group-content { width: 100%; max-width: none; min-width: 0; padding: 18px 0; text-align: left; }
 .analysis-section-group-content > :first-child { margin-top: 0; }
 .analysis-scenario-comparison, .analysis-thresholds { margin-top: 26px; }
 .analysis-scenario-cards, .analysis-threshold-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); gap: 10px; }
@@ -75,7 +75,7 @@
 .analysis-scenario-card dl > div { min-width: 0; }
 .analysis-scenario-card dt, .analysis-threshold span { color: var(--color-text-muted); font-size: var(--font-xs); }
 .analysis-scenario-card dd { margin: 4px 0 0; font-size: clamp(1rem, 2vw, 1.25rem); font-weight: 750; overflow-wrap: anywhere; text-align: center; }
-.analysis-scenario-comparison > p, .analysis-thresholds > p { max-width: 70ch; margin: 12px 0 0; color: var(--color-text-muted); font-size: var(--font-sm); line-height: 1.5; text-align: left; }
+.analysis-scenario-comparison > p, .analysis-thresholds > p { max-width: 70ch; margin: 12px auto 0; color: var(--color-text-muted); font-size: var(--font-sm); line-height: 1.5; text-align: left; }
 .analysis-threshold { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 8px; }
 .analysis-threshold strong { font-size: clamp(1rem, 2vw, 1.25rem); overflow-wrap: anywhere; text-align: center; }
 .notion-page.universal-analysis-page .analysis-section {
@@ -109,14 +109,14 @@
 }
 .notion-page.universal-analysis-page .analysis-section-group-content > p {
   max-width: 76ch;
-  margin: 14px 0;
+  margin: 14px auto;
   font-size: 14px;
   line-height: 1.72;
 }
 .notion-page.universal-analysis-page .analysis-section-group-content > ul,
 .notion-page.universal-analysis-page .analysis-section-group-content > ol {
   max-width: 74ch;
-  margin: 12px 0 20px;
+  margin: 12px auto 20px;
   padding-left: 26px;
 }
 .notion-page.universal-analysis-page .analysis-section-group-content > ul li,
@@ -127,7 +127,7 @@
 }
 .notion-page.universal-analysis-page .analysis-section-group-content > blockquote {
   max-width: 76ch;
-  margin: 18px 0;
+  margin: 18px auto;
   padding: 15px 18px;
   border-left: 2px solid #5d8df0;
   background: rgba(93, 141, 240, .07);
@@ -750,6 +750,10 @@
   .universal-analysis-page {
 
     margin-inline: 0 !important;
+  }
+
+  .analysis-threshold-grid {
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .universal-analysis-page {

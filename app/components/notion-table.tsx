@@ -8,7 +8,8 @@ function looksNumeric(value: string) {
   return /(?:^|\s)[+−-]?[\d\s.,≈]+\s*(?:%|€|\$|£|JPY|USD|EUR|x)?\s*$/i.test(value.trim());
 }
 
-export function NotionTable({ rows, header = true, renderCell }: { rows: string[][]; header?: boolean; renderCell: (value: string) => React.ReactNode }) {
+/** Compact tables may inherit an existing disclosure surface; dense tables keep their own. */
+export function NotionTable({ rows, header = true, renderCell, surfaceForCompact = true }: { rows: string[][]; header?: boolean; renderCell: (value: string) => React.ReactNode; surfaceForCompact?: boolean }) {
   if (!rows.length) return null;
   const columnCount = Math.max(...rows.map(row => row.length), 1);
   const scrollable = shouldScrollNotionTable(rows);
@@ -18,11 +19,14 @@ export function NotionTable({ rows, header = true, renderCell }: { rows: string[
     return <HeaderOrCell scope={headerRow ? "col" : undefined} className={looksNumeric(cell) ? "notion-table-numeric" : undefined} key={cellIndex}>{renderCell(cell)}</HeaderOrCell>;
   })}</tr>;
   const bodyRows = header ? rows.slice(1) : rows;
-  return <SecondaryBlock
-    className={`notion-table-wrap${scrollable ? " notion-table-wrap-scrollable" : ""}`}
-    style={{ "--notion-columns": columnCount } as React.CSSProperties}
-    tabIndex={scrollable ? 0 : undefined}
-    role={scrollable ? "region" : undefined}
-    aria-label={scrollable ? "Tableau défilable horizontalement" : undefined}
-  ><table className={`notion-table${scrollable ? " notion-table-wide" : " notion-table-compact"}${columnClass}`}>{header && <thead>{renderRow(rows[0], 0, true)}</thead>}<tbody>{bodyRows.map((row, rowIndex) => renderRow(row, header ? rowIndex + 1 : rowIndex))}</tbody></table></SecondaryBlock>;
+  const table = <table className={`notion-table${scrollable ? " notion-table-wide" : " notion-table-compact"}${columnClass}`}>{header && <thead>{renderRow(rows[0], 0, true)}</thead>}<tbody>{bodyRows.map((row, rowIndex) => renderRow(row, header ? rowIndex + 1 : rowIndex))}</tbody></table>;
+  const wrapperProps = {
+    className: `notion-table-wrap${scrollable ? " notion-table-wrap-scrollable" : ""}`,
+    style: { "--notion-columns": columnCount } as React.CSSProperties,
+    tabIndex: scrollable ? 0 : undefined,
+    role: scrollable ? "region" : undefined,
+    "aria-label": scrollable ? "Tableau défilable horizontalement" : undefined,
+  };
+  if (!scrollable && !surfaceForCompact) return <div {...wrapperProps}>{table}</div>;
+  return <SecondaryBlock {...wrapperProps}>{table}</SecondaryBlock>;
 }

@@ -151,15 +151,6 @@ function StandardAnalysisReader({ document, companyName, onBack, embedded }: { d
     : scored && document.score
       ? { label: "Score", value: document.score }
       : null;
-  const metadata = [
-    { label: "Agent", value: document.agent },
-    { label: "Statut", value: document.status || "Importé" },
-    ...(scored ? [{ label: "Score", value: document.score || "—" }] : []),
-    {
-      label: "Mise à jour",
-      value: shortDate(document.date || document.lastEditedTime),
-    },
-  ];
   return (
     <section className="research-reader universal-analysis-reader" data-analysis-template={templateKind}>
       {!embedded && onBack && <div className="detail-navigation"><BackButton onBack={onBack} ariaLabel="Retour à la liste précédente" /></div>}
@@ -203,7 +194,6 @@ function StandardAnalysisReader({ document, companyName, onBack, embedded }: { d
               renderValue={inline}
             />
           )}
-          <MetadataGrid ariaLabel="Métadonnées de l’analyse" items={metadata} />
           {scenarioSummary && <ScenarioComparison summary={scenarioSummary} showThresholds />}
           <DisclosureSurface
             className="analysis-source-details"
@@ -270,7 +260,7 @@ function StandardAnalysisReader({ document, companyName, onBack, embedded }: { d
                 </Tag>
               );
             }
-            return <NotionTable key={index} rows={block.rows} header={block.header ?? true} renderCell={inline} />;
+            return <NotionTable key={index} rows={block.rows} header={block.header ?? true} renderCell={inline} surfaceForCompact={false} />;
           }} />
           <footer className="notion-page-footer">
             <span>{isDemo ? "Fin du document de démonstration" : "Fin du document synchronisé"}</span>

@@ -2,7 +2,7 @@ import { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { CompanyDetail } from "../app/components/company-detail";
 import { OpenAnalysisContext } from "../app/lib/app-navigation";
-import { desktopFrame, frame } from "./reference-frame";
+import { desktopFrame, frame, tabletFrame } from "./reference-frame";
 import { company, companyDetail, completeCompanyDetail } from "./reference-fixtures";
 
 const meta = { title: "Reference screens/Company", parameters: { layout: "fullscreen" } } satisfies Meta;
@@ -23,3 +23,4 @@ export const CompleteDossier: Story = { parameters: { viewport: { defaultViewpor
 export const CompleteDossierDesktop: Story = { parameters: { viewport: { defaultViewport: "desktop" } }, render: () => <InteractiveDossier desktop /> };
 export const EmbeddedValuation: Story = { parameters: { viewport: { defaultViewport: "mobile" } }, render: () => <InteractiveDossier selectedDocument="ref-valuation" /> };
 export const EmbeddedValuationDesktop: Story = { parameters: { viewport: { defaultViewport: "desktop" } }, render: () => <InteractiveDossier desktop selectedDocument="ref-valuation" /> };
+export const EmbeddedValuationTablet: Story = { parameters: { viewport: { defaultViewport: "tablet" } }, render: () => tabletFrame(<InteractiveDossier selectedDocument="ref-valuation" />) };
