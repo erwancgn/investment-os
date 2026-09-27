@@ -74,5 +74,45 @@
         "requiredFields": ["Agent", "Verdict", "Confidence", "Evidence Coverage %", "Handoff Summary"]
       }
     }
+  ],
+  "renderingCases": [
+    {
+      "id": "tsmc-valuation-mobile-first",
+      "company": "TSMC",
+      "ticker": "TSM",
+      "kind": "valuation",
+      "referencePrice": "451,89 USD",
+      "referenceDate": "22/09/2026",
+      "horizon": "5 ans",
+      "baseCagr": "9,91 %/an",
+      "hurdle": "12 %/an",
+      "scenarios": [
+        { "name": "Bear", "terminal": "409,55 USD", "cagr": "−1,95 %/an" },
+        { "name": "Base", "terminal": "724,69 USD", "cagr": "9,91 %/an" },
+        { "name": "Bull", "terminal": "973,98 USD", "cagr": "16,60 %/an" }
+      ],
+      "thresholds": [
+        { "rate": "10 %", "price": "449,98 USD" },
+        { "rate": "12 %", "price": "411,21 USD" },
+        { "rate": "15 %", "price": "360,30 USD" }
+      ],
+      "expectedReading": "Base : 9,91 %/an, sous l’objectif de 12 %/an au cours de référence."
+    },
+    {
+      "id": "advantest-valuation-jpy",
+      "company": "Advantest",
+      "ticker": "6857.T",
+      "kind": "valuation",
+      "referencePrice": "33 060 JPY",
+      "referenceDate": "24/09/2026",
+      "horizon": "5 ans",
+      "score": "55/100",
+      "thresholds": [
+        { "rate": "10 %", "price": "34 234 JPY" },
+        { "rate": "12 %", "price": "31 285 JPY" },
+        { "rate": "15 %", "price": "27 411 JPY" }
+      ],
+      "expectedReading": "Le cours de référence est supérieur au prix cible du scénario Base à 12 %."
+    }
   ]
 }

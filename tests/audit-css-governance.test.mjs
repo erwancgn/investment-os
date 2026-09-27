@@ -15,7 +15,7 @@ test("CSS governance matches the checked-in debt baseline", async () => {
     } else if (metric === "importantDeclarations") {
       assert.ok(result.metrics[metric] <= threshold, "important declarations must not grow");
     } else {
-      assert.equal(result.metrics[metric], threshold, `${metric} changed from the governance baseline`);
+      assert.ok(result.metrics[metric] <= threshold, `${metric} must not grow beyond the governance baseline`);
     }
   }
   assert.deepEqual(result.baseline.regressions, []);

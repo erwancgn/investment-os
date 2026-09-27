@@ -290,8 +290,7 @@ table {
 /* Portfolio controls and final light-surface cleanup — v81 */
 
 /* Main surfaces stay white; nested cards use the neutral liquid-glass inset. */
-.notion-source-grid button,
-.analysis-section {
+.notion-source-grid button {
   background: var(--glass-inset) !important;
   border-color: var(--color-border) !important;
   color: var(--color-text) !important;

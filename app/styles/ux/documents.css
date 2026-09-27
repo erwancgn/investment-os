@@ -15,35 +15,6 @@
   line-height: 1.35;
 }
 
-.latest-info-summary,
-.analysis-lead {
-
-  gap: 10px;
-
-
-}
-
-.latest-info-summary > small,
-.analysis-lead > span,
-.analysis-lead > span::after {
-  color: var(--color-accent) !important;
-  font-size: 10px !important;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-.latest-info-summary > .latest-info-summary-more {
-  color: var(--color-text-muted) !important;
-  font-size: 10px !important;
-  font-weight: 500;
-  letter-spacing: 0;
-  text-transform: none;
-}
-
-.analysis-lead > span::after {
-  content: none !important;
-}
 .latest-info-summary p,
 .latest-info-summary ul,
 .analysis-lead p,

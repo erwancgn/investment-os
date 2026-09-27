@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { AnalysisReader } from "../app/components/analysis-reader";
 import { desktopFrame, frame, tabletFrame } from "./reference-frame";
-import { completeReferenceDocuments, document } from "./reference-fixtures";
+import { advantestValuationDocument, completeReferenceDocuments, document, tsmcValuationDocument } from "./reference-fixtures";
 
 const memoDocument = {
   ...document,
@@ -52,6 +52,10 @@ export const Short: Story = { render: () => frame(<AnalysisReader document={comp
 export const PortfolioFit: Story = { render: () => frame(<AnalysisReader document={completeReferenceDocuments.portfolio} companyName="Entreprise de référence" onBack={() => undefined} />) };
 export const CIO: Story = { render: () => frame(<AnalysisReader document={completeReferenceDocuments.synthese} companyName="Entreprise de référence" onBack={() => undefined} />) };
 export const Earnings: Story = { render: () => frame(<AnalysisReader document={completeReferenceDocuments.earnings} companyName="Entreprise de référence" onBack={() => undefined} />) };
+export const ValuationTSMC: Story = { render: () => frame(<AnalysisReader document={tsmcValuationDocument} companyName="TSMC" onBack={() => undefined} />) };
+export const ValuationTSMCTablet: Story = { parameters: { viewport: { defaultViewport: "tablet" } }, render: () => tabletFrame(<AnalysisReader document={tsmcValuationDocument} companyName="TSMC" onBack={() => undefined} />) };
+export const ValuationTSMCDesktop: Story = { parameters: { viewport: { defaultViewport: "desktop" } }, render: () => desktopFrame(<AnalysisReader document={tsmcValuationDocument} companyName="TSMC" onBack={() => undefined} />) };
+export const ValuationAdvantestJPY: Story = { render: () => frame(<AnalysisReader document={advantestValuationDocument} companyName="Advantest" onBack={() => undefined} />) };
 
 const denseMatrixDocument = {
   ...completeReferenceDocuments.valuation,

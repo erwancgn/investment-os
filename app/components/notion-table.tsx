@@ -2,14 +2,13 @@
 
 import React from "react";
 import { shouldScrollNotionTable } from "../lib/table-presentation";
-import { SecondaryBlock } from "./ui-primitives";
 
 function looksNumeric(value: string) {
   return /(?:^|\s)[+−-]?[\d\s.,≈]+\s*(?:%|€|\$|£|JPY|USD|EUR|x)?\s*$/i.test(value.trim());
 }
 
-/** Compact tables may inherit an existing disclosure surface; dense tables keep their own. */
-export function NotionTable({ rows, header = true, renderCell, surfaceForCompact = true }: { rows: string[][]; header?: boolean; renderCell: (value: string) => React.ReactNode; surfaceForCompact?: boolean }) {
+/** A table is structural content; only dense tables receive an accessible scroll region. */
+export function NotionTable({ rows, header = true, renderCell }: { rows: string[][]; header?: boolean; renderCell: (value: string) => React.ReactNode }) {
   if (!rows.length) return null;
   const columnCount = Math.max(...rows.map(row => row.length), 1);
   const scrollable = shouldScrollNotionTable(rows);
@@ -27,6 +26,5 @@ export function NotionTable({ rows, header = true, renderCell, surfaceForCompact
     role: scrollable ? "region" : undefined,
     "aria-label": scrollable ? "Tableau défilable horizontalement" : undefined,
   };
-  if (!scrollable && !surfaceForCompact) return <div {...wrapperProps}>{table}</div>;
-  return <SecondaryBlock {...wrapperProps}>{table}</SecondaryBlock>;
+  return <div {...wrapperProps}>{table}</div>;
 }

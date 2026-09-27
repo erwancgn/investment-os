@@ -7,5 +7,15 @@
     { "kind": "portfolio", "summaryHeading": "TL;DR", "tableColumns": ["Élément", "Verdict"], "priorityFact": "Poids cible" },
     { "kind": "earnings", "summaryHeading": "Synthèse", "tableColumns": ["Indicateur", "Résultat"], "priorityFact": "Guidance" },
     { "kind": "investment_memo", "summaryHeading": "TLDR", "tableColumns": ["Décision", "Condition"], "priorityFact": "Condition" }
-  ]
+  ],
+  "displayContract": {
+    "embeddedFamilies": ["business", "valuation", "short", "portfolio", "investment_memo", "earnings"],
+    "viewports": ["mobile", "tablet", "desktop"],
+    "mobileThreeItemLayout": "stacked-full-width",
+    "scenarioAndThresholdTablesScrollable": false,
+    "denseMatricesScrollable": true,
+    "runReceiptVisible": false,
+    "scoreExample": "55/100",
+    "sourceDetailsPosition": "after-analysis-content"
+  }
 }

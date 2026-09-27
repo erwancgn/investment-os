@@ -59,6 +59,62 @@ test("analysis reference registry covers the six canonical Notion templates", as
   }
 });
 
+test("TSMC and Advantest display fixtures preserve the reviewed valuation examples", async () => {
+  const registry = JSON.parse(await readFile(fixtureUrl, "utf8"));
+  const tsmc = registry.renderingCases.find((item) => item.id === "tsmc-valuation-mobile-first");
+  const advantest = registry.renderingCases.find((item) => item.id === "advantest-valuation-jpy");
+  assert.ok(tsmc, "TSMC reference example is available to tests and Storybook");
+  assert.ok(advantest, "Advantest JPY example is available to tests and Storybook");
+  assert.deepEqual([tsmc.referencePrice, tsmc.referenceDate, tsmc.horizon], ["451,89 USD", "22/09/2026", "5 ans"]);
+  assert.deepEqual(tsmc.scenarios.map(({ name, terminal, cagr }) => [name, terminal, cagr]), [
+    ["Bear", "409,55 USD", "−1,95 %/an"],
+    ["Base", "724,69 USD", "9,91 %/an"],
+    ["Bull", "973,98 USD", "16,60 %/an"],
+  ]);
+  assert.deepEqual(tsmc.thresholds.map(({ rate, price }) => [rate, price]), [
+    ["10 %", "449,98 USD"], ["12 %", "411,21 USD"], ["15 %", "360,30 USD"],
+  ]);
+  assert.equal(tsmc.expectedReading, "Base : 9,91 %/an, sous l’objectif de 12 %/an au cours de référence.");
+  assert.deepEqual([advantest.referencePrice, advantest.referenceDate, advantest.score], ["33 060 JPY", "24/09/2026", "55/100"]);
+  assert.deepEqual(advantest.thresholds.map(({ rate, price }) => [rate, price]), [
+    ["10 %", "34 234 JPY"], ["12 %", "31 285 JPY"], ["15 %", "27 411 JPY"],
+  ]);
+
+  const presentationContract = JSON.parse(await readFile(presentationFixturesUrl, "utf8")).displayContract;
+  assert.deepEqual(presentationContract.embeddedFamilies, ["business", "valuation", "short", "portfolio", "investment_memo", "earnings"]);
+  assert.deepEqual(presentationContract.viewports, ["mobile", "tablet", "desktop"]);
+  assert.equal(presentationContract.mobileThreeItemLayout, "stacked-full-width");
+  assert.equal(presentationContract.scenarioAndThresholdTablesScrollable, false);
+  assert.equal(presentationContract.denseMatricesScrollable, true);
+  assert.equal(presentationContract.runReceiptVisible, false);
+  assert.equal(presentationContract.scoreExample, "55/100");
+  assert.equal(presentationContract.sourceDetailsPosition, "after-analysis-content");
+});
+
+test("TSMC fixture values are extracted as scenarios and thresholds without changing their meaning", async () => {
+  const { extractValuationSummary } = await import("../app/lib/valuation-summary.ts");
+  const { renderingCases } = JSON.parse(await readFile(fixtureUrl, "utf8"));
+  const tsmc = renderingCases.find((item) => item.id === "tsmc-valuation-mobile-first");
+  const blocks = [
+    { type: "heading", level: 2, text: `Scénarios · horizon ${tsmc.horizon}` },
+    { type: "table", header: true, rows: [
+      ["Mesure · horizon 5 ans", "Bear", "Base", "Bull"],
+      ["Prix terminal estimé · USD", ...tsmc.scenarios.map((item) => item.terminal.replace(/\s*USD$/, ""))],
+      ["CAGR actionnaire · %/an", ...tsmc.scenarios.map((item) => item.cagr)],
+    ] },
+    { type: "heading", level: 2, text: "Seuils du scénario Base intacte" },
+    { type: "table", header: true, rows: [
+      ["Rendement exigé", "Prix maximal"],
+      ...tsmc.thresholds.map((item) => [item.rate, item.price]),
+    ] },
+  ];
+  const summary = extractValuationSummary(blocks);
+  assert.deepEqual(summary?.scenarios.map(({ name, terminal, cagr }) => [name, terminal, `${cagr}/an`]),
+    tsmc.scenarios.map(({ name, terminal, cagr }) => [name, terminal, cagr]));
+  assert.deepEqual(summary?.thresholds, tsmc.thresholds);
+  assert.deepEqual(summary?.promotedBlockIndexes, [1, 3]);
+});
+
 test("runtime routes and package identity have no isolated legacy template remnants", async () => {
   const workerSource = await readFile(workerSourceUrl, "utf8");
   const packageSource = JSON.parse(await readFile(new URL("../package.json", import.meta.url), "utf8"));
@@ -477,7 +533,7 @@ test("standard analyses and CIO memo reuse the shared hero and fact grid", async
   assert.match(memoSource, /<AnalysisReportHero/);
   assert.match(memoSource, /<AnalysisFactGrid/);
   assert.doesNotMatch(readerSource, /document\.verdict \|\| "Non renseigné"/);
-  assert.match(readerSource, /scored && document\.score/);
+  assert.match(readerSource, /scored \? formatAnalysisScore\(document\.score\) : null/);
   assert.match(memoSource, /value: document\.verdict \|\| "À statuer"/);
   assert.match(primitiveSource, /className\?: string/);
   assert.match(uxSource, /\.analysis-report-hero--without-outcome/);
@@ -485,14 +541,16 @@ test("standard analyses and CIO memo reuse the shared hero and fact grid", async
   assert.match(uxSource, /\.analysis-structured-value > span \+ span/);
 });
 
-test("standard analysis hero keeps all unique metadata without a duplicate grid", async () => {
+test("standard analysis hero uses concise titles and formats scores without a duplicate metadata grid", async () => {
   const [source, memoSource] = await Promise.all([readFile(analysisReaderUrl, "utf8"), readFile(memoReaderUrl, "utf8")]);
   const standardReader = source.slice(source.indexOf("function StandardAnalysisReader"));
   assert.match(standardReader, /<Badge>\{document\.agent\}<\/Badge>/);
   assert.match(standardReader, /<Badge tone=\{document\.status/);
-  assert.match(standardReader, /companyName\} · \{shortDate\(document\.date \|\| document\.lastEditedTime\)\}/);
-  assert.match(standardReader, /detail: scored && document\.score \? document\.score : undefined/);
-  assert.match(standardReader, /\{ label: "Score", value: document\.score \}/);
+  assert.match(standardReader, /title=\{analysisTypeLabel\(document\)\}/);
+  assert.match(standardReader, /subtitle=\{<>\{companyName\} · \{shortDate\(document\.date \|\| document\.lastEditedTime\)\}<\/?>\}/);
+  assert.match(standardReader, /const formattedScore = scored \? formatAnalysisScore\(document\.score\) : null/);
+  assert.match(standardReader, /label: "Score", value: formattedScore/);
+  assert.match(standardReader, /detail: formattedScore && formattedScore !== "—" \? formattedScore : undefined/);
   assert.match(standardReader, /outcome=\{outcome\}/);
   assert.match(standardReader, /className="analysis-source-details"/);
   assert.match(standardReader, /Ouvrir le document original/);
@@ -500,6 +558,19 @@ test("standard analysis hero keeps all unique metadata without a duplicate grid"
   assert.match(source.slice(0, source.indexOf("function StandardAnalysisReader")), /<MetadataGrid/);
   assert.match(memoSource, /className="memo-decision-card"/);
   assert.match(memoSource, /<AnalysisFactGrid/);
+});
+
+test("analysis reader leads with editorial analysis and keeps sources after the report", async () => {
+  const [readerSource, readerCss] = await Promise.all([
+    readFile(analysisReaderUrl, "utf8"),
+    readFile(new URL("../app/styles/ux/analysis-reader.css", import.meta.url), "utf8"),
+  ]);
+  const standardReader = readerSource.slice(readerSource.indexOf("function StandardAnalysisReader"));
+  assert.doesNotMatch(standardReader, /title=\{document\.title\}/, "technical Notion title must not be the UI heading");
+  assert.ok(standardReader.indexOf("<AnalysisSectionGroups") < standardReader.indexOf("className=\"analysis-source-details\""), "source and TOC disclosure follows analysis content");
+  assert.doesNotMatch(standardReader, /<SecondaryBlock className="analysis-source-details"/);
+  const mobileScenarioLayout = readerCss.match(/@media \(max-width: 760px\) \{([\s\S]*?)\n\}/g)?.find(rule => rule.includes(".analysis-scenario-cards") && rule.includes(".analysis-threshold-grid")) ?? "";
+  assert.match(mobileScenarioLayout, /\.analysis-scenario-cards,[\s\S]*?\.analysis-threshold-grid\s*\{\s*grid-template-columns:\s*minmax\(0,\s*1fr\);/);
 });
 
 test("Investment Memo CIO has a dedicated decision view without a numeric memo score", async () => {
@@ -527,7 +598,7 @@ test("Notion tables use one adaptive reusable component", async () => {
   assert.match(tableSource, /notion-table-wide/);
   assert.match(readerSource, /<NotionTable/);
   assert.match(memoSource, /<NotionTable/);
-  assert.doesNotMatch(memoSource, /surfaceForCompact=\{false\}/);
+  assert.doesNotMatch(memoSource, /surfaceForCompact/);
   assert.match(globalsSource, /\.notion-table \{[\s\S]*table-layout: fixed/);
   assert.match(globalsSource, /\.notion-table-wrap \{[\s\S]*overflow-x: hidden/);
   assert.match(globalsSource, /\.notion-table-wrap-scrollable \{ overflow-x: auto; \}/);
@@ -546,13 +617,13 @@ test("analysis disclosures use the company width while keeping prose readable", 
   assert.match(readerCss, /\.analysis-section-group-content \{[^}]*width: 100%;[^}]*max-width: none;/);
   assert.match(readerCss, /\.notion-page\.universal-analysis-page \.analysis-section-group-content > p \{[^}]*max-width: 76ch;[^}]*margin: 14px auto;/);
   assert.match(readerCss, /\.notion-page\.universal-analysis-page \.analysis-section-group-content > ul,[\s\S]*max-width: 74ch;[\s\S]*margin: 12px auto 20px;/);
-  assert.match(tableSource, /surfaceForCompact = true/);
-  assert.match(tableSource, /if \(!scrollable && !surfaceForCompact\) return <div \{\.\.\.wrapperProps\}>\{table\}<\/div>/);
-  assert.match(tableSource, /return <SecondaryBlock \{\.\.\.wrapperProps\}>\{table\}<\/SecondaryBlock>/);
-  assert.match(analysisSource, /surfaceForCompact=\{false\}/);
+  assert.doesNotMatch(tableSource, /surfaceForCompact/);
+  assert.match(tableSource, /return <div \{\.\.\.wrapperProps\}>\{table\}<\/div>/, "all tables share one structural wrapper; only dense tables enable scrolling");
+  assert.doesNotMatch(tableSource, /return <SecondaryBlock/);
+  assert.doesNotMatch(analysisSource, /surfaceForCompact/);
   assert.doesNotMatch(readerCss, /analysis-section-group-content \.notion-table-wrap/);
-  assert.match(readerCss, /\.analysis-scenario-cards, \.analysis-threshold-grid \{[^}]*repeat\(auto-fit, minmax\(min\(100%, 240px\), 1fr\)\)/);
-  assert.match(readerCss, /@media \(max-width: 760px\) \{[\s\S]*?\.analysis-threshold-grid \{\s*grid-template-columns: minmax\(0, 1fr\);/);
+  assert.match(readerCss, /\.analysis-scenario-cards,\s*\.analysis-threshold-grid\s*\{[^}]*grid-template-columns:\s*repeat\(3, minmax\(0, 1fr\)\)/);
+  assert.match(readerCss, /@media \(max-width: 760px\) \{[\s\S]*?\.analysis-scenario-cards,\s*\.analysis-threshold-grid\s*\{\s*grid-template-columns: minmax\(0, 1fr\);/);
   assert.match(companyCss, /\.generic-company-detail > \.detail-navigation \{[\s\S]*position: sticky;[\s\S]*top:/);
   assert.doesNotMatch(companyCss, /\.generic-company-detail > \.detail-navigation \{[^}]*position: fixed;/);
   const mobileCopyRule = documentsCss.match(/\.universal-analysis-page \.analysis-section-group-content > p,[\s\S]*?\{([^}]*)\}/)?.[1] ?? "";
@@ -698,9 +769,10 @@ test("research actions and coverage use the shared mobile UI primitives", async 
   assert.match(uxSource, /\.company-metrics\.company-metrics--three, \.company-module-grid\s*\{\s*grid-template-columns: minmax\(0, 1fr\)/);
 });
 
-test("analysis and company details share the same nested liquid-glass primitives", async () => {
+test("analysis and company details share the same liquid-glass primitives without table card nesting", async () => {
   const primitiveSource = await readFile(uiPrimitivesUrl, "utf8");
   const readerSource = await readFile(analysisReaderUrl, "utf8");
+  const tableSource = await readFile(notionTableUrl, "utf8");
   const companySource = await readFile(companyDetailUrl, "utf8");
   const latestInfoSource = await readFile(latestInfoUrl, "utf8");
   const uxSource = await readUxSource();
@@ -725,23 +797,28 @@ test("analysis and company details share the same nested liquid-glass primitives
   assert.match(readerSource, /<DisclosureSurface\s+className="analysis-source-details"/);
   assert.match(latestInfoSource, /<PrimaryBlock as="article" className="detail-card latest-info-card"/);
   assert.doesNotMatch(latestInfoSource, /className="panel/);
-  assert.match(latestInfoSource, /<SecondaryBlock className="latest-info-summary"/);
+  assert.match(latestInfoSource, /className="latest-info-summary"/);
+  assert.doesNotMatch(latestInfoSource, /<SecondaryBlock[^>]*latest-info-summary/);
   assert.match(latestInfoSource, /<MetadataGrid items=/);
   assert.match(uxSource, /\.company-summary-grid,[\s\S]*background: transparent !important/);
   assert.match(globalsSource, /\.ui-surface\.ui-surface--primary[\s\S]*--surface-primary/);
   assert.match(globalsSource, /\.ui-surface--secondary[\s\S]*--surface-secondary/);
   assert.match(globalsSource, /\.ui-surface--glass[\s\S]*backdrop-filter/);
   assert.match(globalsSource, /prefers-reduced-transparency: reduce/);
+  assert.doesNotMatch(tableSource, /surfaceForCompact/);
+  assert.doesNotMatch(tableSource, /<SecondaryBlock \{\.\.\.wrapperProps\}/);
   assert.doesNotMatch(`${primitiveSource}\n${uxSource}\n${globalsSource}`, /ui-primary-block|ui-secondary-block/);
   assert.doesNotMatch(`${primitiveSource}\n${uxSource}\n${globalsSource}`, /InsetSurface|ui-inset-surface/);
   assert.doesNotMatch(`${uxSource}\n${globalsSource}`, /analysis-meta-grid|analysis-fact-grid|latest-info-meta|latest-info-facts/);
   assert.doesNotMatch(uxSource, /\.company-research-overview > button \{/);
 });
 
-test("analysis section headings stay contained in their shared surface", async () => {
+test("analysis section headings stay contained without an extra surface", async () => {
   const uxSource = await readUxSource();
   assert.match(uxSource, /\.notion-page\.universal-analysis-page \.analysis-section \{[\s\S]*box-sizing: border-box;[\s\S]*width: 100%;[\s\S]*overflow: hidden;/);
   assert.match(uxSource, /\.notion-page\.universal-analysis-page \.analysis-section > h2,[\s\S]*overflow-wrap: anywhere;/);
+  assert.doesNotMatch(uxSource, /\.notion-source-grid button,\s*\.analysis-section/);
+  assert.doesNotMatch(uxSource, /\.analysis-section\s*\{\s*background:\s*var\(--glass-inset\)/);
 });
 
 test("company list no longer includes Radar, analysis index or search page code", async () => {
@@ -810,6 +887,8 @@ test("short analytical tables are not assigned horizontal scrolling solely by co
   const { shouldScrollNotionTable } = await import("../app/lib/table-presentation.ts");
   assert.equal(shouldScrollNotionTable([["Seuil", "Cours"], ["10 %", "100 €"], ["12 %", "90 €"]]), false);
   assert.equal(shouldScrollNotionTable([["Scénario", "Cours", "Rendement"], ["Base", "100 €", "10 %"]]), false);
+  assert.equal(shouldScrollNotionTable([["Mesure", "Bear", "Base", "Bull", "Source"], ["Prix terminal", "80 €", "100 €", "120 €", "modèle"], ["CAGR", "-4 %", "10 %", "15 %", "modèle"]]), false);
+  assert.equal(shouldScrollNotionTable([["Rendement exigé", "Prix maximal", "Statut", "Source", "Notes"], ["10 %", "100 €", "Cible", "Modèle", "—"], ["12 %", "90 €", "Base", "Modèle", "—"], ["15 %", "80 €", "Prudent", "Modèle", "—"]]), false);
   assert.equal(shouldScrollNotionTable([["Date", "Entreprise", "Cours", "Volume", "Variation"], ...Array.from({ length: 12 }, (_, i) => [`2026-${i}`, `Co ${i}`, `${i}`, `${i}`, `${i}`])]), true);
 });
 
@@ -848,6 +927,53 @@ test("promoted valuation tables hide only their duplicate data and empty heading
   ];
   const hidden = hidePromotedTableSections(blocks, [1, 4], new Set());
   assert.deepEqual([...hidden].sort((a, b) => a - b), [1, 3, 4]);
+});
+
+test("company analysis labels stay short and numeric scores state their denominator", async () => {
+  const { analysisTypeLabel, analysisDisplayValue, formatAnalysisScore } = await import("../app/lib/decision-label.ts");
+  assert.equal(analysisTypeLabel({ category: "valuation", title: "Advantest — Valuation Check v9 — Full Value — 2026-09-24" }), "Valorisation");
+  assert.equal(analysisTypeLabel({ category: "earnings", title: "Q3 update" }), "Résultats");
+  assert.equal(analysisDisplayValue({ category: "valuation", score: "55" }), "55/100");
+  assert.equal(formatAnalysisScore("55 / 100"), "55/100");
+  assert.equal(formatAnalysisScore("72 / 100 (illustratif)"), "72/100 (illustratif)");
+  assert.equal(formatAnalysisScore("Non calculé"), "Non calculé");
+});
+
+test("valuation extraction recognizes explicit hurdle heading and reference market data", async () => {
+  const { extractValuationSummary } = await import("../app/lib/valuation-summary.ts");
+  const blocks = [
+    { type: "paragraph", text: "Cours de référence : 33 060 JPY, clôture TSE du 24/09/2026 à 15:30 JST." },
+    { type: "heading", level: 2, text: "Scénarios · horizon 5 ans" },
+    { type: "table", header: true, rows: [
+      ["Mesure · horizon 5 ans", "Bear", "Base", "Bull"],
+      ["Prix terminal estimé · JPY", "27 411", "31 285", "34 234"],
+      ["CAGR actionnaire · %/an", "−4 %", "8 %", "15 %"],
+    ] },
+    { type: "heading", level: 2, text: "Prix pour 10 %, 12 % et 15 %" },
+    { type: "table", header: true, rows: [
+      ["Rendement exigé", "Prix maximal"],
+      ["10 %", "34 234 JPY"], ["12 %", "31 285 JPY"], ["15 %", "27 411 JPY"],
+    ] },
+  ];
+  const summary = extractValuationSummary(blocks);
+  assert.equal(summary?.referencePrice, "33 060 JPY");
+  assert.equal(summary?.referenceDate, "24/09/2026");
+  assert.deepEqual(summary?.thresholds, [
+    { rate: "10 %", price: "34 234 JPY" }, { rate: "12 %", price: "31 285 JPY" }, { rate: "15 %", price: "27 411 JPY" },
+  ]);
+  assert.deepEqual(summary?.promotedBlockIndexes, [2, 4]);
+
+  const thresholdsOnly = extractValuationSummary([
+    { type: "paragraph", text: "Cours de référence : 33 060 JPY, clôture TSE du 24/09/2026." },
+    { type: "heading", level: 2, text: "9. Prix pour 10 %, 12 % et 15 %" },
+    { type: "table", header: true, rows: [
+      ["Rendement exigé", "Prix maximal"],
+      ["10 %", "34 234 JPY"], ["12 %", "31 285 JPY"], ["15 %", "27 411 JPY"],
+    ] },
+  ]);
+  assert.deepEqual(thresholdsOnly?.scenarios, []);
+  assert.deepEqual(thresholdsOnly?.thresholds.map(item => item.price), ["34 234 JPY", "31 285 JPY", "27 411 JPY"]);
+  assert.deepEqual(thresholdsOnly?.promotedBlockIndexes, [2]);
 });
 
 test("company analysis route keeps the company shell mounted and presents the selected document inside its panel", async () => {

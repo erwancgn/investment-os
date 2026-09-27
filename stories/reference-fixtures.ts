@@ -99,6 +99,77 @@ export const completeReferenceDocuments = {
   earnings: referenceDocument("earnings", "Earnings — référence", "## Résultats\nLa marge progresse sur le trimestre fictif.\n## Guidance\nPrévision inchangée.\n## Analyses à actualiser\nValuation : à revoir.", { sourceKey: "earnings", score: "", id: "ref-earnings" }),
 };
 
+// UI references use only values visible in the reviewed TSMC and Advantest
+// examples. They are presentation fixtures, not live market data.
+export const tsmcValuationDocument = referenceDocument(
+  "valuation",
+  "TSMC — Valuation Check — référence UI",
+  `## TL;DR
+Au cours de référence de 451,89 USD du 22/09/2026, le scénario Base donne 9,91 %/an, sous l’objectif de 12 %/an.
+
+## Cours de référence
+Clôture historique : 451,89 USD au 22/09/2026. Donnée non live.
+
+## Scénarios · horizon 5 ans
+| Mesure · horizon 5 ans | Bear | Base | Bull |
+|---|---:|---:|---:|
+| Prix terminal estimé · USD | 409,55 | 724,69 | 973,98 |
+| CAGR actionnaire · %/an | −1,95 % | 9,91 % | 16,60 % |
+
+## Seuils du scénario Base intacte
+| Rendement exigé | Prix maximal |
+|---|---:|
+| 10 % | 449,98 USD |
+| 12 % | 411,21 USD |
+| 15 % | 360,30 USD |
+
+## Méthode
+Les seuils sont conditionnels à la thèse Base et distincts du cours de référence.
+
+## RUN RECEIPT
+run_id=tsmc-reference; contract_version=1.2.5
+
+## Sources
+Clôture historique utilisée comme exemple de présentation.`,
+  { id: "ref-tsmc-valuation", score: "58", verdict: "Correcte · appréciation du rapport" },
+);
+
+export const advantestValuationDocument = referenceDocument(
+  "valuation",
+  "Advantest — Valuation Check — référence UI",
+  `## TL;DR
+Au cours de référence de 33 060 JPY (clôture TSE du 24/09/2026 à 15:30 JST), la valorisation est correcte mais au-dessus du prix cible à 12 %.
+
+## Cours de référence
+33 060 JPY · clôture TSE du 24/09/2026 à 15:30 JST. Donnée historique, non live.
+
+## Seuils du scénario Base intacte
+| Rendement exigé | Prix maximal |
+|---|---:|
+| 10 % | 34 234 JPY |
+| 12 % | 31 285 JPY |
+| 15 % | 27 411 JPY |
+
+## Lecture
+Statut canonique : au-dessus du prix cible à 12 %.
+
+## Sources
+Cours de référence et seuils historiques de démonstration.`,
+  { id: "ref-advantest-valuation", score: "55", verdict: "Correcte — au-dessus du prix cible 12 %" },
+);
+
+export const tsmcCompany: CompanyListItem = {
+  ...company,
+  id: "company-tsmc-reference",
+  name: "Taiwan Semiconductor Manufacturing Company",
+  ticker: "TSM",
+  sector: "Technology",
+  industry: "Semiconductors",
+  country: "Taiwan",
+  currency: "USD",
+  exchange: "NYSE",
+};
+
 export const completeCompanyDetail: CompanyDetailData = {
   ...companyDetail,
   ownershipStatus: "Not owned",
@@ -117,6 +188,15 @@ export const completeCompanyDetail: CompanyDetailData = {
   decisions: [],
   portfolioDocuments: [],
   archives: [{ ...completeReferenceDocuments.business, id: "ref-business-archive", archived: true, current: false, date: "2026-08-01" }],
+};
+
+export const tsmcCompanyDetail: CompanyDetailData = {
+  ...completeCompanyDetail,
+  ...tsmcCompany,
+  researchReferences: completeCompanyDetail.researchReferences.map((item) => item.kind === "valuation"
+    ? { ...item, id: tsmcValuationDocument.id, title: tsmcValuationDocument.title, score: tsmcValuationDocument.score, verdict: tsmcValuationDocument.verdict }
+    : item),
+  analyses: completeCompanyDetail.analyses.map((item) => item.category === "valuation" ? tsmcValuationDocument : item),
 };
 
 const slice = {

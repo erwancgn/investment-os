@@ -1,7 +1,6 @@
 /* Analysis reader composition and responsive reading layout. */
 /* Analysis reader — one content owner; generic Notion primitives stay in globals.css. */
 .universal-analysis-reader {
-
   margin: 0 auto;
   padding-bottom: 70px;
 }
@@ -66,8 +65,14 @@
 .analysis-section-group .ui-disclosure-surface > summary > strong { flex: 1; font-size: var(--font-md); overflow-wrap: anywhere; }
 .analysis-section-group-content { width: 100%; max-width: none; min-width: 0; padding: 18px 0; text-align: left; }
 .analysis-section-group-content > :first-child { margin-top: 0; }
-.analysis-scenario-comparison, .analysis-thresholds { margin-top: 26px; }
-.analysis-scenario-cards, .analysis-threshold-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); gap: 10px; }
+.analysis-scenario-comparison,
+.analysis-thresholds { margin-top: 26px; }
+.analysis-scenario-cards,
+.analysis-threshold-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
 .analysis-scenario-card, .analysis-threshold { min-width: 0; padding: 16px; text-align: left; }
 .analysis-scenario-card.is-base, .analysis-threshold.is-reference { outline: 1px solid var(--color-accent); }
 .analysis-scenario-card h3 { margin: 0; font-size: var(--font-md); }
@@ -75,9 +80,11 @@
 .analysis-scenario-card dl > div { min-width: 0; }
 .analysis-scenario-card dt, .analysis-threshold span { color: var(--color-text-muted); font-size: var(--font-xs); }
 .analysis-scenario-card dd { margin: 4px 0 0; font-size: clamp(1rem, 2vw, 1.25rem); font-weight: 750; overflow-wrap: anywhere; text-align: center; }
-.analysis-scenario-comparison > p, .analysis-thresholds > p { max-width: 70ch; margin: 12px auto 0; color: var(--color-text-muted); font-size: var(--font-sm); line-height: 1.5; text-align: left; }
+.analysis-scenario-comparison > p, .analysis-thresholds > p { max-width: 70ch; margin: 12px 0 0; color: var(--color-text-muted); font-size: var(--font-sm); line-height: 1.5; text-align: left; }
 .analysis-threshold { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 8px; }
 .analysis-threshold strong { font-size: clamp(1rem, 2vw, 1.25rem); overflow-wrap: anywhere; text-align: center; }
+.analysis-reference-line,
+.analysis-scenario-reading { text-align: left; }
 .notion-page.universal-analysis-page .analysis-section {
   box-sizing: border-box;
   width: 100%;
@@ -85,7 +92,7 @@
   max-width: 100%;
   display: block;
   margin: var(--space-6) 0 var(--space-4);
-  padding: var(--space-5) var(--space-6);
+  padding: var(--space-5) 0;
   overflow: hidden;
   border-top: 1px solid var(--color-border);
   scroll-margin-top: 18px;
@@ -197,9 +204,6 @@
   text-align: left;
   cursor: pointer;
 }
-.section-document-button:hover {
-
-}
 .relation-list {
   display: flex;
   flex-wrap: wrap;
@@ -300,14 +304,6 @@
   font-size: 19px;
 }
 .decision-template-head .eyebrow { margin: 0; }
-.decision-template-badge {
-  padding: 6px 9px;
-  border: 1px solid color-mix(in srgb, var(--color-accent) 35%, transparent);
-  border-radius: var(--radius-pill);
-  color: var(--color-accent);
-  font-size: 8px;
-  white-space: nowrap;
-}
 .decision-facts {
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
@@ -329,12 +325,6 @@
   margin-top: var(--space-3);
   border: 0;
 }
-.decision-template-columns > .ui-surface--secondary {
-  min-width: 0;
-  padding: 14px;
-}
-
-
 @media (max-width: 1100px) {
   .portfolio-main-grid {
     grid-template-columns: 1fr;
@@ -535,9 +525,6 @@
   }
   .analysis-source-body {
     padding: 12px;
-  }
-  .decision-template-badge {
-    font-size: 7px;
   }
   .decision-facts {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -752,25 +739,9 @@
     margin-inline: 0 !important;
   }
 
+  .analysis-scenario-cards,
   .analysis-threshold-grid {
     grid-template-columns: minmax(0, 1fr);
-  }
-
-  .universal-analysis-page {
-    padding: var(--mobile-card-padding) !important;
-    overflow: visible;
-  }
-
-  .universal-analysis-page .analysis-section {
-    margin: 24px 0 12px !important;
-    padding: 18px 20px !important;
-  }
-
-  .universal-analysis-page a {
-    color: var(--color-accent) !important;
-  }
-  .universal-analysis-page strong {
-    color: var(--color-text) !important;
   }
 
   .notion-table a {

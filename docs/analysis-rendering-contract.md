@@ -35,8 +35,10 @@ Le Mémo CIO est une page de décision et non une analyse scorée. Son écran su
 8. `Run Receipt` est une section technique masquée par la projection de présentation. Le document Notion et les blocs parsés restent inchangés.
 9. Le lecteur d’analyse s’affiche dans le panneau de la fiche Compagnie; l’identité et le menu des analyses restent visibles pendant la navigation.
 10. Les textes d’analyse sont alignés à gauche. Seules les valeurs KPI sont centrées.
-11. Les scénarios et seuils de valorisation sont empilés sur mobile et peuvent former une grille lorsque l’espace le permet. Les tables simples restent dans la largeur disponible; le défilement horizontal est réservé aux matrices denses.
+11. Les groupes complets de trois scénarios et de trois seuils utilisent exactement trois colonnes à partir de 761 px. Jusqu’à 760 px, chaque item occupe une ligne pleine largeur : aucun layout en `2 + 1`. Les valeurs de prix et de rendement restent côte à côte à l’intérieur d’un scénario; les libellés et explications restent alignés à gauche, les valeurs KPI sont centrées.
 12. Toute donnée promue dans un résumé de valorisation conserve l’index de son bloc source afin d’éviter de rendre la même table deux fois.
+13. La fiche Compagnie et le lecteur embarqué partagent la même largeur disponible et les mêmes marges latérales. Les wrappers de structure restent transparents; seules les unités d’information qui bénéficient d’une séparation visuelle portent une surface. Une surface ne sert pas à encadrer une autre surface structurelle.
+14. Les tableaux principaux de scénarios et de seuils sont présentés comme des lignes/cartes adaptatives et ne défilent jamais horizontalement. Le scroll interne accessible est réservé aux matrices réellement denses.
 
 ## Versionnement
 

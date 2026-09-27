@@ -26,7 +26,7 @@ Les valeurs ne doivent pas être recopiées dans cette documentation. En cas de 
 ## Contrat de surface
 
 1. Le canvas de toute l’application est blanc (`--surface-canvas`) et ne porte ni dégradé bleu ni gris de page.
-2. Les conteneurs de structure restent sans carte. Une information isolée utilise `primary`; une information imbriquée utilise `secondary`. Les deux surfaces de contenu restent blanches et se distinguent par l’espacement, la bordure et l’ombre, jamais par un fond gris.
+2. Les conteneurs de structure restent transparents. Une surface est réservée à une unité d’information qui gagne à être isolée; les groupes de navigation, disclosures et wrappers ne doivent pas créer une carte simplement pour contenir d’autres cartes. Les surfaces de contenu restent blanches et se distinguent par l’espacement, la bordure et l’ombre, jamais par un fond gris.
 3. Une surface de contenu ne doit pas entourer une page entière pour accueillir d’autres blocs. Retirer l’enveloppe de surface et garder les blocs réellement porteurs d’information.
 4. `glass` est réservé au chrome, à la navigation et aux menus flottants. Sur un canvas blanc, le contour et l’ombre légère assurent sa séparation.
 5. `DiscoveryCard` porte le shell Apple Light / Liquid Glass des lignes d’Entreprises. Un écran peut organiser son contenu interne, mais ne redéfinit pas localement fond, bordure, rayon ou ombre. Les informations réellement imbriquées peuvent utiliser de petites surfaces secondaires. Le hover/focus léger reste une interaction voulue.
@@ -38,7 +38,7 @@ Les valeurs ne doivent pas être recopiées dans cette documentation. En cas de 
 11. `SearchField` conserve recherche et compteur sur une seule ligne au viewport mobile de référence ; la recherche prend `minmax(0, 1fr)` et le compteur reste en `max-content`, avec une hauteur interactive commune.
 12. `StatCard` est réservé aux KPI centrés. Tout texte éditorial, explication, verdict, hypothèse, risque et source est aligné à gauche, y compris à l’intérieur d’un bloc KPI. Les groupes KPI s’adaptent à la largeur disponible.
 13. La fiche Compagnie conserve son identité et le menu horizontal pendant la lecture de chaque analyse. Le panneau de lecture change, la page visuelle ne change pas. Les disclosures d’analyse sont des bandeaux alignés à gauche. `Run Receipt` est filtré côté présentation et la donnée source reste intacte.
-14. Les scénarios et seuils de valorisation s’empilent sur mobile et deviennent une grille lorsque la largeur le permet. Les tables simples restent dans la largeur disponible; seul un tableau réellement dense reçoit un défilement horizontal accessible. Les données promues dans une comparaison ne sont pas répétées sous forme de table brute.
+14. Les groupes de trois scénarios et de trois seuils utilisent exactement trois colonnes à partir de 761 px et des lignes pleine largeur jusqu’à 760 px; aucun groupe ne tombe en disposition `2 + 1`. Les tables simples restent dans la largeur disponible; seul un tableau réellement dense reçoit un défilement horizontal accessible. Les données promues dans une comparaison ne sont pas répétées sous forme de table brute.
 15. Les libellés et descriptions des scénarios restent alignés à gauche. Seules les valeurs KPI sont centrées.
 
 ## Utilisation avec Lovable
@@ -70,17 +70,7 @@ La dette CSS est mesurée par `scripts/audit-css-governance.mjs`. Son périmètr
 `stories/storybook.css`. Le fichier agrégateur `ux-foundations.css` n'est volontairement pas
 compté comme une seconde source de règles.
 
-Après la fusion Entreprises et l’ajout de la page Paniers thématiques, la baseline versionnée est :
-
-- 147 sélecteurs exacts répétés ;
-- 0 conflit direct ;
-- 115 variantes responsive ;
-- 1 redondance stricte intentionnelle ;
-- 31 extensions additives ;
-- 0 token répété ou concurrent ;
-- 207 déclarations `!important` ;
-- 297 classes définies ;
-- 0 classe orpheline.
+La baseline CSS est calculée à l’exécution par les audits à partir du manifeste canonique. Ne pas recopier ses métriques dans ce document : tout changement de règles doit être comparé au rapport courant des audits, et toute nouvelle classe doit avoir un consommateur prouvé.
 
 `audit-css-ownership.mjs` complète la gouvernance en analysant les sélecteurs individuels même
 lorsqu'ils appartiennent à des groupes CSS différents. Le contrat de sortie du Lot 9B est zéro

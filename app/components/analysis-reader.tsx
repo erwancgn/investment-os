@@ -10,6 +10,7 @@ import { AnalysisFactGrid, AnalysisReportHero } from "./analysis-presentation";
 import { AnalysisSectionGroups } from "./analysis-section-groups";
 import { ScenarioComparison } from "./scenario-comparison";
 import { extractValuationSummary } from "../lib/valuation-summary";
+import { analysisTypeLabel, formatAnalysisScore } from "../lib/decision-label";
 import { BackButton, Badge, DisclosureSurface, MetadataGrid, SecondaryBlock } from "./ui-primitives";
 
 type AnalysisDoc = CompanyDocument | ResearchDocument;
@@ -79,7 +80,7 @@ function decisionValue(key: keyof DecisionFields, value: string | null) {
   return value;
 }
 
-function DecisionTemplate({ decision, isDemo }: { decision: DecisionFields; isDemo: boolean }) {
+function DecisionTemplate({ decision }: { decision: DecisionFields }) {
   const keys: (keyof DecisionFields)[] = ["action", "account", "instrumentType", "currentWeight", "maximumWeight", "maximumEntryPrice", "nextReview", "confidence", "outcome"];
   const blocks = [
 
@@ -94,13 +95,12 @@ function DecisionTemplate({ decision, isDemo }: { decision: DecisionFields; isDe
     ["Risque principal", decision.keyRisk],
   ].filter((item): item is [string, string] => Boolean(item[1]));
   return (
-    <SecondaryBlock as="section" className="decision-template">
+    <section className="decision-template">
       <div className="decision-template-head">
         <div>
-          <p className="eyebrow">Decision Card</p>
+          <p className="eyebrow">Décision</p>
           <h2>Cadre de décision</h2>
         </div>
-        <span className="decision-template-badge">{isDemo ? "Document démo structuré" : "Notion · structuré"}</span>
       </div>
       <MetadataGrid
         className="decision-facts"
@@ -110,22 +110,22 @@ function DecisionTemplate({ decision, isDemo }: { decision: DecisionFields; isDe
         }))}
       />
       {blocks.map(([label, value]) => (
-        <SecondaryBlock className="decision-template-block" key={label}>
+        <section className="decision-template-block" key={label}>
           <small>{label}</small>
           <p>{value}</p>
-        </SecondaryBlock>
+        </section>
       ))}
       {riskBlocks.length > 0 && (
         <div className="decision-template-columns">
           {riskBlocks.map(([label, value]) => (
-            <SecondaryBlock key={label}>
+            <section key={label}>
               <small>{label}</small>
               <p>{value}</p>
-            </SecondaryBlock>
+            </section>
           ))}
         </div>
       )}
-    </SecondaryBlock>
+    </section>
   );
 }
 
@@ -146,10 +146,11 @@ function StandardAnalysisReader({ document, companyName, onBack, embedded }: { d
   const headings = blocks.flatMap((block, index) => block.type === "heading" && block.level <= 2 && !hidden.has(index) ? [{ text: block.text, index }] : []);
   const templateKind = document.category || (document.sourceKey === "decisions" ? "synthese" : "universal");
   const scored = templateKind === "business" || templateKind === "valuation";
+  const formattedScore = scored ? formatAnalysisScore(document.score) : null;
   const outcome = document.verdict
-    ? { label: document.sourceKey === "decisions" ? "Décision" : "Verdict", value: document.verdict, detail: scored && document.score ? document.score : undefined }
-    : scored && document.score
-      ? { label: "Score", value: document.score }
+    ? { label: document.sourceKey === "decisions" ? "Décision" : "Verdict", value: document.verdict, detail: formattedScore && formattedScore !== "—" ? formattedScore : undefined }
+    : formattedScore && formattedScore !== "—"
+      ? { label: "Score", value: formattedScore }
       : null;
   return (
     <section className="research-reader universal-analysis-reader" data-analysis-template={templateKind}>
@@ -164,7 +165,7 @@ function StandardAnalysisReader({ document, companyName, onBack, embedded }: { d
             </Badge>
           </>
         }
-        title={document.title}
+        title={analysisTypeLabel(document)}
         subtitle={<>{companyName} · {shortDate(document.date || document.lastEditedTime)}</>}
         outcome={outcome}
       />
@@ -195,12 +196,40 @@ function StandardAnalysisReader({ document, companyName, onBack, embedded }: { d
             />
           )}
           {scenarioSummary && <ScenarioComparison summary={scenarioSummary} showThresholds />}
+          {document.sourceKey === "decisions" && document.decision && <DecisionTemplate decision={document.decision} />}
+          <AnalysisSectionGroups blocks={blocks} hidden={hidden} idForHeading={index => `analysis-heading-${index}`} classForHeading={title => { const scenario = scenarioKind(title); return scenario ? `analysis-scenario analysis-scenario-${scenario}` : ""; }} renderBlock={({ block, index }) => {
+            if (block.type === "heading") {
+              const Tag = `h${Math.min(block.level + 1, 6)}` as keyof React.JSX.IntrinsicElements;
+              return <section className="analysis-section"><Tag>{inline(block.text)}</Tag></section>;
+            }
+            if (block.type === "paragraph") return <p key={index}>{inline(block.text)}</p>;
+            if (block.type === "quote") return <blockquote key={index}>{inline(block.text)}</blockquote>;
+            if (block.type === "callout")
+              return (
+                <SecondaryBlock className="notion-callout" key={index}>
+                  <span>◆</span>
+                  <p>{inline(block.text)}</p>
+                </SecondaryBlock>
+              );
+            if (block.type === "divider") return <hr key={index} />;
+            if (block.type === "list") {
+              const Tag = block.ordered ? "ol" : "ul";
+              return (
+                <Tag key={index}>
+                  {block.items.map((item, itemIndex) => (
+                    <li key={itemIndex}>{inline(item)}</li>
+                  ))}
+                </Tag>
+              );
+            }
+            return <NotionTable key={index} rows={block.rows} header={block.header ?? true} renderCell={inline} />;
+          }} />
           <DisclosureSurface
             className="analysis-source-details"
             summary={
               <>
                 <span>
-                  <strong>Document source et sommaire</strong>
+                  <strong>Sources et document original</strong>
                   <small>
                     {isDemo ? `${blocks.length} blocs fictifs` : `${blocks.length} blocs Notion structurés`} · {headings.length} section{headings.length > 1 ? "s" : ""}
                   </small>
@@ -234,34 +263,6 @@ function StandardAnalysisReader({ document, companyName, onBack, embedded }: { d
               {!isDemo && <a className="notion-original" href={document.notionUrl} target="_blank" rel="noreferrer">Ouvrir le document original ↗</a>}
             </div>
           </DisclosureSurface>
-          {document.sourceKey === "decisions" && document.decision && <DecisionTemplate decision={document.decision} isDemo={isDemo} />}
-          <AnalysisSectionGroups blocks={blocks} hidden={hidden} idForHeading={index => `analysis-heading-${index}`} classForHeading={title => { const scenario = scenarioKind(title); return scenario ? `analysis-scenario analysis-scenario-${scenario}` : ""; }} renderBlock={({ block, index }) => {
-            if (block.type === "heading") {
-              const Tag = `h${Math.min(block.level + 1, 6)}` as keyof React.JSX.IntrinsicElements;
-              return <section className="analysis-section"><Tag>{inline(block.text)}</Tag></section>;
-            }
-            if (block.type === "paragraph") return <p key={index}>{inline(block.text)}</p>;
-            if (block.type === "quote") return <blockquote key={index}>{inline(block.text)}</blockquote>;
-            if (block.type === "callout")
-              return (
-                <SecondaryBlock className="notion-callout" key={index}>
-                  <span>◆</span>
-                  <p>{inline(block.text)}</p>
-                </SecondaryBlock>
-              );
-            if (block.type === "divider") return <hr key={index} />;
-            if (block.type === "list") {
-              const Tag = block.ordered ? "ol" : "ul";
-              return (
-                <Tag key={index}>
-                  {block.items.map((item, itemIndex) => (
-                    <li key={itemIndex}>{inline(item)}</li>
-                  ))}
-                </Tag>
-              );
-            }
-            return <NotionTable key={index} rows={block.rows} header={block.header ?? true} renderCell={inline} surfaceForCompact={false} />;
-          }} />
           <footer className="notion-page-footer">
             <span>{isDemo ? "Fin du document de démonstration" : "Fin du document synchronisé"}</span>
             {!isDemo && <a href={document.notionUrl} target="_blank" rel="noreferrer">Comparer avec Notion ↗</a>}

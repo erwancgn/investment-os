@@ -67,6 +67,25 @@ test("company Storybook demonstrates persistent analysis navigation with complet
   assert.match(fixtures, /Seuils de rendement · Base intacte[\s\S]*RUN RECEIPT[\s\S]*Sources/);
 });
 
+test("company and reader stories cover every embedded analysis family and valuation reference", async () => {
+  const [companyStory, readerStory, fixtures] = await Promise.all([
+    read("stories/Company.stories.tsx"), read("stories/Reader.stories.tsx"), read("stories/reference-fixtures.ts"),
+  ]);
+  for (const story of ["EmbeddedBusiness", "EmbeddedValuation", "EmbeddedShort", "EmbeddedPortfolioFit", "EmbeddedEarnings", "EmbeddedTSMCValuation"]) {
+    assert.match(companyStory, new RegExp(`export const ${story}\\b`), `${story} exercises an analysis in the company shell`);
+  }
+  for (const category of ["business", "valuation", "risques", "portfolio", "synthese", "earnings"]) {
+    assert.match(fixtures, new RegExp(`${category}: referenceDocument\\(`), `${category} fixture is available`);
+  }
+  for (const story of ["Business", "Valuation", "Short", "PortfolioFit", "CIO", "Earnings", "ValuationTSMC", "ValuationAdvantestJPY"]) {
+    assert.match(readerStory, new RegExp(`export const ${story}\\b`), `${story} has a full reader story`);
+  }
+  assert.match(fixtures, /export const tsmcValuationDocument[\s\S]*451,89 USD[\s\S]*724,69[\s\S]*411,21 USD[\s\S]*id: "ref-tsmc-valuation"/);
+  assert.match(fixtures, /export const advantestValuationDocument[\s\S]*33 060 JPY[\s\S]*31 285 JPY[\s\S]*id: "ref-advantest-valuation", score: "55"/);
+  assert.match(readerStory, /ValuationTSMCTablet[\s\S]*defaultViewport: \"tablet\"/);
+  assert.match(readerStory, /ValuationTSMCDesktop[\s\S]*defaultViewport: \"desktop\"/);
+});
+
 test("mobile navigation presents four equal destinations with a selected blue indicator", async () => {
   const [page, shellCss, discoveryCss] = await Promise.all([read("app/page.tsx"), read("app/styles/ux/shell.css"), read("app/styles/ux/discovery.css")]);
   const tabList = page.match(/const tabs:[\s\S]*?\n\];/)?.[0] ?? "";

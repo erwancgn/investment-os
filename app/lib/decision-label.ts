@@ -42,11 +42,19 @@ export function formatAnalysisDate(value: string | null | undefined, fallback: s
 type AnalysisDisplayDocument = { category: string; title?: string; score?: string | null; verdict?: string | null; status?: string | null; date?: string | null; lastEditedTime?: string | null };
 
 export function analysisDisplayValue(document: AnalysisDisplayDocument) {
-  if (document.category === "business" || document.category === "valuation") return document.score?.trim() || "—";
+  if (document.category === "business" || document.category === "valuation") return formatAnalysisScore(document.score);
   return compactDecisionLabel(document.verdict || document.status);
 }
 
+/** Make the denominator explicit while preserving unavailable or annotated scores. */
+export function formatAnalysisScore(value: string | null | undefined) {
+  const score = normalizedText(value);
+  if (!score) return "—";
+  const explicit = score.match(/^(\d+(?:[.,]\d+)?)\s*\/\s*100(.*)$/i);
+  if (explicit) return `${explicit[1]}/100${explicit[2]}`;
+  return /^\d+(?:[.,]\d+)?$/.test(score) ? `${score}/100` : score;
+}
+
 export function analysisTypeLabel(document: Pick<AnalysisDisplayDocument, "category" | "title">) {
-  const category = document.category === "valuation" ? "Valorisation" : document.category === "risques" ? "Short" : document.category === "synthese" ? "Mémo CIO" : document.category === "portfolio" ? "Portfolio" : document.category === "business" ? "Business" : "Analyse";
-  return /full\s*(?:analyse|analysis)|analyse\s+compl[eè]te/i.test(document.title || "") ? `${category} · analyse complète` : category;
+  return document.category === "valuation" ? "Valorisation" : document.category === "risques" ? "Short" : document.category === "synthese" ? "Mémo CIO" : document.category === "portfolio" ? "Portfolio" : document.category === "business" ? "Business" : document.category === "earnings" ? "Résultats" : "Analyse";
 }

@@ -122,7 +122,11 @@
   text-align: left;
   cursor: pointer;
 }
-.company-analysis-panel { min-width: 0; }
+.company-analysis-panel {
+  width: 100%;
+  max-width: none;
+  min-width: 0;
+}
 .company-analysis-panel .report-hero { margin-top: var(--space-4); }
 .company-module-card > span { color: var(--color-text-muted); font-size: var(--font-xs); }
 .company-module-card > strong { display: flex; align-items: center; gap: 8px; font-size: var(--font-md); }

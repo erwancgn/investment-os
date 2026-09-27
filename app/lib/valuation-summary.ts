@@ -2,9 +2,21 @@ import type { RenderBlock } from "./notion-renderer";
 
 type Scenario = { name: "Bear" | "Base" | "Bull"; terminal: string; cagr: string };
 type Threshold = { rate: string; price: string };
-type Summary = { scenarios: Scenario[]; horizon: string | null; thresholds: Threshold[]; promotedBlockIndexes: number[] };
+type Summary = { scenarios: Scenario[]; horizon: string | null; referencePrice: string | null; referenceDate: string | null; thresholds: Threshold[]; promotedBlockIndexes: number[] };
 const names = ["Bear", "Base", "Bull"] as const;
 const currencyPattern = /\b(?:USD|EUR|GBP|CHF|CAD|JPY|SEK|TWD)\b|[$€£¥]/i;
+const scenarioRowPattern = /^(?:---+:?|:?-{3,}:?)$/;
+
+function cells(row: string[]) {
+  const normalized = row.map(cell => cell.trim());
+  while (normalized[0] === "") normalized.shift();
+  while (normalized.at(-1) === "") normalized.pop();
+  return normalized;
+}
+
+function tableRows(block: Extract<RenderBlock, { type: "table" }>) {
+  return block.rows.map(cells).filter(row => row.some(Boolean) && !row.every(cell => scenarioRowPattern.test(cell)));
+}
 
 function scenarioName(value: string): Scenario["name"] | null {
   const normalized = value.trim().toLowerCase();
@@ -25,8 +37,9 @@ function normalizeScenario(name: Scenario["name"], terminal: string, cagr: strin
 }
 
 function fromTable(block: Extract<RenderBlock, { type: "table" }>): Scenario[] | null {
-  if (!block.header || block.rows.length < 3) return null;
-  const [header, ...rows] = block.rows;
+  const sourceRows = tableRows(block);
+  if (!block.header || sourceRows.length < 3) return null;
+  const [header, ...rows] = sourceRows;
   const columns = names.map(name => header.findIndex(cell => scenarioName(cell) === name));
   if (columns.every(index => index > 0)) {
     const terminal = rows.find(row => /prix terminal|terminal price/i.test(row[0] ?? ""));
@@ -49,15 +62,15 @@ function fromTable(block: Extract<RenderBlock, { type: "table" }>): Scenario[] |
 }
 
 function thresholdsFromBlocks(blocks: RenderBlock[]): { thresholds: Threshold[]; index: number | null } {
-  const heading = blocks.findIndex(block => block.type === "heading" && /seuil|hurdle/i.test(block.text) && /base/i.test(block.text));
+  const heading = blocks.findIndex(block => block.type === "heading" && /(?:seuil|hurdle|prix\s+pour)/i.test(block.text) && (/base/i.test(block.text) || /10\s*%.*12\s*%.*15\s*%/i.test(block.text)));
   if (heading < 0) return { thresholds: [], index: null };
   const next = blocks.slice(heading + 1).findIndex(block => block.type === "heading");
   const range = blocks.slice(heading + 1, next < 0 ? undefined : heading + 1 + next);
-  if (!/base intacte/i.test((blocks[heading] as Extract<RenderBlock, { type: "heading" }>).text) && !range.some(block => block.type === "paragraph" && /base intacte/i.test(block.text))) return { thresholds: [], index: null };
-  const tableOffset = range.findIndex(block => block.type === "table" && block.header && /objectif|hurdle|rendement|exigé|required/i.test(block.rows[0]?.join(" ") ?? "") && /cours|prix|maximal/i.test(block.rows[0]?.join(" ") ?? ""));
+  if (!/base intacte/i.test((blocks[heading] as Extract<RenderBlock, { type: "heading" }>).text) && !range.some(block => "text" in block && /base intacte/i.test(block.text)) && !/10\s*%.*12\s*%.*15\s*%/i.test((blocks[heading] as Extract<RenderBlock, { type: "heading" }>).text)) return { thresholds: [], index: null };
+  const tableOffset = range.findIndex(block => block.type === "table" && block.header && /objectif|hurdle|rendement|exigé|required/i.test(cells(block.rows[0] ?? []).join(" ")) && /cours|prix|maximal/i.test(cells(block.rows[0] ?? []).join(" ")));
   const table = tableOffset < 0 ? undefined : range[tableOffset];
   if (table?.type === "table") {
-    const [header, ...rows] = table.rows;
+    const [header, ...rows] = tableRows(table);
     const rateIndex = header.findIndex(cell => /objectif|hurdle|rendement|exigé|required/i.test(cell));
     const priceIndex = header.findIndex(cell => /cours|prix|maximal/i.test(cell));
     const values = [10, 12, 15].map(rate => {
@@ -75,21 +88,42 @@ function thresholdsFromBlocks(blocks: RenderBlock[]): { thresholds: Threshold[];
   return thresholds.every(Boolean) ? { thresholds: thresholds as Threshold[], index: null } : { thresholds: [], index: null };
 }
 
+function referenceValues(blocks: RenderBlock[]) {
+  const text = blocks.flatMap(block => {
+    if (block.type === "table") return block.rows.flatMap(row => row);
+    if (block.type === "list") return block.items;
+    return "text" in block ? [block.text] : [];
+  }).join(" · ").replace(/\s+/g, " ");
+  const price = text.match(/(?:cours|prix)\s+(?:de\s+)?r[eé]f[eé]rence\s*[:：]\s*([\d][\d\s.,]*\s*(?:USD|EUR|GBP|CHF|CAD|JPY|SEK|TWD|[$€£¥]))/i)?.[1]?.trim() ?? null;
+  const date = text.match(/(?:cl[oô]ture(?:\s+[A-Z]{2,6})?\s+(?:du\s+)?|(?:cours|prix)\s+(?:de\s+)?r[eé]f[eé]rence\s+du\s+)(\d{1,2}[./-]\d{1,2}[./-]\d{4})/i)?.[1] ?? null;
+  return { referencePrice: price, referenceDate: date };
+}
+
 /** Only promote explicit, complete prices and annualized returns from the report. */
 export function extractValuationSummary(blocks: RenderBlock[]): Summary | null {
+  const thresholdSummary = thresholdsFromBlocks(blocks);
   for (const [index, block] of blocks.entries()) {
     if (block.type !== "table") continue;
     const scenarios = fromTable(block);
     if (!scenarios) continue;
     const context = blocks.slice(Math.max(0, index - 2), index + 1).map(item => item.type === "heading" ? item.text : "").join(" ");
     const horizon = /\b5\s*ans\b/i.test(context) || /\b5\s*ans\b/i.test(block.rows[0]?.join(" ") ?? "") ? "5 ans" : null;
-    const thresholdSummary = thresholdsFromBlocks(blocks);
+    const reference = referenceValues(blocks);
     return {
       scenarios,
       horizon,
+      ...reference,
       thresholds: thresholdSummary.thresholds,
       promotedBlockIndexes: [index, ...(thresholdSummary.index == null ? [] : [thresholdSummary.index])],
     };
   }
-  return null;
+  if (!thresholdSummary.thresholds.length) return null;
+  const reference = referenceValues(blocks);
+  return {
+    scenarios: [],
+    horizon: blocks.some(block => "text" in block && /\b5\s*ans\b/i.test(block.text)) ? "5 ans" : null,
+    ...reference,
+    thresholds: thresholdSummary.thresholds,
+    promotedBlockIndexes: thresholdSummary.index == null ? [] : [thresholdSummary.index],
+  };
 }

@@ -19,7 +19,7 @@ function AccountMenu({ onOpenManagement }: { onOpenManagement: () => void }) {
   const [hasCustomAvatar, setHasCustomAvatar] = useState(false);
 
   useEffect(() => {
-    if (!isPersonal) { setAvatar(""); setHasCustomAvatar(false); return; }
+    if (!isPersonal) return;
     try {
       const stored = window.localStorage.getItem("investment-os:profile-image");
       if (stored) {

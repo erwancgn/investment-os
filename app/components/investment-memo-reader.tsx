@@ -3,7 +3,7 @@
 import React from "react";
 import type { CompanyDocument, ResearchDocument } from "../lib/investment-data";
 import { documentPresentation, hidePromotedTableSections } from "../lib/document-presentation";
-import { compactDecisionLabel } from "../lib/decision-label";
+import { analysisTypeLabel, compactDecisionLabel } from "../lib/decision-label";
 import { parseNotionDocument, type RenderBlock } from "../lib/notion-renderer";
 import { NotionTable } from "./notion-table";
 import { AnalysisFactGrid, AnalysisReportHero } from "./analysis-presentation";
@@ -200,15 +200,14 @@ export function InvestmentMemoReader({
         className="memo-hero"
         badges={
           <>
-            <Badge>Investment Memo CIO</Badge>
             {document.current && <Badge tone="positive">Current</Badge>}
             <Badge tone={stale ? "warning" : "positive"}>
               {stale ? "À actualiser" : document.status || "Disponible"}
             </Badge>
           </>
         }
-        title={companyName}
-        subtitle={<>{document.title} · {shortDate(memoDate)}</>}
+        title={analysisTypeLabel(document)}
+        subtitle={<>{companyName} · {shortDate(memoDate)}</>}
         outcome={{
           label: "Décision CIO",
           value: document.verdict || "À statuer",
@@ -261,12 +260,12 @@ export function InvestmentMemoReader({
           </section>
 
           {reasoning.length > 0 && (
-            <SecondaryBlock className="memo-reasoning">
+            <section className="memo-reasoning">
               <small>Raisonnement décisif</small>
               {reasoning.map((text, index) => (
                 <p key={index}>{inline(text)}</p>
               ))}
-            </SecondaryBlock>
+            </section>
           )}
           {scenarioSummary && <ScenarioComparison summary={scenarioSummary} />}
 
