@@ -6,7 +6,8 @@ import { LiveHoldingSummary } from "./live-holding-summary";
 import { useOpenAnalysis } from "../lib/app-navigation";
 import { useClientResource } from "../lib/client-resource";
 import { LatestInfoCard } from "./latest-info-card";
-import { ActionButton, BackButton, Badge, DisclosureSurface, MetadataGrid, PrimaryBlock, SecondaryBlock, SectionHeader, StatCard, Tabs, type BadgeTone } from "./ui-primitives";
+import { AnalysisReader } from "./analysis-reader";
+import { BackButton, Badge, DisclosureSurface, MetadataGrid, PrimaryBlock, SecondaryBlock, SectionHeader, StatCard, Tabs, type BadgeTone } from "./ui-primitives";
 
 type CompanyTab = CompanySectionKey | "memo";
 const tabs: [CompanyTab, string][] = [
@@ -121,7 +122,7 @@ function guidanceTone(value: string | null): BadgeTone {
   return "neutral";
 }
 
-function EarningsReviewCard({ document, onOpen }: { document: CompanyDocument; onOpen: (doc: CompanyDocument) => void }) {
+function EarningsReviewCard({ document }: { document: CompanyDocument }) {
   const review = document.earningsReview;
   const period = review?.fiscalPeriod || "Période non renseignée";
   const guidance = review?.guidanceVsConsensus || review?.guidance || "Guidance non renseignée";
@@ -157,23 +158,7 @@ function EarningsReviewCard({ document, onOpen }: { document: CompanyDocument; o
           })}
         </div>
       </section>
-      <ActionButton className="featured-document-open" onClick={() => onOpen(document)}>Lire la review complète</ActionButton>
     </PrimaryBlock>
-  );
-}
-
-function EarningsSection({ docs, archives, onOpen, demo = false }: { docs: CompanyDocument[]; archives: CompanyDocument[]; onOpen: (doc: CompanyDocument) => void; demo?: boolean }) {
-  const featured = docs[0];
-  if (!featured) return <DocumentSection section="earnings" docs={docs} archives={archives} onOpen={onOpen} demo={demo} />;
-  const isDemo = demo || featured.id.startsWith("demo-");
-  const additional = docs.slice(1);
-  return (
-    <section className="company-section-block section-earnings">
-      <SectionHeader eyebrow={isDemo ? "Démonstration · Earnings" : "Base Notion · Earnings"} title="Earnings" description={isDemo ? "Exemple fictif de publication et de routage vers les cinq modules Investment OS." : "La dernière publication analysée et son routage vers les cinq modules Investment OS."} meta={<span className="analysis-total">1 principale</span>} />
-      <EarningsReviewCard document={featured} onOpen={onOpen} />
-      <DocumentHistory docs={additional} title={`${additional.length} autre${additional.length > 1 ? "s" : ""} review${additional.length > 1 ? "s" : ""}`} detail={isDemo ? "Autres publications de démonstration" : "Autres publications courantes reliées"} label="Current" onOpen={onOpen} />
-      <DocumentHistory docs={archives} title={`${archives.length} publication${archives.length > 1 ? "s" : ""} précédente${archives.length > 1 ? "s" : ""}`} detail="Historique Earnings de cette entreprise" label="Historique" onOpen={onOpen} />
-    </section>
   );
 }
 
@@ -182,6 +167,11 @@ type ResearchHighlight = {
   label: string;
   document: CompanyDocument;
 };
+
+function sectionForDocument(document: CompanyDocument): CompanyTab {
+  if (document.sourceKey === "decisions" || (document.sourceKey === "analyses" && (document.category === "synthese" || /investment memo|mémo cio/i.test(`${document.agent} ${document.title}`)))) return "memo";
+  return document.category;
+}
 
 function ResearchCoverage({ items, onSelect }: { items: ResearchHighlight[]; onSelect: (section: CompanyTab) => void }) {
   return <div className="company-module-grid" aria-label="Analyses disponibles">{items.map(({ id, label, document: doc }) => (
@@ -193,7 +183,7 @@ function ResearchCoverage({ items, onSelect }: { items: ResearchHighlight[]; onS
   ))}</div>;
 }
 
-export function CompanyDetail({ companyId, close, initialData }: { companyId: string; close: () => void; initialData?: CompanyDetail }) {
+export function CompanyDetail({ companyId, selectedAnalysisId = null, close, initialData }: { companyId: string; selectedAnalysisId?: string | null; close: () => void; initialData?: CompanyDetail }) {
   const { data: payload, loading, error, refresh } = useClientResource<{ company: CompanyDetail }>(`/api/companies/${encodeURIComponent(companyId)}`, false, initialData === undefined);
   const data = payload?.company ?? initialData;
   const [section, setSection] = useState<CompanyTab>("synthese");
@@ -204,7 +194,14 @@ export function CompanyDetail({ companyId, close, initialData }: { companyId: st
     [...data.analyses, ...data.earnings, ...data.decisions, ...data.portfolioDocuments].forEach((doc) => unique.set(doc.id, doc));
     return [...unique.values()].sort((a, b) => new Date(b.lastEditedTime).getTime() - new Date(a.lastEditedTime).getTime());
   }, [data]);
-  const openDocument = (document: CompanyDocument) => openAnalysis(document.id);
+  const selectedDocument = useMemo(() => selectedAnalysisId && data
+    ? [...allDocuments, ...(data.archives ?? [])].find(doc => doc.id.replaceAll("-", "").toLowerCase() === selectedAnalysisId.replaceAll("-", "").toLowerCase()) ?? null
+    : null, [allDocuments, data, selectedAnalysisId]);
+  const activeSection = selectedDocument ? sectionForDocument(selectedDocument) : section;
+  const openDocument = (document: CompanyDocument) => {
+    setSection(sectionForDocument(document));
+    openAnalysis(document.id);
+  };
   if (loading && !data)
     return (
       <>
@@ -243,6 +240,15 @@ export function CompanyDetail({ companyId, close, initialData }: { companyId: st
     .filter(([id]) => id !== "synthese" && id !== "analyses")
     .map(([id, label]) => ({ id, label, document: grouped(id)[0] }))
     .filter((item): item is ResearchHighlight => Boolean(item.document));
+  const selectSection = (next: CompanyTab) => {
+    setSection(next);
+    if (next === "synthese" || next === "analyses") {
+      openAnalysis(null);
+      return;
+    }
+    const document = grouped(next)[0];
+    openAnalysis(document?.id ?? null);
+  };
   return (
     <div className="company-detail generic-company-detail">
       <div className="detail-navigation">
@@ -279,14 +285,14 @@ export function CompanyDetail({ companyId, close, initialData }: { companyId: st
           label,
           count: id === "synthese" ? undefined : grouped(id).length,
         }))}
-        value={section}
-        onChange={setSection}
+        value={activeSection}
+        onChange={selectSection}
         ariaLabel="Sections de la fiche entreprise"
         panelId="company-section-panel"
       />
-      <div id="company-section-panel" role="tabpanel" tabIndex={0} aria-label={sectionTitles[section]}>
-      {data.ownershipStatus === "Owned" && section === "portfolio" && <LiveHoldingSummary companyId={companyId} companyName={title} detailed />}
-      {section === "synthese" && (
+      <div id="company-section-panel" role="tabpanel" tabIndex={0} aria-labelledby={`company-section-panel-tab-${activeSection}`}>
+      {data.ownershipStatus === "Owned" && activeSection === "portfolio" && <LiveHoldingSummary companyId={companyId} companyName={title} detailed />}
+      {activeSection === "synthese" && (
         <>
           <PrimaryBlock as="section" className="company-decision-brief">
             <Badge tone={currentMemo ? "positive" : "neutral"}>{currentMemo ? "Décision du mémo CIO" : "Recherche en cours"}</Badge>
@@ -321,7 +327,7 @@ export function CompanyDetail({ companyId, close, initialData }: { companyId: st
             <section className="company-research-overview">
               <p className="eyebrow">Couverture de recherche</p>
               <h2>Analyses disponibles <small>{allDocuments.length} document{allDocuments.length > 1 ? "s" : ""} courant{allDocuments.length > 1 ? "s" : ""}</small></h2>
-              {researchHighlights.length ? <ResearchCoverage items={researchHighlights} onSelect={setSection} /> : <p className="generic-empty">Aucune analyse courante reliée.</p>}
+              {researchHighlights.length ? <ResearchCoverage items={researchHighlights} onSelect={selectSection} /> : <p className="generic-empty">Aucune analyse courante reliée.</p>}
               <DisclosureSurface level="primary" className="company-notion-details" summary={isDemo ? "Informations de démonstration" : "Informations Notion"}>
                 <div className="quality-row">
                   <span>Ticker</span>
@@ -345,7 +351,15 @@ export function CompanyDetail({ companyId, close, initialData }: { companyId: st
           </section>
         </>
       )}
-      {section === "portfolio" && (
+      {activeSection !== "synthese" && activeSection !== "analyses" && selectedDocument && sectionForDocument(selectedDocument) === activeSection && (
+        <section className="company-section-block company-analysis-panel" aria-label={`${sectionTitles[activeSection]} · ${selectedDocument.title}`}>
+          {activeSection === "earnings" && <EarningsReviewCard document={selectedDocument} />}
+          <AnalysisReader document={selectedDocument} companyName={title} embedded />
+          <DocumentHistory docs={grouped(activeSection).filter(doc => doc.id !== selectedDocument.id)} title="Autres documents courants" detail="Autres versions reliées à cette catégorie" label="Current" onOpen={openDocument} />
+          <DocumentHistory docs={archivedByCategory(activeSection)} title="Versions archivées" detail="Historique de cette catégorie" label="Archive" onOpen={openDocument} />
+        </section>
+      )}
+      {activeSection === "portfolio" && !selectedDocument && (
         <>
           <DocumentSection section="portfolio" docs={grouped("portfolio")} archives={archivedByCategory("portfolio")} onOpen={openDocument} demo={isDemo} />
           {data.ownershipStatus !== "Owned" && (
@@ -356,8 +370,8 @@ export function CompanyDetail({ companyId, close, initialData }: { companyId: st
           )}
         </>
       )}
-      {section === "earnings" && <EarningsSection docs={grouped("earnings")} archives={archivedByCategory("earnings")} onOpen={openDocument} demo={isDemo} />}
-      {section !== "synthese" && section !== "portfolio" && section !== "earnings" && <DocumentSection section={section} docs={grouped(section)} archives={archivedByCategory(section)} onOpen={openDocument} demo={isDemo} />}
+      {activeSection !== "synthese" && activeSection !== "analyses" && !selectedDocument && activeSection !== "portfolio" && <DocumentSection section={activeSection} docs={grouped(activeSection)} archives={archivedByCategory(activeSection)} onOpen={openDocument} demo={isDemo} />}
+      {activeSection === "analyses" && <DocumentSection section="analyses" docs={allDocuments} archives={data.archives ?? []} onOpen={openDocument} demo={isDemo} />}
       </div>
       <footer className="company-detail-footer">
         <span>{isDemo ? "Fiche fictive fournie à titre de démonstration." : "Fiche construite depuis les données Notion importées, sans réécriture du contenu source."}</span>

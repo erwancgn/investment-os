@@ -91,6 +91,28 @@ export function visibleSummaryItems(items: string[]) {
   return items.filter((item) => !/^run(?:\s*id)?\s*[:#—–-]?\s*[A-Z0-9][A-Z0-9._-]*\.?\s*$/i.test(compact(item)));
 }
 
+/** Hide promoted source tables and headings that would otherwise become empty sections. */
+export function hidePromotedTableSections(blocks: RenderBlock[], promotedIndexes: number[], hiddenIndexes: Set<number>) {
+  for (const index of promotedIndexes) {
+    hiddenIndexes.add(index);
+    let headingIndex = -1;
+    for (let cursor = index - 1; cursor >= 0; cursor--) {
+      const candidate = blocks[cursor];
+      if (candidate.type === "heading" && candidate.level <= 2) {
+        headingIndex = cursor;
+        break;
+      }
+    }
+    if (headingIndex < 0) continue;
+    const nextHeading = blocks.findIndex((block, cursor) => cursor > headingIndex && block.type === "heading" && block.level <= 2);
+    const end = nextHeading < 0 ? blocks.length : nextHeading;
+    const remainingContent = blocks.slice(headingIndex + 1, end)
+      .some((_block, offset) => headingIndex + 1 + offset !== index && !hiddenIndexes.has(headingIndex + 1 + offset));
+    if (!remainingContent) hiddenIndexes.add(headingIndex);
+  }
+  return hiddenIndexes;
+}
+
 function escapeRegExp(value: string) {
   return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
@@ -147,6 +169,18 @@ export function documentPresentation(blocks: RenderBlock[], propertySummary: str
     const fallbackIndex = blocks.indexOf(fallbackBlock);
     if (fallbackIndex >= 0) hiddenIndexes.add(fallbackIndex);
   }
+
+  // Run Receipt is parser/debug metadata, not reader-facing analysis. Hide its
+  // whole heading range at presentation time; the persisted source stays intact.
+  blocks.forEach((block, index) => {
+    if (block.type !== "heading" || !/^run\s*receipt$/i.test(compact(block.text).replace(/^\d+[.)\s-]+/, "").replace(/[:：]$/, ""))) return;
+    hiddenIndexes.add(index);
+    for (let next = index + 1; next < blocks.length; next++) {
+      const candidate = blocks[next];
+      if (candidate.type === "heading" && candidate.level <= block.level) break;
+      hiddenIndexes.add(next);
+    }
+  });
 
   // A number of Notion templates start with a compact metadata paragraph
   // (date, ticker, currency, period…). Once those values are promoted to the

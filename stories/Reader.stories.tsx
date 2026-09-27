@@ -51,3 +51,21 @@ export const Short: Story = { render: () => frame(<AnalysisReader document={comp
 export const PortfolioFit: Story = { render: () => frame(<AnalysisReader document={completeReferenceDocuments.portfolio} companyName="Entreprise de référence" onBack={() => undefined} />) };
 export const CIO: Story = { render: () => frame(<AnalysisReader document={completeReferenceDocuments.synthese} companyName="Entreprise de référence" onBack={() => undefined} />) };
 export const Earnings: Story = { render: () => frame(<AnalysisReader document={completeReferenceDocuments.earnings} companyName="Entreprise de référence" onBack={() => undefined} />) };
+
+const denseMatrixDocument = {
+  ...completeReferenceDocuments.valuation,
+  id: "ref-valuation-dense",
+  title: "Valuation — matrice dense",
+  plainText: `## Repères historiques
+| Date | Scénario | Prix | CAGR | Devise |
+|---|---|---:|---:|---|
+| 2022 | Bear | 80 | -4 % | USD |
+| 2023 | Bear | 84 | -3 % | USD |
+| 2024 | Base | 100 | 0 % | USD |
+| 2025 | Base | 120 | 4 % | USD |
+| 2026 | Bull | 145 | 8 % | USD |
+| 2027 | Bull | 160 | 10 % | USD |
+| 2028 | Bull | 180 | 12 % | USD |`,
+};
+
+export const DenseMatrix: Story = { render: () => frame(<AnalysisReader document={denseMatrixDocument} companyName="Entreprise de référence" onBack={() => undefined} />) };

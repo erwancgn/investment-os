@@ -25,10 +25,10 @@ Les valeurs ne doivent pas être recopiées dans cette documentation. En cas de 
 
 ## Contrat de surface
 
-1. Le canvas de page est blanc (`--surface-canvas`) sur tous les écrans. Les surfaces de contenu restent blanches ; leurs bordures et ombres légères donnent la séparation, y compris sous le chrome Liquid Glass.
-2. Une surface de contenu de premier niveau utilise `primary` : carte métier, recherche, KPI, liste documentaire.
-3. `secondary` est réservé aux informations réellement imbriquées ou de soutien ; il ne doit pas servir à griser arbitrairement une carte de premier niveau.
-4. `glass` est réservé au chrome, à la navigation, aux menus flottants et aux surfaces qui se superposent au contenu.
+1. Le canvas de toute l’application est blanc (`--surface-canvas`) et ne porte ni dégradé bleu ni gris de page.
+2. Les conteneurs de structure restent sans carte. Une information isolée utilise `primary`; une information imbriquée utilise `secondary`. Les deux surfaces de contenu restent blanches et se distinguent par l’espacement, la bordure et l’ombre, jamais par un fond gris.
+3. Une surface de contenu ne doit pas entourer une page entière pour accueillir d’autres blocs. Retirer l’enveloppe de surface et garder les blocs réellement porteurs d’information.
+4. `glass` est réservé au chrome, à la navigation et aux menus flottants. Sur un canvas blanc, le contour et l’ombre légère assurent sa séparation.
 5. `DiscoveryCard` porte le shell Apple Light / Liquid Glass des lignes d’Entreprises. Un écran peut organiser son contenu interne, mais ne redéfinit pas localement fond, bordure, rayon ou ombre. Les informations réellement imbriquées peuvent utiliser de petites surfaces secondaires. Le hover/focus léger reste une interaction voulue.
 6. Le titre principal d’une DiscoveryCard peut occuper jusqu’à deux lignes dans une piste flexible `minmax(0, 1fr)`. Il utilise le token sémantique `--font-discovery-title`. Toute information interne secondaire reste typographiquement sous ce niveau : valeurs de signal au plus en `--font-sm`, métadonnées et labels en `--font-xs` ou plus petit. Les badges, statuts et actions occupent des pistes `auto` non réductibles : le titre ne peut ni les chevaucher ni leur prendre leur espace, et la carte conserve une hauteur intrinsèque.
 7. La liste Entreprises montre l’identité, les badges Détenue et Watchlist, les cinq références actuelles et leur date. Le verdict CIO vient uniquement du mémo `Current Investment Memo` relié et `Validated` ; en son absence, la page affiche `Pas de décision CIO`.
@@ -36,8 +36,10 @@ Les valeurs ne doivent pas être recopiées dans cette documentation. En cas de 
 9. Un segmented control contenu conserve lui aussi une zone interactive de 44 px ; son conteneur visuel reste à 40 px avec 3 px d’inset uniforme et le segment actif à 34 px. Il est réservé aux bascules de mode compactes, pas aux taxonomies longues.
 10. `Tabs` pilote les vues Toutes, Détenues et Watchlist de la liste Entreprises, reliées à un `tabpanel`. Les filtres visibles jusqu'à six choix utilisent des pills via `SegmentedControl`. Aucun comportement automatique basé sur le nombre d’options n’est caché dans la primitive : la composition reste explicite dans l’écran.
 11. `SearchField` conserve recherche et compteur sur une seule ligne au viewport mobile de référence ; la recherche prend `minmax(0, 1fr)` et le compteur reste en `max-content`, avec une hauteur interactive commune.
-12. Une synthèse de `StatCard` adapte sa grille à la place disponible. Sur mobile, trois indicateurs se lisent l’un sous l’autre ; sur grand écran, ils peuvent former trois colonnes. Les informations courtes à l’intérieur des cartes sont centrées. Le corps long des rapports reste aligné au départ de la ligne pour préserver sa lecture. Au-delà de six KPI, les indicateurs prioritaires restent visibles et le complément passe dans un niveau de détail ou une disclosure.
-13. La fiche Compagnie présente une conclusion documentaire, des repères et les modules d’analyse reliés. Le menu horizontal des analyses garde son onglet actif visible et relie ses boutons au panneau de lecture. Les sections d’un rapport se déplient en bandeaux ; les trois scénarios et les trois seuils de valorisation sont des lignes complètes sur mobile et des colonnes quand la largeur le permet. Un chiffre n’est promu dans ces comparaisons que si le rapport fournit explicitement sa valeur et son unité.
+12. `StatCard` est réservé aux KPI centrés. Tout texte éditorial, explication, verdict, hypothèse, risque et source est aligné à gauche, y compris à l’intérieur d’un bloc KPI. Les groupes KPI s’adaptent à la largeur disponible.
+13. La fiche Compagnie conserve son identité et le menu horizontal pendant la lecture de chaque analyse. Le panneau de lecture change, la page visuelle ne change pas. Les disclosures d’analyse sont des bandeaux alignés à gauche. `Run Receipt` est filtré côté présentation et la donnée source reste intacte.
+14. Les scénarios et seuils de valorisation s’empilent sur mobile et deviennent une grille lorsque la largeur le permet. Les tables simples restent dans la largeur disponible; seul un tableau réellement dense reçoit un défilement horizontal accessible. Les données promues dans une comparaison ne sont pas répétées sous forme de table brute.
+15. Les libellés et descriptions des scénarios restent alignés à gauche. Seules les valeurs KPI sont centrées.
 
 ## Utilisation avec Lovable
 

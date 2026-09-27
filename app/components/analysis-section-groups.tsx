@@ -26,7 +26,7 @@ export function AnalysisSectionGroups({
       groups[groups.length - 1].entries.push({ block, index });
     }
   }
-  return <div className="analysis-section-groups">{groups.map((group, index) => (
+  return <div className="analysis-section-groups">{groups.filter(group => group.entries.length > 0).map((group, index) => (
     <div className={`analysis-section-group ${classForHeading?.(group.title) ?? ""}`.trim()} id={group.id} key={`${group.id ?? "intro"}-${index}`}>
       <DisclosureSurface level="primary" summary={<strong>{group.title}</strong>}>
         <div className="analysis-section-group-content">{group.entries.map(entry => <Fragment key={entry.index}>{renderBlock(entry)}</Fragment>)}</div>

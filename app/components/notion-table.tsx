@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { shouldScrollNotionTable } from "../lib/table-presentation";
 import { SecondaryBlock } from "./ui-primitives";
 
 function looksNumeric(value: string) {
@@ -10,7 +11,7 @@ function looksNumeric(value: string) {
 export function NotionTable({ rows, header = true, renderCell }: { rows: string[][]; header?: boolean; renderCell: (value: string) => React.ReactNode }) {
   if (!rows.length) return null;
   const columnCount = Math.max(...rows.map(row => row.length), 1);
-  const scrollable = columnCount > 2;
+  const scrollable = shouldScrollNotionTable(rows);
   const columnClass = columnCount === 2 ? " notion-table-two-column" : "";
   const renderRow = (row: string[], rowIndex: number, headerRow = false) => <tr key={rowIndex}>{row.map((cell, cellIndex) => {
     const HeaderOrCell = headerRow ? "th" : "td";
@@ -23,5 +24,5 @@ export function NotionTable({ rows, header = true, renderCell }: { rows: string[
     tabIndex={scrollable ? 0 : undefined}
     role={scrollable ? "region" : undefined}
     aria-label={scrollable ? "Tableau défilable horizontalement" : undefined}
-  ><table className={`notion-table${scrollable ? " notion-table-wide" : ""}${columnClass}`}>{header && <thead>{renderRow(rows[0], 0, true)}</thead>}<tbody>{bodyRows.map((row, rowIndex) => renderRow(row, header ? rowIndex + 1 : rowIndex))}</tbody></table></SecondaryBlock>;
+  ><table className={`notion-table${scrollable ? " notion-table-wide" : " notion-table-compact"}${columnClass}`}>{header && <thead>{renderRow(rows[0], 0, true)}</thead>}<tbody>{bodyRows.map((row, rowIndex) => renderRow(row, header ? rowIndex + 1 : rowIndex))}</tbody></table></SecondaryBlock>;
 }

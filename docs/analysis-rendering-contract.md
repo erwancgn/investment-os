@@ -32,6 +32,11 @@ Le Mémo CIO est une page de décision et non une analyse scorée. Son écran su
 5. Les champs non reconnus ne sont pas supprimés : ils restent dans le texte de secours.
 6. Les relations restent des liens Notion, jamais du texte opaque.
 7. Un document sans template métier doit rester lisible grâce au rendu universel.
+8. `Run Receipt` est une section technique masquée par la projection de présentation. Le document Notion et les blocs parsés restent inchangés.
+9. Le lecteur d’analyse s’affiche dans le panneau de la fiche Compagnie; l’identité et le menu des analyses restent visibles pendant la navigation.
+10. Les textes d’analyse sont alignés à gauche. Seules les valeurs KPI sont centrées.
+11. Les scénarios et seuils de valorisation sont empilés sur mobile et peuvent former une grille lorsque l’espace le permet. Les tables simples restent dans la largeur disponible; le défilement horizontal est réservé aux matrices denses.
+12. Toute donnée promue dans un résumé de valorisation conserve l’index de son bloc source afin d’éviter de rendre la même table deux fois.
 
 ## Versionnement
 

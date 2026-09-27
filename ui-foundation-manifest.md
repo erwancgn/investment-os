@@ -7,7 +7,7 @@ the visual validation reference for the same contracts.
 
 | # | Export | Role | Story coverage |
 |---:|---|---|---|
-| 1 | `Surface` | Semantic primary, secondary, or glass surface with nested-surface resolution. | `Foundations/Primitives — Surfaces`, `Design System/Overview` |
+| 1 | `Surface` | Semantic primary, secondary, or glass surface with nested-surface resolution; content surfaces remain white on the white canvas. | `Foundations/Primitives — Surfaces`, `Design System/Overview` |
 | 2 | `ProgressBar` | Accessible bounded progress indicator. | `DataDisplay`, `Design System/Overview` |
 | 3 | `SegmentedControl` | Toggle group for mutually exclusive filters or views. | `Controls`, `Design System/Overview`, screen stories |
 | 4 | `CompactControl` | Compact select or icon control for dense toolbars. | `Controls`, `Design System/Overview`, Portfolio |
@@ -17,14 +17,14 @@ the visual validation reference for the same contracts.
 | 8 | `SearchField` | Shared search input with optional result count. | `Controls`, `Design System/Overview`, screen stories |
 | 9 | `SectionHeader` | Consistent section title, description, metadata, and actions. | `Controls`, `Design System/Overview`, screen stories |
 | 10 | `FilterBar` | Semantic layout container for filter controls. | `Controls`, `Design System/Overview`, screen stories |
-| 11 | `Tabs` | Keyboard-navigable tab selector. | `Controls`, `Design System/Overview`, Company |
+| 11 | `Tabs` | Keyboard-navigable tab selector with stable tab and panel linkage. | `Controls`, `Design System/Overview`, Company |
 | 12 | `StatCard` | KPI card for a label, value, and supporting detail. | `Data display`, `Design System/Overview`, screen stories |
 | 13 | `DiscoveryCard` | Shared production card shell for the company directory. | `Discovery cards`, `Design System/Overview`, screen stories |
 | 14 | `AsyncState` | Explicit empty, loading, or error state surface. | `Badges / States`, screen state stories |
-| 15 | `PrimaryBlock` | Primary semantic surface wrapper. | `Surfaces`, `Design System/Overview`, screen stories |
-| 16 | `SecondaryBlock` | Secondary nested surface wrapper. | `Surfaces`, `Design System/Overview`, Reader |
+| 15 | `PrimaryBlock` | Isolated white content surface wrapper; not a page-level shell. | `Surfaces`, `Design System/Overview`, screen stories |
+| 16 | `SecondaryBlock` | Nested white content surface wrapper; hierarchy comes from spacing and border. | `Surfaces`, `Design System/Overview`, Reader |
 | 17 | `GlassChrome` | Glass surface wrapper reserved for navigation or floating chrome. | `Surfaces`, `Design System/Overview` |
-| 18 | `DisclosureSurface` | Expandable details surface with a shared surface contract. | `Content states`, Reader, Company |
+| 18 | `DisclosureSurface` | Expandable white content surface with a shared surface contract. | `Content states`, Reader, Company |
 | 19 | `MetadataGrid` | Definition-list grid for structured metadata. | `Data display`, `Design System/Overview`, Reader |
 | 20 | `DataTable` | Accessible tabular data display using typed column renderers. | `Data display`, `Design System/Overview`, Company |
 

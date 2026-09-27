@@ -2,7 +2,7 @@
 
 import React from "react";
 import type { CompanyDocument, DecisionFields, ResearchDocument } from "../lib/investment-data";
-import { documentPresentation } from "../lib/document-presentation";
+import { documentPresentation, hidePromotedTableSections } from "../lib/document-presentation";
 import { parseNotionDocument } from "../lib/notion-renderer";
 import { NotionTable } from "./notion-table";
 import { InvestmentMemoReader } from "./investment-memo-reader";
@@ -10,7 +10,7 @@ import { AnalysisFactGrid, AnalysisReportHero } from "./analysis-presentation";
 import { AnalysisSectionGroups } from "./analysis-section-groups";
 import { ScenarioComparison } from "./scenario-comparison";
 import { extractValuationSummary } from "../lib/valuation-summary";
-import { BackButton, Badge, DisclosureSurface, MetadataGrid, PrimaryBlock, SecondaryBlock } from "./ui-primitives";
+import { BackButton, Badge, DisclosureSurface, MetadataGrid, SecondaryBlock } from "./ui-primitives";
 
 type AnalysisDoc = CompanyDocument | ResearchDocument;
 
@@ -129,19 +129,21 @@ function DecisionTemplate({ decision, isDemo }: { decision: DecisionFields; isDe
   );
 }
 
-export function AnalysisReader({ document, companyName, onBack }: { document: AnalysisDoc; companyName: string; onBack: () => void }) {
+export function AnalysisReader({ document, companyName, onBack, embedded = false }: { document: AnalysisDoc; companyName: string; onBack?: () => void; embedded?: boolean }) {
   if (document.sourceKey === "analyses" && (document.category === "synthese" || /investment memo|mémo cio/i.test(`${document.agent} ${document.title}`))) {
-    return <InvestmentMemoReader document={document} companyName={companyName} onBack={onBack} />;
+    return <InvestmentMemoReader document={document} companyName={companyName} onBack={onBack} embedded={embedded} />;
   }
-  return <StandardAnalysisReader document={document} companyName={companyName} onBack={onBack}/>;
+  return <StandardAnalysisReader document={document} companyName={companyName} onBack={onBack} embedded={embedded}/>;
 }
 
-function StandardAnalysisReader({ document, companyName, onBack }: { document: AnalysisDoc; companyName: string; onBack: () => void }) {
+function StandardAnalysisReader({ document, companyName, onBack, embedded }: { document: AnalysisDoc; companyName: string; onBack?: () => void; embedded: boolean }) {
   const isDemo = document.id.startsWith("demo-");
   const blocks = React.useMemo(() => parseNotionDocument(document.plainText, document.title, document.notionBlocks), [document]);
   const presentation = documentPresentation(blocks, document.summary ?? "", { category: document.category, handoffSummary: document.handoffSummary });
   const scenarioSummary = document.category === "valuation" ? extractValuationSummary(blocks) : null;
-  const headings = blocks.flatMap((block, index) => block.type === "heading" && block.level <= 2 && !presentation.hiddenIndexes.has(index) ? [{ text: block.text, index }] : []);
+  const hidden = new Set(presentation.hiddenIndexes);
+  if (scenarioSummary) hidePromotedTableSections(blocks, scenarioSummary.promotedBlockIndexes, hidden);
+  const headings = blocks.flatMap((block, index) => block.type === "heading" && block.level <= 2 && !hidden.has(index) ? [{ text: block.text, index }] : []);
   const templateKind = document.category || (document.sourceKey === "decisions" ? "synthese" : "universal");
   const scored = templateKind === "business" || templateKind === "valuation";
   const outcome = document.verdict
@@ -160,9 +162,7 @@ function StandardAnalysisReader({ document, companyName, onBack }: { document: A
   ];
   return (
     <section className="research-reader universal-analysis-reader" data-analysis-template={templateKind}>
-      <div className="detail-navigation">
-        <BackButton onBack={onBack} ariaLabel="Retour à la liste précédente" />
-      </div>
+      {!embedded && onBack && <div className="detail-navigation"><BackButton onBack={onBack} ariaLabel="Retour à la liste précédente" /></div>}
       <AnalysisReportHero
         badges={
           <>
@@ -178,7 +178,7 @@ function StandardAnalysisReader({ document, companyName, onBack }: { document: A
         outcome={outcome}
       />
       <div className="notion-layout universal-analysis-layout">
-        <PrimaryBlock as="article" className="notion-page universal-analysis-page">
+        <article className="notion-page universal-analysis-page">
           {presentation.summaryItems.length > 0 && (
             <SecondaryBlock className="analysis-lead">
               <section aria-labelledby="analysis-tldr">
@@ -245,7 +245,7 @@ function StandardAnalysisReader({ document, companyName, onBack }: { document: A
             </div>
           </DisclosureSurface>
           {document.sourceKey === "decisions" && document.decision && <DecisionTemplate decision={document.decision} isDemo={isDemo} />}
-          <AnalysisSectionGroups blocks={blocks} hidden={presentation.hiddenIndexes} idForHeading={index => `analysis-heading-${index}`} classForHeading={title => { const scenario = scenarioKind(title); return scenario ? `analysis-scenario analysis-scenario-${scenario}` : ""; }} renderBlock={({ block, index }) => {
+          <AnalysisSectionGroups blocks={blocks} hidden={hidden} idForHeading={index => `analysis-heading-${index}`} classForHeading={title => { const scenario = scenarioKind(title); return scenario ? `analysis-scenario analysis-scenario-${scenario}` : ""; }} renderBlock={({ block, index }) => {
             if (block.type === "heading") {
               const Tag = `h${Math.min(block.level + 1, 6)}` as keyof React.JSX.IntrinsicElements;
               return <section className="analysis-section"><Tag>{inline(block.text)}</Tag></section>;
@@ -276,7 +276,7 @@ function StandardAnalysisReader({ document, companyName, onBack }: { document: A
             <span>{isDemo ? "Fin du document de démonstration" : "Fin du document synchronisé"}</span>
             {!isDemo && <a href={document.notionUrl} target="_blank" rel="noreferrer">Comparer avec Notion ↗</a>}
           </footer>
-        </PrimaryBlock>
+        </article>
       </div>
     </section>
   );

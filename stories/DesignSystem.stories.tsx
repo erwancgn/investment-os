@@ -59,7 +59,9 @@ export const Overview: Story = {
         <section className="storybook-reference-section" aria-labelledby="surfaces-heading">
           <h2 id="surfaces-heading">Surfaces</h2>
           <div className="storybook-grid">
-            <Surface surface="primary"><strong>Primary</strong><p>Top-level content surface.</p></Surface>
+            <Surface surface="primary"><strong>Primary</strong><p>Isolated white content surface.</p></Surface>
+            <Surface surface="secondary"><strong>Secondary</strong><p>Nested support content remains white.</p></Surface>
+            <Surface surface="glass"><strong>Glass chrome</strong><p>Navigation and floating chrome.</p></Surface>
             <SecondaryBlock><strong>Secondary</strong><p>Nested supporting surface.</p></SecondaryBlock>
             <GlassChrome><strong>Glass</strong><p>Navigation and floating chrome.</p></GlassChrome>
           </div>

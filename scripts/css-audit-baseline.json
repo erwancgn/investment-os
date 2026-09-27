@@ -3,9 +3,9 @@
   "capturedAt": "2026-09-25",
   "scope": "app CSS governance audit after the Basket chart and AI launcher update",
   "thresholds": {
-    "exactRepeatedSelectors": 147,
+    "exactRepeatedSelectors": 145,
     "directPropertyConflicts": 0,
-    "responsiveVariants": 115,
+    "responsiveVariants": 113,
     "strictRedundantDeclarations": 1,
     "additiveExtensions": 31,
     "repeatedTokens": 0,

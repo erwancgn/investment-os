@@ -24,6 +24,8 @@ vérité.
 | Police | `--font-family-sans`, `--font-geist-mono`, `--font-discovery-title` | Le texte UI utilise `--font-family-sans`; le titre Discovery utilise son rôle sémantique dédié et reste au-dessus des valeurs, métadonnées et labels internes ; le monospace est réservé aux données qui le nécessitent. |
 | Couleurs sémantiques | `--color-bg`, `--color-bg-elevated`, `--color-surface`, `--color-surface-raised`, `--color-surface-active`, `--color-border`, `--color-border-strong`, `--color-text`, `--color-text-secondary`, `--color-text-muted`, `--color-accent`, `--color-accent-strong`, `--color-positive`, `--color-negative`, `--color-warning`, `--color-info`, `--color-violet`, `--color-content-copy` | Les composants consomment les rôles sémantiques ; aucune couleur littérale ne doit être ajoutée dans une primitive. |
 | Surfaces | `--surface-canvas`, `--surface-primary`, `--surface-secondary`, `--surface-glass`, `--surface-glass-fallback`, `--surface-stroke`, `--surface-stroke-strong`, `--surface-highlight`, `--surface-blur` | `Surface` et ses wrappers déterminent la hiérarchie primaire, secondaire et glass. |
+
+Le canvas et les surfaces de contenu sont blancs sur tous les écrans. Les éléments de structure ne reçoivent pas de surface. `primary` porte un contenu isolé, `secondary` un contenu imbriqué sans fond gris; le chrome de navigation utilise `glass`. Les textes rédigés s’alignent à gauche et seules les valeurs KPI se centrent.
 | Rayons | `--radius-sm`, `--radius-md`, `--radius-lg`, `--radius-pill` | Les rayons sont choisis par rôle ; une nouvelle valeur locale doit être justifiée dans le contrat. |
 | Ombres | `--surface-shadow`, `--surface-shadow-glass`, `--shadow-panel` | Une surface ne redéfinit pas son ombre localement pour corriger une divergence visuelle. |
 | Contrôles | `--control-height`, `--ui-control-height`, `--ui-control-hit-height`, `--ui-control-contained-height`, `--ui-control-radius`, `--ui-progress-track`, `--ui-progress-accent`, `--ui-progress-positive`, `--ui-progress-warning`, `--ui-progress-height` | Les contrôles compacts, les segments et les actions utilisent ces tokens communs ; le hit target peut être supérieur à la hauteur visuelle. |
@@ -86,7 +88,7 @@ porte le shell partagé de la liste Entreprises.
 
 | Référence Lovable | Export React | Classe racine | Story / états vérifiés |
 |---|---|---|---|
-| Primary / secondary / glass surface | `Surface` | `.ui-surface` | `Foundations/Primitives — Surfaces`, `Design System/Overview` / trois rôles, nesting |
+| Primary / secondary / glass surface | `Surface` | `.ui-surface` | `Foundations/Primitives — Surfaces`, `Design System/Overview` / trois rôles, nesting blanc |
 | Progress indicator | `ProgressBar` | `.ui-progress-track` | `DataDisplay`, `Design System/Overview` / accent, positive, bounded value |
 | Segmented filters | `SegmentedControl` | `.ui-control-group` | `Controls`, `Design System/Overview` / actif, contenu, clavier |
 | Compact select / icon | `CompactControl` | `.ui-compact-control` | `Controls`, `Design System/Overview`, Portfolio / select, icon, disabled |
@@ -101,7 +103,7 @@ porte le shell partagé de la liste Entreprises.
 | Company directory card | `DiscoveryCard` | `.ui-discovery-card--company` | Entreprises, `Design System/Overview`, `Design System/ProductionVisualReview` / normal, long, no memo |
 | Async state | `AsyncState` | `.ui-async-state` | `Badges / States`, screen state stories / empty, loading, error |
 | Primary block | `PrimaryBlock` | `.ui-surface--primary` | Surfaces, `Design System/Overview`, screen stories / semantic wrapper |
-| Secondary block | `SecondaryBlock` | `.ui-surface--secondary` | Surfaces, `Design System/Overview`, Reader / nested content |
+| Secondary block | `SecondaryBlock` | `.ui-surface--secondary` | Surfaces, `Design System/Overview`, Reader / nested white content |
 | Floating glass chrome | `GlassChrome` | `.ui-surface--glass` | Surfaces, `Design System/Overview` / chrome role |
 | Disclosure details | `DisclosureSurface` | `.ui-disclosure-surface` | Content states, Reader, Company / closed, open |
 | Metadata definition list | `MetadataGrid` | `.ui-metadata-grid` | Data display, `Design System/Overview`, Reader / labelled list |

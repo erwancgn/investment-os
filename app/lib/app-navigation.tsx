@@ -7,7 +7,7 @@ export const tabIds = ["portfolio", "companies", "themes", "ia", "gestion"] as c
 export type Tab = typeof tabIds[number];
 type Route = { tab: Tab; company: string | null; document: string | null; key: string };
 type Position = { y: number; focus: HTMLElement | null };
-export const OpenAnalysisContext = createContext<(id: string) => void>(() => {});
+export const OpenAnalysisContext = createContext<(id: string | null) => void>(() => {});
 export const useOpenAnalysis = () => useContext(OpenAnalysisContext);
 let sequence = 0;
 const newKey = () => `${Date.now().toString(36)}-${++sequence}`;
@@ -28,7 +28,7 @@ export function useAppNavigation() {
     for (const map of [positions.current, views.current]) if (map.size > 100) map.delete(map.keys().next().value!);
   };
   const apply = (next: Route) => {
-    const endpoint = next.document ? `/api/analyses/${encodeURIComponent(next.document)}` : next.company ? `/api/companies/${encodeURIComponent(next.company)}` : ({portfolio:"/api/portfolio/live",companies:"/api/companies",themes:"/api/theme-baskets?dimension=theme&period=1y",ia:null,gestion:"/api/notion/integrity"})[next.tab];
+    const endpoint = next.company ? `/api/companies/${encodeURIComponent(next.company)}` : next.document ? `/api/analyses/${encodeURIComponent(next.document)}` : ({portfolio:"/api/portfolio/live",companies:"/api/companies",themes:"/api/theme-baskets?dimension=theme&period=1y",ia:null,gestion:"/api/notion/integrity"})[next.tab];
     if (endpoint) preloadResource(endpoint);
     current.current = next;
     setVisited(previous => previous.includes(next.tab) ? previous : [...previous, next.tab]);
@@ -106,6 +106,6 @@ export function useAppNavigation() {
     route, visited, back,
     navigate: (tab: Tab) => { if (tab !== route.tab || route.company || route.document) move({ tab, company: null, document: null }); },
     openCompany: (company: string, document?: string) => move({ tab: route.tab, company, document: document ?? null }),
-    openAnalysis: (document: string) => move({ ...current.current, document }),
+    openAnalysis: (document: string | null) => move({ ...current.current, document }),
   };
 }

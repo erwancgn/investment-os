@@ -324,7 +324,7 @@ export function Tabs<T extends string>({
     }}>
       {options.map((option) => {
         const selected = option.value === value;
-        return <button type="button" role="tab" aria-selected={selected} aria-controls={panelId} tabIndex={selected ? 0 : -1} className={selected ? "is-active" : ""} key={option.value} onClick={() => onChange(option.value)}>{option.label}{option.count != null && <span>{option.count}</span>}</button>;
+        return <button type="button" id={panelId ? `${panelId}-tab-${option.value}` : undefined} role="tab" aria-selected={selected} aria-controls={panelId} tabIndex={selected ? 0 : -1} className={selected ? "is-active" : ""} key={option.value} onClick={() => onChange(option.value)}>{option.label}{option.count != null && <span>{option.count}</span>}</button>;
       })}
     </div>
   );

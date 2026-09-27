@@ -34,9 +34,9 @@ type Story = StoryObj<typeof meta>;
 export const Surfaces: Story = {
   render: () => (
     <div className="storybook-stack">
-      <Surface surface="primary"><strong>Primary surface</strong><p>Default grouped content.</p></Surface>
-      <Surface surface="secondary"><strong>Secondary surface</strong><p>Supporting grouped content.</p></Surface>
-      <Surface surface="glass"><strong>Glass chrome</strong><p>Reserved for navigation and floating chrome.</p></Surface>
+      <Surface surface="primary"><strong>Primary surface</strong><p>Isolated content on the white canvas.</p></Surface>
+      <Surface surface="secondary"><strong>Secondary surface</strong><p>Nested content stays white; hierarchy comes from spacing, border and shadow.</p></Surface>
+      <Surface surface="glass"><strong>Glass chrome</strong><p>Liquid Glass material for navigation and floating chrome.</p></Surface>
       <PrimaryBlock><strong>Primary block wrapper</strong><p>Production wrapper for primary content.</p></PrimaryBlock>
       <SecondaryBlock><strong>Secondary block wrapper</strong><p>Production wrapper for nested content.</p></SecondaryBlock>
       <GlassChrome><strong>Glass chrome wrapper</strong><p>Production wrapper for floating chrome.</p></GlassChrome>
@@ -75,8 +75,8 @@ export const ReferencePage: Story = {
 
         <div className="storybook-stack">
           <p className="eyebrow">Surfaces</p>
-          <Surface surface="primary"><strong>Primary content</strong><p>Top-level content, search, KPI and discovery cards.</p></Surface>
-          <Surface surface="secondary"><strong>Secondary inset</strong><p>Supporting information nested inside a content surface.</p></Surface>
+          <Surface surface="primary"><strong>Primary content</strong><p>Isolated report blocks, search, KPI and discovery cards.</p></Surface>
+          <Surface surface="secondary"><strong>Secondary content</strong><p>Nested information remains white and uses a quieter outline.</p></Surface>
           <Surface surface="glass"><strong>Glass chrome</strong><p>Navigation and floating chrome only.</p></Surface>
         </div>
 

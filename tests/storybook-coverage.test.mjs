@@ -47,6 +47,15 @@ test("reference screen stories render production components at mobile and deskto
   assert.match(frame, /maxWidth: 390/);
 });
 
+test("company Storybook demonstrates persistent analysis navigation with complete valuation data", async () => {
+  const [companyStory, fixtures] = await Promise.all([read("stories/Company.stories.tsx"), read("stories/reference-fixtures.ts")]);
+  assert.match(companyStory, /OpenAnalysisContext/);
+  assert.match(companyStory, /selectedAnalysisId=\{activeDocument\}/);
+  assert.match(companyStory, /export const EmbeddedValuation/);
+  assert.match(companyStory, /export const EmbeddedValuationDesktop/);
+  assert.match(fixtures, /Seuils de rendement · Base intacte[\s\S]*RUN RECEIPT[\s\S]*Sources/);
+});
+
 test("mobile navigation presents four equal destinations with a selected blue indicator", async () => {
   const [page, shellCss, discoveryCss] = await Promise.all([read("app/page.tsx"), read("app/styles/ux/shell.css"), read("app/styles/ux/discovery.css")]);
   const tabList = page.match(/const tabs:[\s\S]*?\n\];/)?.[0] ?? "";

@@ -302,8 +302,8 @@
   text-transform: none !important;
 }
 
-/* White belongs to the primary liquid-glass page/card only. Structural
-   wrappers and traceability footers must not create nested white rectangles. */
+/* The document canvas stays transparent. White glass belongs to the actual
+   content blocks; structural wrappers and traceability footers stay flat. */
 .company-summary-grid,
 .company-research-overview,
 .company-section-block,

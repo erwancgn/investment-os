@@ -2,7 +2,7 @@
 
 import React from "react";
 import type { CompanyDocument, ResearchDocument } from "../lib/investment-data";
-import { documentPresentation } from "../lib/document-presentation";
+import { documentPresentation, hidePromotedTableSections } from "../lib/document-presentation";
 import { compactDecisionLabel } from "../lib/decision-label";
 import { parseNotionDocument, type RenderBlock } from "../lib/notion-renderer";
 import { NotionTable } from "./notion-table";
@@ -14,7 +14,6 @@ import {
   BackButton,
   Badge,
   DisclosureSurface,
-  PrimaryBlock,
   SecondaryBlock,
 } from "./ui-primitives";
 
@@ -147,10 +146,12 @@ export function InvestmentMemoReader({
   document,
   companyName,
   onBack,
+  embedded = false,
 }: {
   document: MemoDocument;
   companyName: string;
-  onBack: () => void;
+  onBack?: () => void;
+  embedded?: boolean;
 }) {
   const isDemo = document.id.startsWith("demo-");
   const [openedAt] = React.useState(() => Date.now());
@@ -176,6 +177,7 @@ export function InvestmentMemoReader({
         .filter(Boolean)
     : [];
   const hidden = new Set(presentation.hiddenIndexes);
+  if (scenarioSummary) hidePromotedTableSections(blocks, scenarioSummary.promotedBlockIndexes, hidden);
   for (const range of [decisionRange, reasoningRange]) {
     if (range)
       for (let index = range.start; index < range.end; index++)
@@ -193,9 +195,7 @@ export function InvestmentMemoReader({
       className="research-reader universal-analysis-reader investment-memo-reader"
       data-analysis-template="memo"
     >
-      <div className="detail-navigation">
-        <BackButton onBack={onBack} ariaLabel="Retour à la fiche entreprise" />
-      </div>
+      {!embedded && onBack && <div className="detail-navigation"><BackButton onBack={onBack} ariaLabel="Retour à la fiche entreprise" /></div>}
       <AnalysisReportHero
         className="memo-hero"
         badges={
@@ -217,10 +217,7 @@ export function InvestmentMemoReader({
       />
 
       <div className="notion-layout universal-analysis-layout">
-        <PrimaryBlock
-          as="article"
-          className="notion-page universal-analysis-page memo-page"
-        >
+        <article className="notion-page universal-analysis-page memo-page">
           {presentation.summaryItems.length > 0 && (
             <SecondaryBlock className="analysis-lead memo-tldr">
               <section aria-labelledby="memo-tldr">
@@ -348,7 +345,7 @@ export function InvestmentMemoReader({
               </a>}
             </div>
           </DisclosureSurface>
-        </PrimaryBlock>
+        </article>
       </div>
     </section>
   );

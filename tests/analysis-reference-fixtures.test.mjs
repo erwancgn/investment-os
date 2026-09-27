@@ -363,7 +363,7 @@ test("earnings expose the five canonical refresh routes in the company design sy
   assert.match(companySource, /<SecondaryBlock className="earnings-routing-item"/);
   assert.match(companySource, /Refresh recommandé/);
   assert.match(companySource, /Refresh requis/);
-  assert.match(companySource, /section === "earnings" && <EarningsSection/);
+  assert.match(companySource, /activeSection === "earnings" && <EarningsReviewCard/);
   assert.doesNotMatch(companySource, /Execution Score/);
   assert.match(uxSource, /Earnings — latest quarter and cross-module refresh routing/);
   assert.match(uxSource, /\.earnings-routing-grid/);
@@ -428,7 +428,7 @@ test("company and analysis layouts preserve the Notion parser contract", async (
   assert.match(readerSource, /parseNotionDocument\(document\.plainText, document\.title, document\.notionBlocks\)/);
   assert.match(readerSource, /analysis-source-details/);
   assert.match(readerSource, /scenarioKind\(title\)/);
-  assert.match(readerSource, /<AnalysisSectionGroups blocks=\{blocks\} hidden=\{presentation\.hiddenIndexes\}/);
+  assert.match(readerSource, /<AnalysisSectionGroups blocks=\{blocks\} hidden=\{hidden\}/);
   assert.match(readerSource, /<NotionTable/);
 });
 
@@ -508,8 +508,9 @@ test("Notion tables use one adaptive reusable component", async () => {
   assert.match(tableSource, /Tableau défilable horizontalement/);
   assert.match(tableSource, /notion-table-wide/);
   assert.match(readerSource, /<NotionTable/);
-  assert.match(globalsSource, /\.notion-table \{[\s\S]*table-layout: auto/);
-  assert.match(globalsSource, /\.notion-table-wrap \{[\s\S]*overflow-x: auto/);
+  assert.match(globalsSource, /\.notion-table \{[\s\S]*table-layout: fixed/);
+  assert.match(globalsSource, /\.notion-table-wrap \{[\s\S]*overflow-x: hidden/);
+  assert.match(globalsSource, /\.notion-table-wrap-scrollable \{ overflow-x: auto; \}/);
   assert.match(globalsSource, /\.notion-table-wide \{[\s\S]*min-width: max\(100%, calc\(var\(--notion-columns\) \* 148px\)\)/);
 });
 
@@ -556,7 +557,7 @@ test("Apple Light theme covers shared surfaces and aligns financial figures", as
   const globalsSource = await readFile(globalsUrl, "utf8");
   assert.match(uxSource, /\.ui-metadata-item/);
   assert.match(uxSource, /\.decision-template \{/);
-  assert.match(globalsSource, /--surface-secondary: var\(--contrast-surface-secondary, rgba\(242, 242, 247, \.92\)\)/);
+  assert.match(globalsSource, /--surface-secondary: var\(--contrast-surface-secondary, #fff\)/);
   assert.match(uxSource, /font-variant-numeric: tabular-nums lining-nums/);
   assert.match(uxSource, /grid-template-columns:\s*minmax\(210px, 1fr\)\s*minmax\(\s*88px,\s*0?\.45fr\s*\)\s*66px\s*84px\s*84px\s*82px/);
 });
@@ -641,7 +642,7 @@ test("research actions and coverage use the shared mobile UI primitives", async 
   assert.match(latestInfoSource, /<ActionButton className="featured-document-open"/);
   assert.doesNotMatch(latestInfoSource, /company-document-open/);
   assert.match(companySource, /<PrimaryBlock as="button"[^>]*className="company-module-card"/);
-  assert.match(companySource, /<ResearchCoverage items=\{researchHighlights\} onSelect=\{setSection\}/);
+  assert.match(companySource, /<ResearchCoverage items=\{researchHighlights\} onSelect=\{selectSection\}/);
   assert.match(companySource, /documentConclusion\(doc\)/);
   assert.doesNotMatch(companySource, /research-verdict-cell/);
   assert.match(holdingSource, /className="holding-summary-state holding-summary-loading" aria-busy="true"/);
@@ -667,8 +668,8 @@ test("analysis and company details share the same nested liquid-glass primitives
   assert.match(primitiveSource, /parentSurface === "primary" \|\| parentSurface === "secondary"/);
   assert.match(primitiveSource, /export function MetadataGrid/);
   assert.match(primitiveSource, /export function DisclosureSurface/);
-  assert.match(readerSource, /<PrimaryBlock\s+as="article"\s+className="notion-page universal-analysis-page"/);
-  assert.match(readerSource, /<BackButton onBack=\{onBack\} ariaLabel="Retour à la liste précédente" \/>/);
+  assert.match(readerSource, /<article className="notion-page universal-analysis-page">/);
+  assert.match(readerSource, /!embedded && onBack && <div className="detail-navigation">/);
   assert.doesNotMatch(readerSource, /className="back-button"/);
   assert.match(companySource, /<BackButton onBack=\{close\} ariaLabel="Retour à la vue précédente" \/>/);
   assert.doesNotMatch(companySource, /className="back-button"/);
@@ -740,4 +741,89 @@ test("portfolio trajectories keep Notion targets and active positions isolated",
   assert.doesNotMatch(targetSource, /13 août 2026|29 juillet 2026/);
   assert.match(targetSource, /Cible incomplète/);
   assert.match(targetSource, /outsideTarget/);
+});
+
+test("Run Receipt is hidden as a complete presentation section without mutating source blocks", async () => {
+  const { documentPresentation } = await import(presentationUrl.href);
+  const blocks = [
+    { type: "heading", level: 2, text: "Conclusion" },
+    { type: "paragraph", text: "Conclusion lisible." },
+    { type: "heading", level: 2, text: "9. RUN RECEIPT:" },
+    { type: "paragraph", text: "run_id=demo-1; contract_version=1" },
+    { type: "table", header: false, rows: [["internal", "value"]] },
+    { type: "heading", level: 2, text: "Sources" },
+    { type: "paragraph", text: "Source publique." },
+  ];
+  const presentation = documentPresentation(blocks, "", { category: "valuation" });
+
+  assert.deepEqual([...presentation.hiddenIndexes].sort((a, b) => a - b), [2, 3, 4]);
+  assert.equal(blocks.length, 7, "source blocks remain intact");
+  assert.equal(blocks[3].text, "run_id=demo-1; contract_version=1");
+});
+
+test("short analytical tables are not assigned horizontal scrolling solely by column count", async () => {
+  const { shouldScrollNotionTable } = await import("../app/lib/table-presentation.ts");
+  assert.equal(shouldScrollNotionTable([["Seuil", "Cours"], ["10 %", "100 €"], ["12 %", "90 €"]]), false);
+  assert.equal(shouldScrollNotionTable([["Scénario", "Cours", "Rendement"], ["Base", "100 €", "10 %"]]), false);
+  assert.equal(shouldScrollNotionTable([["Date", "Entreprise", "Cours", "Volume", "Variation"], ...Array.from({ length: 12 }, (_, i) => [`2026-${i}`, `Co ${i}`, `${i}`, `${i}`, `${i}`])]), true);
+});
+
+test("valuation promotion keeps JPY scenario and hurdle values once with source indexes", async () => {
+  const { extractValuationSummary } = await import("../app/lib/valuation-summary.ts");
+  const blocks = [
+    { type: "heading", level: 2, text: "Scénarios 5 ans" },
+    { type: "table", header: true, rows: [
+      ["Scénario", "Prix terminal", "CAGR annualisé"],
+      ["Bear", "27 411 ¥", "-4 %/an"],
+      ["Base", "31 285 ¥", "8 %/an"],
+      ["Bull", "34 234 ¥", "15 %/an"],
+    ] },
+    { type: "heading", level: 2, text: "Seuils du scénario Base intacte" },
+    { type: "table", header: true, rows: [
+      ["Rendement exigé", "Prix maximal"],
+      ["10 %", "34 234 ¥"],
+      ["12 %", "31 285 ¥"],
+      ["15 %", "27 411 ¥"],
+    ] },
+  ];
+  const summary = extractValuationSummary(blocks);
+  assert.deepEqual(summary?.scenarios.map(item => item.terminal), ["27 411 ¥", "31 285 ¥", "34 234 ¥"]);
+  assert.deepEqual(summary?.thresholds.map(item => item.price), ["34 234 ¥", "31 285 ¥", "27 411 ¥"]);
+  assert.deepEqual(summary?.promotedBlockIndexes, [1, 3]);
+});
+
+test("promoted valuation tables hide only their duplicate data and empty headings", async () => {
+  const { hidePromotedTableSections } = await import(presentationUrl.href);
+  const blocks = [
+    { type: "heading", level: 2, text: "Scénarios 5 ans" },
+    { type: "table", header: true, rows: [["Scenario", "Price"], ["Base", "120 USD"]] },
+    { type: "paragraph", text: "La trajectoire dépend de la marge et de l’exécution." },
+    { type: "heading", level: 2, text: "Seuils Base intacte" },
+    { type: "table", header: true, rows: [["Hurdle", "Prix"], ["12 %", "90 USD"]] },
+  ];
+  const hidden = hidePromotedTableSections(blocks, [1, 4], new Set());
+  assert.deepEqual([...hidden].sort((a, b) => a - b), [1, 3, 4]);
+});
+
+test("company analysis route keeps the company shell mounted and presents the selected document inside its panel", async () => {
+  const [pageSource, companySource, navigationSource, primitiveSource] = await Promise.all([
+    readFile(pageUrl, "utf8"), readFile(companyDetailUrl, "utf8"), readFile(navigationUrl, "utf8"), readFile(uiPrimitivesUrl, "utf8"),
+  ]);
+  assert.match(pageSource, /CompanyDetail companyId=\{selectedCompany\}[\s\S]*selectedAnalysisId=\{route\.document\}/);
+  assert.match(pageSource, /route\.document && !selectedCompany/);
+  assert.match(companySource, /className="company-section-block company-analysis-panel"/);
+  assert.match(companySource, /role="tabpanel"/);
+  assert.match(companySource, /aria-labelledby=\{`company-section-panel-tab-\$\{activeSection\}`\}/);
+  assert.match(navigationSource, /openAnalysis: \(document: string \| null\) => move\(\{ \.\.\.current\.current, document \}\)/);
+  assert.match(primitiveSource, /id=\{panelId \? `\$\{panelId\}-tab-\$\{option\.value\}` : undefined\}/);
+  assert.match(primitiveSource, /event\.key === "Home"[\s\S]*event\.key === "End"/);
+});
+
+test("global surfaces use white content materials and shell has no blue radial canvas", async () => {
+  const [globalsSource, shellSource] = await Promise.all([
+    readFile(globalsUrl, "utf8"), readFile(new URL("../app/styles/ux/shell.css", import.meta.url), "utf8"),
+  ]);
+  assert.match(globalsSource, /--surface-canvas:\s*#fff/i);
+  assert.match(globalsSource, /--surface-secondary:\s*(?:var\([^)]*,\s*)?#fff/i);
+  assert.doesNotMatch(shellSource, /radial-gradient\(circle at 90%/);
 });
