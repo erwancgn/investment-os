@@ -25,7 +25,7 @@ Les valeurs ne doivent pas être recopiées dans cette documentation. En cas de 
 
 ## Contrat de surface
 
-1. Le canvas de page est neutre et distinct du contenu.
+1. Le canvas de page est blanc (`--surface-canvas`) sur tous les écrans. Les surfaces de contenu restent blanches ; leurs bordures et ombres légères donnent la séparation, y compris sous le chrome Liquid Glass.
 2. Une surface de contenu de premier niveau utilise `primary` : carte métier, recherche, KPI, liste documentaire.
 3. `secondary` est réservé aux informations réellement imbriquées ou de soutien ; il ne doit pas servir à griser arbitrairement une carte de premier niveau.
 4. `glass` est réservé au chrome, à la navigation, aux menus flottants et aux surfaces qui se superposent au contenu.
@@ -36,7 +36,8 @@ Les valeurs ne doivent pas être recopiées dans cette documentation. En cas de 
 9. Un segmented control contenu conserve lui aussi une zone interactive de 44 px ; son conteneur visuel reste à 40 px avec 3 px d’inset uniforme et le segment actif à 34 px. Il est réservé aux bascules de mode compactes, pas aux taxonomies longues.
 10. `Tabs` pilote les vues Toutes, Détenues et Watchlist de la liste Entreprises, reliées à un `tabpanel`. Les filtres visibles jusqu'à six choix utilisent des pills via `SegmentedControl`. Aucun comportement automatique basé sur le nombre d’options n’est caché dans la primitive : la composition reste explicite dans l’écran.
 11. `SearchField` conserve recherche et compteur sur une seule ligne au viewport mobile de référence ; la recherche prend `minmax(0, 1fr)` et le compteur reste en `max-content`, avec une hauteur interactive commune.
-12. Une synthèse de `StatCard` affiche 1 à 3 KPI sur une ligne, 4 KPI en grille 2 × 2, et 5 à 6 KPI en grille 3 × 2. Au-delà de six KPI, le contenu n’est plus considéré comme une synthèse : les indicateurs prioritaires restent visibles et le complément passe dans un niveau de détail ou une disclosure.
+12. Une synthèse de `StatCard` adapte sa grille à la place disponible. Sur mobile, trois indicateurs se lisent l’un sous l’autre ; sur grand écran, ils peuvent former trois colonnes. Les informations courtes à l’intérieur des cartes sont centrées. Le corps long des rapports reste aligné au départ de la ligne pour préserver sa lecture. Au-delà de six KPI, les indicateurs prioritaires restent visibles et le complément passe dans un niveau de détail ou une disclosure.
+13. La fiche Compagnie présente une conclusion documentaire, des repères et les modules d’analyse reliés. Le menu horizontal des analyses garde son onglet actif visible et relie ses boutons au panneau de lecture. Les sections d’un rapport se déplient en bandeaux ; les trois scénarios et les trois seuils de valorisation sont des lignes complètes sur mobile et des colonnes quand la largeur le permet. Un chiffre n’est promu dans ces comparaisons que si le rapport fournit explicitement sa valeur et son unité.
 
 ## Utilisation avec Lovable
 

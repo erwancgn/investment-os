@@ -87,6 +87,49 @@ test("the semantic template registry covers every company section", async () => 
   }
 });
 
+test("valuation scenario extraction keeps terminal prices, CAGR and thresholds distinct", async () => {
+  const { extractValuationSummary } = await import("../app/lib/valuation-summary.ts");
+  const columns = [
+    { type: "heading", level: 2, text: "Scénarios 5 ans" },
+    { type: "table", header: true, rows: [
+      ["Mesure · horizon 5 ans", "Bear", "Base", "Bull"],
+      ["Prix terminal estimé · USD", "409,55", "724,69", "973,98"],
+      ["CAGR actionnaire · %/an", "−1,95 %", "9,91 %", "16,60 %"],
+    ] },
+    { type: "heading", level: 2, text: "Seuils du scénario Base" },
+    { type: "paragraph", text: "Hurdle 10 % : 449,98 USD ; 12 % : 411,21 USD ; 15 % : 360,30 USD." },
+    { type: "paragraph", text: "Prix conditionnels à la thèse Base intacte." },
+  ];
+  const summary = extractValuationSummary(columns);
+  assert.deepEqual(summary?.scenarios.map(item => [item.name, item.terminal, item.cagr]), [
+    ["Bear", "409,55 USD", "−1,95 %"], ["Base", "724,69 USD", "9,91 %"], ["Bull", "973,98 USD", "16,60 %"],
+  ]);
+  assert.deepEqual(summary?.thresholds, [{ rate: "10 %", price: "449,98 USD" }, { rate: "12 %", price: "411,21 USD" }, { rate: "15 %", price: "360,30 USD" }]);
+  assert.equal(summary?.horizon, "5 ans");
+  const rows = [
+    { type: "heading", level: 2, text: "Scénarios 5 ans" },
+    { type: "table", header: true, rows: [
+      ["", "Scénario", "Prix terminal", "CAGR annualisé", ""],
+      ["", "---", "---:", "---:", ""],
+      ["", "Bear", "80 USD", "-4 %/an", ""],
+      ["", "Base", "145 USD", "8 %/an", ""],
+      ["", "Bull", "205 USD", "15 %/an", ""],
+    ] },
+    { type: "heading", level: 2, text: "Seuils de rendement · Base intacte" },
+    { type: "table", header: true, rows: [
+      ["", "Objectif annuel", "Cours conditionnel", ""],
+      ["", "---", "---:", ""],
+      ["", "10 %", "94 USD", ""],
+      ["", "12 %", "86 USD", ""],
+      ["", "15 %", "75 USD", ""],
+    ] },
+  ];
+  assert.deepEqual(extractValuationSummary(rows)?.thresholds, [
+    { rate: "10 %", price: "94 USD" }, { rate: "12 %", price: "86 USD" }, { rate: "15 %", price: "75 USD" },
+  ]);
+  assert.equal(extractValuationSummary([{ type: "table", header: true, rows: [["Scénario", "Prix terminal", "CAGR"], ["Base", "120", "9 %"]] }]), null);
+});
+
 test("metadata discovery queues only missing or edited Notion pages", async () => {
   const syncSource = await readFile(new URL("../app/lib/notion-sync.ts", import.meta.url), "utf8");
   assert.match(syncSource, /queryDataSource\(token,dataSourceId,cursor,100\)/);
@@ -384,7 +427,8 @@ test("company and analysis layouts preserve the Notion parser contract", async (
   assert.match(companySource, /<DocumentHistory docs=\{archives\}/);
   assert.match(readerSource, /parseNotionDocument\(document\.plainText, document\.title, document\.notionBlocks\)/);
   assert.match(readerSource, /analysis-source-details/);
-  assert.match(readerSource, /scenarioKind\(block\.text\)/);
+  assert.match(readerSource, /scenarioKind\(title\)/);
+  assert.match(readerSource, /<AnalysisSectionGroups blocks=\{blocks\} hidden=\{presentation\.hiddenIndexes\}/);
   assert.match(readerSource, /<NotionTable/);
 });
 
@@ -502,9 +546,9 @@ test("Apple Light theme stays isolated from data and parser contracts", async ()
   assert.match(designSystemSource, /@import "\.\/ux-foundations\.css";[\s\S]*@import "\.\/globals\.css";/);
   assert.match(globalsSource, /color-scheme: light/);
   assert.match(uxSource, /backdrop-filter: saturate\(180%\) blur\(24px\)/);
-  assert.match(globalsSource, /--surface-canvas: #f5f5f7/);
+  assert.match(globalsSource, /--surface-canvas: #fff/);
   assert.match(globalsSource, /--color-bg: var\(--surface-canvas\)/);
-  assert.match(layoutSource, /themeColor: "#f5f5f7"/);
+  assert.match(layoutSource, /themeColor: "#ffffff"/);
 });
 
 test("Apple Light theme covers shared surfaces and aligns financial figures", async () => {
@@ -596,16 +640,16 @@ test("research actions and coverage use the shared mobile UI primitives", async 
   assert.match(primitiveSource, /export function DataTable/);
   assert.match(latestInfoSource, /<ActionButton className="featured-document-open"/);
   assert.doesNotMatch(latestInfoSource, /company-document-open/);
-  assert.match(companySource, /<DataTable\s+columns=\{columns\}/);
-  assert.match(companySource, /key:\s*"score",\s*label:\s*"Conclusion"/);
-  assert.match(companySource, /documentConclusion\(item\.document\)/);
+  assert.match(companySource, /<PrimaryBlock as="button"[^>]*className="company-module-card"/);
+  assert.match(companySource, /<ResearchCoverage items=\{researchHighlights\} onSelect=\{setSection\}/);
+  assert.match(companySource, /documentConclusion\(doc\)/);
   assert.doesNotMatch(companySource, /research-verdict-cell/);
   assert.match(holdingSource, /className="holding-summary-state holding-summary-loading" aria-busy="true"/);
   assert.doesNotMatch(companySource, /panel company-research-overview/);
   assert.doesNotMatch(readerSource, /analysis-section-number/);
   assert.match(uxSource, /\.company-section-block,[\s\S]*background: transparent !important/);
-  assert.match(uxSource, /\.research-coverage-table \.ui-data-table tr[\s\S]*grid-template-columns: minmax\(0, 1fr\) minmax\(52px, \.65fr\) minmax\(68px, auto\)/);
-  assert.match(uxSource, /research-coverage-table \.ui-data-table \.research-type-cell[\s\S]*grid-row: 1;/);
+  assert.match(uxSource, /\.company-module-grid\s*\{[^}]*grid-template-columns: repeat\(3, minmax\(0, 1fr\)\)/);
+  assert.match(uxSource, /\.company-metrics\.company-metrics--three, \.company-module-grid\s*\{\s*grid-template-columns: minmax\(0, 1fr\)/);
 });
 
 test("analysis and company details share the same nested liquid-glass primitives", async () => {

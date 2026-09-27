@@ -6,16 +6,16 @@ import { LiveHoldingSummary } from "./live-holding-summary";
 import { useOpenAnalysis } from "../lib/app-navigation";
 import { useClientResource } from "../lib/client-resource";
 import { LatestInfoCard } from "./latest-info-card";
-import { ActionButton, BackButton, Badge, DataTable, DisclosureSurface, MetadataGrid, PrimaryBlock, SecondaryBlock, SectionHeader, StatCard, Tabs, type BadgeTone, type DataTableColumn } from "./ui-primitives";
+import { ActionButton, BackButton, Badge, DisclosureSurface, MetadataGrid, PrimaryBlock, SecondaryBlock, SectionHeader, StatCard, Tabs, type BadgeTone } from "./ui-primitives";
 
 type CompanyTab = CompanySectionKey | "memo";
 const tabs: [CompanyTab, string][] = [
   ["synthese", "Synthèse"],
-  ["memo", "Mémo CIO"],
-  ["portfolio", "Portfolio"],
   ["business", "Business"],
-  ["valuation", "Valorisation"],
-  ["risques", "Short"],
+  ["valuation", "Valuation"],
+  ["risques", "Short / Risques"],
+  ["portfolio", "Portfolio Fit"],
+  ["memo", "Mémo CIO"],
   ["earnings", "Earnings"],
   ["analyses", "Analyses"],
 ];
@@ -183,32 +183,14 @@ type ResearchHighlight = {
   document: CompanyDocument;
 };
 
-function ResearchCoverage({ items, onOpen }: { items: ResearchHighlight[]; onOpen: (document: CompanyDocument) => void }) {
-  const columns: Array<DataTableColumn<ResearchHighlight>> = [
-    {
-      key: "analysis",
-      label: "Analyse",
-      className: "research-type-cell",
-      render: (item) => <strong>{item.label}</strong>,
-    },
-    {
-      key: "score",
-      label: "Conclusion",
-      className: "research-score-cell",
-      render: (item) => documentConclusion(item.document),
-    },
-    {
-      key: "action",
-      label: "",
-      className: "research-action-cell",
-      render: (item) => (
-        <ActionButton compact ariaLabel={`Ouvrir l’analyse ${item.label}`} onClick={() => onOpen(item.document)}>
-          Ouvrir
-        </ActionButton>
-      ),
-    },
-  ];
-  return <DataTable columns={columns} rows={items} getRowKey={(item) => item.id} ariaLabel="Analyses disponibles" className="research-coverage-table" />;
+function ResearchCoverage({ items, onSelect }: { items: ResearchHighlight[]; onSelect: (section: CompanyTab) => void }) {
+  return <div className="company-module-grid" aria-label="Analyses disponibles">{items.map(({ id, label, document: doc }) => (
+    <PrimaryBlock as="button" type="button" className="company-module-card" key={id} onClick={() => onSelect(id)}>
+      <span>{doc.date ? shortDate(doc.date) : shortDate(doc.lastEditedTime)} · {doc.status || "Importé"}</span>
+      <strong>{label} <span aria-hidden="true">›</span></strong>
+      <small>{documentConclusion(doc)}</small>
+    </PrimaryBlock>
+  ))}</div>;
 }
 
 export function CompanyDetail({ companyId, close, initialData }: { companyId: string; close: () => void; initialData?: CompanyDetail }) {
@@ -255,8 +237,8 @@ export function CompanyDetail({ companyId, close, initialData }: { companyId: st
   const title = data.name;
   const isDemo = data.id.startsWith("demo-");
   const latest = allDocuments[0];
-  const businessDocs = grouped("business");
-  const valuationDocs = grouped("valuation");
+  const memoDoc = grouped("memo")[0];
+  const memoSummary = memoDoc?.previewSummaryItems?.[0] || memoDoc?.summary;
   const researchHighlights = tabs
     .filter(([id]) => id !== "synthese" && id !== "analyses")
     .map(([id, label]) => ({ id, label, document: grouped(id)[0] }))
@@ -300,11 +282,19 @@ export function CompanyDetail({ companyId, close, initialData }: { companyId: st
         value={section}
         onChange={setSection}
         ariaLabel="Sections de la fiche entreprise"
+        panelId="company-section-panel"
       />
+      <div id="company-section-panel" role="tabpanel" tabIndex={0} aria-label={sectionTitles[section]}>
       {data.ownershipStatus === "Owned" && section === "portfolio" && <LiveHoldingSummary companyId={companyId} companyName={title} detailed />}
       {section === "synthese" && (
         <>
-          <section className="company-metrics">
+          <PrimaryBlock as="section" className="company-decision-brief">
+            <Badge tone={currentMemo ? "positive" : "neutral"}>{currentMemo ? "Décision du mémo CIO" : "Recherche en cours"}</Badge>
+            <h2>{currentMemo?.verdict || "Pas de décision CIO"}</h2>
+            <p>{currentMemo ? memoSummary || "Lire le Mémo CIO pour les arguments et conditions de revue." : "Aucun mémo Current validé relié à cette entreprise."}</p>
+            {currentMemo && <small>Mémo du {shortDate(currentMemo.date || currentMemo.lastEditedTime)} · conclusion historique</small>}
+          </PrimaryBlock>
+          <section className="company-metrics company-metrics--three" aria-label="Repères de la compagnie">
             <StatCard
               label="Business score"
               value={
@@ -315,7 +305,6 @@ export function CompanyDetail({ companyId, close, initialData }: { companyId: st
               }
               detail={data.businessVerdict || "Non renseigné"}
             />
-            <StatCard label="Analyses courantes" value={allDocuments.length} detail={`${businessDocs.length} business · ${valuationDocs.length} valorisation`} />
             <StatCard label="Couverture analyses" value={`${data.researchReferences.length}/5`} detail="Business · Valorisation · Short · PF Fit · Mémo" />
             <StatCard className="company-date" label="Dernière mise à jour" value={shortDate(data.lastAnalysis || latest?.lastEditedTime || null)} detail={latest?.agent || (isDemo ? "Démo" : "Notion")} />
           </section>
@@ -331,8 +320,8 @@ export function CompanyDetail({ companyId, close, initialData }: { companyId: st
             )}
             <section className="company-research-overview">
               <p className="eyebrow">Couverture de recherche</p>
-              <h2>Analyses disponibles</h2>
-              {researchHighlights.length ? <ResearchCoverage items={researchHighlights} onOpen={openDocument} /> : <p className="generic-empty">Aucune analyse courante reliée.</p>}
+              <h2>Analyses disponibles <small>{allDocuments.length} document{allDocuments.length > 1 ? "s" : ""} courant{allDocuments.length > 1 ? "s" : ""}</small></h2>
+              {researchHighlights.length ? <ResearchCoverage items={researchHighlights} onSelect={setSection} /> : <p className="generic-empty">Aucune analyse courante reliée.</p>}
               <DisclosureSurface level="primary" className="company-notion-details" summary={isDemo ? "Informations de démonstration" : "Informations Notion"}>
                 <div className="quality-row">
                   <span>Ticker</span>
@@ -369,6 +358,7 @@ export function CompanyDetail({ companyId, close, initialData }: { companyId: st
       )}
       {section === "earnings" && <EarningsSection docs={grouped("earnings")} archives={archivedByCategory("earnings")} onOpen={openDocument} demo={isDemo} />}
       {section !== "synthese" && section !== "portfolio" && section !== "earnings" && <DocumentSection section={section} docs={grouped(section)} archives={archivedByCategory(section)} onOpen={openDocument} demo={isDemo} />}
+      </div>
       <footer className="company-detail-footer">
         <span>{isDemo ? "Fiche fictive fournie à titre de démonstration." : "Fiche construite depuis les données Notion importées, sans réécriture du contenu source."}</span>
         {!isDemo && <a href={data.notionUrl} target="_blank" rel="noreferrer">Ouvrir dans Notion ↗</a>}

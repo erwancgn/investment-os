@@ -60,6 +60,27 @@
   margin: 0 auto;
   padding: 38px 48px;
 }
+.analysis-section-groups { display: grid; gap: 12px; margin-top: 24px; }
+.analysis-section-group { min-width: 0; scroll-margin-top: 72px; }
+.analysis-section-group .ui-disclosure-surface > summary { min-height: 56px; justify-content: space-between; gap: 16px; text-align: center; }
+.analysis-section-group .ui-disclosure-surface > summary > strong { flex: 1; font-size: var(--font-md); overflow-wrap: anywhere; }
+.analysis-section-group-content { max-width: var(--measure-copy); min-width: 0; margin-inline: auto; padding-block: 18px; text-align: left; }
+.analysis-section-group-content > :first-child { margin-top: 0; }
+.analysis-scenario-comparison, .analysis-thresholds { margin-top: 26px; }
+.analysis-scenario-cards, .analysis-threshold-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.analysis-scenario-card, .analysis-threshold { min-width: 0; padding: 16px; text-align: center; }
+.analysis-scenario-card.is-base, .analysis-threshold.is-reference { outline: 1px solid var(--color-accent); }
+.analysis-scenario-card h3 { margin: 0; font-size: var(--font-md); }
+.analysis-scenario-card dl { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin: 0; }
+.analysis-scenario-card dt, .analysis-threshold span { color: var(--color-text-muted); font-size: var(--font-xs); }
+.analysis-scenario-card dd { margin: 4px 0 0; font-size: clamp(1rem, 2vw, 1.25rem); font-weight: 750; overflow-wrap: anywhere; }
+.analysis-scenario-comparison > p, .analysis-thresholds > p { max-width: 70ch; margin: 12px auto 0; color: var(--color-text-muted); font-size: var(--font-sm); line-height: 1.5; text-align: center; }
+.analysis-threshold { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 8px; }
+.analysis-threshold strong { font-size: clamp(1rem, 2vw, 1.25rem); overflow-wrap: anywhere; }
+@media (max-width: 760px) {
+  .analysis-scenario-cards, .analysis-threshold-grid { grid-template-columns: minmax(0, 1fr); }
+  .analysis-scenario-card { display: grid; grid-template-columns: 58px minmax(0, 1fr); align-items: center; gap: 8px; }
+}
 .notion-page.universal-analysis-page .analysis-section {
   box-sizing: border-box;
   width: 100%;
@@ -89,25 +110,25 @@
   overflow-wrap: anywhere;
   word-break: normal;
 }
-.notion-page.universal-analysis-page > p {
+.notion-page.universal-analysis-page .analysis-section-group-content > p {
   max-width: 76ch;
   margin: 14px 0;
   font-size: 14px;
   line-height: 1.72;
 }
-.notion-page.universal-analysis-page > ul,
-.notion-page.universal-analysis-page > ol {
+.notion-page.universal-analysis-page .analysis-section-group-content > ul,
+.notion-page.universal-analysis-page .analysis-section-group-content > ol {
   max-width: 74ch;
   margin: 12px 0 20px;
   padding-left: 26px;
 }
-.notion-page.universal-analysis-page > ul li,
-.notion-page.universal-analysis-page > ol li {
+.notion-page.universal-analysis-page .analysis-section-group-content > ul li,
+.notion-page.universal-analysis-page .analysis-section-group-content > ol li {
   margin: 7px 0;
   font-size: 14px;
   line-height: 1.65;
 }
-.notion-page.universal-analysis-page > blockquote {
+.notion-page.universal-analysis-page .analysis-section-group-content > blockquote {
   max-width: 76ch;
   margin: 18px 0;
   padding: 15px 18px;
@@ -610,7 +631,7 @@
     padding: 12px 0 0 !important;
     border-top: 1px solid var(--color-border);
     border-left: 0 !important;
-    text-align: left !important;
+    text-align: center !important;
   }
 
   /* Tabs are the only horizontally scrollable navigation element. */

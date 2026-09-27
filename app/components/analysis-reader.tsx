@@ -2,15 +2,17 @@
 
 import React from "react";
 import type { CompanyDocument, DecisionFields, ResearchDocument } from "../lib/investment-data";
-import { documentPresentation, isSummaryHeading } from "../lib/document-presentation";
-import { parseNotionDocument, type RenderBlock } from "../lib/notion-renderer";
+import { documentPresentation } from "../lib/document-presentation";
+import { parseNotionDocument } from "../lib/notion-renderer";
 import { NotionTable } from "./notion-table";
 import { InvestmentMemoReader } from "./investment-memo-reader";
 import { AnalysisFactGrid, AnalysisReportHero } from "./analysis-presentation";
+import { AnalysisSectionGroups } from "./analysis-section-groups";
+import { ScenarioComparison } from "./scenario-comparison";
+import { extractValuationSummary } from "../lib/valuation-summary";
 import { BackButton, Badge, DisclosureSurface, MetadataGrid, PrimaryBlock, SecondaryBlock } from "./ui-primitives";
 
 type AnalysisDoc = CompanyDocument | ResearchDocument;
-type Block = RenderBlock;
 
 function inline(text: string) {
   const parts = text.split(/(\*\*.*?\*\*|__.*?__|~~.*?~~|(?<!\*)\*[^*]+\*(?!\*)|`.*?`|\[[^\]]+\]\([^)]+\))/g).filter(Boolean);
@@ -138,8 +140,8 @@ function StandardAnalysisReader({ document, companyName, onBack }: { document: A
   const isDemo = document.id.startsWith("demo-");
   const blocks = React.useMemo(() => parseNotionDocument(document.plainText, document.title, document.notionBlocks), [document]);
   const presentation = documentPresentation(blocks, document.summary ?? "", { category: document.category, handoffSummary: document.handoffSummary });
-  const headings = blocks.filter((block): block is Extract<Block, { type: "heading" }> => block.type === "heading" && block.level <= 2 && !isSummaryHeading(block.text));
-  let headingIndex = 0;
+  const scenarioSummary = document.category === "valuation" ? extractValuationSummary(blocks) : null;
+  const headings = blocks.flatMap((block, index) => block.type === "heading" && block.level <= 2 && !presentation.hiddenIndexes.has(index) ? [{ text: block.text, index }] : []);
   const templateKind = document.category || (document.sourceKey === "decisions" ? "synthese" : "universal");
   const scored = templateKind === "business" || templateKind === "valuation";
   const outcome = document.verdict
@@ -202,6 +204,7 @@ function StandardAnalysisReader({ document, companyName, onBack }: { document: A
             />
           )}
           <MetadataGrid ariaLabel="Métadonnées de l’analyse" items={metadata} />
+          {scenarioSummary && <ScenarioComparison summary={scenarioSummary} showThresholds />}
           <DisclosureSurface
             className="analysis-source-details"
             summary={
@@ -219,8 +222,8 @@ function StandardAnalysisReader({ document, companyName, onBack }: { document: A
             <div className="analysis-source-body">
               <nav aria-label="Sommaire du document">
                 {headings.length ? (
-                  headings.map((heading, index) => (
-                    <a href={`#analysis-heading-${index}`} onClick={event => { event.preventDefault(); window.document.getElementById(`analysis-heading-${index}`)?.scrollIntoView({ block: "start" }); }} key={`${heading.text}-${index}`}>
+                  headings.map((heading) => (
+                    <a href={`#analysis-heading-${heading.index}`} onClick={event => { event.preventDefault(); window.document.getElementById(`analysis-heading-${heading.index}`)?.scrollIntoView({ block: "start" }); }} key={heading.index}>
                       {heading.text}
                     </a>
                   ))
@@ -242,17 +245,10 @@ function StandardAnalysisReader({ document, companyName, onBack }: { document: A
             </div>
           </DisclosureSurface>
           {document.sourceKey === "decisions" && document.decision && <DecisionTemplate decision={document.decision} isDemo={isDemo} />}
-          {blocks.map((block, index) => {
-            if (presentation.hiddenIndexes.has(index)) return null;
+          <AnalysisSectionGroups blocks={blocks} hidden={presentation.hiddenIndexes} idForHeading={index => `analysis-heading-${index}`} classForHeading={title => { const scenario = scenarioKind(title); return scenario ? `analysis-scenario analysis-scenario-${scenario}` : ""; }} renderBlock={({ block, index }) => {
             if (block.type === "heading") {
-              const id = block.level <= 2 ? `analysis-heading-${headingIndex++}` : undefined;
-              const scenario = scenarioKind(block.text);
               const Tag = `h${Math.min(block.level + 1, 6)}` as keyof React.JSX.IntrinsicElements;
-              return (
-                <section className={`analysis-section${scenario ? ` analysis-scenario analysis-scenario-${scenario}` : ""}`} key={index}>
-                  <Tag id={id}>{inline(block.text)}</Tag>
-                </section>
-              );
+              return <section className="analysis-section"><Tag>{inline(block.text)}</Tag></section>;
             }
             if (block.type === "paragraph") return <p key={index}>{inline(block.text)}</p>;
             if (block.type === "quote") return <blockquote key={index}>{inline(block.text)}</blockquote>;
@@ -275,7 +271,7 @@ function StandardAnalysisReader({ document, companyName, onBack }: { document: A
               );
             }
             return <NotionTable key={index} rows={block.rows} header={block.header ?? true} renderCell={inline} />;
-          })}
+          }} />
           <footer className="notion-page-footer">
             <span>{isDemo ? "Fin du document de démonstration" : "Fin du document synchronisé"}</span>
             {!isDemo && <a href={document.notionUrl} target="_blank" rel="noreferrer">Comparer avec Notion ↗</a>}

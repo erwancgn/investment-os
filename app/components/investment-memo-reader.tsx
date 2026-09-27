@@ -7,6 +7,9 @@ import { compactDecisionLabel } from "../lib/decision-label";
 import { parseNotionDocument, type RenderBlock } from "../lib/notion-renderer";
 import { NotionTable } from "./notion-table";
 import { AnalysisFactGrid, AnalysisReportHero } from "./analysis-presentation";
+import { AnalysisSectionGroups } from "./analysis-section-groups";
+import { ScenarioComparison } from "./scenario-comparison";
+import { extractValuationSummary } from "../lib/valuation-summary";
 import {
   BackButton,
   Badge,
@@ -157,6 +160,7 @@ export function InvestmentMemoReader({
     document.notionBlocks,
   ), [document]);
   const presentation = documentPresentation(blocks, document.summary ?? "", { category: document.category, handoffSummary: document.handoffSummary });
+  const scenarioSummary = extractValuationSummary(blocks);
   const decisionRange = sectionRange(blocks, /decision card/i);
   const modulesRange = sectionRange(
     blocks,
@@ -267,6 +271,7 @@ export function InvestmentMemoReader({
               ))}
             </SecondaryBlock>
           )}
+          {scenarioSummary && <ScenarioComparison summary={scenarioSummary} />}
 
           {modulesTable && (
             <DisclosureSurface
@@ -302,11 +307,7 @@ export function InvestmentMemoReader({
             )}
           </nav>
 
-          {blocks.map((block, index) =>
-            hidden.has(index) ? null : (
-              <MemoBlock block={block} index={index} key={index} />
-            ),
-          )}
+          <AnalysisSectionGroups blocks={blocks} hidden={hidden} idForHeading={index => `memo-heading-${index}`} renderBlock={({ block, index }) => <MemoBlock block={block} index={index} />} />
 
           <DisclosureSurface
             className="analysis-source-details memo-traceability"

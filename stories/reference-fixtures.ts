@@ -75,6 +75,50 @@ export const companyDetail: CompanyDetailData = {
   archives: [],
 };
 
+// Complete, fictional company dossier for UI coverage. Kept separate from the
+// public demo data and from any personal or live Notion document.
+const referenceDocument = (category: CompanyDocument["category"], title: string, plainText: string, overrides: Partial<CompanyDocument> = {}): CompanyDocument => ({
+  ...document,
+  id: `ref-${category}`,
+  title,
+  category,
+  agent: `${category} reference`,
+  plainText,
+  summary: `${title} : conclusion de référence pour la maquette.`,
+  score: category === "business" ? "82" : category === "valuation" ? "58" : "",
+  verdict: category === "synthese" ? "Conserver" : "À surveiller",
+  ...overrides,
+});
+
+export const completeReferenceDocuments = {
+  business: referenceDocument("business", "Business — référence", "## Thèse\nUne activité de qualité, sous réserve de confirmer la demande.\n## Risques\nLa concentration client peut modifier la trajectoire."),
+  valuation: referenceDocument("valuation", "Valuation — référence", "## Données de référence\nCours de référence : 100 USD au 22 septembre 2026.\n## Scénarios 5 ans\n| Scénario | Prix terminal | CAGR annualisé |\n|---|---:|---:|\n| Bear | 80 USD | -4 %/an |\n| Base | 145 USD | 8 %/an |\n| Bull | 205 USD | 15 %/an |\n## Seuils de rendement · Base intacte\n| Objectif annuel | Cours conditionnel |\n|---|---:|\n| 10 % | 94 USD |\n| 12 % | 86 USD |\n| 15 % | 75 USD |\n## Hypothèses\nLe rendement dépend de la thèse et du cours de référence."),
+  risques: referenceDocument("risques", "Short — référence", "## Thèse baissière\nLe scénario central peut échouer.\n## Antithèse\nLes résultats peuvent rester solides.\n## Signaux\nSurveiller les marges et le cash."),
+  portfolio: referenceDocument("portfolio", "Portfolio Fit — référence", "## Contribution\nExposition fictive, aucune position personnelle.\n## Risques\nLa corrélation des actifs peut renforcer un choc commun."),
+  synthese: referenceDocument("synthese", "Mémo CIO — référence", "## Decision Card\nAction | Conserver\nConfiance | Moyenne\n## Raisonnement décisif\nActivité solide, rendement à revoir.\n## État des modules\nBusiness | Validated\nValuation | Current\n## Prochaine revue\nAprès résultats.", { agent: "Investment Memo CIO", score: "", verdict: "Conserver", id: "ref-memo" }),
+  earnings: referenceDocument("earnings", "Earnings — référence", "## Résultats\nLa marge progresse sur le trimestre fictif.\n## Guidance\nPrévision inchangée.\n## Analyses à actualiser\nValuation : à revoir.", { sourceKey: "earnings", score: "", id: "ref-earnings" }),
+};
+
+export const completeCompanyDetail: CompanyDetailData = {
+  ...companyDetail,
+  ownershipStatus: "Not owned",
+  researchReferences: [
+    ...(["business", "valuation", "short", "portfolio", "memo"] as const).map((kind) => ({
+      ...reference,
+      id: kind === "memo" ? "ref-memo" : `ref-${kind === "short" ? "risques" : kind}`,
+      kind,
+      title: completeReferenceDocuments[kind === "short" ? "risques" : kind === "memo" ? "synthese" : kind].title,
+      score: kind === "business" ? "82" : kind === "valuation" ? "58" : "",
+      verdict: kind === "memo" ? "Conserver" : "À surveiller",
+    })),
+  ],
+  analyses: [completeReferenceDocuments.business, completeReferenceDocuments.valuation, completeReferenceDocuments.risques, completeReferenceDocuments.portfolio, completeReferenceDocuments.synthese],
+  earnings: [completeReferenceDocuments.earnings],
+  decisions: [],
+  portfolioDocuments: [],
+  archives: [{ ...completeReferenceDocuments.business, id: "ref-business-archive", archived: true, current: false, date: "2026-08-01" }],
+};
+
 const slice = {
   marketValueEur: 10000,
   investedValueEur: 9300,

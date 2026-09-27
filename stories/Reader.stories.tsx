@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { AnalysisReader } from "../app/components/analysis-reader";
 import { desktopFrame, frame } from "./reference-frame";
-import { document } from "./reference-fixtures";
+import { completeReferenceDocuments, document } from "./reference-fixtures";
 
 const memoDocument = {
   ...document,
@@ -44,3 +44,10 @@ export const ReaderDesktop: Story = { parameters: { viewport: { defaultViewport:
 
 export const Memo: Story = { parameters: { viewport: { defaultViewport: "mobile" } }, render: () => frame(<AnalysisReader document={memoDocument} companyName="Advanced Micro Devices" onBack={() => undefined} />) };
 export const MemoDesktop: Story = { parameters: { viewport: { defaultViewport: "desktop" } }, render: () => desktopFrame(<AnalysisReader document={memoDocument} companyName="Advanced Micro Devices" onBack={() => undefined} />) };
+
+export const Business: Story = { render: () => frame(<AnalysisReader document={completeReferenceDocuments.business} companyName="Entreprise de référence" onBack={() => undefined} />) };
+export const Valuation: Story = { render: () => frame(<AnalysisReader document={completeReferenceDocuments.valuation} companyName="Entreprise de référence" onBack={() => undefined} />) };
+export const Short: Story = { render: () => frame(<AnalysisReader document={completeReferenceDocuments.risques} companyName="Entreprise de référence" onBack={() => undefined} />) };
+export const PortfolioFit: Story = { render: () => frame(<AnalysisReader document={completeReferenceDocuments.portfolio} companyName="Entreprise de référence" onBack={() => undefined} />) };
+export const CIO: Story = { render: () => frame(<AnalysisReader document={completeReferenceDocuments.synthese} companyName="Entreprise de référence" onBack={() => undefined} />) };
+export const Earnings: Story = { render: () => frame(<AnalysisReader document={completeReferenceDocuments.earnings} companyName="Entreprise de référence" onBack={() => undefined} />) };

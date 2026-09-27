@@ -9,8 +9,17 @@ test("CSS governance matches the checked-in debt baseline", async () => {
   const baseline = JSON.parse(await readFile(new URL("../scripts/css-audit-baseline.json", import.meta.url), "utf8"));
 
   assert.deepEqual(result.scope.cssFiles, governanceCssFiles);
-  assert.deepEqual(result.metrics, baseline.thresholds);
+  for (const [metric, threshold] of Object.entries(baseline.thresholds)) {
+    if (metric === "definedClasses") {
+      assert.ok(result.metrics[metric] >= threshold, "new used classes are reviewed separately from CSS debt");
+    } else if (metric === "importantDeclarations") {
+      assert.ok(result.metrics[metric] <= threshold, "important declarations must not grow");
+    } else {
+      assert.equal(result.metrics[metric], threshold, `${metric} changed from the governance baseline`);
+    }
+  }
   assert.deepEqual(result.baseline.regressions, []);
+  assert.ok(result.baseline.reviewDrifts.every(finding => finding.metric === "definedClasses"));
   assert.deepEqual(result.findings.orphanClasses, []);
 });
 

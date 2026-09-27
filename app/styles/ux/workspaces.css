@@ -430,9 +430,6 @@
   font-size: 14px;
 }
 /* Company detail and portfolio interaction refinements. */
-.generic-company-detail > .ui-tabs {
-  margin-block: 20px;
-}
 .company-metrics .ui-stat-card > strong {
   font-size: 1.25rem;
   line-height: 1.25;
@@ -450,9 +447,6 @@
   overflow-wrap: normal;
 }
 @media (max-width: 760px) {
-  .generic-company-detail > .ui-tabs {
-    margin-block: 16px;
-  }
   .company-metrics .company-date > strong {
     font-size: .9375rem;
   }
