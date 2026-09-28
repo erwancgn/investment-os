@@ -622,8 +622,7 @@ test("analysis disclosures use the company width while keeping prose readable", 
   assert.doesNotMatch(tableSource, /return <SecondaryBlock/);
   assert.doesNotMatch(analysisSource, /surfaceForCompact/);
   assert.doesNotMatch(readerCss, /analysis-section-group-content \.notion-table-wrap/);
-  assert.match(readerCss, /\.analysis-projection-scenario\s*\{[^}]*grid-template-columns: minmax\(0, 1fr\) minmax\(0, 1fr\)/);
-  assert.match(readerCss, /\.analysis-projection-scenario \{ grid-template-columns: minmax\(0, 1fr\);/);
+  assert.match(readerCss, /\.analysis-projection-scenario\s*\{[^}]*grid-template-columns: repeat\(auto-fit, minmax\(min\(100%, 20rem\), 1fr\)\)/);
   assert.match(companyCss, /\.generic-company-detail > \.detail-navigation \{[\s\S]*position: sticky;[\s\S]*top:/);
   assert.doesNotMatch(companyCss, /\.generic-company-detail > \.detail-navigation \{[^}]*position: fixed;/);
   const mobileCopyRule = documentsCss.match(/\.universal-analysis-page \.analysis-section-group-content > p,[\s\S]*?\{([^}]*)\}/)?.[1] ?? "";
