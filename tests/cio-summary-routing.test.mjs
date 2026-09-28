@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { documentPresentation } from "../app/lib/document-presentation.ts";
+import { documentPresentation, visibleSummaryItems } from "../app/lib/document-presentation.ts";
 
 const technicalHandoff = "contract_version=1; run_id=NVDA-FULL-20260907-1552; module=CIO; business=Excellente 92/100; valuation=Attractive 75/100; short=No exploitable short; final_decision=Renforcer; initial=0.5 share; target=10% direct; ceiling=12% economic; confidence=Medium";
 
@@ -11,7 +11,10 @@ test("CIO memo uses its human introduction instead of the technical handoff", ()
     { type: "heading", level: 1, text: "Decision Card" },
   ], technicalHandoff, { category: "synthese", handoffSummary: technicalHandoff });
 
-  assert.deepEqual(presentation.summaryItems, [humanCallout]);
+  assert.deepEqual(presentation.summaryItems, [
+    "Décision CIO : Renforcer — +0,5 action maximum.",
+    "Business exceptionnel, mais concentration AI élevée.",
+  ]);
   assert.doesNotMatch(presentation.summaryItems.join(" "), /contract_version|run_id|module=|final_decision/);
 });
 
@@ -31,4 +34,14 @@ test("other analysis families preserve their property-first fallback", () => {
   ], "Résumé éditorial Business", { category: "business" });
 
   assert.deepEqual(presentation.summaryItems, ["Résumé éditorial Business"]);
+});
+
+test("analysis summaries split sentence runs while preserving French abbreviations and decimal values", () => {
+  assert.deepEqual(visibleSummaryItems([
+    "M. Dupont juge la marge stable à 12,5 %. Le risque vient du cycle. La guidance sera révisée ensuite.",
+  ]), [
+    "M. Dupont juge la marge stable à 12,5 %.",
+    "Le risque vient du cycle.",
+    "La guidance sera révisée ensuite.",
+  ]);
 });

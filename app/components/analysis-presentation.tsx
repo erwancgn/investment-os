@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 import type { PresentationFact } from "../lib/document-presentation";
 import type { AnalysisPresentationProjection, ProjectionFact, ProjectionMetric, ProjectionStatus } from "../lib/presentation-projection";
 import { isPriorityPresentationFact, splitPresentationFactValue } from "../lib/document-presentation";
+import { renderInlineFormat } from "../lib/inline-format";
 import { PrimaryBlock } from "./ui-primitives";
 
 type AnalysisOutcome = {
@@ -93,15 +94,15 @@ function projectionCitations(evidenceIds: string[], projection: AnalysisPresenta
 function metricRows(metric: ProjectionMetric, projection: AnalysisPresentationProjection) {
   if (metric.status !== "known") return null;
   return <div className="analysis-projection-metric" key={metric.id}>
-    <dt>{metric.label}{projectionCitations(metric.evidenceIds, projection)}</dt>
-    <dd>{metric.status === "known" ? projectionValue(metric.value, metric.unit) : "Indisponible"}</dd>
+    <dt>{renderInlineFormat(metric.label)}{projectionCitations(metric.evidenceIds, projection)}</dt>
+    <dd>{renderInlineFormat(metric.status === "known" ? projectionValue(metric.value, metric.unit) : "Indisponible")}</dd>
   </div>;
 }
 
 function factRow(fact: ProjectionFact, projection: AnalysisPresentationProjection) {
   return <div key={fact.id}>
-    <dt>{fact.label}{projectionCitations(fact.evidenceIds, projection)}</dt>
-    <dd>{fact.status === "known" ? projectionValue(fact.value, fact.unit) : "Indisponible"}</dd>
+    <dt>{renderInlineFormat(fact.label)}{projectionCitations(fact.evidenceIds, projection)}</dt>
+    <dd>{renderInlineFormat(fact.status === "known" ? projectionValue(fact.value, fact.unit) : "Indisponible")}</dd>
   </div>;
 }
 
@@ -117,7 +118,7 @@ export function AnalysisProjectionSummary({ projection }: { projection: Analysis
     <section className="analysis-projection-lead" aria-labelledby="analysis-projection-summary-title">
       <p className="eyebrow">Mise à jour le {projectionDate(projection.generatedAt)}</p>
       <h2 id="analysis-projection-summary-title">Synthèse</h2>
-      <p>{projection.summary.text}{projectionCitations(projection.summary.evidenceIds, projection)}</p>
+      <p>{renderInlineFormat(projection.summary.text)}{projectionCitations(projection.summary.evidenceIds, projection)}</p>
       <small>{sources.length} source{sources.length === 1 ? "" : "s"}{latestRetrievedAt ? ` consultée${sources.length === 1 ? "" : "s"} jusqu’au ${projectionDate(latestRetrievedAt)}` : " enregistrée"}{unknownFreshness ? ` · fraîcheur inconnue pour ${unknownFreshness}` : ""}</small>
     </section>
     {knownFacts.length > 0 && <section className="analysis-projection-section" aria-labelledby="analysis-projection-facts-title">
@@ -127,7 +128,7 @@ export function AnalysisProjectionSummary({ projection }: { projection: Analysis
     {knownScenarios.length > 0 && <section className="analysis-projection-section" aria-labelledby="analysis-projection-scenarios-title">
       <h2 id="analysis-projection-scenarios-title">Scénarios</h2>
       <div className="analysis-projection-scenarios">{knownScenarios.map(scenario => <div className="analysis-projection-scenario" key={scenario.id}>
-        <div><h3>{scenario.label}{projectionCitations(scenario.evidenceIds, projection)}</h3><p>{scenario.condition}</p><p>{scenario.impact}</p></div>
+        <div><h3>{renderInlineFormat(scenario.label)}{projectionCitations(scenario.evidenceIds, projection)}</h3><p>{renderInlineFormat(scenario.condition)}</p><p>{renderInlineFormat(scenario.impact)}</p></div>
         <dl>{scenario.terminalValue && metricRows(scenario.terminalValue, projection)}{scenario.cagrPercent && metricRows(scenario.cagrPercent, projection)}{scenario.horizon && metricRows(scenario.horizon, projection)}</dl>
       </div>)}</div>
     </section>}
@@ -138,8 +139,8 @@ export function AnalysisProjectionSummary({ projection }: { projection: Analysis
     <details className="analysis-projection-sources">
       <summary>Sources <span>{sources.length}</span></summary>
       <ol>{sources.map((source, index) => <li id={`analysis-projection-source-${source.id}`} key={source.id}>
-        <a href={source.url} target="_blank" rel="noreferrer">[{index + 1}] {source.title} ↗</a>
-        <span>{source.publisher || "Éditeur non précisé"} · {source.provenance === "collected_this_run" ? "Collectée pour cette analyse" : "Source de référence"}</span>
+        <a href={source.url} target="_blank" rel="noreferrer">[{index + 1}] {renderInlineFormat(source.title)} ↗</a>
+        <span>{renderInlineFormat(source.publisher || "Éditeur non précisé")} · {source.provenance === "collected_this_run" ? "Collectée pour cette analyse" : "Source de référence"}</span>
         <small>Consultée le {projectionDate(source.retrievedAt)} · Données au {projectionDate(source.asOf)}{source.publishedAt ? ` · Publiée le ${projectionDate(source.publishedAt)}` : ""} · {source.freshness === "known" ? "Date connue" : "Fraîcheur inconnue"}</small>
       </li>)}</ol>
     </details>

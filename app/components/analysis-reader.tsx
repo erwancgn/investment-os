@@ -9,6 +9,7 @@ import { NotionTable } from "./notion-table";
 import { InvestmentMemoReader } from "./investment-memo-reader";
 import { AnalysisFactGrid, AnalysisProjectionSummary, AnalysisReportHero, ProjectionStatusNotice } from "./analysis-presentation";
 import { AnalysisSectionGroups, navigateToAnalysisSection } from "./analysis-section-groups";
+import { renderInlineFormat } from "../lib/inline-format";
 import { ScenarioComparison } from "./scenario-comparison";
 import { extractValuationSummary } from "../lib/valuation-summary";
 import { analysisTypeLabel, formatAnalysisScore } from "../lib/decision-label";
@@ -18,21 +19,7 @@ type AnalysisDoc = (CompanyDocument | ResearchDocument) & { presentationStatus?:
 
 function inline(text: string) {
   text = text.replace(/\\~/g, "~");
-  const parts = text.split(/(\*\*.*?\*\*|__.*?__|~~.*?~~|(?<!\*)\*[^*]+\*(?!\*)|`.*?`|\[[^\]]+\]\([^)]+\))/g).filter(Boolean);
-  return parts.map((part, index) => {
-    if ((part.startsWith("**") && part.endsWith("**")) || (part.startsWith("__") && part.endsWith("__"))) return <strong key={index}>{part.slice(2, -2)}</strong>;
-    if (part.startsWith("~~") && part.endsWith("~~")) return <del key={index}>{part.slice(2, -2)}</del>;
-    if (part.startsWith("*") && part.endsWith("*")) return <em key={index}>{part.slice(1, -1)}</em>;
-    if (part.startsWith("`") && part.endsWith("`")) return <code key={index}>{part.slice(1, -1)}</code>;
-    const link = part.match(/^\[([^\]]+)\]\(([^)]+)\)$/);
-    if (link)
-      return (
-        <a href={link[2]} target="_blank" rel="noreferrer" key={index}>
-          {link[1]}
-        </a>
-      );
-    return <React.Fragment key={index}>{part}</React.Fragment>;
-  });
+  return renderInlineFormat(text);
 }
 
 const shortDate = (value: string | null) =>

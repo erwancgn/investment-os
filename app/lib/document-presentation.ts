@@ -88,7 +88,19 @@ function cioHandoffItems(value: string) {
 }
 
 export function visibleSummaryItems(items: string[]) {
-  return items.filter((item) => !/^run(?:\s*id)?\s*[:#—–-]?\s*[A-Z0-9][A-Z0-9._-]*\.?\s*$/i.test(compact(item)));
+  const sentenceSegmenter = new Intl.Segmenter("fr", { granularity: "sentence" });
+  return items
+    .filter((item) => !/^run(?:\s*id)?\s*[:#—–-]?\s*[A-Z0-9][A-Z0-9._-]*\.?\s*$/i.test(compact(item)))
+    .flatMap(item => {
+      const protectedAbbreviations: string[] = [];
+      const protectedText = compact(item).replace(/\b(Mme\.|Mlle\.|M\.|Dr\.|Pr\.|etc\.|ex\.|p\.\s?ex\.)/gi, value => {
+        const index = protectedAbbreviations.push(value) - 1;
+        return `\uE000${index}\uE001`;
+      });
+      return [...sentenceSegmenter.segment(protectedText)]
+        .map(sentence => sentence.segment.replace(/\uE000(\d+)\uE001/g, (_match, index: string) => protectedAbbreviations[Number(index)]).trim())
+        .filter(Boolean);
+    });
 }
 
 /** Hide promoted source tables and headings that would otherwise become empty sections. */

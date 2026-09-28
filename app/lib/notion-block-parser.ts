@@ -21,8 +21,9 @@ function richText(value: unknown): string {
     let text = raw;
     if (annotations.code === true) text = `\`${text}\``;
     else {
-      if (annotations.bold === true) text = `**${text}**`;
-      if (annotations.italic === true) text = `*${text}*`;
+      if (annotations.bold === true && annotations.italic === true) text = `***${text}***`;
+      else if (annotations.bold === true) text = `**${text}**`;
+      else if (annotations.italic === true) text = `*${text}*`;
       if (annotations.strikethrough === true) text = `~~${text}~~`;
     }
     const href = typeof item.href === "string" ? item.href : null;
