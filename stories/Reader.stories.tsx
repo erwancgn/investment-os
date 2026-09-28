@@ -57,28 +57,6 @@ export const ValuationTSMCTablet: Story = { parameters: { viewport: { defaultVie
 export const ValuationTSMCDesktop: Story = { parameters: { viewport: { defaultViewport: "desktop" } }, render: () => desktopFrame(<AnalysisReader document={tsmcValuationDocument} companyName="TSMC" onBack={() => undefined} />) };
 export const ValuationAdvantestJPY: Story = { render: () => frame(<AnalysisReader document={advantestValuationDocument} companyName="Advantest" onBack={() => undefined} />) };
 
-// Fallback-renderer regression fixtures transcribed from the read-only Notion pages.
-// Google v13: https://app.notion.com/p/3dd37ea7af3581a69ca3fa76f6033714
-// Google v14: https://app.notion.com/p/3e937ea7af3581e99d34e56efc0a0a04
-const googleValuation = (version: "v13" | "v14", date: string, price: string, cagr: string, status: string) => ({
-  ...completeReferenceDocuments.valuation,
-  id: `ref-google-${version}`,
-  title: `Alphabet — Valuation Check ${version} — Full Value — ${date}`,
-  agent: "Valuation",
-  current: version === "v14",
-  status,
-  verdict: "Correcte",
-  plainText: `## TL;DR\nCours de référence : ${price} USD. Le scénario Base donne ${cagr} % par an. À 12 % de rendement exigé, le prix maximal est ~332 USD.\n\n## Cours de référence\n${price} USD.\n\n## Scénarios · horizon 5 ans\n| Mesure | Bear | Base | Bull |\n|---|---:|---:|---:|\n| Prix terminal estimé · USD | 262 | 585 | 920 |\n| CAGR actionnaire · %/an | -5,3 % | 11,2 % | 21,7 % |\n\n## Seuils · scénario Base intacte\n| Rendement exigé | Prix maximal |\n|---|---:|\n| 10 % | 363 USD |\n| 12 % | 332 USD |\n| 15 % | 291 USD |\n\n## Sources\nContenu du rapport Notion ${version}.`,
-  summary: `Cours ${price} USD · Base ${cagr} %/an · seuil 12 % ~332 USD`,
-  score: "59",
-  date,
-});
-const googleV13 = googleValuation("v13", "2026-09-16", "344.98", "11.1", "Superseded");
-const googleV14 = googleValuation("v14", "2026-09-28", "343.92", "11.2", "Validated");
-export const GoogleV13: Story = { render: () => frame(<AnalysisReader document={googleV13} companyName="Alphabet" onBack={() => undefined} />) };
-export const GoogleV13Desktop: Story = { parameters: { viewport: { defaultViewport: "desktop" } }, render: () => desktopFrame(<AnalysisReader document={googleV13} companyName="Alphabet" onBack={() => undefined} />) };
-export const GoogleV14: Story = { render: () => frame(<AnalysisReader document={googleV14} companyName="Alphabet" onBack={() => undefined} />) };
-export const GoogleV14Desktop: Story = { parameters: { viewport: { defaultViewport: "desktop" } }, render: () => desktopFrame(<AnalysisReader document={googleV14} companyName="Alphabet" onBack={() => undefined} />) };
 
 const denseMatrixDocument = {
   ...completeReferenceDocuments.valuation,
