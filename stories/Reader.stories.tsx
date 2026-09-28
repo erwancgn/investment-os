@@ -57,6 +57,7 @@ export const ValuationTSMCTablet: Story = { parameters: { viewport: { defaultVie
 export const ValuationTSMCDesktop: Story = { parameters: { viewport: { defaultViewport: "desktop" } }, render: () => desktopFrame(<AnalysisReader document={tsmcValuationDocument} companyName="TSMC" onBack={() => undefined} />) };
 export const ValuationAdvantestJPY: Story = { render: () => frame(<AnalysisReader document={advantestValuationDocument} companyName="Advantest" onBack={() => undefined} />) };
 
+
 const denseMatrixDocument = {
   ...completeReferenceDocuments.valuation,
   id: "ref-valuation-dense",

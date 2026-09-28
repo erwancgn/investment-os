@@ -1,5 +1,5 @@
 export type RenderBlock =
-  | { type: "heading"; level: number; text: string }
+  | { type: "heading"; level: number; text: string; id?: string }
   | { type: "paragraph"; text: string }
   | { type: "quote"; text: string }
   | { type: "callout"; text: string; icon?: string }
@@ -21,8 +21,9 @@ function richText(value: unknown): string {
     let text = raw;
     if (annotations.code === true) text = `\`${text}\``;
     else {
-      if (annotations.bold === true) text = `**${text}**`;
-      if (annotations.italic === true) text = `*${text}*`;
+      if (annotations.bold === true && annotations.italic === true) text = `***${text}***`;
+      else if (annotations.bold === true) text = `**${text}**`;
+      else if (annotations.italic === true) text = `*${text}*`;
       if (annotations.strikethrough === true) text = `~~${text}~~`;
     }
     const href = typeof item.href === "string" ? item.href : null;
@@ -63,7 +64,8 @@ function parseNodes(nodes: JsonRecord[]): RenderBlock[] {
     }
     if (/^heading_[123]$/.test(type)) {
       const text = blockText(block);
-      if (text) output.push({ type: "heading", level: Number(type.slice(-1)), text });
+      const id = typeof block.id === "string" && block.id.trim() ? block.id : undefined;
+      if (text) output.push({ type: "heading", level: Number(type.slice(-1)), text, id });
     } else if (type === "paragraph") {
       const text = blockText(block);
       if (text) output.push({ type: "paragraph", text });

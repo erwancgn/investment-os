@@ -2,35 +2,24 @@
 
 import React from "react";
 import type { CompanyDocument, DecisionFields, ResearchDocument } from "../lib/investment-data";
+import type { AnalysisPresentationProjection, ProjectionStatus } from "../lib/presentation-projection";
 import { documentPresentation, hidePromotedTableSections } from "../lib/document-presentation";
 import { parseNotionDocument } from "../lib/notion-renderer";
 import { NotionTable } from "./notion-table";
 import { InvestmentMemoReader } from "./investment-memo-reader";
-import { AnalysisFactGrid, AnalysisReportHero } from "./analysis-presentation";
-import { AnalysisSectionGroups } from "./analysis-section-groups";
+import { AnalysisFactGrid, AnalysisProjectionSummary, AnalysisReportHero, ProjectionStatusNotice } from "./analysis-presentation";
+import { AnalysisSectionGroups, navigateToAnalysisSection } from "./analysis-section-groups";
+import { renderInlineFormat } from "../lib/inline-format";
 import { ScenarioComparison } from "./scenario-comparison";
 import { extractValuationSummary } from "../lib/valuation-summary";
 import { analysisTypeLabel, formatAnalysisScore } from "../lib/decision-label";
 import { BackButton, Badge, DisclosureSurface, MetadataGrid, SecondaryBlock } from "./ui-primitives";
 
-type AnalysisDoc = CompanyDocument | ResearchDocument;
+type AnalysisDoc = (CompanyDocument | ResearchDocument) & { presentationStatus?: ProjectionStatus; presentationProjection?: AnalysisPresentationProjection | null };
 
 function inline(text: string) {
-  const parts = text.split(/(\*\*.*?\*\*|__.*?__|~~.*?~~|(?<!\*)\*[^*]+\*(?!\*)|`.*?`|\[[^\]]+\]\([^)]+\))/g).filter(Boolean);
-  return parts.map((part, index) => {
-    if ((part.startsWith("**") && part.endsWith("**")) || (part.startsWith("__") && part.endsWith("__"))) return <strong key={index}>{part.slice(2, -2)}</strong>;
-    if (part.startsWith("~~") && part.endsWith("~~")) return <del key={index}>{part.slice(2, -2)}</del>;
-    if (part.startsWith("*") && part.endsWith("*")) return <em key={index}>{part.slice(1, -1)}</em>;
-    if (part.startsWith("`") && part.endsWith("`")) return <code key={index}>{part.slice(1, -1)}</code>;
-    const link = part.match(/^\[([^\]]+)\]\(([^)]+)\)$/);
-    if (link)
-      return (
-        <a href={link[2]} target="_blank" rel="noreferrer" key={index}>
-          {link[1]}
-        </a>
-      );
-    return <React.Fragment key={index}>{part}</React.Fragment>;
-  });
+  text = text.replace(/\\~/g, "~");
+  return renderInlineFormat(text);
 }
 
 const shortDate = (value: string | null) =>
@@ -139,21 +128,23 @@ export function AnalysisReader({ document, companyName, onBack, embedded = false
 function StandardAnalysisReader({ document, companyName, onBack, embedded }: { document: AnalysisDoc; companyName: string; onBack?: () => void; embedded: boolean }) {
   const isDemo = document.id.startsWith("demo-");
   const blocks = React.useMemo(() => parseNotionDocument(document.plainText, document.title, document.notionBlocks), [document]);
-  const presentation = documentPresentation(blocks, document.summary ?? "", { category: document.category, handoffSummary: document.handoffSummary });
-  const scenarioSummary = document.category === "valuation" ? extractValuationSummary(blocks) : null;
-  const hidden = new Set(presentation.hiddenIndexes);
+  const projection = document.presentationStatus === "valid" ? document.presentationProjection ?? null : null;
+  const documentSummary = projection ? null : documentPresentation(blocks, document.summary ?? "", { category: document.category, handoffSummary: document.handoffSummary });
+  const presentation = documentSummary;
+  const scenarioSummary = !projection && document.category === "valuation" ? extractValuationSummary(blocks) : null;
+  const hidden = new Set(presentation?.hiddenIndexes ?? []);
   if (scenarioSummary) hidePromotedTableSections(blocks, scenarioSummary.promotedBlockIndexes, hidden);
-  const headings = blocks.flatMap((block, index) => block.type === "heading" && block.level <= 2 && !hidden.has(index) ? [{ text: block.text, index }] : []);
+  const headings = blocks.flatMap((block, index) => block.type === "heading" && block.level <= 2 && !hidden.has(index) ? [{ text: block.text, index, id: block.id ?? `analysis-heading-${index}` }] : []);
   const templateKind = document.category || (document.sourceKey === "decisions" ? "synthese" : "universal");
   const scored = templateKind === "business" || templateKind === "valuation";
   const formattedScore = scored ? formatAnalysisScore(document.score) : null;
-  const outcome = document.verdict
+  const outcome = projection ? null : document.verdict
     ? { label: document.sourceKey === "decisions" ? "Décision" : "Verdict", value: document.verdict, detail: formattedScore && formattedScore !== "—" ? formattedScore : undefined }
     : formattedScore && formattedScore !== "—"
       ? { label: "Score", value: formattedScore }
       : null;
   return (
-    <section className="research-reader universal-analysis-reader" data-analysis-template={templateKind}>
+    <section className="research-reader universal-analysis-reader" data-analysis-template={projection?.analysisType ?? templateKind} data-projection-status={document.presentationStatus ?? "unavailable"}>
       {!embedded && onBack && <div className="detail-navigation"><BackButton onBack={onBack} ariaLabel="Retour à la liste précédente" /></div>}
       <AnalysisReportHero
         badges={
@@ -169,10 +160,12 @@ function StandardAnalysisReader({ document, companyName, onBack, embedded }: { d
         subtitle={<>{companyName} · {shortDate(document.date || document.lastEditedTime)}</>}
         outcome={outcome}
       />
+      {document.presentationStatus === "invalid" && <ProjectionStatusNotice status="invalid" />}
       <div className="notion-layout universal-analysis-layout">
         <article className="notion-page universal-analysis-page">
-          {presentation.summaryItems.length > 0 && (
-            <SecondaryBlock className="analysis-lead">
+          {projection && <AnalysisProjectionSummary projection={projection} />}
+          {presentation && presentation.summaryItems.length > 0 && (
+            <section className="analysis-lead">
               <section aria-labelledby="analysis-tldr">
                 <span id="analysis-tldr">TL;DR</span>
                 {presentation.summaryItems.length === 1 ? (
@@ -185,9 +178,9 @@ function StandardAnalysisReader({ document, companyName, onBack, embedded }: { d
                   </ul>
                 )}
               </section>
-            </SecondaryBlock>
+            </section>
           )}
-          {presentation.facts.length > 0 && (
+          {presentation && presentation.facts.length > 0 && (
             <AnalysisFactGrid
               ariaLabel="Repères du document"
               category={templateKind}
@@ -242,7 +235,7 @@ function StandardAnalysisReader({ document, companyName, onBack, embedded }: { d
               <nav aria-label="Sommaire du document">
                 {headings.length ? (
                   headings.map((heading) => (
-                    <a href={`#analysis-heading-${heading.index}`} onClick={event => { event.preventDefault(); window.document.getElementById(`analysis-heading-${heading.index}`)?.scrollIntoView({ block: "start" }); }} key={heading.index}>
+                    <a href={`#${heading.id}`} onClick={event => { event.preventDefault(); navigateToAnalysisSection(heading.id); }} key={heading.index}>
                       {heading.text}
                     </a>
                   ))

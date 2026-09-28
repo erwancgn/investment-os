@@ -2,12 +2,14 @@
 
 import React from "react";
 import type { CompanyDocument, ResearchDocument } from "../lib/investment-data";
+import type { AnalysisPresentationProjection, ProjectionStatus } from "../lib/presentation-projection";
 import { documentPresentation, hidePromotedTableSections } from "../lib/document-presentation";
 import { analysisTypeLabel, compactDecisionLabel } from "../lib/decision-label";
 import { parseNotionDocument, type RenderBlock } from "../lib/notion-renderer";
 import { NotionTable } from "./notion-table";
-import { AnalysisFactGrid, AnalysisReportHero } from "./analysis-presentation";
-import { AnalysisSectionGroups } from "./analysis-section-groups";
+import { AnalysisFactGrid, AnalysisProjectionSummary, AnalysisReportHero, ProjectionStatusNotice } from "./analysis-presentation";
+import { AnalysisSectionGroups, navigateToAnalysisSection } from "./analysis-section-groups";
+import { renderInlineFormat } from "../lib/inline-format";
 import { ScenarioComparison } from "./scenario-comparison";
 import { extractValuationSummary } from "../lib/valuation-summary";
 import {
@@ -17,31 +19,11 @@ import {
   SecondaryBlock,
 } from "./ui-primitives";
 
-type MemoDocument = CompanyDocument | ResearchDocument;
+type MemoDocument = (CompanyDocument | ResearchDocument) & { presentationStatus?: ProjectionStatus; presentationProjection?: AnalysisPresentationProjection | null };
 
 function inline(text: string) {
-  const parts = text
-    .split(/(\*\*.*?\*\*|__.*?__|~~.*?~~|`.*?`|\[[^\]]+\]\([^)]+\))/g)
-    .filter(Boolean);
-  return parts.map((part, index) => {
-    if (
-      (part.startsWith("**") && part.endsWith("**")) ||
-      (part.startsWith("__") && part.endsWith("__"))
-    )
-      return <strong key={index}>{part.slice(2, -2)}</strong>;
-    if (part.startsWith("~~") && part.endsWith("~~"))
-      return <del key={index}>{part.slice(2, -2)}</del>;
-    if (part.startsWith("`") && part.endsWith("`"))
-      return <code key={index}>{part.slice(1, -1)}</code>;
-    const link = part.match(/^\[([^\]]+)\]\(([^)]+)\)$/);
-    if (link)
-      return (
-        <a href={link[2]} target="_blank" rel="noreferrer" key={index}>
-          {link[1]}
-        </a>
-      );
-    return <React.Fragment key={index}>{part}</React.Fragment>;
-  });
+  text = text.replace(/\\~/g, "~");
+  return renderInlineFormat(text);
 }
 
 const shortDate = (value: string | null) =>
@@ -108,7 +90,7 @@ function MemoBlock({ block, index }: { block: RenderBlock; index: number }) {
       `h${Math.min(block.level + 1, 6)}` as keyof React.JSX.IntrinsicElements;
     return (
       <section className="analysis-section memo-section-heading">
-        <Tag id={`memo-heading-${index}`}>{inline(block.text)}</Tag>
+      <Tag>{inline(block.text)}</Tag>
       </section>
     );
   }
@@ -160,8 +142,10 @@ export function InvestmentMemoReader({
     document.title,
     document.notionBlocks,
   ), [document]);
-  const presentation = documentPresentation(blocks, document.summary ?? "", { category: document.category, handoffSummary: document.handoffSummary });
-  const scenarioSummary = extractValuationSummary(blocks);
+  const projection = document.presentationStatus === "valid" ? document.presentationProjection ?? null : null;
+  const documentSummary = projection ? null : documentPresentation(blocks, document.summary ?? "", { category: document.category, handoffSummary: document.handoffSummary });
+  const presentation = documentSummary;
+  const scenarioSummary = projection ? null : extractValuationSummary(blocks);
   const decisionRange = sectionRange(blocks, /decision card/i);
   const modulesRange = sectionRange(
     blocks,
@@ -176,7 +160,7 @@ export function InvestmentMemoReader({
         .map(blockText)
         .filter(Boolean)
     : [];
-  const hidden = new Set(presentation.hiddenIndexes);
+  const hidden = new Set(presentation?.hiddenIndexes ?? []);
   if (scenarioSummary) hidePromotedTableSections(blocks, scenarioSummary.promotedBlockIndexes, hidden);
   for (const range of [decisionRange, reasoningRange]) {
     if (range)
@@ -194,6 +178,7 @@ export function InvestmentMemoReader({
     <section
       className="research-reader universal-analysis-reader investment-memo-reader"
       data-analysis-template="memo"
+      data-projection-status={document.presentationStatus ?? "unavailable"}
     >
       {!embedded && onBack && <div className="detail-navigation"><BackButton onBack={onBack} ariaLabel="Retour à la fiche entreprise" /></div>}
       <AnalysisReportHero
@@ -214,11 +199,13 @@ export function InvestmentMemoReader({
           detail: stale ? `Mémo daté de ${ageDays} jours` : "Synthèse décisionnelle",
         }}
       />
+      {document.presentationStatus === "invalid" && <ProjectionStatusNotice status="invalid" />}
 
       <div className="notion-layout universal-analysis-layout">
         <article className="notion-page universal-analysis-page memo-page">
-          {presentation.summaryItems.length > 0 && (
-            <SecondaryBlock className="analysis-lead memo-tldr">
+          {projection && <AnalysisProjectionSummary projection={projection} />}
+          {presentation && presentation.summaryItems.length > 0 && (
+            <section className="analysis-lead memo-tldr">
               <section aria-labelledby="memo-tldr">
                 <span id="memo-tldr">TL;DR</span>
                 {presentation.summaryItems.length === 1 ? (
@@ -231,7 +218,7 @@ export function InvestmentMemoReader({
                   </ul>
                 )}
               </section>
-            </SecondaryBlock>
+            </section>
           )}
 
           <section
@@ -296,7 +283,7 @@ export function InvestmentMemoReader({
               block.type === "heading" &&
               block.level <= 2 &&
               !hidden.has(index) ? (
-                <a key={index} href={`#memo-heading-${index}`}>
+                <a key={index} href={`#${block.id ?? `memo-heading-${index}`}`} onClick={event => { event.preventDefault(); navigateToAnalysisSection(block.id ?? `memo-heading-${index}`); }}>
                   {block.text}
                 </a>
               ) : null,

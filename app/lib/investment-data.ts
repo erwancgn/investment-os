@@ -1,5 +1,6 @@
 import { getQuotes, type QuoteView } from "./quotes";
 import { documentCompanyLinks, documentPrimaryCompanyLinks, ensureRelationTable, normalizeNotionPageId, snapshotPlainText } from "./notion-sync";
+import { humanReadableNotionBlocks, type AnalysisPresentationProjection, type ProjectionStatus, verifyPresentationProjection } from "./presentation-projection";
 
 type JsonRecord = Record<string, unknown>;
 type StoredDocument = { page_id: string; title: string; notion_url: string; properties_json: string };
@@ -176,13 +177,13 @@ export async function listCompanies(db: D1Database, includeReferences = true, co
       else if(!conflictingWatchlistCompanyIds.has(companyId)) watchlistStateByCompany.set(companyId,state);
     }
   }
-  const analysisRows=includeReferences?(context.analysisRows ?? (await db.prepare("SELECT page_id,title,source_key,notion_url,last_edited_time,plain_text,properties_json FROM notion_documents WHERE source_key IN ('analyses','earnings','decisions','portfolio') ORDER BY last_edited_time DESC").all<StoredContentDocument>()).results??[]):[];
+  const analysisRows=includeReferences?(context.analysisRows ?? (await db.prepare("SELECT page_id,title,source_key,notion_url,last_edited_time,plain_text,properties_json,blocks_json FROM notion_documents WHERE source_key IN ('analyses','earnings','decisions','portfolio') ORDER BY last_edited_time DESC").all<StoredContentDocument>()).results??[]):[];
   const canonical=currentCompanyDocumentLinks(rows);
   const currentIds=currentDocumentIds(rows);
   const policy=context.archivePolicy ?? buildArchivePolicy(analysisRows,rows,primaryLinks,currentIds);
   // Work with canonical IDs inside this projection. The DB may contain legacy
   // dashed UUIDs while a fresh Notion relation contains the compact form.
-  const analyses=analysisRows.map(row=>{const canonicalRow={...row,page_id:normalizeNotionPageId(row.page_id)};return {row:canonicalRow,doc:documentFromRow(canonicalRow,[],currentIds,policy),properties:props(row)};});
+  const analyses=await Promise.all(analysisRows.map(async row=>{const canonicalRow={...row,page_id:normalizeNotionPageId(row.page_id)};return {row:canonicalRow,doc:await documentFromRow(canonicalRow,[],currentIds,policy),properties:props(row)};}));
   return rows.filter(row => !context.companyId || normalizeNotionPageId(row.page_id) === context.companyId).map(row => {
     const p = props(row);
     const owned=ownedCompanyIds.has(normalizeNotionPageId(row.page_id));
@@ -265,7 +266,7 @@ export type DecisionFields = {
 export type EarningsRefreshStatus = "not-needed"|"monitor"|"recommended"|"required"|"unknown";
 export type EarningsRefreshItem = { key:"business"|"valuation"|"short"|"portfolio"|"memo"; label:string; status:EarningsRefreshStatus; rawValue:string|null };
 export type EarningsReviewFields = { fiscalPeriod:string|null; guidance:string|null; guidanceVsConsensus:string|null; confidence:string|null; refreshes:EarningsRefreshItem[] };
-export type CompanyDocument = { previewSummaryItems?:string[]; id:string; title:string; sourceKey:string; category:CompanySectionKey; agent:string; notionUrl:string; lastEditedTime:string; plainText:string; notionBlocks?:unknown[]; summary:string|null; handoffSummary:string|null; status:string; score:string; verdict:string; confidence:string|null; date:string|null; relations:RelationLink[]; archived:boolean; current:boolean; decision?:DecisionFields|null; earningsReview?:EarningsReviewFields|null };
+export type CompanyDocument = { previewSummaryItems?:string[]; id:string; title:string; sourceKey:string; category:CompanySectionKey; agent:string; notionUrl:string; lastEditedTime:string; plainText:string; notionBlocks?:unknown[]; presentationProjection?:AnalysisPresentationProjection|null; presentationStatus?:ProjectionStatus; presentationError?:string|null; summary:string|null; handoffSummary:string|null; status:string; score:string; verdict:string; confidence:string|null; date:string|null; relations:RelationLink[]; archived:boolean; current:boolean; decision?:DecisionFields|null; earningsReview?:EarningsReviewFields|null };
 export type ResearchDocument = CompanyDocument & { companyName:string };
 export type CompanyDetail = CompanyListItem & { analyses:CompanyDocument[]; earnings:CompanyDocument[]; decisions:CompanyDocument[]; portfolioDocuments:CompanyDocument[]; archives:CompanyDocument[] };
 type StoredContentDocument = StoredDocument & { source_key:string; last_edited_time:string; plain_text:string; blocks_json?:string };
@@ -345,8 +346,16 @@ export function earningsReviewFields(properties:JsonRecord):EarningsReviewFields
     refreshes,
   };
 }
-function notionBlocks(row:StoredContentDocument):unknown[]|undefined { if(!row.blocks_json)return undefined; try { const value=JSON.parse(row.blocks_json); return Array.isArray(value)?value:undefined; } catch { return undefined; } }
-function documentFromRow(row:StoredContentDocument,relations:RelationLink[]=[],currentIds:Set<string>=new Set(),policy:ArchivePolicy|null=null):CompanyDocument { const p=props(row); const displayText=row.blocks_json ? snapshotPlainText(row.title,row.properties_json,row.blocks_json,row.plain_text) : row.plain_text; const category=classifyDocument(row.source_key,row.title,displayText,p); const decision=row.source_key==="decisions"?decisionFields(p):null; const earningsReview=row.source_key==="earnings"?earningsReviewFields(p):null; const status=String(propertyValue(p,"Status")??""); const rowId=normalizeNotionPageId(row.page_id); const archived=policy?.archivedIds.has(rowId)??explicitlyArchived(row); return {id:row.page_id,title:row.title,sourceKey:row.source_key,category,agent:agentFor(category,row.source_key),notionUrl:row.notion_url,lastEditedTime:row.last_edited_time,plainText:displayText,notionBlocks:notionBlocks(row),summary:displayProperty(p,["TL;DR","TLDR","TL,DR","Executive Summary","Summary","Guidance Summary"]),handoffSummary:displayProperty(p,["Handoff Summary"]),status,score:String(propertyValue(p,"Score")??propertyValue(p,"Business Score")??""),verdict:String(propertyValue(p,"Verdict")??propertyValue(p,"Business Verdict")??(decision?.action??"")),confidence:displayProperty(p,["Confidence","Confiance"]),date:(propertyValue(p,"Earnings Date")??propertyValue(p,"Date")??propertyValue(p,"Analysis Date")??propertyValue(p,"Decision Date")??null) as string|null,relations,archived,current:currentIds.has(rowId),decision,earningsReview}; }
+function notionBlocks(row:StoredContentDocument):unknown[]|undefined { if(!row.blocks_json)return undefined; try { const value=JSON.parse(row.blocks_json); return Array.isArray(value)?humanReadableNotionBlocks(value):undefined; } catch { return undefined; } }
+async function presentationForRow(row:StoredContentDocument):Promise<{ projection:AnalysisPresentationProjection|null; status:ProjectionStatus; error:string|null }> {
+  if (!row.blocks_json) return { projection:null, status:"absent", error:null };
+  try {
+    const blocks:unknown=JSON.parse(row.blocks_json);
+    const result=await verifyPresentationProjection(blocks);
+    return { projection:result.status==="valid"?result.projection:null, status:result.status, error:result.error };
+  } catch { return { projection:null, status:"invalid", error:"Le snapshot Notion ne peut pas être validé." }; }
+}
+async function documentFromRow(row:StoredContentDocument,relations:RelationLink[]=[],currentIds:Set<string>=new Set(),policy:ArchivePolicy|null=null,includePresentation=false):Promise<CompanyDocument> { const p=props(row); const displayText=row.blocks_json ? snapshotPlainText(row.title,row.properties_json,row.blocks_json,row.plain_text) : row.plain_text; const category=classifyDocument(row.source_key,row.title,displayText,p); const decision=row.source_key==="decisions"?decisionFields(p):null; const earningsReview=row.source_key==="earnings"?earningsReviewFields(p):null; const status=String(propertyValue(p,"Status")??""); const rowId=normalizeNotionPageId(row.page_id); const archived=policy?.archivedIds.has(rowId)??explicitlyArchived(row); const presentation=includePresentation?await presentationForRow(row):null; return {id:row.page_id,title:row.title,sourceKey:row.source_key,category,agent:agentFor(category,row.source_key),notionUrl:row.notion_url,lastEditedTime:row.last_edited_time,plainText:displayText,notionBlocks:notionBlocks(row),...(presentation?{presentationProjection:presentation.projection,presentationStatus:presentation.status,presentationError:presentation.error}:{}),summary:displayProperty(p,["TL;DR","TLDR","TL,DR","Executive Summary","Summary","Guidance Summary"]),handoffSummary:displayProperty(p,["Handoff Summary"]),status,score:String(propertyValue(p,"Score")??propertyValue(p,"Business Score")??""),verdict:String(propertyValue(p,"Verdict")??propertyValue(p,"Business Verdict")??(decision?.action??"")),confidence:displayProperty(p,["Confidence","Confiance"]),date:(propertyValue(p,"Earnings Date")??propertyValue(p,"Date")??propertyValue(p,"Analysis Date")??propertyValue(p,"Decision Date")??null) as string|null,relations,archived,current:currentIds.has(rowId),decision,earningsReview}; }
 function relatesToCompany(row:StoredContentDocument,company:CompanyListItem,links?:Map<string,string[]>):boolean { const p=props(row); const rowId=normalizeNotionPageId(row.page_id); const companyId=normalizeNotionPageId(company.id); if((links?.get(rowId)??[]).includes(companyId))return true; if(allRelationIds(p).includes(companyId))return true; const title=normalizedName(row.title); const name=normalizedName(company.name); const base=name.split(" ").filter(token=>!new Set(["group","holdings","holding","inc","corp","corporation","company","co","ltd","limited","plc","sa","class","a","adr"]).has(token)).join(" "); return Boolean(base && (title===name || title.startsWith(`${name} `) || title===base || title.startsWith(`${base} `))); }
 type CurrentDocumentCategory = CompanySectionKey | "earnings";
 type CurrentCompanyDocumentLinks = Map<string,Map<CurrentDocumentCategory,Set<string>>>;
@@ -388,7 +397,7 @@ export async function getCompanyDetail(db:D1Database,companyId:string):Promise<C
     db.prepare("SELECT page_id,title,notion_url,properties_json FROM notion_documents WHERE source_key='companies' ORDER BY title COLLATE NOCASE").all<StoredDocument>().then(result => result.results ?? []),
     documentPrimaryCompanyLinks(db),
     relationMap(db),
-    db.prepare("SELECT page_id,title,source_key,notion_url,last_edited_time,plain_text,properties_json FROM notion_documents WHERE source_key IN ('analyses','earnings','decisions','portfolio') ORDER BY last_edited_time DESC").all<StoredContentDocument>().then(result => result.results ?? []),
+    db.prepare("SELECT page_id,title,source_key,notion_url,last_edited_time,plain_text,properties_json,blocks_json FROM notion_documents WHERE source_key IN ('analyses','earnings','decisions','portfolio') ORDER BY last_edited_time DESC").all<StoredContentDocument>().then(result => result.results ?? []),
   ]);
   const companyRow=companyRows.find(row=>normalizeNotionPageId(row.page_id)===canonicalCompanyId);
   if(!companyRow)return null;
@@ -401,16 +410,17 @@ export async function getCompanyDetail(db:D1Database,companyId:string):Promise<C
   // Keep every document owned by this company in the candidate set.  A
   // populated Current relation selects the main version, but it must not hide
   // the older, explicitly related versions from the archive list.
-  const candidates=rows.filter(row=>{
+  const candidateRows=rows.filter(row=>{
     const category=classifyDocument(row.source_key,row.title,row.plain_text,props(row));
     const id=normalizeNotionPageId(row.page_id);
     const current=canonicalIdsForCategory(canonical,canonicalCompanyId,category);
     return current.has(id)||primaryCompanyDocument(row,company,companyRow,primaryLinks);
-  }).map(row=>{
-    const id=normalizeNotionPageId(row.page_id);
-    const doc=documentFromRow(row,relations.get(id)??[],currentIds,policy);
-    return {...doc,archived:policy.archivedIds.has(id),current:false};
   });
+  const candidates=await Promise.all(candidateRows.map(async row=>{
+    const id=normalizeNotionPageId(row.page_id);
+    const doc=await documentFromRow(row,relations.get(id)??[],currentIds,policy,true);
+    return {...doc,archived:policy.archivedIds.has(id),current:false};
+  }));
 
   // A CIO memo and an investment-decision row are both synthesis documents,
   // but they are independent current records and must remain accessible at
@@ -444,12 +454,12 @@ export async function getCompanyDetail(db:D1Database,companyId:string):Promise<C
   sortDocs(main); sortDocs(archives);
   return {...company,analyses:main.filter(doc=>doc.sourceKey==="analyses"),earnings:main.filter(doc=>doc.sourceKey==="earnings"),decisions:main.filter(doc=>doc.sourceKey==="decisions"),portfolioDocuments:main.filter(doc=>doc.sourceKey==="portfolio"),archives};
 }
-export async function listResearchDocuments(db:D1Database):Promise<ResearchDocument[]>{
+export async function listResearchDocuments(db:D1Database,includePresentation=false):Promise<ResearchDocument[]>{
   const [primaryLinks, relations, companyResult, documentResult] = await Promise.all([
     documentPrimaryCompanyLinks(db),
     relationMap(db),
     db.prepare("SELECT page_id,title,notion_url,properties_json FROM notion_documents WHERE source_key='companies'").all<StoredDocument>(),
-    db.prepare("SELECT page_id,title,source_key,notion_url,last_edited_time,SUBSTR(plain_text,1,700) AS plain_text,properties_json FROM notion_documents WHERE source_key IN ('analyses','earnings','decisions','portfolio') ORDER BY last_edited_time DESC").all<StoredContentDocument>(),
+    db.prepare("SELECT page_id,title,source_key,notion_url,last_edited_time,SUBSTR(plain_text,1,700) AS plain_text,properties_json,blocks_json FROM notion_documents WHERE source_key IN ('analyses','earnings','decisions','portfolio') ORDER BY last_edited_time DESC").all<StoredContentDocument>(),
   ]);
   const companies=await listCompanies(db,false,{primaryLinks});
   const companyRows=companyResult.results??[];
@@ -457,7 +467,7 @@ export async function listResearchDocuments(db:D1Database):Promise<ResearchDocum
   const owners=canonicalOwners(canonical);
   const currentIds=currentDocumentIds(companyRows);
   const rows=documentResult.results??[];
- const policy=buildArchivePolicy(rows,companyRows,primaryLinks,currentIds); return rows.map(row=>{const doc=documentFromRow(row,relations.get(row.page_id)??[],currentIds,policy);return {...doc,companyName:documentCompanyLabel(row,companies,owners,primaryLinks)};}); }
+ const policy=buildArchivePolicy(rows,companyRows,primaryLinks,currentIds); return Promise.all(rows.map(async row=>{const doc=await documentFromRow(row,relations.get(row.page_id)??[],currentIds,policy,includePresentation);return {...doc,companyName:documentCompanyLabel(row,companies,owners,primaryLinks)};})); }
 
 export async function getResearchDocument(db:D1Database,pageId:string):Promise<ResearchDocument|null>{
   const canonicalPageId=normalizeNotionPageId(pageId);
@@ -466,10 +476,10 @@ export async function getResearchDocument(db:D1Database,pageId:string):Promise<R
   const [companyRows, primaryLinks, relations, allRows] = await Promise.all([
     db.prepare("SELECT page_id,title,notion_url,properties_json FROM notion_documents WHERE source_key='companies'").all<StoredDocument>().then(result => result.results ?? []),
     documentPrimaryCompanyLinks(db), relationMap(db),
-    db.prepare("SELECT page_id,title,source_key,notion_url,last_edited_time,plain_text,properties_json FROM notion_documents WHERE source_key IN ('analyses','earnings','decisions','portfolio')").all<StoredContentDocument>().then(result => result.results ?? []),
+    db.prepare("SELECT page_id,title,source_key,notion_url,last_edited_time,plain_text,properties_json,blocks_json FROM notion_documents WHERE source_key IN ('analyses','earnings','decisions','portfolio')").all<StoredContentDocument>().then(result => result.results ?? []),
   ]);
   const companies=await listCompanies(db,false,{primaryLinks});
-  const owners=canonicalOwners(currentCompanyDocumentLinks(companyRows));const currentIds=currentDocumentIds(companyRows);const policy=buildArchivePolicy(allRows,companyRows,primaryLinks,currentIds);const doc=documentFromRow(row,relations.get(normalizeNotionPageId(row.page_id))??[],currentIds,policy);return {...doc,companyName:documentCompanyLabel(row,companies,owners,primaryLinks)};
+  const owners=canonicalOwners(currentCompanyDocumentLinks(companyRows));const currentIds=currentDocumentIds(companyRows);const policy=buildArchivePolicy(allRows,companyRows,primaryLinks,currentIds);const doc=await documentFromRow(row,relations.get(normalizeNotionPageId(row.page_id))??[],currentIds,policy,true);return {...doc,companyName:documentCompanyLabel(row,companies,owners,primaryLinks)};
 }
 export type PortfolioSlice = { marketValueEur:number; investedValueEur:number; cashValueEur:number; costBasisEur:number; pnlEur:number; pnlPercent:number|null; brokerCostBasisEur:number; brokerPnlEur:number; brokerPnlPercent:number|null; positions:number };
 export type ReconciliationIssue = { positionId:string|null; positionName:string|null; severity:"warning"|"error"; code:string; message:string };

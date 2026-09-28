@@ -1,3 +1,5 @@
+import { humanReadableNotionBlocks, verifyPresentationProjection } from "./presentation-projection";
+
 const NOTION_API = "https://api.notion.com/v1";
 const NOTION_VERSION = "2026-03-11";
 
@@ -22,6 +24,7 @@ async function ensureSyncStateColumns(db: D1Database) {
   if (!names.has("next_cursor")) await db.prepare("ALTER TABLE notion_sync_state ADD COLUMN next_cursor TEXT").run();
   if (!names.has("last_scanned_at")) await db.prepare("ALTER TABLE notion_sync_state ADD COLUMN last_scanned_at TEXT").run();
 }
+
 
 /** A short-lived D1 lock prevents a launch refresh and a manual refresh from
  * importing the same Notion pages concurrently. The lock is intentionally
@@ -437,7 +440,7 @@ async function listBlockChildren(token: string, blockId: string, startCursor?: s
 
 function flattenBlockText(blocks: JsonRecord[]): string[] {
   const output: string[] = [];
-  for (const block of blocks) {
+  for (const block of humanReadableNotionBlocks(blocks).map(asRecord)) {
     const text = blockText(block).trim();
     if (text) output.push(text);
     if (Array.isArray(block.children)) output.push(...flattenBlockText(block.children.map(asRecord)));
@@ -721,6 +724,9 @@ export async function processNextNotionImport(db:D1Database,token:string,maximum
       const continuation=result.has_more===true&&typeof result.next_cursor==="string"
         ? [{...task,cursor:result.next_cursor}]
         : [];
+      if(task.depth>=12&&children.some(block=>block.has_children===true)){
+        throw new Error("La page Notion dépasse la profondeur maximale d’import; le snapshot complet précédent est conservé.");
+      }
       const descendants=task.depth>=12?[]:children.flatMap((block,index)=>block.has_children===true&&typeof block.id==="string"
         ? [{parentId:block.id,path:[...task.path,offset+index],depth:task.depth+1}]
         : []);
@@ -737,6 +743,9 @@ export async function processNextNotionImport(db:D1Database,token:string,maximum
     const page=asRecord(JSON.parse(job.page_json));
     const pageId=String(page.id??job.page_id);
     const canonicalPageId=normalizeNotionPageId(pageId);
+    const presentation=["analyses","earnings","decisions"].includes(job.source_key)
+      ? await verifyPresentationProjection(blocks)
+      : { status:"absent" as const, projection:null, error:null };
     await db.batch([
       db.prepare("DELETE FROM notion_documents WHERE source_key=? AND LOWER(REPLACE(page_id,'-',''))=? AND page_id<>?").bind(job.source_key,canonicalPageId,pageId),
       documentUpsertStatement(db,job.source_key,page,blocks),
@@ -747,7 +756,7 @@ export async function processNextNotionImport(db:D1Database,token:string,maximum
     if(Number(sourcePending?.count??0)===0&&Number(sourceFailed?.count??0)===0){
       await db.prepare("UPDATE notion_sync_state SET last_status='imported',last_error=NULL WHERE source_key=?").bind(job.source_key).run();
     }
-    return {processed:true,completed:true,pageId:job.page_id,...await importQueueSummary(db)};
+    return {processed:true,completed:true,pageId:job.page_id,presentationStatus:presentation.status,presentationError:presentation.error,...await importQueueSummary(db)};
   }catch(error){
     const attempts=Number(job.attempts??0)+1;
     const failed=attempts>=5;
