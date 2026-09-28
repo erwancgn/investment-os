@@ -527,7 +527,7 @@ test("standard analyses and CIO memo reuse the shared hero and fact grid", async
   const uxSource = await readUxSource();
   assert.match(presentationSource, /export function AnalysisReportHero/);
   assert.match(presentationSource, /export function AnalysisFactGrid/);
-  assert.match(presentationSource, /<MetadataGrid/);
+  assert.match(presentationSource, /<PrimaryBlock as="header"/);
   assert.match(readerSource, /<AnalysisReportHero/);
   assert.match(readerSource, /<AnalysisFactGrid/);
   assert.match(memoSource, /<AnalysisReportHero/);
@@ -622,8 +622,8 @@ test("analysis disclosures use the company width while keeping prose readable", 
   assert.doesNotMatch(tableSource, /return <SecondaryBlock/);
   assert.doesNotMatch(analysisSource, /surfaceForCompact/);
   assert.doesNotMatch(readerCss, /analysis-section-group-content \.notion-table-wrap/);
-  assert.match(readerCss, /\.analysis-scenario-cards,\s*\.analysis-threshold-grid\s*\{[^}]*grid-template-columns:\s*repeat\(3, minmax\(0, 1fr\)\)/);
-  assert.match(readerCss, /@media \(max-width: 760px\) \{[\s\S]*?\.analysis-scenario-cards,\s*\.analysis-threshold-grid\s*\{\s*grid-template-columns: minmax\(0, 1fr\);/);
+  assert.match(readerCss, /\.analysis-projection-scenario\s*\{[^}]*grid-template-columns: minmax\(0, 1fr\) minmax\(0, 1fr\)/);
+  assert.match(readerCss, /\.analysis-projection-scenario \{ grid-template-columns: minmax\(0, 1fr\);/);
   assert.match(companyCss, /\.generic-company-detail > \.detail-navigation \{[\s\S]*position: sticky;[\s\S]*top:/);
   assert.doesNotMatch(companyCss, /\.generic-company-detail > \.detail-navigation \{[^}]*position: fixed;/);
   const mobileCopyRule = documentsCss.match(/\.universal-analysis-page \.analysis-section-group-content > p,[\s\S]*?\{([^}]*)\}/)?.[1] ?? "";
@@ -792,7 +792,8 @@ test("analysis and company details share the same liquid-glass primitives withou
   assert.doesNotMatch(companySource, /className="back-button"/);
   assert.match(globalsSource, /\.ui-back-button \{/);
   assert.match(uxSource, /prefers-reduced-transparency: reduce/);
-  assert.match(readerSource, /<SecondaryBlock className="analysis-lead"/);
+  assert.match(readerSource, /<section className="analysis-lead"/);
+  assert.doesNotMatch(readerSource, /<SecondaryBlock className="analysis-lead"/);
   assert.match(readerSource, /<AnalysisFactGrid\s+ariaLabel="Repères du document"/);
   assert.match(readerSource, /<DisclosureSurface\s+className="analysis-source-details"/);
   assert.match(latestInfoSource, /<PrimaryBlock as="article" className="detail-card latest-info-card"/);

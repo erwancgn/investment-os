@@ -1,5 +1,5 @@
 export type RenderBlock =
-  | { type: "heading"; level: number; text: string }
+  | { type: "heading"; level: number; text: string; id?: string }
   | { type: "paragraph"; text: string }
   | { type: "quote"; text: string }
   | { type: "callout"; text: string; icon?: string }
@@ -63,7 +63,8 @@ function parseNodes(nodes: JsonRecord[]): RenderBlock[] {
     }
     if (/^heading_[123]$/.test(type)) {
       const text = blockText(block);
-      if (text) output.push({ type: "heading", level: Number(type.slice(-1)), text });
+      const id = typeof block.id === "string" && block.id.trim() ? block.id : undefined;
+      if (text) output.push({ type: "heading", level: Number(type.slice(-1)), text, id });
     } else if (type === "paragraph") {
       const text = blockText(block);
       if (text) output.push({ type: "paragraph", text });

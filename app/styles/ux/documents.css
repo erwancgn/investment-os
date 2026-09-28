@@ -246,6 +246,14 @@
   padding: 16px 18px !important;
 }
 
+.analysis-lead {
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
 .analysis-lead section,
 .latest-info-summary section {
   min-width: 0;

@@ -235,6 +235,12 @@ export function CompanyDetail({ companyId, selectedAnalysisId = null, close, ini
   const isDemo = data.id.startsWith("demo-");
   const latest = allDocuments[0];
   const memoDoc = grouped("memo")[0];
+  const latestCoreAnalysis = allDocuments
+    .filter(doc => doc.category === "business" || doc.category === "valuation")
+    .sort((a, b) => Date.parse(b.date || b.lastEditedTime) - Date.parse(a.date || a.lastEditedTime))[0];
+  const memoTimestamp = currentMemo ? Date.parse(currentMemo.date || currentMemo.lastEditedTime) : NaN;
+  const coreTimestamp = latestCoreAnalysis ? Date.parse(latestCoreAnalysis.date || latestCoreAnalysis.lastEditedTime) : NaN;
+  const memoPredatesCoreAnalysis = Number.isFinite(memoTimestamp) && Number.isFinite(coreTimestamp) && memoTimestamp < coreTimestamp;
   const memoSummary = memoDoc?.previewSummaryItems?.[0] || memoDoc?.summary;
   const researchHighlights = tabs
     .filter(([id]) => id !== "synthese" && id !== "analyses")
@@ -277,6 +283,7 @@ export function CompanyDetail({ companyId, selectedAnalysisId = null, close, ini
           <small>Décision CIO · mémo Current validé</small>
           <strong>{currentMemo?.verdict || "Pas de décision CIO"}</strong>
           <span>{currentMemo ? `Mémo validé · ${formatAnalysisDate(currentMemo.date || currentMemo.lastEditedTime)}` : "Aucun mémo Current validé relié à cette entreprise."}</span>
+          {memoPredatesCoreAnalysis && latestCoreAnalysis && <small>Mémo antérieur à la dernière analyse {latestCoreAnalysis.category === "business" ? "Business" : "Valuation"} ({shortDate(latestCoreAnalysis.date || latestCoreAnalysis.lastEditedTime)}).</small>}
         </div>
       </PrimaryBlock>
       <Tabs
@@ -298,7 +305,7 @@ export function CompanyDetail({ companyId, selectedAnalysisId = null, close, ini
             <Badge tone={currentMemo ? "positive" : "neutral"}>{currentMemo ? "Décision du mémo CIO" : "Recherche en cours"}</Badge>
             <h2>{currentMemo?.verdict || "Pas de décision CIO"}</h2>
             <p>{currentMemo ? memoSummary || "Lire le Mémo CIO pour les arguments et conditions de revue." : "Aucun mémo Current validé relié à cette entreprise."}</p>
-            {currentMemo && <small>Mémo du {shortDate(currentMemo.date || currentMemo.lastEditedTime)} · conclusion historique</small>}
+            {currentMemo && <small>Mémo du {shortDate(currentMemo.date || currentMemo.lastEditedTime)}{memoPredatesCoreAnalysis && latestCoreAnalysis ? ` · antérieur au dernier ${latestCoreAnalysis.category === "business" ? "Business" : "Valuation"} du ${shortDate(latestCoreAnalysis.date || latestCoreAnalysis.lastEditedTime)}` : " · conclusion historique"}</small>}
           </PrimaryBlock>
           <section className="company-metrics company-metrics--three" aria-label="Repères de la compagnie">
             <StatCard
