@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { createElement, Fragment } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
-import { renderInlineFormat } from "../app/lib/inline-format.ts";
+import { plainInlineText, renderInlineFormat } from "../app/lib/inline-format.ts";
 import { parseNotionBlocks } from "../app/lib/notion-block-parser.ts";
 
 const markup = text => renderToStaticMarkup(createElement(Fragment, null, ...renderInlineFormat(text)));
@@ -24,4 +24,10 @@ test("Notion rich text annotations render emphasis without visible Markdown mark
 test("adjacent emphasis and malformed bold delimiters do not leak double asterisks", () => {
   assert.equal(markup("**Premier****second**"), "<strong>Premier</strong><strong>second</strong>");
   assert.equal(markup("Résultat **incomplet"), "Résultat incomplet");
+});
+
+test("supported HTML emphasis becomes semantic formatting without literal tags", () => {
+  assert.equal(markup("<strong>important</strong> et <i>utile</i>"), "<strong>important</strong> et <em>utile</em>");
+  assert.equal(plainInlineText("<b>TL;DR</b>"), "TL;DR");
+  assert.equal(plainInlineText("**TL;DR**"), "TL;DR");
 });

@@ -236,7 +236,7 @@ function StandardAnalysisReader({ document, companyName, onBack, embedded }: { d
                 {headings.length ? (
                   headings.map((heading) => (
                     <a href={`#${heading.id}`} onClick={event => { event.preventDefault(); navigateToAnalysisSection(heading.id); }} key={heading.index}>
-                      {heading.text}
+                      {inline(heading.text)}
                     </a>
                   ))
                 ) : (

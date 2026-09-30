@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
-import { access, readFile } from "node:fs/promises";
+import { access, mkdir, readFile, rm } from "node:fs/promises";
 import test from "node:test";
+import { build } from "esbuild";
 import { uxCssFiles } from "../scripts/css-file-manifest.mjs";
 
 const fixtureUrl = new URL("../app/data/analysis-reference-fixtures.json", import.meta.url);
@@ -111,7 +112,7 @@ test("TSMC fixture values are extracted as scenarios and thresholds without chan
   const summary = extractValuationSummary(blocks);
   assert.deepEqual(summary?.scenarios.map(({ name, terminal, cagr }) => [name, terminal, `${cagr}/an`]),
     tsmc.scenarios.map(({ name, terminal, cagr }) => [name, terminal, cagr]));
-  assert.deepEqual(summary?.thresholds, tsmc.thresholds);
+  assert.deepEqual(summary?.thresholds.map(({ rate, price }) => ({ rate, price })), tsmc.thresholds);
   assert.deepEqual(summary?.promotedBlockIndexes, [1, 3]);
 });
 
@@ -160,7 +161,7 @@ test("valuation scenario extraction keeps terminal prices, CAGR and thresholds d
   assert.deepEqual(summary?.scenarios.map(item => [item.name, item.terminal, item.cagr]), [
     ["Bear", "409,55 USD", "−1,95 %"], ["Base", "724,69 USD", "9,91 %"], ["Bull", "973,98 USD", "16,60 %"],
   ]);
-  assert.deepEqual(summary?.thresholds, [{ rate: "10 %", price: "449,98 USD" }, { rate: "12 %", price: "411,21 USD" }, { rate: "15 %", price: "360,30 USD" }]);
+  assert.deepEqual(summary?.thresholds.map(({ rate, price }) => ({ rate, price })), [{ rate: "10 %", price: "449,98 USD" }, { rate: "12 %", price: "411,21 USD" }, { rate: "15 %", price: "360,30 USD" }]);
   assert.equal(summary?.horizon, "5 ans");
   const rows = [
     { type: "heading", level: 2, text: "Scénarios 5 ans" },
@@ -180,10 +181,13 @@ test("valuation scenario extraction keeps terminal prices, CAGR and thresholds d
       ["", "15 %", "75 USD", ""],
     ] },
   ];
-  assert.deepEqual(extractValuationSummary(rows)?.thresholds, [
+  assert.deepEqual(extractValuationSummary(rows)?.thresholds.map(({ rate, price }) => ({ rate, price })), [
     { rate: "10 %", price: "94 USD" }, { rate: "12 %", price: "86 USD" }, { rate: "15 %", price: "75 USD" },
   ]);
-  assert.equal(extractValuationSummary([{ type: "table", header: true, rows: [["Scénario", "Prix terminal", "CAGR"], ["Base", "120", "9 %"]] }]), null);
+  const unlabeledPrice = extractValuationSummary([{ type: "table", header: true, rows: [["Scénario", "Prix terminal", "CAGR"], ["Base", "120", "9 %"]] }]);
+  assert.equal(unlabeledPrice?.scenarios[0]?.terminal, undefined);
+  assert.equal(unlabeledPrice?.scenarios[0]?.cagr, "9 %");
+  assert.deepEqual(unlabeledPrice?.promotedBlockIndexes, []);
 });
 
 test("metadata discovery queues only missing or edited Notion pages", async () => {
@@ -580,6 +584,7 @@ test("Investment Memo CIO has a dedicated decision view without a numeric memo s
   assert.match(readerSource, /<InvestmentMemoReader/);
   assert.match(companySource, /\["memo", "Mémo CIO"\]/);
   assert.match(memoSource, /Decision Card/);
+  assert.match(memoSource, /extractedValuation\?\.scenarios\.length === 3[\s\S]*every\(item => item\.terminal && item\.cagr\)/);
   assert.match(memoSource, /Raisonnement décisif/);
   assert.match(memoSource, /État des quatre modules/);
   assert.match(memoSource, /!\/\^\(\?:score\|note\)/);
@@ -958,7 +963,7 @@ test("valuation extraction recognizes explicit hurdle heading and reference mark
   const summary = extractValuationSummary(blocks);
   assert.equal(summary?.referencePrice, "33 060 JPY");
   assert.equal(summary?.referenceDate, "24/09/2026");
-  assert.deepEqual(summary?.thresholds, [
+  assert.deepEqual(summary?.thresholds.map(({ rate, price }) => ({ rate, price })), [
     { rate: "10 %", price: "34 234 JPY" }, { rate: "12 %", price: "31 285 JPY" }, { rate: "15 %", price: "27 411 JPY" },
   ]);
   assert.deepEqual(summary?.promotedBlockIndexes, [2, 4]);
@@ -974,6 +979,132 @@ test("valuation extraction recognizes explicit hurdle heading and reference mark
   assert.deepEqual(thresholdsOnly?.scenarios, []);
   assert.deepEqual(thresholdsOnly?.thresholds.map(item => item.price), ["34 234 JPY", "31 285 JPY", "27 411 JPY"]);
   assert.deepEqual(thresholdsOnly?.promotedBlockIndexes, [2]);
+});
+
+test("valuation presentation extracts safe partial facts without hiding partial source blocks", async () => {
+  const { extractValuationSummary } = await import("../app/lib/valuation-summary.ts");
+  const blocks = [
+    { type: "paragraph", text: "Bear: prix cible 317 USD, CAGR actionnaire 5,2 %; Base: cible 420 USD, CAGR cours 8 %" },
+    { type: "heading", level: 2, text: "Prix maximal selon rendement exigé" },
+    { type: "paragraph", text: "Prix maximal pour 12 % : 280 USD." },
+  ];
+  const summary = extractValuationSummary(blocks);
+  assert.equal(summary?.version, 2);
+  assert.deepEqual(summary?.scenarios.map(s => [s.name, s.terminal, s.cagr]), [["Bear", "317 USD", "5,2 %"], ["Base", "420 USD", "8 %"]]);
+  assert.deepEqual(summary?.thresholds.map(t => [t.rate, t.price]), [["12 %", "280 USD"]]);
+  assert.deepEqual(summary?.promotedBlockIndexes, []);
+});
+
+test("Amazon-style scenario prose keeps final punctuation, approximations, and shareholder CAGR distinct from EBIT CAGR", async () => {
+  const { extractValuationSummary } = await import("../app/lib/valuation-summary.ts");
+  const blocks = [
+    { type: "paragraph", text: "Bear : CAGR EBIT 12 %, EBIT 2031 193,5 Md$, EV/EBIT terminal 18x, cible 317 USD, CAGR actionnaire 5,2 %. Base 504 USD/15,4 %. Bull 705 USD/23,4 %." },
+    { type: "heading", level: 2, text: "Prix maximal pour 10 %, 12 % et 15 %" },
+    { type: "paragraph", text: "Prix maximal: ≈313/286/251 USD." },
+  ];
+  const summary = extractValuationSummary(blocks);
+  assert.deepEqual(summary?.scenarios.map(s => [s.name, s.terminal, s.cagr]), [
+    ["Bear", "317 USD", "5,2 %"], ["Base", "504 USD", "15,4 %"], ["Bull", "705 USD", "23,4 %"],
+  ]);
+  assert.deepEqual(summary?.thresholds.map(t => [t.rate, t.price]), [["10 %", "≈313 USD"], ["12 %", "≈286 USD"], ["15 %", "≈251 USD"]]);
+  const ebitOnly = extractValuationSummary([{ type: "table", header: true, rows: [["Metric", "Bear", "Base", "Bull"], ["CAGR EBIT", "10 %", "12 %", "14 %"]] }]);
+  assert.equal(ebitOnly, null);
+});
+
+test("Amazon Notion lines extract partial facts with exact source indexes and scenario word boundaries", async () => {
+  const { extractValuationSummary } = await import("../app/lib/valuation-summary.ts");
+  const blocks = [
+    { type: "heading", level: 1, text: "5. Scénarios Bear / Base / Bull" },
+    { type: "paragraph", text: "Bear : CAGR EBIT 12 %, EBIT 2031 193,5 Md$, EV/EBIT terminal 18x, cible 317 USD, CAGR actionnaire 5,2 %." },
+    { type: "paragraph", text: "Base : CAGR EBIT 18 %, EBIT 2031 251,2 Md$, EV/EBIT terminal 22x, cible 504 USD, CAGR actionnaire 15,4 %." },
+    { type: "paragraph", text: "Bull : CAGR EBIT 23 %, EBIT 2031 309,1 Md$, EV/EBIT terminal 25x, cible 705 USD, CAGR actionnaire 23,4 %." },
+    { type: "heading", level: 1, text: "9. Prix pour 10 %, 12 % et 15 %" },
+    { type: "paragraph", text: "Prix maximal pour 10 % : ≈ 313 USD." },
+    { type: "paragraph", text: "Prix maximal pour 12 % : ≈ 286 USD." },
+    { type: "paragraph", text: "Prix maximal pour 15 % : ≈ 251 USD." },
+  ];
+  const summary = extractValuationSummary(blocks);
+  assert.deepEqual(summary?.scenarios.map(s => [s.name, s.terminal, s.cagr, s.sourceBlockIndexes]), [
+    ["Bear", "317 USD", "5,2 %", [1]], ["Base", "504 USD", "15,4 %", [2]], ["Bull", "705 USD", "23,4 %", [3]],
+  ]);
+  assert.deepEqual(summary?.thresholds.map(t => [t.rate, t.price, t.sourceBlockIndexes]), [
+    ["10 %", "≈ 313 USD", [5]], ["12 %", "≈ 286 USD", [6]], ["15 %", "≈ 251 USD", [7]],
+  ]);
+  assert.deepEqual(summary?.promotedBlockIndexes, []);
+  assert.equal(extractValuationSummary([{ type: "paragraph", text: "database target 317 USD; description 5 %" }]), null);
+});
+
+test("analysis sections render H1-only roots and retain Advantest H2/H3 content", async () => {
+  const outputDir = new URL("../.test-runtime/", import.meta.url);
+  const outputFile = new URL("./analysis-section-groups-runtime.mjs", outputDir);
+  await mkdir(outputDir, { recursive: true });
+  try {
+    await build({ entryPoints: [new URL("../app/components/analysis-section-groups.tsx", import.meta.url).pathname], bundle: true, platform: "node", format: "esm", packages: "external", outfile: outputFile.pathname });
+    const [{ createElement }, { renderToStaticMarkup }, { AnalysisSectionGroups }] = await Promise.all([
+      import("react"), import("react-dom/server"), import(outputFile.href),
+    ]);
+    const renderBlock = ({ block, index }) => block.type === "paragraph"
+      ? createElement("p", { key: index }, block.text)
+      : block.type === "heading" ? createElement(`h${block.level}`, { key: index }, block.text) : null;
+    const render = blocks => renderToStaticMarkup(createElement(AnalysisSectionGroups, { blocks, hidden: new Set(), idForHeading: i => `section-${i}`, renderBlock }));
+    const amazon = render([
+      { type: "heading", level: 1, id: "investment-card", text: "Investment Card" },
+      { type: "paragraph", text: "Business model : Fort" },
+      { type: "paragraph", text: "Moat : Fort" },
+      { type: "paragraph", text: "Croissance structurelle : Forte" },
+      { type: "paragraph", text: "Qualité financière : Forte mais en transition capitalistique" },
+      { type: "heading", level: 1, id: "classification", text: "Classification" },
+      { type: "paragraph", text: "Source conservée dans le corps." },
+    ]);
+    assert.match(amazon, /<details[^>]*id="investment-card"/);
+    assert.match(amazon, /<details[^>]*id="classification"/);
+    assert.match(amazon, /Tout déplier[\s\S]*Tout replier/);
+    assert.match(amazon, /class="analysis-key-facts"/);
+    for (const value of ["Business model", "Fort", "Moat", "Croissance structurelle", "Qualité financière", "transition capitalistique"]) assert.ok(amazon.includes(value));
+    const advantest = render([
+      { type: "heading", level: 1, text: "Scénarios" },
+      { type: "heading", level: 2, text: "Base" },
+      { type: "paragraph", text: "Base scenario content." },
+      { type: "heading", level: 3, text: "Hypothèses" },
+      { type: "paragraph", text: "Margin and multiple assumptions remain visible." },
+    ]);
+    assert.match(advantest, /aria-level="3">Base/);
+    assert.match(advantest, /<h3>Hypothèses<\/h3>/);
+    assert.ok(advantest.includes("Margin and multiple assumptions remain visible."));
+  } finally {
+    await rm(outputFile, { force: true });
+    await rm(outputDir, { recursive: true, force: true });
+  }
+});
+
+test("valuation presentation recognizes semantic row and column tables while rejecting unlabeled or currency-conflicted data", async () => {
+  const { extractValuationSummary } = await import("../app/lib/valuation-summary.ts");
+  const table = (rows) => extractValuationSummary([{ type: "table", header: true, rows }]);
+  const eliLilly = table([["", "Scenario", "Target Price", "CAGR Total"], ["", "Bear", "317 USD", "5,2 %"], ["", "Base", "420 USD", "8 %"], ["", "Bull", "510 USD", "12 %"]]);
+  assert.equal(eliLilly?.scenarios.length, 3);
+  const sparse = extractValuationSummary([{ type: "table", header: true, rows: [["", "Scenario", "Target Price (USD)", "CAGR Total"], ["", "Bear", "317", "5,2 %"], ["", "Base", "420", "8 %"], ["", "Bull", "510", "12 %"]] }]);
+  assert.deepEqual(sparse?.scenarios.map(s => [s.name, s.terminal, s.cagr]), [["Bear", "317 USD", "5,2 %"], ["Base", "420 USD", "8 %"], ["Bull", "510 USD", "12 %"]]);
+  assert.deepEqual(sparse?.promotedBlockIndexes, [0]);
+  const duplicateScenario = extractValuationSummary([{ type: "table", header: true, rows: [["Scenario", "Target Price", "CAGR"], ["Bear", "317 USD", "5 %"], ["Bear", "318 USD", "4 %"], ["Base", "420 USD", "8 %"]] }]);
+  assert.deepEqual(duplicateScenario?.promotedBlockIndexes, [], "a duplicate scenario row cannot stand in for a missing Bull row");
+  const equinix = table([["Measure", "Bear", "Base", "Bull"], ["Prix cible 2031 · USD", "317", "420", "510"], ["CAGR cours", "5,2 %", "8 %", "12 %"]]);
+  assert.equal(equinix?.scenarios[1]?.terminal, "420 USD");
+  const conflicting = table([["Measure", "Bear", "Base", "Bull"], ["Prix terminal · USD", "317 USD", "420 EUR", "510 USD"], ["CAGR", "5 %", "8 %", "12 %"]]);
+  assert.equal(conflicting?.scenarios.length, 3);
+  assert.ok(conflicting?.scenarios.every(s => !s.terminal && s.cagr));
+  const duplicateConflict = extractValuationSummary([
+    { type: "table", header: true, rows: [["Scenario", "Target Price", "CAGR"], ["Bear", "317 USD", "5 %"], ["Base", "420 USD", "8 %"], ["Bull", "510 USD", "12 %"]] },
+    { type: "table", header: true, rows: [["Scenario", "Target Price", "CAGR"], ["Bear", "317 USD", "5 %"], ["Base", "430 USD", "8 %"], ["Bull", "510 USD", "12 %"]] },
+  ]);
+  assert.deepEqual(duplicateConflict?.promotedBlockIndexes, [], "conflicting duplicate values keep both source tables visible");
+  const thresholdConflict = extractValuationSummary([
+    { type: "heading", level: 2, text: "Prix maximal selon rendement exigé" },
+    { type: "table", header: true, rows: [["Hurdle", "Prix maximal"], ["10 %", "90 USD"], ["12 %", "80 USD"], ["15 %", "70 USD"]] },
+    { type: "table", header: true, rows: [["Hurdle", "Prix maximal"], ["10 %", "90 USD"], ["12 %", "75 USD"], ["15 %", "70 USD"]] },
+  ]);
+  assert.deepEqual(thresholdConflict?.thresholds.map(t => t.rate), ["10 %", "15 %"]);
+  assert.deepEqual(thresholdConflict?.promotedBlockIndexes, [], "threshold tables with a conflicting rate remain visible");
+  assert.equal(table([["Bear", "Base", "Bull"], ["317 USD", "420 USD", "510 USD"]]), null);
 });
 
 test("company analysis route keeps the company shell mounted and presents the selected document inside its panel", async () => {

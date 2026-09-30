@@ -145,7 +145,9 @@ export function InvestmentMemoReader({
   const projection = document.presentationStatus === "valid" ? document.presentationProjection ?? null : null;
   const documentSummary = projection ? null : documentPresentation(blocks, document.summary ?? "", { category: document.category, handoffSummary: document.handoffSummary });
   const presentation = documentSummary;
-  const scenarioSummary = projection ? null : extractValuationSummary(blocks);
+  const extractedValuation = projection ? null : extractValuationSummary(blocks);
+  // Keep the memo’s existing compact scenario card contract: partial valuation facts belong in the source report.
+  const scenarioSummary = extractedValuation?.scenarios.length === 3 && extractedValuation.scenarios.every(item => item.terminal && item.cagr) ? extractedValuation : null;
   const decisionRange = sectionRange(blocks, /decision card/i);
   const modulesRange = sectionRange(
     blocks,

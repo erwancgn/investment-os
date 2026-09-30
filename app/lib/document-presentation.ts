@@ -1,4 +1,5 @@
 import type { RenderBlock } from "./notion-renderer";
+import { plainInlineText } from "./inline-format.ts";
 
 export type PresentationFact = { label: string; value: string };
 type PresentationOptions = { category?: string; handoffSummary?: string | null };
@@ -39,7 +40,7 @@ const factLabels = [
 ];
 
 export function isSummaryHeading(text: string) {
-  return summaryHeadingPattern.test(text.trim());
+  return summaryHeadingPattern.test(plainInlineText(text).trim());
 }
 
 function blockText(block: RenderBlock): string[] {
