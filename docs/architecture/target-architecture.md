@@ -1,6 +1,6 @@
 # Investment OS — Lot 2 : architecture cible
 
-Décision de conception du 30 septembre 2026, fondée sur la [baseline Sites v207](baseline.md) et la [debt map](debt-map.md), commit d'audit `ae8d566`. **Ce document décrit la cible ; aucune de ces extractions n'est encore implémentée.** La branche reste `chore/architecture-stabilization-mcp`, sans changement ni déploiement de l'application. Le checkpoint après ce lot conditionne le démarrage du Lot 3.
+Décision de conception du 30 septembre 2026, fondée sur la [baseline Sites v207](baseline.md) et la [debt map](debt-map.md), commit d'audit `ae8d566`. **Au checkpoint du Lot 2, aucune de ces extractions n'était encore implémentée.** Les contrats du Lot 3 sont depuis matérialisés dans les [contrats de domaine](domain-contracts.md); les migrations d’adapters, services et consommateurs restent à faire. La branche reste `chore/architecture-stabilization-mcp`, sans changement ni déploiement de l'application.
 
 Trois revues factuelles Luna ont couvert données/cache, renderer/mobile/tests et contrats/Core/MCP. L'orchestrateur a relu les conclusions, choisi les frontières et effectué la revue finale. Les notes de travail restent locales dans `outputs/lot1/` et `outputs/lot2/` ; les décisions revues sont celles de ce document.
 
@@ -43,7 +43,7 @@ Il n'y a pas de monorepo, de conteneur d'injection ou de repository générique 
 
 ## Contrats à figer au Lot 3
 
-Les noms ci-dessous définissent les responsabilités, pas une API TypeScript déjà créée. Les champs exhaustifs et fixtures seront arrêtés au Lot 3 à partir des consommateurs actuels.
+Les noms ci-dessous définissent les responsabilités. Les contrats versionnés et fixtures matérialisés au Lot 3 sont documentés dans les [contrats de domaine](domain-contracts.md); la politique Current y reste pure et non branchée aux adapters/consommateurs.
 
 | Contrat | Invariants |
 | --- | --- |
@@ -89,9 +89,9 @@ Les méthodes de lecture ciblent un ID, une compagnie et/ou une page bornée. El
 
 La sélection est un service unique du Core, après mapping des propriétés Current par l'adapter :
 
-- Une référence Current explicite et admissible est prioritaire. L'admissibilité appartient à la politique du Core, avec cohérence compagnie/famille/archive. Le memo exige déjà `Validated` et l'agent attendu ; les autres familles n'appliquent pas aujourd'hui uniformément ce filtre. Le Lot 3 doit figer leur matrice de statuts, notamment Draft/Rejected, sur des fixtures réelles avant bascule ; on ne généralise pas silencieusement la règle du memo.
+- Une référence Current explicite et admissible est prioritaire. L'admissibilité appartient à la politique du Core, avec cohérence compagnie/famille/archive. Le memo exige déjà `Validated` et l'agent attendu ; les autres familles n'appliquent pas aujourd'hui uniformément ce filtre. La matrice matérialisée au Lot 3 est décrite dans les [contrats de domaine](domain-contracts.md), avec des fixtures synthétiques avant validation de mapping réel.
 - Plusieurs références Current concurrentes, une référence renseignée dont le document est absent, non admissible ou contradictoire produisent un diagnostic de sélection. Aucune référence explicite invalide n'est remplacée silencieusement par le document le plus récent.
-- Quand aucune référence explicite n'existe, le fallback historique reste temporairement autorisé : filtres d'admissibilité puis ordre total par rang de fraîcheur validé, date effective documentée et ID stable. Le résultat expose `selectionReason: legacy_fallback`. Ce rang sera figé avec les fixtures au Lot 3 ; un tie-break ne peut comparer seulement le candidat `b`.
+- Quand aucune référence explicite n'existe, le fallback historique reste temporairement autorisé pour les familles ordinaires : filtres d'admissibilité puis ordre total par rang de fraîcheur validé, date effective documentée et ID stable. Le résultat expose `selectionReason: legacy_fallback`. CIO memo fait exception : sans Current explicite, le résultat est absent, conformément au lecteur actuel qui n'a pas de fallback.
 - Une analyse peut être liée à plusieurs compagnies ; la sélection Current est contextualisée par compagnie/famille et conserve la distinction memo CIO/décision Notion, même si les deux apparaissent dans Synthèse. Les archives gardent ID, contenu et provenance. Les conflits archive/Current sont visibles et ne réécrivent pas le snapshot.
 
 La priorité explicite corrige un comportement aujourd'hui ambigu ; sa migration demande des fixtures de conflits et une comparaison des sélections réelles. Un écart inexpliqué bloque la bascule. L'avertissement memo plus ancien qu'une analyse amont reste conservé et repose sur des dates explicites.
