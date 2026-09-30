@@ -1,6 +1,6 @@
 # Investment OS — Lot 2 : architecture cible
 
-Décision de conception du 30 septembre 2026, fondée sur la [baseline Sites v207](baseline.md) et la [debt map](debt-map.md), commit d'audit `ae8d566`. **Au checkpoint du Lot 2, aucune de ces extractions n'était encore implémentée.** Les contrats du Lot 3 sont depuis matérialisés dans les [contrats de domaine](domain-contracts.md); les migrations d’adapters, services et consommateurs restent à faire. La branche reste `chore/architecture-stabilization-mcp`, sans changement ni déploiement de l'application.
+Décision de conception du 30 septembre 2026, fondée sur la [baseline Sites v207](baseline.md) et la [debt map](debt-map.md), commit d'audit `ae8d566`. **Au checkpoint du Lot 2, aucune de ces extractions n'était encore implémentée.** Les contrats du Lot 3 sont depuis matérialisés dans les [contrats de domaine](domain-contracts.md); les migrations d’adapters, services et consommateurs restent à faire. La branche reste `chore/architecture-stabilization-mcp`. Le checkpoint du Lot 4 ci-dessous décrit sa migration applicative, sans déploiement.
 
 Trois revues factuelles Luna ont couvert données/cache, renderer/mobile/tests et contrats/Core/MCP. L'orchestrateur a relu les conclusions, choisi les frontières et effectué la revue finale. Les notes de travail restent locales dans `outputs/lot1/` et `outputs/lot2/` ; les décisions revues sont celles de ce document.
 
@@ -191,3 +191,46 @@ La largeur de la fourchette reflète surtout le profilage mémoire et les garant
 - Résultat : cible reviewable et plan de migration défini ; aucune correction applicative revendiquée. Dette/risques : ceux de la debt map, priorisés ci-dessus, restent ouverts.
 - Budget observé au checkpoint : compte Codex partagé à 54 % utilisés sur la fenêtre de cinq heures et 8 % sur la semaine ; un reset disponible, aucun utilisé. Ce relevé n'isole pas le coût du lot ni celui des agents.
 - Décision : arrêt au checkpoint ; recommandation GO Lot 3, sous réserve du GO utilisateur.
+
+
+## Checkpoint Lot 4 — renderer canonique
+
+Gate préalable : les livrables documentaires Lots 2/3.5 ont été revus, commités et poussés sous `0f9752f3d8a1e05290a733607e7cd0bcd4566c09`; local et Cloud étaient propres et alignés avant l’implémentation.
+
+Chemin obtenu : `CompanyDocument brut → normalizeAnalysisDocument → Analysis (contrat Lot 3 validé) → ViewModel → AnalysisReader → AnalysisBlockBody`. Le Mémo CIO conserve sa composition Decision Card/modules, avec le même corps canonique. Le ViewModel reprend résumé, faits, décision, raisonnement et membership scénarios/seuils du modèle canonique validé; les formats source conservent approximations, unités et espacements. Aucun branchement ticker/entreprise. Les formats Notion structurés et historiques HTML/Markdown passent par le dispatcher existant `parseNotionDocument`. Les previews utilisent le même normalizer; les réponses documentaires ne dupliquent plus texte brut/blocs/projection à côté du corps canonique.
+
+Fichiers applicatifs modifiés :
+- `app/components/analysis-reader.tsx`, `investment-memo-reader.tsx`, `analysis-presentation.tsx` : orchestration des compositions et rendu partagé des blocs canoniques.
+- `app/components/analysis-section-groups.tsx`, `notion-table.tsx`, `scenario-comparison.tsx`, `latest-info-card.tsx` : sections/tableaux typés, libellés métier et preview cohérent.
+- `app/lib/document-presentation.ts`, `notion-renderer.ts`, `notion-block-parser.ts`, `valuation-summary.ts` : normalisation unique, provenance, diagnostics, tableaux à deux colonnes, descendants/listes, scénarios indépendants de ponctuation et distinction CAGR actionnaire/EPS.
+- `app/lib/inline-segments.ts` (47 lignes, nouveau), `inline-format.ts` : extraction pure de la syntaxe inline existante puis rendu des segments; aucun parser de document supplémentaire.
+- `app/lib/investment-data.ts`, `company-preview.ts` : normalisation serveur et réponses compactes.
+- `core/contracts/analysis.ts` : extensions `.ts` de deux imports runtime, sans changement de contrat.
+- `tests/analysis-canonical-renderer.test.mjs` (328 lignes, nouveau), `tests/analysis-reference-fixtures.test.mjs`, `package.json` : 17 tests canoniques, migration des références vers le normalizer et enregistrement dans la suite.
+
+Validation : typecheck, build direct `bash scripts/sites-env.sh -- node_modules/.bin/vinext build`, `npm run validate:artifact`, lint des fichiers modifiés et 202/202 tests Node PASS dans `/private/tmp/investment-os-lot4-validation`, sans réinstallation. La commande `npm test` complète reste bloquée sur macOS par le wrapper exigeant GNU `timeout`; le chemin avec espaces conserve la limite de test documentée en baseline. Aucun contournement ni modification du test CSS Cloud; lockfile inchangé. Le résultat Cloud Lot 3.5 demeure distinct de cette preuve locale du Lot 4.
+
+Panel réel Notion : Advantest Valuation v9 (24/09), Nebius Q2 2026 (13/08), Booking Short v1 historique (11/08), TSMC Valuation v16 (22/09), NVIDIA Business v5 détenue mais Superseded (07/09), plus Advantest CIO historique (07/08). Validation du texte exporté HTML/Markdown; blocs Notion structurés/projections et toutes familles couverts par fixtures SSR. Aux viewports 360×800 et 390×844, toutes les sections se déplient et la largeur document reste égale au viewport. KPI/scénarios/seuils, tableaux et Decision Card vérifiés; aucun test sur matériel mobile physique. Captures PNG et mesures privées sous `outputs/lot4/`, ignorées par Git. La story ponctuelle, les rapports bruts et le log de debug sont supprimés après captures.
+
+Portfolio et Basket : références des composants de production à 360/390, sans débordement; suites métier PASS. IA : recherche démo NVIDIA, workflow Valorisation et aperçu du prompt vérifiés dans l’application Vite réelle à 360/390, sans ouverture de conversation externe. La story Shell/IA échoue sur `process is not defined` dans `next/image` (fichiers IA/Storybook inchangés); aucune modification de configuration ajoutée pour le contourner.
+
+Lot 5 : les anciens corps JSX Standard/Memo ont été remplacés. Garder les deux lecteurs de format, `RenderBlock`, `documentPresentation` et `extractValuationSummary`, encore consommés dans l’adaptation historique du normalizer; aucun de ces fichiers n’est déclaré mort. Restent à examiner les wrappers inline et l’union legacy de sections, ainsi que `readNotionStatus`/`NotionRelationRow` déjà prouvés morts au Lot 2. Toute suppression exige une recherche de consommateurs. Le GO provisoire est retiré par la revue stricte ci-dessous; Lot 5 non commencé. Aucun déploiement.
+
+
+### Revue stricte Lot 4 — NO-GO Lot 5
+
+Sites confirme la production v207, commit `bf77b919705127e42f880ca6d0785db4feffab85`, déploiement réussi le 29/09. Le chemin canonique Lot 4 est local et non déployé; la production exécute encore les lecteurs de la baseline. Aucun renderer/parser de document concurrent ajouté dans le diff local; les deux formats restent nécessaires.
+
+Blocage fonctionnel reproduit en normalisation et SSR : dans le raisonnement CIO, `[le rapport annuel](https://example.com/annual-report)` conserve son `href` dans le bloc canonique, mais `memo.reasoning` concatène seulement `segment.text`. Le bloc source est masqué et le HTML du lecteur ne contient plus l’URL. Cette régression doit être corrigée en conservant les blocs canoniques du raisonnement et en utilisant `AnalysisBlockBody`, puis couverte par un test SSR de lien source.
+
+Blocage de preuve : `outputs/lot4/portfolio-360.png` contient un spinner, pas un portefeuille chargé. La preuve visuelle Portfolio à 360 doit être refaite; cela ne prouve pas une régression du code. Les captures Basket/IA et Portfolio 390 sont exploitables. Le panel des six exports réels et la couverture structurée/projections par fixtures restent valides dans leurs limites; ils ne constituent pas une validation de production après déploiement.
+
+Les 202 tests existants passent et la copie de validation correspond aux sources, mais ne couvrent pas la perte de lien ci-dessus. Build direct/typecheck/artefact restent validés; limitations macOS/chemins avec espaces/Cloud CSS inchangées. Seuls `readNotionStatus` et `NotionRelationRow` sont déjà prouvés morts; wrappers inline/shortDate et union legacy nécessitent migration/recherche avant retrait. Aucune suppression ni changement applicatif pendant cette revue. NO-GO Lot 5 jusqu’à correction du lien, validation SSR et preuve Portfolio 360 chargée.
+
+### Clôture ciblée Lot 4.1 — GO Lot 5
+
+Le raisonnement CIO conserve désormais ses blocs canoniques et utilise `AnalysisBlockBody`; le lien est préservé après sérialisation API et rendu SSR. Correction limitée à `document-presentation.ts`, `investment-memo-reader.tsx`, au test SSR ciblé et au lien de la fixture Memo existante dans `stories/Reader.stories.tsx`.
+
+Les trois tests ciblés (lien CIO, compositions du lecteur, preview), le typecheck et le build direct passent. Vérification visuelle CIO à 360 px : lien visible dans « Raisonnement décisif ». Portfolio à 360 px : synthèse et positions chargées, aucun spinner ni débordement; la capture précédente montrait le chargement transitoire Storybook. Aucune correction Portfolio nécessaire. Captures sous `outputs/lot41/`, ignorées par Git.
+
+Les deux blocages de la revue précédente sont levés : GO Lot 5, avec recherche des consommateurs avant chaque suppression. Aucun nouveau renderer/parser, aucun déploiement, aucune revalidation complète du panel ni réaudit Basket/IA; limitations déjà documentées inchangées. Lot 5 non commencé.

@@ -1,11 +1,15 @@
 "use client";
 
 import { Fragment, useCallback, useRef, useState, type ReactNode, type SyntheticEvent } from "react";
+import type { AnalysisBlock, InlineSegment } from "../../core/contracts/analysis";
 import type { RenderBlock } from "../lib/notion-renderer";
-import { plainInlineText, renderInlineFormat } from "../lib/inline-format";
+import { plainInlineText, renderInlineFormat, renderInlineSegments } from "../lib/inline-format";
 
-type Entry = { block: RenderBlock; index: number };
-type Section = { title: string; id?: string; level: number; entries: Entry[]; children: Section[] };
+type Entry = { block: RenderBlock | AnalysisBlock; index: number };
+type FactGroup = { start: number; end: number; facts: { label: string; value: string; index: number }[] };
+const titleText = (text: string | InlineSegment[]) => typeof text === "string" ? plainInlineText(text) : text.map(segment => segment.text).join("");
+const titleBody = (text: string | InlineSegment[]) => typeof text === "string" ? renderInlineFormat(text) : renderInlineSegments(text);
+type Section = { title: string | InlineSegment[]; id?: string; level: number; entries: Entry[]; children: Section[] };
 
 function sectionHasContent(section: Section): boolean {
   return section.entries.length > 0 || section.children.some(sectionHasContent);
@@ -27,9 +31,10 @@ export function navigateToAnalysisSection(sectionId: string) {
 
 /** Group source blocks under their original headings without adding card surfaces. */
 export function AnalysisSectionGroups({
-  blocks, hidden, idForHeading, renderBlock, classForHeading,
+  blocks, hidden, idForHeading, renderBlock, classForHeading, factGroups = [],
 }: {
-  blocks: RenderBlock[];
+  blocks: (RenderBlock | AnalysisBlock)[];
+  factGroups?: FactGroup[];
   hidden: Set<number>;
   idForHeading: (index: number) => string;
   renderBlock: (entry: Entry) => ReactNode;
@@ -67,16 +72,9 @@ export function AnalysisSectionGroups({
   const renderSectionEntries = (entries: Entry[]) => {
     const output: ReactNode[] = [];
     for (let cursor = 0; cursor < entries.length;) {
-      const pairs: { label: string; value: string; index: number }[] = [];
-      let end = cursor;
-      while (end < entries.length) {
-        const entry = entries[end];
-        if (entry.block.type !== "paragraph") break;
-        const match = entry.block.text.match(/^(?:\*\*|__)?([^:：\n]{2,48}?)(?:\*\*|__)?\s*[:：]\s*(\S[\s\S]{0,159})$/);
-        if (!match) break;
-        pairs.push({ label: match[1].trim(), value: match[2].trim(), index: entry.index });
-        end++;
-      }
+      const group = factGroups.find(group => group.start === entries[cursor].index && group.facts.every((fact, offset) => entries[cursor + offset]?.index === fact.index));
+      const pairs = group?.facts ?? [];
+      const end = group ? entries.findIndex(entry => entry.index === group.end - 1) + 1 : cursor;
       if (pairs.length >= 3) {
         output.push(<dl className="analysis-key-facts" key={`key-facts-${pairs[0].index}`}>
           {pairs.map(pair => <div key={pair.index}><dt>{renderInlineFormat(pair.label)}:</dt><dd>{renderInlineFormat(pair.value)}</dd></div>)}
@@ -89,8 +87,8 @@ export function AnalysisSectionGroups({
     }
     return output;
   };
-  const renderDisclosure = (section: Section): ReactNode => <details onToggle={handleToggle} className={`analysis-section-group ${classForHeading?.(plainInlineText(section.title)) ?? ""}`.trim()} id={section.id} key={section.id ?? `${section.title}-context`}>
-    <summary><span role="heading" aria-level={section.level + 1}>{renderInlineFormat(section.title)}</span><svg viewBox="0 0 12 12" aria-hidden="true" focusable="false"><path d="m3.5 4.5 2.5 2.5 2.5-2.5" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" /></svg></summary>
+  const renderDisclosure = (section: Section): ReactNode => <details onToggle={handleToggle} className={`analysis-section-group ${classForHeading?.(titleText(section.title)) ?? ""}`.trim()} id={section.id} key={section.id ?? `${section.title}-context`}>
+    <summary><span role="heading" aria-level={section.level + 1}>{titleBody(section.title)}</span><svg viewBox="0 0 12 12" aria-hidden="true" focusable="false"><path d="m3.5 4.5 2.5 2.5 2.5-2.5" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" /></svg></summary>
     <div className="analysis-section-group-content">{renderSectionEntries(section.entries)}{section.children.filter(sectionHasContent).map(renderDisclosure)}</div>
   </details>;
 
@@ -105,8 +103,8 @@ export function AnalysisSectionGroups({
     if (root.level !== 1 || root.children.length === 0) return sectionHasContent(root) ? renderDisclosure(root) : null;
     const children = root.children.filter(sectionHasContent);
     if (!root.entries.length && !children.length) return null;
-    return <section className={`analysis-section-parent ${classForHeading?.(plainInlineText(root.title)) ?? ""}`.trim()} id={root.id} key={root.id ?? `${root.title}-${index}`}>
-      <h2>{renderInlineFormat(root.title)}</h2>
+    return <section className={`analysis-section-parent ${classForHeading?.(titleText(root.title)) ?? ""}`.trim()} id={root.id} key={root.id ?? `${root.title}-${index}`}>
+      <h2>{titleBody(root.title)}</h2>
       {root.entries.length > 0 && <div className="analysis-section-parent-content">{renderSectionEntries(root.entries)}</div>}
       {children.length > 0 && <div className="analysis-section-groups">{children.map(renderDisclosure)}</div>}
     </section>;

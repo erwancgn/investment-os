@@ -1,8 +1,9 @@
+import { plainInlineText } from "./inline-segments.ts";
 import type { RenderBlock } from "./notion-renderer";
 
 export type ValuationPresentation = {
   version: 2;
-  scenarios: { name: "Bear" | "Base" | "Bull"; terminal?: string; cagr?: string; sourceBlockIndexes: number[] }[];
+  scenarios: { name: "Bear" | "Base" | "Bull"; terminal?: string; terminalLabel?: string; cagr?: string; sourceBlockIndexes: number[] }[];
   horizon: string | null;
   referencePrice: string | null;
   referenceDate: string | null;
@@ -19,7 +20,7 @@ function scenarioName(value: string): typeof names[number] | null {
   if (/^(bull|haussier|favorable)$/.test(s)) return "Bull";
   return null;
 }
-function cleanCells(row: string[]) { return row.map(s => s.trim()); }
+function cleanCells(row: string[]) { return row.map(s => plainInlineText(s).trim()); }
 function money(value: string, fallback?: string) {
   const m = value.match(/(?:[~≈≃]\s*)?(?:\d[\d .,'’]*(?:[,.]\d+)?\s*(?:USD|EUR|GBP|CHF|CAD|JPY|SEK|TWD|[$€£¥])|[$€£¥]\s*\d[\d .,'’]*(?:[,.]\d+)?)/i);
   const raw = m ?? (fallback ? value.match(/^\s*(?:[~≈≃]\s*)?\d[\d .,'’]*(?:[,.]\d+)?\s*$/) : null);
@@ -28,8 +29,8 @@ function money(value: string, fallback?: string) {
   return c ? (currencyPattern.test(raw[0]) ? raw[0].trim() : `${raw[0].trim()} ${c.toUpperCase()}`) : null;
 }
 function cagr(value: string) { return /[-−+]?\s*\d[\d,.]*\s*%/.test(value) ? (value.match(/[-−+]?\s*\d[\d,.]*\s*%/)?.[0].trim() ?? null) : null; }
-function terminalLabel(s: string) { return /terminal price|target price|cours terminal|prix terminal|cours cible|prix cible|cible 20\d\d|prix objectif/i.test(s); }
-function cagrLabel(s: string) { return !/\b(?:ebit|ebitda|revenue|sales|marge|margins?|chiffre d'affaires|free cash flow|fcf)\b/i.test(s) && /cagr|annualized return|annualised return|return|rendement|taux annualis/i.test(s); }
+function terminalLabel(s: string) { return /terminal price|target price|cours terminal|prix terminal|cours cible|prix cible|cible 20\d\d|prix objectif|valeur (?:totale|20\d\d|terminale)/i.test(s); }
+function cagrLabel(s: string) { return !/\b(?:ebit|ebitda|eps|bpa|ca|revenue|sales|marge|margins?|chiffre d'affaires|free cash flow|fcf)\b/i.test(s) && /cagr|annualized return|annualised return|return|rendement|taux annualis/i.test(s); }
 function thresholdRates(text: string) { return [...new Set([...text.matchAll(/\b(10|12|15)\s*%/g)].map(match => `${match[1]} %`))]; }
 function thresholdPriceTokens(text: string) {
   return [...text.matchAll(/([~≈≃]?\s*\d[\d .,'’]*(?:[,.]\d+)?\s*(?:USD|EUR|GBP|CHF|CAD|JPY|SEK|TWD|[$€£¥])?)(?![\d.,]|\s*%)/gi)]
@@ -38,18 +39,18 @@ function thresholdPriceTokens(text: string) {
 function explicitRows(block: Extract<RenderBlock,{type:"table"}>, index: number) {
   const rows = block.rows.map(cleanCells).filter(r => r.some(Boolean) && !r.filter(Boolean).every(cell => /^:?-{3,}:?$/.test(cell)));
   if (!rows.length) return { scenarios: [], full: false };
-  let found: ValuationPresentation["scenarios"] = [];
+  const found: ValuationPresentation["scenarios"] = [];
   const header = rows[0];
   const scenarioCols = names.map(name => header.findIndex(cell => scenarioName(cell) === name));
   if (scenarioCols.every(i => i >= 0)) {
     const trow = rows.find(r => r.some(cell => terminalLabel(cell)));
-    const crow = rows.find(r => r.some(cell => cagrLabel(cell) && /%|cagr|rendement/i.test(cell)));
+    const crow = rows.find(r => cagrLabel(r[0] ?? ""));
     const currencies = new Set([...(trow ?? []).flatMap(v => v.match(currencyPattern) ?? [])].map(normalized));
     for (let i=0;i<3;i++) {
       const rowCurrency = trow?.find(cell => terminalLabel(cell))?.match(currencyPattern)?.[0];
       const terminal = trow && currencies.size <= 1 ? money(trow[scenarioCols[i]], rowCurrency) ?? undefined : undefined;
       const rate = crow ? cagr(crow[scenarioCols[i]] ?? "") ?? undefined : undefined;
-      if (terminal || rate) found.push({name:names[i], ...(terminal?{terminal}:{}), ...(rate?{cagr:rate}:{}), sourceBlockIndexes:[index]});
+      if (terminal || rate) found.push({name:names[i], ...(terminal?{terminal, terminalLabel: /dividendes|dividends/i.test(trow?.[0] ?? "") ? "Valeur à l’horizon, dividendes inclus" : "Prix terminal"}:{}), ...(rate?{cagr:rate}:{}), sourceBlockIndexes:[index]});
     }
     return {scenarios:found, full: !!trow && !!crow && found.length === 3 && currencies.size <= 1 && rows.length === 3};
   }
@@ -64,14 +65,14 @@ function explicitRows(block: Extract<RenderBlock,{type:"table"}>, index: number)
       const name = scenarioName(row[scenarioCol] ?? ""); if (!name) continue;
       const t = terminalCol >= 0 && !currencyConflict ? money(row[terminalCol] ?? "", declaredCurrency) : null;
       const r = cagrCol >= 0 ? cagr(row[cagrCol] ?? "") : null;
-      if (t || r) found.push({name, ...(t?{terminal:t}:{}), ...(r?{cagr:r}:{}), sourceBlockIndexes:[index]});
+      if (t || r) found.push({name, ...(t?{terminal:t, terminalLabel: /dividendes|dividends/i.test(header[terminalCol] ?? "") ? "Valeur à l’horizon, dividendes inclus" : "Prix terminal"}:{}), ...(r?{cagr:r}:{}), sourceBlockIndexes:[index]});
     }
-    return {scenarios:found, full: found.length === 3 && new Set(found.map(s=>s.name)).size === 3 && found.every(s=>s.terminal && s.cagr) && !currencyConflict && rows.length === 4};
+    return {scenarios:found, full: found.length === 3 && new Set(found.map(s=>s.name)).size === 3 && found.every(s=>s.terminal && s.cagr) && !currencyConflict && rows.length === 4 && rows.every(row => row.every((cell, column) => [scenarioCol, terminalCol, cagrCol].includes(column) || !cell))};
   }
   return {scenarios:[],full:false};
 }
 function referenceValues(blocks: RenderBlock[]) {
-  const text = blocks.flatMap(b => b.type === "table" ? b.rows.flat() : b.type === "list" ? b.items : "text" in b ? [b.text] : []).join(" · ");
+  const text = blocks.flatMap(b => b.type === "table" ? b.rows.flat() : b.type === "list" ? b.items : "text" in b ? [b.text] : []).map(plainInlineText).join(" · ");
   return {
     referencePrice: text.match(/(?:cours|prix)\s+(?:de\s+)?r[eé]f[eé]rence\s*[:：]\s*([\d][\d\s.,]*\s*(?:USD|EUR|GBP|CHF|CAD|JPY|SEK|TWD|[$€£¥]))/i)?.[1]?.trim() ?? null,
     referenceDate: text.match(/(?:cl[oô]ture(?:\s+[A-Z]{2,6})?\s+(?:du\s+)?|(?:cours|prix)\s+(?:de\s+)?r[eé]f[eé]rence\s+du\s+)(\d{1,2}[./-]\d{1,2}[./-]\d{4})/i)?.[1] ?? null,
@@ -130,16 +131,16 @@ export function extractValuationSummary(blocks: RenderBlock[]): ValuationPresent
     const b=blocks[i];
     if(b.type==="table") { const got=explicitRows(b,i); scenarios.push(...got.scenarios); if(got.full) scenarioPromoted.push(i); continue; }
     if(b.type==="paragraph") {
-      const rx=/\b(bear|base|bull|baissier|central|haussier)\b\s*:?\s*([^\n;|]+?)(?=\s*(?:[;|]|[.!?](?=\s|$)|$))/gi;
-      for(const m of b.text.matchAll(rx)) {
+      const rx=/\b(bear|base|bull|baissier|central|haussier)\b\s*[:：]?\s*([\s\S]*?)(?=\b(?:bear|base|bull|baissier|central|haussier)\b|$)/gi;
+      for(const m of plainInlineText(b.text).matchAll(rx)) {
         const name=scenarioName(m[1]);
         if(!name) continue;
-        const segment=m[2];
-        const terminalLabelMatch=segment.match(/(?:cible|target price|cours terminal|prix terminal)\s*[:=]?\s*([^,;]+?(?:USD|EUR|GBP|CHF|CAD|JPY|SEK|TWD|[$€£¥]))/i);
+        const segment=m[2].trim().replace(/[.;|!?]+$/, "").trim();
+        const terminalLabelMatch=segment.match(/(?:cible|target price|cours terminal|prix terminal)\s*[:=]?\s*([~≈≃]?\s*\d[\d . ,'’]*(?:USD|EUR|GBP|CHF|CAD|JPY|SEK|TWD|[$€£¥]))/i);
         const shareholderRate=segment.match(/(?:cagr\s+(?:actionnaire|(?:du\s+)?cours|total)|shareholder\s+cagr|shareholder return|stock return|rendement\s+(?:actionnaire|du cours|annualis[eé]))\s*[:=]?\s*([-−+]?\s*\d[\d,.]*\s*%)/i);
-        const operatingCagr=/\b(?:cagr|rendement)\s+(?:ebit|ebitda|revenus?|chiffre d'affaires|marges?|fcf)\b/i.test(segment);
+        const operatingCagr=/\b(?:cagr|rendement)\s+(?:ebit|ebitda|eps|bpa|ca|revenus?|chiffre d'affaires|marges?|fcf)\b/i.test(segment);
         const genericRate=!operatingCagr ? segment.match(/(?:cagr|annualized return|annualised return|return|rendement)\s*[:=]?\s*([-−+]?\s*\d[\d,.]*\s*%)/i) : null;
-        const compactScenarioMetrics=segment.match(/^\s*[:：]?\s*([-−+]?\s*\d[\d,.]*\s*(?:USD|EUR|GBP|CHF|CAD|JPY|SEK|TWD|[$€£¥]))\s*\/\s*([-−+]?\s*\d[\d,.]*\s*%)\s*$/i);
+        const compactScenarioMetrics=segment.match(/^\s*[:：]?\s*([~≈≃]?\s*[-−+]?\s*\d[\d,.]*\s*(?:USD|EUR|GBP|CHF|CAD|JPY|SEK|TWD|[$€£¥]))\s*\/\s*([-−+]?\s*\d[\d,.]*\s*%)\s*$/i);
         const terminal=terminalLabelMatch?money(terminalLabelMatch[1]):compactScenarioMetrics?money(compactScenarioMetrics[1]):null;
         const rateMatch=shareholderRate??genericRate??compactScenarioMetrics;
         const rate=rateMatch?cagr(compactScenarioMetrics && rateMatch===compactScenarioMetrics ? compactScenarioMetrics[2] : rateMatch[1]):null;

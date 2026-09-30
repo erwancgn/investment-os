@@ -3,20 +3,17 @@
 import React from "react";
 import type { CompanyDocument, ResearchDocument } from "../lib/investment-data";
 import type { AnalysisPresentationProjection, ProjectionStatus } from "../lib/presentation-projection";
-import { documentPresentation, hidePromotedTableSections } from "../lib/document-presentation";
+import { normalizeAnalysisDocument } from "../lib/document-presentation";
 import { analysisTypeLabel, compactDecisionLabel } from "../lib/decision-label";
-import { parseNotionDocument, type RenderBlock } from "../lib/notion-renderer";
 import { NotionTable } from "./notion-table";
-import { AnalysisFactGrid, AnalysisProjectionSummary, AnalysisReportHero, ProjectionStatusNotice } from "./analysis-presentation";
+import { AnalysisBlockBody, AnalysisFactGrid, AnalysisProjectionSummary, AnalysisReportHero, ProjectionStatusNotice } from "./analysis-presentation";
 import { AnalysisSectionGroups, navigateToAnalysisSection } from "./analysis-section-groups";
-import { renderInlineFormat } from "../lib/inline-format";
+import { renderInlineFormat, renderInlineSegments } from "../lib/inline-format";
 import { ScenarioComparison } from "./scenario-comparison";
-import { extractValuationSummary } from "../lib/valuation-summary";
 import {
   BackButton,
   Badge,
   DisclosureSurface,
-  SecondaryBlock,
 } from "./ui-primitives";
 
 type MemoDocument = (CompanyDocument | ResearchDocument) & { presentationStatus?: ProjectionStatus; presentationProjection?: AnalysisPresentationProjection | null };
@@ -35,141 +32,31 @@ const shortDate = (value: string | null) =>
       })
     : "Date non renseignée";
 
-function sectionRange(blocks: RenderBlock[], pattern: RegExp) {
-  const start = blocks.findIndex(
-    (block) => block.type === "heading" && pattern.test(block.text),
-  );
-  if (start < 0) return null;
-  const level = blocks[start].type === "heading" ? blocks[start].level : 1;
-  const offset = blocks
-    .slice(start + 1)
-    .findIndex((block) => block.type === "heading" && block.level <= level);
-  return { start, end: offset < 0 ? blocks.length : start + 1 + offset };
-}
-
-function firstTable(
-  blocks: RenderBlock[],
-  range: { start: number; end: number } | null,
-) {
-  if (!range) return null;
-  return (
-    blocks
-      .slice(range.start + 1, range.end)
-      .find(
-        (block): block is Extract<RenderBlock, { type: "table" }> =>
-          block.type === "table",
-      ) ?? null
-  );
-}
-
-function twoColumnFacts(table: Extract<RenderBlock, { type: "table" }> | null) {
-  if (!table) return [];
-  const rows = table.header ? table.rows.slice(1) : table.rows;
-  return rows
-    .filter((row) => row.length >= 2)
-    .map((row) => ({
-      label: row[0]?.trim(),
-      value: row.slice(1).join(" · ").trim(),
-    }))
-    .filter(
-      (item) =>
-        item.label &&
-        item.value &&
-        !/^(?:score|note)(?:\s|$)/i.test(item.label),
-    );
-}
-
-function blockText(block: RenderBlock) {
-  if (block.type === "list") return block.items.join(" ");
-  return "text" in block ? block.text : "";
-}
-
-function MemoBlock({ block, index }: { block: RenderBlock; index: number }) {
-  if (block.type === "heading") {
-    const Tag =
-      `h${Math.min(block.level + 1, 6)}` as keyof React.JSX.IntrinsicElements;
-    return (
-      <section className="analysis-section memo-section-heading">
-      <Tag>{inline(block.text)}</Tag>
-      </section>
-    );
-  }
-  if (block.type === "paragraph") return <p>{inline(block.text)}</p>;
-  if (block.type === "quote")
-    return <blockquote>{inline(block.text)}</blockquote>;
-  if (block.type === "callout")
-    return (
-      <SecondaryBlock className="notion-callout">
-        <span>{block.icon || "◆"}</span>
-        <p>{inline(block.text)}</p>
-      </SecondaryBlock>
-    );
-  if (block.type === "divider") return <hr />;
-  if (block.type === "list") {
-    const Tag = block.ordered ? "ol" : "ul";
-    return (
-      <Tag>
-        {block.items.map((item, itemIndex) => (
-          <li key={itemIndex}>{inline(item)}</li>
-        ))}
-      </Tag>
-    );
-  }
-  return (
-    <NotionTable
-      rows={block.rows}
-      header={block.header ?? true}
-      renderCell={inline}
-    />
-  );
-}
-
 export function InvestmentMemoReader({
   document,
+  normalized,
   companyName,
   onBack,
   embedded = false,
 }: {
   document: MemoDocument;
+  normalized: ReturnType<typeof normalizeAnalysisDocument>;
   companyName: string;
   onBack?: () => void;
   embedded?: boolean;
 }) {
   const isDemo = document.id.startsWith("demo-");
   const [openedAt] = React.useState(() => Date.now());
-  const blocks = React.useMemo(() => parseNotionDocument(
-    document.plainText,
-    document.title,
-    document.notionBlocks,
-  ), [document]);
-  const projection = document.presentationStatus === "valid" ? document.presentationProjection ?? null : null;
-  const documentSummary = projection ? null : documentPresentation(blocks, document.summary ?? "", { category: document.category, handoffSummary: document.handoffSummary });
+  const blocks = normalized.analysis.content.blocks;
+  const projection = normalized.analysis.projection.status === "valid" ? normalized.analysis.projection.projection : null;
+  const documentSummary = projection ? null : normalized.view;
   const presentation = documentSummary;
-  const extractedValuation = projection ? null : extractValuationSummary(blocks);
+  const extractedValuation = projection ? null : normalized.valuation;
   // Keep the memo’s existing compact scenario card contract: partial valuation facts belong in the source report.
   const scenarioSummary = extractedValuation?.scenarios.length === 3 && extractedValuation.scenarios.every(item => item.terminal && item.cagr) ? extractedValuation : null;
-  const decisionRange = sectionRange(blocks, /decision card/i);
-  const modulesRange = sectionRange(
-    blocks,
-    /handoffs disponibles|état des modules|modules disponibles/i,
-  );
-  const reasoningRange = sectionRange(blocks, /raisonnement décisif/i);
-  const decisionFacts = twoColumnFacts(firstTable(blocks, decisionRange));
-  const modulesTable = firstTable(blocks, modulesRange);
-  const reasoning = reasoningRange
-    ? blocks
-        .slice(reasoningRange.start + 1, reasoningRange.end)
-        .map(blockText)
-        .filter(Boolean)
-    : [];
-  const hidden = new Set(presentation?.hiddenIndexes ?? []);
-  if (scenarioSummary) hidePromotedTableSections(blocks, scenarioSummary.promotedBlockIndexes, hidden);
-  for (const range of [decisionRange, reasoningRange]) {
-    if (range)
-      for (let index = range.start; index < range.end; index++)
-        hidden.add(index);
-  }
-  const memoDate = document.date || document.lastEditedTime;
+  const { decisionFacts, modulesTable, reasoning } = normalized.memo;
+  const hidden = new Set([...(presentation?.hiddenIndexes ?? []), ...normalized.memo.hiddenIndexes]);
+  const memoDate = normalized.analysis.header.date || normalized.analysis.header.provenance.capturedAt;
   const ageDays = memoDate
     ? Math.floor((openedAt - new Date(memoDate).getTime()) / 86_400_000)
     : null;
@@ -180,7 +67,7 @@ export function InvestmentMemoReader({
     <section
       className="research-reader universal-analysis-reader investment-memo-reader"
       data-analysis-template="memo"
-      data-projection-status={document.presentationStatus ?? "unavailable"}
+      data-projection-status={normalized.analysis.projection.status}
     >
       {!embedded && onBack && <div className="detail-navigation"><BackButton onBack={onBack} ariaLabel="Retour à la fiche entreprise" /></div>}
       <AnalysisReportHero
@@ -201,7 +88,7 @@ export function InvestmentMemoReader({
           detail: stale ? `Mémo daté de ${ageDays} jours` : "Synthèse décisionnelle",
         }}
       />
-      {document.presentationStatus === "invalid" && <ProjectionStatusNotice status="invalid" />}
+      <ProjectionStatusNotice status={normalized.analysis.projection.status} diagnostics={normalized.analysis.diagnostics} />
 
       <div className="notion-layout universal-analysis-layout">
         <article className="notion-page universal-analysis-page memo-page">
@@ -251,9 +138,7 @@ export function InvestmentMemoReader({
           {reasoning.length > 0 && (
             <section className="memo-reasoning">
               <small>Raisonnement décisif</small>
-              {reasoning.map((text, index) => (
-                <p key={index}>{inline(text)}</p>
-              ))}
+              {reasoning.map(block => <AnalysisBlockBody key={block.id} block={block} memo />)}
             </section>
           )}
           {scenarioSummary && <ScenarioComparison summary={scenarioSummary} />}
@@ -275,7 +160,7 @@ export function InvestmentMemoReader({
               <NotionTable
                 rows={modulesTable.rows}
                 header={modulesTable.header ?? true}
-                renderCell={inline}
+                renderCell={renderInlineSegments}
               />
             </DisclosureSurface>
           )}
@@ -286,13 +171,13 @@ export function InvestmentMemoReader({
               block.level <= 2 &&
               !hidden.has(index) ? (
                 <a key={index} href={`#${block.id ?? `memo-heading-${index}`}`} onClick={event => { event.preventDefault(); navigateToAnalysisSection(block.id ?? `memo-heading-${index}`); }}>
-                  {block.text}
+                  {renderInlineSegments(block.text)}
                 </a>
               ) : null,
             )}
           </nav>
 
-          <AnalysisSectionGroups blocks={blocks} hidden={hidden} idForHeading={index => `memo-heading-${index}`} renderBlock={({ block, index }) => <MemoBlock block={block} index={index} />} />
+          <AnalysisSectionGroups blocks={blocks} hidden={hidden} factGroups={normalized.view.factGroups} idForHeading={index => `memo-heading-${index}`} renderBlock={({ block }) => <AnalysisBlockBody block={block as typeof blocks[number]} memo />} />
 
           <DisclosureSurface
             className="analysis-source-details memo-traceability"

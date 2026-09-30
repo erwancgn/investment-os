@@ -16,8 +16,8 @@ import {
   type Validator,
   validateDiagnostic,
   validateProvenance,
-} from "./common";
-import { validatePresentationProjection, type AnalysisPresentationProjection } from "./presentation-projection";
+} from "./common.ts";
+import { validatePresentationProjection, type AnalysisPresentationProjection } from "./presentation-projection.ts";
 
 export type AnalysisFamily = "business" | "valuation" | "short" | "portfolio" | "cio_memo" | "decision" | "earnings" | "generic" | "unknown";
 export type AnalysisSourceKind = "analysis" | "decision";

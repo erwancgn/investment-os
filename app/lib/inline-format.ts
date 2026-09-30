@@ -1,42 +1,24 @@
 import { createElement, Fragment, type ReactNode } from "react";
+import type { InlineSegment } from "../../core/contracts/analysis";
+import { inlineSegments } from "./inline-segments.ts";
 
-const MARKDOWN_PART = /(<strong\b[^>]*>[\s\S]+?<\/strong\s*>|<b\b[^>]*>[\s\S]+?<\/b\s*>|<em\b[^>]*>[\s\S]+?<\/em\s*>|<i\b[^>]*>[\s\S]+?<\/i\s*>|\*\*\*[\s\S]+?\*\*\*|___[\s\S]+?___|\*\*[\s\S]+?\*\*|__[\s\S]+?__|~~[\s\S]+?~~|`[^`\n]+`|\*[^*\n]+\*|_[^_\n]+_|\[[^\]]+\]\([^)]+\))/gi;
-
-export function plainInlineText(value: string): string {
-  return value
-    .replace(/\*\*\*([\s\S]+?)\*\*\*/g, "$1")
-    .replace(/___([\s\S]+?)___/g, "$1")
-    .replace(/\*\*([\s\S]+?)\*\*/g, "$1")
-    .replace(/__([\s\S]+?)__/g, "$1")
-    .replace(/~~([\s\S]+?)~~/g, "$1")
-    .replace(/`([^`\n]+)`/g, "$1")
-    .replace(/(?<!\*)\*([^*\n]+)\*(?!\*)/g, "$1")
-    .replace(/(?<!_)_([^_\n]+)_(?!_)/g, "$1")
-    .replace(/<\/?\s*(?:strong|b|em|i)\b[^>]*>/gi, "");
-}
+export { plainInlineText } from "./inline-segments.ts";
 
 /** Render the supported inline emphasis syntax into semantic HTML elements. */
 export function renderInlineFormat(value: string): ReactNode[] {
-  return value.split(MARKDOWN_PART).filter(Boolean).map((part, index) => {
-    const htmlEmphasis = part.match(/^<(strong|b|em|i)\b[^>]*>([\s\S]+)<\/\1\s*>$/i);
-    if (htmlEmphasis) {
-      const tag = /^(?:strong|b)$/i.test(htmlEmphasis[1]) ? "strong" : "em";
-      return createElement(tag, { key: index }, renderInlineFormat(htmlEmphasis[2]));
+  return renderInlineSegments(inlineSegments(value));
+}
+
+export function renderInlineSegments(segments: InlineSegment[]): ReactNode[] {
+  return segments.map((segment, index) => {
+    let element: ReactNode = segment.text;
+    if (segment.marks.includes("code")) element = createElement("code", null, element);
+    else {
+      if (segment.marks.includes("italic")) element = createElement("em", null, element);
+      if (segment.marks.includes("bold")) element = createElement("strong", null, element);
+      if (segment.marks.includes("strikethrough")) element = createElement("del", null, element);
     }
-    if ((part.startsWith("***") && part.endsWith("***")) || (part.startsWith("___") && part.endsWith("___"))) {
-      return createElement("strong", { key: index }, createElement("em", null, renderInlineFormat(part.slice(3, -3))));
-    }
-    if ((part.startsWith("**") && part.endsWith("**")) || (part.startsWith("__") && part.endsWith("__"))) {
-      return createElement("strong", { key: index }, renderInlineFormat(part.slice(2, -2)));
-    }
-    if (part.startsWith("~~") && part.endsWith("~~")) return createElement("del", { key: index }, renderInlineFormat(part.slice(2, -2)));
-    if ((part.startsWith("*") && part.endsWith("*")) || (part.startsWith("_") && part.endsWith("_"))) {
-      return createElement("em", { key: index }, renderInlineFormat(part.slice(1, -1)));
-    }
-    if (part.startsWith("`") && part.endsWith("`")) return createElement("code", { key: index }, part.slice(1, -1));
-    const link = part.match(/^\[([^\]]+)\]\(([^)]+)\)$/);
-    if (link) return createElement("a", { href: link[2], target: "_blank", rel: "noreferrer", key: index }, renderInlineFormat(link[1]));
-    // A malformed bold delimiter must not leak literal ** into an analysis.
-    return createElement(Fragment, { key: index }, part.replace(/\*\*/g, "").replace(/<\/?\s*(?:strong|b|em|i)\b[^>]*>/gi, ""));
+    if (segment.href) element = createElement("a", { href: segment.href, target: "_blank", rel: "noreferrer" }, element);
+    return createElement(Fragment, { key: index }, element);
   });
 }

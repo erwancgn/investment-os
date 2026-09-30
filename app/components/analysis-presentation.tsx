@@ -1,11 +1,33 @@
 "use client";
 
 import type { ReactNode } from "react";
+import type { Diagnostic } from "../../core/contracts/common";
+import type { AnalysisBlock } from "../../core/contracts/analysis";
 import type { PresentationFact } from "../lib/document-presentation";
 import type { AnalysisPresentationProjection, ProjectionFact, ProjectionMetric, ProjectionStatus } from "../lib/presentation-projection";
 import { isPriorityPresentationFact, splitPresentationFactValue } from "../lib/document-presentation";
-import { renderInlineFormat } from "../lib/inline-format";
-import { PrimaryBlock } from "./ui-primitives";
+import { renderInlineFormat, renderInlineSegments } from "../lib/inline-format";
+import { PrimaryBlock, SecondaryBlock } from "./ui-primitives";
+import { NotionTable } from "./notion-table";
+
+/** One canonical body dispatcher for Standard, CIO and decision documents. */
+export function AnalysisBlockBody({ block, memo = false }: { block: AnalysisBlock; memo?: boolean }) {
+  if (block.type === "heading") {
+    const Tag = `h${Math.min(block.level + 1, 6)}` as keyof React.JSX.IntrinsicElements;
+    return <section className={`analysis-section${memo ? " memo-section-heading" : ""}`}><Tag>{renderInlineSegments(block.text)}</Tag></section>;
+  }
+  if (block.type === "paragraph") return <p>{renderInlineSegments(block.text)}</p>;
+  if (block.type === "quote") return <blockquote>{renderInlineSegments(block.text)}</blockquote>;
+  if (block.type === "callout") return <SecondaryBlock className="notion-callout"><span>{block.icon || "◆"}</span><p>{renderInlineSegments(block.text)}</p></SecondaryBlock>;
+  if (block.type === "divider") return <hr />;
+  if (block.type === "list") {
+    const Tag = block.ordered ? "ol" : "ul";
+    return <Tag>{block.items.map((item, index) => <li key={index}>{renderInlineSegments(item)}</li>)}</Tag>;
+  }
+  if (block.type === "unsupported") return <p role="note" data-unsupported-block={block.sourceType}>{block.text || block.diagnostic.message}</p>;
+  if (block.type === "table") return <NotionTable rows={block.rows} header={block.header} renderCell={renderInlineSegments} />;
+  return null;
+}
 
 type AnalysisOutcome = {
   label: string;
@@ -82,11 +104,16 @@ function projectionValue(value: string | number | null, unit: string | null) {
   return unit ? `${formatted} ${unit}` : formatted;
 }
 
+function orderedProjectionSources(projection: AnalysisPresentationProjection) {
+  return [...projection.sources].sort((a, b) => Date.parse(b.retrievedAt) - Date.parse(a.retrievedAt) || a.id.localeCompare(b.id));
+}
+
 function projectionCitations(evidenceIds: string[], projection: AnalysisPresentationProjection) {
+  const sources = orderedProjectionSources(projection);
   const citations = evidenceIds.flatMap(id => {
     const evidence = projection.evidence.find(item => item.id === id);
-    const sourceIndex = evidence ? projection.sources.findIndex(item => item.id === evidence.sourceId) : -1;
-    return sourceIndex < 0 ? [] : [{ sourceId: projection.sources[sourceIndex].id, label: sourceIndex + 1 }];
+    const sourceIndex = evidence ? sources.findIndex(item => item.id === evidence.sourceId) : -1;
+    return sourceIndex < 0 ? [] : [{ sourceId: sources[sourceIndex].id, label: sourceIndex + 1 }];
   });
   return citations.length ? <span className="projection-citations">{citations.map((citation, index) => <a key={`${citation.sourceId}-${index}`} href={`#analysis-projection-source-${citation.sourceId}`}>[{citation.label}]</a>)}</span> : null;
 }
@@ -108,7 +135,7 @@ function factRow(fact: ProjectionFact, projection: AnalysisPresentationProjectio
 
 /** Compact evidence-linked fields; the synced Notion blocks remain the article body. */
 export function AnalysisProjectionSummary({ projection }: { projection: AnalysisPresentationProjection }) {
-  const sources = [...projection.sources].sort((a, b) => Date.parse(b.retrievedAt) - Date.parse(a.retrievedAt));
+  const sources = orderedProjectionSources(projection);
   const latestRetrievedAt = sources[0]?.retrievedAt ?? null;
   const unknownFreshness = sources.filter(source => source.freshness === "unknown").length;
   const knownFacts = projection.facts.filter(fact => fact.status === "known");
@@ -147,7 +174,10 @@ export function AnalysisProjectionSummary({ projection }: { projection: Analysis
   </div>;
 }
 
-export function ProjectionStatusNotice({ status }: { status?: ProjectionStatus }) {
-  if (status === "invalid") return <p className="projection-status-notice" data-projection-status="invalid">La synthèse structurée est indisponible. Le rapport source reste affiché.</p>;
-  return null;
+export function ProjectionStatusNotice({ status, diagnostics = [] }: { status?: ProjectionStatus; diagnostics?: Diagnostic[] }) {
+  const sourceDiagnostics = diagnostics.filter(diagnostic => diagnostic.code === "invalid_source_date");
+  return <>
+    {status === "invalid" && <p className="projection-status-notice" data-projection-status="invalid">La synthèse structurée est indisponible. Le rapport source reste affiché.</p>}
+    {sourceDiagnostics.map(diagnostic => <p key={diagnostic.code} className="projection-status-notice" role="note">{diagnostic.message}</p>)}
+  </>;
 }

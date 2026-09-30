@@ -485,11 +485,13 @@ test("company and analysis layouts preserve the Notion parser contract", async (
   assert.match(companySource, /company-history-details/);
   assert.match(companySource, /docs\.map\(\(?doc\)? => \(?\s*<DocumentRow/);
   assert.match(companySource, /<DocumentHistory docs=\{archives\}/);
-  assert.match(readerSource, /parseNotionDocument\(document\.plainText, document\.title, document\.notionBlocks\)/);
+  assert.match(readerSource, /document\.normalizedAnalysis \?\? normalizeAnalysisDocument\(document\)/);
+  assert.match(await readFile(presentationUrl, "utf8"), /parseNotionDocument\(document\.plainText, document\.title, document\.notionBlocks\)/);
   assert.match(readerSource, /analysis-source-details/);
   assert.match(readerSource, /scenarioKind\(title\)/);
   assert.match(readerSource, /<AnalysisSectionGroups blocks=\{blocks\} hidden=\{hidden\}/);
-  assert.match(readerSource, /<NotionTable/);
+  assert.match(readerSource, /<AnalysisBlockBody/);
+  assert.match(await readFile(analysisPresentationUrl, "utf8"), /<NotionTable/);
 });
 
 test("all canonical analysis families share one summary presentation contract", async () => {
@@ -551,7 +553,7 @@ test("standard analysis hero uses concise titles and formats scores without a du
   assert.match(standardReader, /<Badge>\{document\.agent\}<\/Badge>/);
   assert.match(standardReader, /<Badge tone=\{document\.status/);
   assert.match(standardReader, /title=\{analysisTypeLabel\(document\)\}/);
-  assert.match(standardReader, /subtitle=\{<>\{companyName\} · \{shortDate\(document\.date \|\| document\.lastEditedTime\)\}<\/?>\}/);
+  assert.match(standardReader, /subtitle=\{<>\{companyName\} · \{shortDate\(normalized\.analysis\.header\.date \|\| normalized\.analysis\.header\.provenance\.capturedAt\)\}<\/?>\}/);
   assert.match(standardReader, /const formattedScore = scored \? formatAnalysisScore\(document\.score\) : null/);
   assert.match(standardReader, /label: "Score", value: formattedScore/);
   assert.match(standardReader, /detail: formattedScore && formattedScore !== "—" \? formattedScore : undefined/);
@@ -587,7 +589,7 @@ test("Investment Memo CIO has a dedicated decision view without a numeric memo s
   assert.match(memoSource, /extractedValuation\?\.scenarios\.length === 3[\s\S]*every\(item => item\.terminal && item\.cagr\)/);
   assert.match(memoSource, /Raisonnement décisif/);
   assert.match(memoSource, /État des quatre modules/);
-  assert.match(memoSource, /!\/\^\(\?:score\|note\)/);
+  assert.match(await readFile(presentationUrl, "utf8"), /!\/\^\(\?:score\|note\)/);
   assert.doesNotMatch(memoSource, /document\.score/);
   assert.doesNotMatch(await readFile(pageUrl, "utf8"), /AnalysisHub|NotionAnalyses/);
 });
@@ -596,13 +598,15 @@ test("Notion tables use one adaptive reusable component", async () => {
   const tableSource = await readFile(notionTableUrl, "utf8");
   const readerSource = await readFile(analysisReaderUrl, "utf8");
   const memoSource = await readFile(memoReaderUrl, "utf8");
+  const sharedBodySource = await readFile(new URL("../app/components/analysis-presentation.tsx", import.meta.url), "utf8");
   const globalsSource = await readFile(globalsUrl, "utf8");
   assert.match(tableSource, /export function NotionTable/);
   assert.match(tableSource, /--notion-columns/);
   assert.match(tableSource, /Tableau défilable horizontalement/);
   assert.match(tableSource, /notion-table-wide/);
-  assert.match(readerSource, /<NotionTable/);
-  assert.match(memoSource, /<NotionTable/);
+  assert.match(readerSource, /<AnalysisBlockBody/);
+  assert.match(memoSource, /<AnalysisBlockBody/);
+  assert.match(sharedBodySource, /<NotionTable/);
   assert.doesNotMatch(memoSource, /surfaceForCompact/);
   assert.match(globalsSource, /\.notion-table \{[\s\S]*table-layout: fixed/);
   assert.match(globalsSource, /\.notion-table-wrap \{[\s\S]*overflow-x: hidden/);
@@ -1046,7 +1050,11 @@ test("analysis sections render H1-only roots and retain Advantest H2/H3 content"
     const renderBlock = ({ block, index }) => block.type === "paragraph"
       ? createElement("p", { key: index }, block.text)
       : block.type === "heading" ? createElement(`h${block.level}`, { key: index }, block.text) : null;
-    const render = blocks => renderToStaticMarkup(createElement(AnalysisSectionGroups, { blocks, hidden: new Set(), idForHeading: i => `section-${i}`, renderBlock }));
+    const { normalizeAnalysisDocument } = await import("../app/lib/document-presentation.ts");
+    const render = blocks => {
+      const normalized = normalizeAnalysisDocument({ id: "section-test", title: "Sections", category: "analyses", lastEditedTime: "2026-09-30T10:00:00Z", relations: [], plainText: blocks.map(block => block.type === "heading" ? `${"#".repeat(block.level)} ${block.text}` : block.text).join("\n\n") });
+      return renderToStaticMarkup(createElement(AnalysisSectionGroups, { blocks, factGroups: normalized.view.factGroups, hidden: new Set(), idForHeading: i => `section-${i}`, renderBlock }));
+    };
     const amazon = render([
       { type: "heading", level: 1, id: "investment-card", text: "Investment Card" },
       { type: "paragraph", text: "Business model : Fort" },

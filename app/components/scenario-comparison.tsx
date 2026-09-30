@@ -17,7 +17,7 @@ export function ScenarioComparison({ summary, showThresholds = false }: { summar
       <div className="analysis-scenario-cards">{summary.scenarios.map(scenario => {
         return <div className={`analysis-scenario-card${scenario.name === "Base" ? " is-base" : ""}`} key={scenario.name}>
           <h3>{scenario.name}</h3>
-          <dl><div><dt>Prix terminal</dt><dd>{scenario.terminal ?? "Non renseigné"}</dd></div><div><dt>CAGR annualisé</dt><dd>{scenario.cagr ? `${scenario.cagr}/an` : "Non renseigné"}</dd></div></dl>
+          <dl><div><dt>{scenario.terminalLabel ?? "Prix terminal"}</dt><dd>{scenario.terminal ?? "Non renseigné"}</dd></div><div><dt>CAGR annualisé</dt><dd>{scenario.cagr ? `${scenario.cagr}/an` : "Non renseigné"}</dd></div></dl>
         </div>;
       })}</div>
       <p>Les prix terminaux sont des estimations, distinctes du cours de référence et des seuils d’entrée.</p>
