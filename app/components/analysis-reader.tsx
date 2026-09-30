@@ -14,11 +14,6 @@ import { BackButton, Badge, DisclosureSurface, MetadataGrid } from "./ui-primiti
 
 type AnalysisDoc = (CompanyDocument | ResearchDocument) & { presentationStatus?: ProjectionStatus; presentationProjection?: AnalysisPresentationProjection | null };
 
-function inline(text: string) {
-  text = text.replace(/\\~/g, "~");
-  return renderInlineFormat(text);
-}
-
 const shortDate = (value: string | null) =>
   value
     ? new Date(value).toLocaleDateString("fr-FR", {
@@ -168,11 +163,11 @@ function StandardAnalysisReader({ document, normalized, companyName, onBack, emb
               <section aria-labelledby="analysis-tldr">
                 <span id="analysis-tldr">TL;DR</span>
                 {presentation.summaryItems.length === 1 ? (
-                  <p>{inline(presentation.summaryItems[0])}</p>
+                  <p>{renderInlineFormat(presentation.summaryItems[0])}</p>
                 ) : (
                   <ul>
                     {presentation.summaryItems.map((item, index) => (
-                      <li key={index}>{inline(item)}</li>
+                      <li key={index}>{renderInlineFormat(item)}</li>
                     ))}
                   </ul>
                 )}
@@ -184,12 +179,12 @@ function StandardAnalysisReader({ document, normalized, companyName, onBack, emb
               ariaLabel="Repères du document"
               category={templateKind}
               facts={presentation.facts}
-              renderValue={inline}
+              renderValue={renderInlineFormat}
             />
           )}
           {scenarioSummary && <ScenarioComparison summary={scenarioSummary} showThresholds />}
           {document.sourceKey === "decisions" && document.decision && <DecisionTemplate decision={document.decision} />}
-          <AnalysisSectionGroups blocks={blocks} hidden={hidden} factGroups={normalized.view.factGroups} idForHeading={index => `analysis-heading-${index}`} classForHeading={title => { const scenario = scenarioKind(title); return scenario ? `analysis-scenario analysis-scenario-${scenario}` : ""; }} renderBlock={({ block }) => <AnalysisBlockBody block={block as typeof blocks[number]} />} />
+          <AnalysisSectionGroups blocks={blocks} hidden={hidden} factGroups={normalized.view.factGroups} idForHeading={index => `analysis-heading-${index}`} classForHeading={title => { const scenario = scenarioKind(title); return scenario ? `analysis-scenario analysis-scenario-${scenario}` : ""; }} renderBlock={({ block }) => <AnalysisBlockBody block={block} />} />
           <DisclosureSurface
             className="analysis-source-details"
             summary={
@@ -209,7 +204,7 @@ function StandardAnalysisReader({ document, normalized, companyName, onBack, emb
                 {headings.length ? (
                   headings.map((heading) => (
                     <a href={`#${heading.id}`} onClick={event => { event.preventDefault(); navigateToAnalysisSection(heading.id); }} key={heading.index}>
-                      {inline(heading.text)}
+                      {renderInlineFormat(heading.text)}
                     </a>
                   ))
                 ) : (

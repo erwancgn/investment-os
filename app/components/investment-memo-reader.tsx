@@ -18,11 +18,6 @@ import {
 
 type MemoDocument = (CompanyDocument | ResearchDocument) & { presentationStatus?: ProjectionStatus; presentationProjection?: AnalysisPresentationProjection | null };
 
-function inline(text: string) {
-  text = text.replace(/\\~/g, "~");
-  return renderInlineFormat(text);
-}
-
 const shortDate = (value: string | null) =>
   value
     ? new Date(value).toLocaleDateString("fr-FR", {
@@ -98,11 +93,11 @@ export function InvestmentMemoReader({
               <section aria-labelledby="memo-tldr">
                 <span id="memo-tldr">TL;DR</span>
                 {presentation.summaryItems.length === 1 ? (
-                  <p>{inline(presentation.summaryItems[0])}</p>
+                  <p>{renderInlineFormat(presentation.summaryItems[0])}</p>
                 ) : (
                   <ul>
                     {presentation.summaryItems.map((item, index) => (
-                      <li key={index}>{inline(item)}</li>
+                      <li key={index}>{renderInlineFormat(item)}</li>
                     ))}
                   </ul>
                 )}
@@ -126,7 +121,7 @@ export function InvestmentMemoReader({
                 ariaLabel="Decision Card du Mémo CIO"
                 category="memo"
                 facts={decisionFacts}
-                renderValue={inline}
+                renderValue={renderInlineFormat}
               />
             ) : (
               <p className="generic-empty">
@@ -177,7 +172,7 @@ export function InvestmentMemoReader({
             )}
           </nav>
 
-          <AnalysisSectionGroups blocks={blocks} hidden={hidden} factGroups={normalized.view.factGroups} idForHeading={index => `memo-heading-${index}`} renderBlock={({ block }) => <AnalysisBlockBody block={block as typeof blocks[number]} memo />} />
+          <AnalysisSectionGroups blocks={blocks} hidden={hidden} factGroups={normalized.view.factGroups} idForHeading={index => `memo-heading-${index}`} renderBlock={({ block }) => <AnalysisBlockBody block={block} memo />} />
 
           <DisclosureSurface
             className="analysis-source-details memo-traceability"

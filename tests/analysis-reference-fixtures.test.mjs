@@ -1048,12 +1048,15 @@ test("analysis sections render H1-only roots and retain Advantest H2/H3 content"
       import("react"), import("react-dom/server"), import(outputFile.href),
     ]);
     const renderBlock = ({ block, index }) => block.type === "paragraph"
-      ? createElement("p", { key: index }, block.text)
-      : block.type === "heading" ? createElement(`h${block.level}`, { key: index }, block.text) : null;
-    const { normalizeAnalysisDocument } = await import("../app/lib/document-presentation.ts");
+      ? createElement("p", { key: index }, block.text.map(segment => segment.text).join(""))
+      : block.type === "heading" ? createElement(`h${block.level}`, { key: index }, block.text.map(segment => segment.text).join("")) : null;
+    const [{ normalizeAnalysisDocument }, { canonicalAnalysisContent }] = await Promise.all([
+      import("../app/lib/document-presentation.ts"), import("../app/lib/notion-renderer.ts"),
+    ]);
     const render = blocks => {
       const normalized = normalizeAnalysisDocument({ id: "section-test", title: "Sections", category: "analyses", lastEditedTime: "2026-09-30T10:00:00Z", relations: [], plainText: blocks.map(block => block.type === "heading" ? `${"#".repeat(block.level)} ${block.text}` : block.text).join("\n\n") });
-      return renderToStaticMarkup(createElement(AnalysisSectionGroups, { blocks, factGroups: normalized.view.factGroups, hidden: new Set(), idForHeading: i => `section-${i}`, renderBlock }));
+      const canonicalBlocks = canonicalAnalysisContent("section-test", blocks).blocks;
+      return renderToStaticMarkup(createElement(AnalysisSectionGroups, { blocks: canonicalBlocks, factGroups: normalized.view.factGroups, hidden: new Set(), idForHeading: i => `section-${i}`, renderBlock }));
     };
     const amazon = render([
       { type: "heading", level: 1, id: "investment-card", text: "Investment Card" },

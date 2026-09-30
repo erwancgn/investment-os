@@ -234,3 +234,22 @@ Le raisonnement CIO conserve désormais ses blocs canoniques et utilise `Analysi
 Les trois tests ciblés (lien CIO, compositions du lecteur, preview), le typecheck et le build direct passent. Vérification visuelle CIO à 360 px : lien visible dans « Raisonnement décisif ». Portfolio à 360 px : synthèse et positions chargées, aucun spinner ni débordement; la capture précédente montrait le chargement transitoire Storybook. Aucune correction Portfolio nécessaire. Captures sous `outputs/lot41/`, ignorées par Git.
 
 Les deux blocages de la revue précédente sont levés : GO Lot 5, avec recherche des consommateurs avant chaque suppression. Aucun nouveau renderer/parser, aucun déploiement, aucune revalidation complète du panel ni réaudit Basket/IA; limitations déjà documentées inchangées. Lot 5 non commencé.
+
+### Clôture Lot 5 — nettoyage avec preuves
+
+Reprise locale depuis `7e988b65ca7103c153835ed76740860134de4630`. Les six lignes retirées dans Cloud ont été reprises ici après vérification; le premier bilan Cloud était incomplet pour clôturer ce lot. Sites reste à la version sauvegardée v207, source de la baseline, à la vérification du 30/09.
+
+| Catégorie | Retrait ou conservation vérifié |
+| --- | --- |
+| Renderers | Le callback Standard et `MemoBlock` ont déjà été remplacés au Lot 4. Aucun ancien corps restant; `AnalysisBlockBody` est partagé par les deux compositions actives. |
+| Parsers | Garder `parseNotionBlocks` et `parseNotionText`, appelés par `parseNotionDocument`; structuré partiel et rapports historiques restent couverts. Le dispatcher et le normalizer ne sont pas des parsers concurrents. |
+| Helpers | Retirer `readNotionStatus`, sans référence; garder le client actif `readBrowserNotionStatus`. Retirer les deux wrappers `inline()`: `renderInlineFormat` appelle déjà `inlineSegments`, qui traite l’échappement de tilde. Garder les dates encore appelées. |
+| Compatibilité/types/imports | `AnalysisSectionGroups` reçoit uniquement des `AnalysisBlock[]` en production. Retirer son union `RenderBlock`, les branches de titre string, les imports associés et deux casts des lecteurs. Migrer le test SSR historique avec `canonicalAnalysisContent`, IDs et assertions H1/H2/H3/faits conservés. Retirer `NotionRelationRow`, sans consommateur. |
+| Fallbacks | Garder structuré vide/partiel vers texte, projection absente/invalide, résumé absent et scénarios partiels: corps, diagnostics et sources restent nécessaires. `documentPresentation` et `extractValuationSummary` restent appelés par le normalizer; aucune suppression de fichier justifiée. |
+| CSS | Audits dead CSS, gouvernance et ownership conformes; zéro candidat supprimable. Les styles ciblent encore le DOM canonique, responsive et focus inclus. Aucun CSS retiré. |
+
+Mesures hors tests/docs: **20 lignes ajoutées, 37 supprimées, net −17**, cinq fichiers produit modifiés, zéro fichier supprimé. Test migré: +7/−4, sans nouveau test ni fichier. Comptage des dispatchers de corps JSX: **2 avant Lot 4 → 1 à l’entrée du Lot 5 → 1 après Lot 5**; compositions Standard/CIO exclues du comptage. Parsers de format: **2 → 2 → 2**, dispatcher unique conservé. Les suppressions du Lot 4 ne sont pas comptabilisées dans les LOC du Lot 5.
+
+Validation locale: **203/203 tests Node PASS** dans la copie sans espaces actualisée, typecheck, build direct, validation d’artefact, lint ciblé et diff-check PASS. HTML SSR strictement identique avant/après pour huit fixtures existantes (six familles, Advantest, TSMC), à horloge fixe. Aucune nouvelle campagne du panel privé ou capture mobile: DOM et CSS inchangés sur cette comparaison. Sondes SSR temporaires supprimées; aucun script de diagnostic ajouté. Wrapper macOS GNU timeout et échec CSS Cloud préexistant restent distincts et inchangés; lockfile et test CSS inchangés.
+
+Revue Sol des preuves et du diff Luna: **GO Lot 6 recommandé**, soumis à décision utilisateur. Aucun Lot 6 commencé, changement de méthodologie, infrastructure ou déploiement.

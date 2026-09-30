@@ -2,14 +2,13 @@
 
 import { Fragment, useCallback, useRef, useState, type ReactNode, type SyntheticEvent } from "react";
 import type { AnalysisBlock, InlineSegment } from "../../core/contracts/analysis";
-import type { RenderBlock } from "../lib/notion-renderer";
-import { plainInlineText, renderInlineFormat, renderInlineSegments } from "../lib/inline-format";
+import { renderInlineFormat, renderInlineSegments } from "../lib/inline-format";
 
-type Entry = { block: RenderBlock | AnalysisBlock; index: number };
+type Entry = { block: AnalysisBlock; index: number };
 type FactGroup = { start: number; end: number; facts: { label: string; value: string; index: number }[] };
-const titleText = (text: string | InlineSegment[]) => typeof text === "string" ? plainInlineText(text) : text.map(segment => segment.text).join("");
-const titleBody = (text: string | InlineSegment[]) => typeof text === "string" ? renderInlineFormat(text) : renderInlineSegments(text);
-type Section = { title: string | InlineSegment[]; id?: string; level: number; entries: Entry[]; children: Section[] };
+const titleText = (text: InlineSegment[]) => text.map(segment => segment.text).join("");
+const contextTitle: InlineSegment[] = [{ text: "Contexte et données", marks: [], href: null }];
+type Section = { title: InlineSegment[]; id?: string; level: number; entries: Entry[]; children: Section[] };
 
 function sectionHasContent(section: Section): boolean {
   return section.entries.length > 0 || section.children.some(sectionHasContent);
@@ -33,7 +32,7 @@ export function navigateToAnalysisSection(sectionId: string) {
 export function AnalysisSectionGroups({
   blocks, hidden, idForHeading, renderBlock, classForHeading, factGroups = [],
 }: {
-  blocks: (RenderBlock | AnalysisBlock)[];
+  blocks: AnalysisBlock[];
   factGroups?: FactGroup[];
   hidden: Set<number>;
   idForHeading: (index: number) => string;
@@ -62,7 +61,7 @@ export function AnalysisSectionGroups({
       current = section;
     } else {
       if (!current) {
-        current = { title: "Contexte et données", level: 2, entries: [], children: [] };
+        current = { title: contextTitle, level: 2, entries: [], children: [] };
         roots.push(current);
       }
       current.entries.push({ block, index });
@@ -87,8 +86,8 @@ export function AnalysisSectionGroups({
     }
     return output;
   };
-  const renderDisclosure = (section: Section): ReactNode => <details onToggle={handleToggle} className={`analysis-section-group ${classForHeading?.(titleText(section.title)) ?? ""}`.trim()} id={section.id} key={section.id ?? `${section.title}-context`}>
-    <summary><span role="heading" aria-level={section.level + 1}>{titleBody(section.title)}</span><svg viewBox="0 0 12 12" aria-hidden="true" focusable="false"><path d="m3.5 4.5 2.5 2.5 2.5-2.5" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" /></svg></summary>
+  const renderDisclosure = (section: Section): ReactNode => <details onToggle={handleToggle} className={`analysis-section-group ${classForHeading?.(titleText(section.title)) ?? ""}`.trim()} id={section.id} key={section.id ?? `${titleText(section.title)}-context`}>
+    <summary><span role="heading" aria-level={section.level + 1}>{renderInlineSegments(section.title)}</span><svg viewBox="0 0 12 12" aria-hidden="true" focusable="false"><path d="m3.5 4.5 2.5 2.5 2.5-2.5" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" /></svg></summary>
     <div className="analysis-section-group-content">{renderSectionEntries(section.entries)}{section.children.filter(sectionHasContent).map(renderDisclosure)}</div>
   </details>;
 
@@ -103,8 +102,8 @@ export function AnalysisSectionGroups({
     if (root.level !== 1 || root.children.length === 0) return sectionHasContent(root) ? renderDisclosure(root) : null;
     const children = root.children.filter(sectionHasContent);
     if (!root.entries.length && !children.length) return null;
-    return <section className={`analysis-section-parent ${classForHeading?.(titleText(root.title)) ?? ""}`.trim()} id={root.id} key={root.id ?? `${root.title}-${index}`}>
-      <h2>{titleBody(root.title)}</h2>
+    return <section className={`analysis-section-parent ${classForHeading?.(titleText(root.title)) ?? ""}`.trim()} id={root.id} key={root.id ?? `${titleText(root.title)}-${index}`}>
+      <h2>{renderInlineSegments(root.title)}</h2>
       {root.entries.length > 0 && <div className="analysis-section-parent-content">{renderSectionEntries(root.entries)}</div>}
       {children.length > 0 && <div className="analysis-section-groups">{children.map(renderDisclosure)}</div>}
     </section>;

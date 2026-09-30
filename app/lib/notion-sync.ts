@@ -336,8 +336,6 @@ export async function documentPrimaryCompanyLinks(db: D1Database): Promise<Map<s
   return links;
 }
 
-export type NotionRelationRow = { source_page_id:string; source_key:string; property_name:string; target_page_id:string; target_source_key:string|null };
-
 /** Rebuilds the complete page-to-page relation index from imported Notion properties. */
 export async function rebuildNotionRelations(db: D1Database) {
   await ensureRelationTable(db);
