@@ -178,7 +178,7 @@ export async function listCompanies(db: D1Database, includeReferences = true, co
       else if(!conflictingWatchlistCompanyIds.has(companyId)) watchlistStateByCompany.set(companyId,state);
     }
   }
-  const analysisRows=includeReferences?(context.analysisRows ?? (await db.prepare("SELECT page_id,title,source_key,notion_url,last_edited_time,plain_text,properties_json,blocks_json FROM notion_documents WHERE source_key IN ('analyses','earnings','decisions','portfolio') ORDER BY last_edited_time DESC").all<StoredContentDocument>()).results??[]):[];
+  const analysisRows=includeReferences?(context.analysisRows ?? (await db.prepare("SELECT page_id,title,source_key,notion_url,last_edited_time,SUBSTR(plain_text,1,500) AS plain_text,properties_json FROM notion_documents WHERE source_key IN ('analyses','earnings','decisions','portfolio') ORDER BY last_edited_time DESC").all<StoredContentDocument>()).results??[]):[];
   const canonical=currentCompanyDocumentLinks(rows);
   const currentIds=currentDocumentIds(rows);
   const policy=context.archivePolicy ?? buildArchivePolicy(analysisRows,rows,primaryLinks,currentIds);
@@ -294,7 +294,53 @@ function classifyDocument(sourceKey:string,title:string,plainText:string,propert
   return "analyses";
 }
 function agentFor(category:CompanySectionKey,sourceKey:string):string { if(category==="business")return "Business Analyst"; if(category==="valuation")return "Valuation Analyst"; if(category==="risques")return "Short Seller"; if(category==="portfolio")return "Portfolio Manager"; if(category==="synthese")return "Investment Memo"; if(category==="earnings")return "Earnings"; return sourceKey; }
-async function relationMap(db:D1Database):Promise<Map<string,RelationLink[]>> { await ensureRelationTable(db); const rows=(await db.prepare(`SELECT source_page_id,target_page_id,property_name,target_source_key FROM notion_relations ORDER BY property_name`).all<{source_page_id:string;target_page_id:string;property_name:string;target_source_key:string|null}>()).results??[]; const documents=(await db.prepare("SELECT page_id,title,notion_url FROM notion_documents").all<{page_id:string;title:string;notion_url:string}>()).results??[]; const byId=new Map(documents.map(doc=>[normalizeNotionPageId(doc.page_id),doc])); const map=new Map<string,RelationLink[]>(); for(const row of rows){const sourceId=normalizeNotionPageId(row.source_page_id); const targetId=normalizeNotionPageId(row.target_page_id); const target=byId.get(targetId); const current=map.get(sourceId)??[]; current.push({id:targetId,title:target?.title??"Page Notion",url:target?.notion_url??`https://www.notion.so/${targetId}`,property:row.property_name,sourceKey:row.target_source_key}); map.set(sourceId,current);} return map; }
+async function relationMap(db:D1Database, sourcePageIds?:string[]):Promise<Map<string,RelationLink[]>> {
+  await ensureRelationTable(db);
+  const map=new Map<string,RelationLink[]>();
+  const addRows=(rows:{source_page_id:string;target_page_id:string;property_name:string;target_source_key:string|null;title:string|null;notion_url:string|null}[])=>{
+    for(const row of rows){
+      const sourceId=normalizeNotionPageId(row.source_page_id);
+      const targetId=normalizeNotionPageId(row.target_page_id);
+      const current=map.get(sourceId)??[];
+      current.push({id:targetId,title:row.title??"Page Notion",url:row.notion_url??`https://www.notion.so/${targetId}`,property:row.property_name,sourceKey:row.target_source_key});
+      map.set(sourceId,current);
+    }
+  };
+  if(sourcePageIds===undefined){
+    const rows=(await db.prepare("SELECT source_page_id,target_page_id,property_name,target_source_key FROM notion_relations ORDER BY property_name").all<{source_page_id:string;target_page_id:string;property_name:string;target_source_key:string|null}>()).results??[];
+    const documents=(await db.prepare("SELECT page_id,title,notion_url FROM notion_documents").all<{page_id:string;title:string;notion_url:string}>()).results??[];
+    const byId=new Map(documents.map(doc=>[normalizeNotionPageId(doc.page_id),doc]));
+    addRows(rows.map(row=>({...row,title:byId.get(normalizeNotionPageId(row.target_page_id))?.title??null,notion_url:byId.get(normalizeNotionPageId(row.target_page_id))?.notion_url??null})));
+    return map;
+  }
+  const scopedIds=[...new Set(sourcePageIds.flatMap(id=>{
+    const canonical=normalizeNotionPageId(id);
+    if(!canonical)return [];
+    if(!/^[0-9a-f]{32}$/i.test(canonical))return [id,canonical];
+    const dashed=`${canonical.slice(0,8)}-${canonical.slice(8,12)}-${canonical.slice(12,16)}-${canonical.slice(16,20)}-${canonical.slice(20)}`;
+    return [id,canonical,canonical.toUpperCase(),dashed,dashed.toUpperCase()];
+  }))];
+  if(scopedIds.length===0)return map;
+  const idBatches=Array.from({length:Math.ceil(scopedIds.length/80)},(_,index)=>scopedIds.slice(index*80,(index+1)*80));
+  for(const ids of idBatches){
+    const where=` WHERE r.source_page_id IN (${ids.map(()=>"?").join(",")})`;
+    const rows=(await db.prepare(`SELECT r.source_page_id,r.target_page_id,r.property_name,r.target_source_key,COALESCE(d.title,(SELECT fallback.title FROM notion_documents fallback WHERE LOWER(REPLACE(fallback.page_id,'-',''))=LOWER(REPLACE(r.target_page_id,'-','')) ORDER BY fallback.rowid DESC LIMIT 1)) AS title,COALESCE(d.notion_url,(SELECT fallback.notion_url FROM notion_documents fallback WHERE LOWER(REPLACE(fallback.page_id,'-',''))=LOWER(REPLACE(r.target_page_id,'-','')) ORDER BY fallback.rowid DESC LIMIT 1)) AS notion_url FROM notion_relations r LEFT JOIN notion_documents d ON d.page_id=r.target_page_id${where} ORDER BY r.property_name`).bind(...ids).all<{source_page_id:string;target_page_id:string;property_name:string;target_source_key:string|null;title:string|null;notion_url:string|null}>()).results??[];
+    addRows(rows);
+  }
+  return map;
+}
+
+async function contentRowsByPageIds(db:D1Database,pageIds:string[]):Promise<StoredContentDocument[]> {
+  const ids=[...new Set(pageIds)];
+  const batches=Array.from({length:Math.ceil(ids.length/80)},(_,index)=>ids.slice(index*80,(index+1)*80));
+  const rows:StoredContentDocument[]=[];
+  for(const batch of batches){
+    if(!batch.length)continue;
+    rows.push(...((await db.prepare(`SELECT page_id,title,source_key,notion_url,last_edited_time,plain_text,properties_json,blocks_json FROM notion_documents WHERE page_id IN (${batch.map(()=>"?").join(",")}) AND source_key IN ('analyses','earnings','decisions','portfolio')`).bind(...batch).all<StoredContentDocument>()).results??[]));
+  }
+  const byId=new Map(rows.map(row=>[normalizeNotionPageId(row.page_id),row]));
+  return ids.map(id=>byId.get(normalizeNotionPageId(id))).filter((row):row is StoredContentDocument=>Boolean(row));
+}
 function displayProperty(properties:JsonRecord, names:string[]):string|null { for(const name of names){const value=propertyValue(properties,name); if(value===null||value===undefined||value==="")continue; if(Array.isArray(value))return value.join(", "); return String(value);} return null; }
 function decisionFields(properties:JsonRecord):DecisionFields|null {
   const fields:DecisionFields={
@@ -356,7 +402,7 @@ async function presentationForRow(row:StoredContentDocument):Promise<{ projectio
     return { projection:result.status==="valid"?result.projection:null, status:result.status, error:result.error };
   } catch { return { projection:null, status:"invalid", error:"Le snapshot Notion ne peut pas être validé." }; }
 }
-async function documentFromRow(row:StoredContentDocument,relations:RelationLink[]=[],currentIds:Set<string>=new Set(),policy:ArchivePolicy|null=null,includePresentation=false):Promise<CompanyDocument> { const p=props(row); const displayText=row.blocks_json ? snapshotPlainText(row.title,row.properties_json,row.blocks_json,row.plain_text) : row.plain_text; const category=classifyDocument(row.source_key,row.title,displayText,p); const decision=row.source_key==="decisions"?decisionFields(p):null; const earningsReview=row.source_key==="earnings"?earningsReviewFields(p):null; const status=String(propertyValue(p,"Status")??""); const rowId=normalizeNotionPageId(row.page_id); const archived=policy?.archivedIds.has(rowId)??explicitlyArchived(row); const presentation=includePresentation?await presentationForRow(row):null; const document:CompanyDocument = {id:row.page_id,title:row.title,sourceKey:row.source_key,category,agent:agentFor(category,row.source_key),notionUrl:row.notion_url,lastEditedTime:row.last_edited_time,plainText:displayText,notionBlocks:notionBlocks(row),...(presentation?{presentationProjection:presentation.projection,presentationStatus:presentation.status,presentationError:presentation.error}:{}),summary:displayProperty(p,["TL;DR","TLDR","TL,DR","Executive Summary","Summary","Guidance Summary"]),handoffSummary:displayProperty(p,["Handoff Summary"]),status,score:String(propertyValue(p,"Score")??propertyValue(p,"Business Score")??""),verdict:String(propertyValue(p,"Verdict")??propertyValue(p,"Business Verdict")??(decision?.action??"")),confidence:displayProperty(p,["Confidence","Confiance"]),date:(propertyValue(p,"Earnings Date")??propertyValue(p,"Date")??propertyValue(p,"Analysis Date")??propertyValue(p,"Decision Date")??null) as string|null,relations,archived,current:currentIds.has(rowId),decision,earningsReview}; if(includePresentation){document.normalizedAnalysis=normalizeAnalysisDocument(document);document.plainText="";document.notionBlocks=undefined;document.presentationProjection=undefined;} return document; }
+async function documentFromRow(row:StoredContentDocument,relations:RelationLink[]=[],currentIds:Set<string>=new Set(),policy:ArchivePolicy|null=null,includePresentation=false):Promise<CompanyDocument> { const p=props(row); const displayText=row.blocks_json ? snapshotPlainText(row.title,row.properties_json,row.blocks_json,row.plain_text) : row.plain_text; const category=classifyDocument(row.source_key,row.title,displayText,p); const decision=row.source_key==="decisions"?decisionFields(p):null; const earningsReview=row.source_key==="earnings"?earningsReviewFields(p):null; const status=String(propertyValue(p,"Status")??""); const rowId=normalizeNotionPageId(row.page_id); const archived=policy?.archivedIds.has(rowId)??explicitlyArchived(row); const presentation=includePresentation?await presentationForRow(row):null; const document:CompanyDocument = {id:row.page_id,title:row.title,sourceKey:row.source_key,category,agent:agentFor(category,row.source_key),notionUrl:row.notion_url,lastEditedTime:row.last_edited_time,plainText:displayText,notionBlocks:notionBlocks(row),...(presentation?{presentationProjection:presentation.projection,presentationStatus:presentation.status,presentationError:presentation.error}:{}),summary:displayProperty(p,["TL;DR","TLDR","TL,DR","Executive Summary","Summary","Guidance Summary"]),handoffSummary:displayProperty(p,["Handoff Summary"]),status,score:String(propertyValue(p,"Score")??propertyValue(p,"Business Score")??""),verdict:String(propertyValue(p,"Verdict")??propertyValue(p,"Business Verdict")??(decision?.action??"")),confidence:displayProperty(p,["Confidence","Confiance"]),date:(propertyValue(p,"Earnings Date")??propertyValue(p,"Date")??propertyValue(p,"Analysis Date")??propertyValue(p,"Decision Date")??null) as string|null,relations,archived,current:currentIds.has(rowId),decision,earningsReview}; if(includePresentation){try{document.normalizedAnalysis=normalizeAnalysisDocument(document);}catch(cause){const error=Object.assign(new Error("Analyse canonique invalide."),{code:"normalization",stage:"normalization"});(error as Error & {cause?:unknown}).cause=cause;throw error;} document.plainText="";document.notionBlocks=undefined;document.presentationProjection=undefined;} return document; }
 function relatesToCompany(row:StoredContentDocument,company:CompanyListItem,links?:Map<string,string[]>):boolean { const p=props(row); const rowId=normalizeNotionPageId(row.page_id); const companyId=normalizeNotionPageId(company.id); if((links?.get(rowId)??[]).includes(companyId))return true; if(allRelationIds(p).includes(companyId))return true; const title=normalizedName(row.title); const name=normalizedName(company.name); const base=name.split(" ").filter(token=>!new Set(["group","holdings","holding","inc","corp","corporation","company","co","ltd","limited","plc","sa","class","a","adr"]).has(token)).join(" "); return Boolean(base && (title===name || title.startsWith(`${name} `) || title===base || title.startsWith(`${base} `))); }
 type CurrentDocumentCategory = CompanySectionKey | "earnings";
 type CurrentCompanyDocumentLinks = Map<string,Map<CurrentDocumentCategory,Set<string>>>;
@@ -394,11 +440,10 @@ function primaryCompanyDocument(row:StoredContentDocument,company:CompanyListIte
 function documentCompanyLabel(row:StoredContentDocument,companies:CompanyListItem[],owners:Map<string,string[]>,primaryLinks:Map<string,string[]>):string { const canonical=owners.get(normalizeNotionPageId(row.page_id)); if(canonical?.length){const names=canonical.map(id=>companies.find(company=>normalizeNotionPageId(company.id)===id)?.name).filter(Boolean) as string[];if(names.length)return names.join(", ");} const company=companies.find(item=>relatesToCompany(row,item,primaryLinks)); return company?.name??"Non relié"; }
 export async function getCompanyDetail(db:D1Database,companyId:string):Promise<CompanyDetail|null>{
   const canonicalCompanyId=normalizeNotionPageId(companyId);
-  const [companyRows, primaryLinks, relations, rows] = await Promise.all([
+  const [companyRows, primaryLinks, rows] = await Promise.all([
     db.prepare("SELECT page_id,title,notion_url,properties_json FROM notion_documents WHERE source_key='companies' ORDER BY title COLLATE NOCASE").all<StoredDocument>().then(result => result.results ?? []),
     documentPrimaryCompanyLinks(db),
-    relationMap(db),
-    db.prepare("SELECT page_id,title,source_key,notion_url,last_edited_time,plain_text,properties_json,blocks_json FROM notion_documents WHERE source_key IN ('analyses','earnings','decisions','portfolio') ORDER BY last_edited_time DESC").all<StoredContentDocument>().then(result => result.results ?? []),
+    db.prepare("SELECT page_id,title,source_key,notion_url,last_edited_time,SUBSTR(plain_text,1,500) AS plain_text,properties_json FROM notion_documents WHERE source_key IN ('analyses','earnings','decisions','portfolio') ORDER BY last_edited_time DESC").all<StoredContentDocument>().then(result => result.results ?? []),
   ]);
   const companyRow=companyRows.find(row=>normalizeNotionPageId(row.page_id)===canonicalCompanyId);
   if(!companyRow)return null;
@@ -417,9 +462,14 @@ export async function getCompanyDetail(db:D1Database,companyId:string):Promise<C
     const current=canonicalIdsForCategory(canonical,canonicalCompanyId,category);
     return current.has(id)||primaryCompanyDocument(row,company,companyRow,primaryLinks);
   });
-  const candidates=await Promise.all(candidateRows.map(async row=>{
+  const fullCandidateRows=await contentRowsByPageIds(db,candidateRows.map(row=>row.page_id));
+  const candidateById=new Map(fullCandidateRows.map(row=>[normalizeNotionPageId(row.page_id),row]));
+  const scopedRelations=await relationMap(db,candidateRows.map(row=>row.page_id));
+  const candidates=await Promise.all(candidateRows.map(async header=>{
+    const row=candidateById.get(normalizeNotionPageId(header.page_id));
+    if(!row)return null;
     const id=normalizeNotionPageId(row.page_id);
-    const doc=await documentFromRow(row,relations.get(id)??[],currentIds,policy,true);
+    const doc=await documentFromRow(row,scopedRelations.get(id)??[],currentIds,policy,true);
     return {...doc,archived:policy.archivedIds.has(id),current:false};
   }));
 
@@ -428,6 +478,7 @@ export async function getCompanyDetail(db:D1Database,companyId:string):Promise<C
   // the same time. Other categories keep their existing one-current rule.
   const byCategory=new Map<string,CompanyDocument[]>();
   for(const doc of candidates){
+    if(!doc)continue;
     const categoryKey=doc.category==="synthese"?`${doc.category}:${doc.sourceKey}`:doc.category;
     const list=byCategory.get(categoryKey)??[];
     list.push(doc);
@@ -460,7 +511,7 @@ export async function listResearchDocuments(db:D1Database,includePresentation=fa
     documentPrimaryCompanyLinks(db),
     relationMap(db),
     db.prepare("SELECT page_id,title,notion_url,properties_json FROM notion_documents WHERE source_key='companies'").all<StoredDocument>(),
-    db.prepare("SELECT page_id,title,source_key,notion_url,last_edited_time,SUBSTR(plain_text,1,700) AS plain_text,properties_json,blocks_json FROM notion_documents WHERE source_key IN ('analyses','earnings','decisions','portfolio') ORDER BY last_edited_time DESC").all<StoredContentDocument>(),
+    db.prepare(includePresentation?"SELECT page_id,title,source_key,notion_url,last_edited_time,SUBSTR(plain_text,1,700) AS plain_text,properties_json,blocks_json FROM notion_documents WHERE source_key IN ('analyses','earnings','decisions','portfolio') ORDER BY last_edited_time DESC":"SELECT page_id,title,source_key,notion_url,last_edited_time,SUBSTR(plain_text,1,700) AS plain_text,properties_json FROM notion_documents WHERE source_key IN ('analyses','earnings','decisions','portfolio') ORDER BY last_edited_time DESC").all<StoredContentDocument>(),
   ]);
   const companies=await listCompanies(db,false,{primaryLinks});
   const companyRows=companyResult.results??[];
@@ -472,12 +523,14 @@ export async function listResearchDocuments(db:D1Database,includePresentation=fa
 
 export async function getResearchDocument(db:D1Database,pageId:string):Promise<ResearchDocument|null>{
   const canonicalPageId=normalizeNotionPageId(pageId);
-  const row=await db.prepare("SELECT page_id,title,source_key,notion_url,last_edited_time,plain_text,properties_json,blocks_json FROM notion_documents WHERE (page_id=? OR LOWER(REPLACE(page_id, '-', ''))=?) AND source_key IN ('analyses','earnings','decisions','portfolio') LIMIT 1").bind(pageId,canonicalPageId).first<StoredContentDocument>();
+  const selectedColumns="page_id,title,source_key,notion_url,last_edited_time,plain_text,properties_json,blocks_json";
+  const row=await db.prepare(`SELECT ${selectedColumns} FROM notion_documents WHERE page_id=? AND source_key IN ('analyses','earnings','decisions','portfolio') LIMIT 1`).bind(pageId).first<StoredContentDocument>()
+    ??await db.prepare(`SELECT ${selectedColumns} FROM notion_documents WHERE LOWER(REPLACE(page_id, '-', ''))=? AND source_key IN ('analyses','earnings','decisions','portfolio') LIMIT 1`).bind(canonicalPageId).first<StoredContentDocument>();
   if(!row)return null;
   const [companyRows, primaryLinks, relations, allRows] = await Promise.all([
     db.prepare("SELECT page_id,title,notion_url,properties_json FROM notion_documents WHERE source_key='companies'").all<StoredDocument>().then(result => result.results ?? []),
-    documentPrimaryCompanyLinks(db), relationMap(db),
-    db.prepare("SELECT page_id,title,source_key,notion_url,last_edited_time,plain_text,properties_json,blocks_json FROM notion_documents WHERE source_key IN ('analyses','earnings','decisions','portfolio')").all<StoredContentDocument>().then(result => result.results ?? []),
+    documentPrimaryCompanyLinks(db), relationMap(db,[row.page_id]),
+    db.prepare("SELECT page_id,title,source_key,notion_url,last_edited_time,SUBSTR(plain_text,1,500) AS plain_text,properties_json FROM notion_documents WHERE source_key IN ('analyses','earnings','decisions','portfolio')").all<StoredContentDocument>().then(result => result.results ?? []),
   ]);
   const companies=await listCompanies(db,false,{primaryLinks});
   const owners=canonicalOwners(currentCompanyDocumentLinks(companyRows));const currentIds=currentDocumentIds(companyRows);const policy=buildArchivePolicy(allRows,companyRows,primaryLinks,currentIds);const doc=await documentFromRow(row,relations.get(normalizeNotionPageId(row.page_id))??[],currentIds,policy,true);return {...doc,companyName:documentCompanyLabel(row,companies,owners,primaryLinks)};

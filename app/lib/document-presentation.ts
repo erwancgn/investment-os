@@ -425,7 +425,13 @@ export function normalizeAnalysisDocument(document: CompanyDocument): Normalized
     const sourceBlockIds = [blockIds[blocks.indexOf(decisionTable)]];
     analysis.presentation.facts.push(...memo.decisionFacts.map((fact, index) => ({ id: `decision:${index}`, label: fact.label, value: fact.value, unit: null, status: "known" as const, asOf: null, sourceBlockIds, provenance })));
   }
-  if (!isAnalysis(analysis)) throw new Error(`Analyse canonique invalide : ${document.id}`);
+  if (!isAnalysis(analysis)) {
+    const error = Object.assign(new Error("Analyse canonique invalide."), {
+      code: "normalization",
+      stage: "normalization",
+    });
+    throw error;
+  }
   // Presentation sidecars carry layout and source formatting only. Business values
   // and membership come from the validated canonical contract, never a second parse.
   view.summaryItems = projection.status === "valid" ? visibleSummaryItems([analysis.summary ?? ""]) : analysis.summary?.split("\n").filter(Boolean) ?? [];

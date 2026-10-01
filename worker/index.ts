@@ -310,14 +310,33 @@ const worker = {
     }
 
     if (url.pathname.startsWith("/api/analyses/") && request.method === "GET") {
-      const pageId=decodeURIComponent(url.pathname.slice("/api/analyses/".length));
+      const started=performance.now();
+      const requestId=crypto.randomUUID();
+      const readHeaders=()=>({"cache-control":"private, no-store","x-request-id":requestId,"server-timing":`app;dur=${(performance.now()-started).toFixed(1)}`});
       if (scope === "demo") {
+        let pageId:string;
+        try{pageId=decodeURIComponent(url.pathname.slice("/api/analyses/".length));}
+        catch{return Response.json({error:"Analyse introuvable."},{status:404,headers:{"cache-control":"no-store"}});}
         const document = getDemoResearchDocument(pageId);
         return document ? Response.json(document, { headers: { "cache-control": "no-store" } }) : Response.json({ error: "Analyse introuvable" }, { status: 404, headers: { "cache-control": "no-store" } });
       }
       if (!owner) return privateScopeDenied();
-      const document=await getResearchDocument(env.DB,pageId);
-      return document?Response.json({document},{headers:{"cache-control":"private, no-store"}}):Response.json({error:"Analyse introuvable"},{status:404,headers:{"cache-control":"private, no-store"}});
+      let pageId:string;
+      try{pageId=decodeURIComponent(url.pathname.slice("/api/analyses/".length));}
+      catch{return Response.json({error:"Identifiant d’analyse invalide.",code:"invalid_input",stage:"input",requestId},{status:400,headers:readHeaders()});}
+      try{
+        const document=await getResearchDocument(env.DB,pageId);
+        return document?Response.json({document},{headers:readHeaders()}):Response.json({error:"Analyse introuvable",code:"analysis_not_found",stage:"lookup",requestId},{status:404,headers:readHeaders()});
+      }catch(error){
+        const tagged=error&&typeof error==="object"?error as {code?:unknown;stage?:unknown}:{};
+        const causeName=error instanceof Error?error.name:"";
+        const timedOut=causeName==="TimeoutError"||causeName==="AbortError";
+        const code=tagged.code==="normalization"?"normalization":timedOut?"timeout":"storage";
+        const stage=typeof tagged.stage==="string"?tagged.stage:code==="normalization"?"normalization":"read";
+        const durationMs=Number((performance.now()-started).toFixed(1));
+        console.error(JSON.stringify({event:"analysis-read-failed",id:requestId,code,stage,durationMs}));
+        return Response.json({error:"Lecture de l’analyse indisponible. Réessaie dans un instant.",code,stage,requestId},{status:500,headers:readHeaders()});
+      }
     }
 
     if (url.pathname === "/api/portfolio/live" && request.method === "GET") {

@@ -33,6 +33,7 @@ before(async () => {
     stdin: {
       contents: [
         'export { AnalysisReader } from "./app/components/analysis-reader.tsx";',
+        'export { CompanyAnalysisDocument } from "./app/components/company-analysis-document.tsx";',
         'export { AnalysisProjectionSummary } from "./app/components/analysis-presentation.tsx";',
         'export { parseNotionDocument, canonicalAnalysisContent, hasResidualMarkup } from "./app/lib/notion-renderer.ts";',
         'export { normalizeAnalysisDocument } from "./app/lib/document-presentation.ts";',
@@ -45,6 +46,13 @@ before(async () => {
       sourcefile: "lot4-canonical-renderer-entry.ts",
     },
     bundle: true, platform: "node", format: "esm", packages: "external", outfile: output,
+    plugins: [{
+      name: "stub-company-resource-hook",
+      setup(build) {
+        build.onResolve({ filter: /client-resource$/ }, args => args.path.endsWith("client-resource") ? { path: "client-resource", namespace: "company-resource-test" } : undefined);
+        build.onLoad({ filter: /.*/, namespace: "company-resource-test" }, () => ({ contents: "export function useClientResource(){ return globalThis.__companyAnalysisResource; }", loader: "js" }));
+      },
+    }],
   });
   runtime = await import(pathToFileURL(output).href);
 });
@@ -333,6 +341,45 @@ test("CIO memo reasoning keeps canonical links after API serialization", () => {
   const html = renderToStaticMarkup(createElement(runtime.AnalysisReader, { document: serializedDocument, companyName: "Société CIO" }));
   const reasoningHtml = html.match(/<section class="memo-reasoning">([\s\S]*?)<\/section>/)?.[1] ?? "";
   assert.match(reasoningHtml, /<a href="https:\/\/example\.com\/decision-source"[^>]*>Source déterminante<\/a>/);
+});
+
+test("CompanyAnalysisDocument accepts validated canonical API bodies and keeps stale content on refresh failure", () => {
+  const source = { ...runtime.completeReferenceDocuments.business, id: "embedded-company-report", plainText: "## Thèse\nCanonical body survives the API boundary.", notionBlocks: undefined };
+  const normalizedAnalysis = JSON.parse(JSON.stringify(runtime.normalizeAnalysisDocument(source)));
+  assert.equal(runtime.isAnalysis(normalizedAnalysis.analysis), true);
+  const render = preview => renderToStaticMarkup(createElement(runtime.CompanyAnalysisDocument, { preview, companyName: "Société A" }));
+  try {
+    globalThis.__companyAnalysisResource = { data: undefined, loading: false, error: "", refresh() {} };
+    const embedded = render({ ...source, plainText: "", normalizedAnalysis });
+    assert.match(embedded, /Canonical body survives the API boundary/);
+    assert.doesNotMatch(embedded, /Document indisponible/);
+
+    const fetched = { ...source, plainText: "", notionBlocks: undefined, normalizedAnalysis };
+    globalThis.__companyAnalysisResource = { data: { document: fetched }, loading: false, error: "Rafraîchissement en échec", refresh() {} };
+    const stale = render({ ...source, plainText: "", notionBlocks: undefined, normalizedAnalysis: undefined });
+    assert.match(stale, /Canonical body survives the API boundary/);
+    assert.match(stale, /Rafraîchissement en échec/);
+  } finally { delete globalThis.__companyAnalysisResource; }
+});
+
+test("CompanyAnalysisDocument rejects wrong-ID or invalid canonical bodies and still accepts legacy text", () => {
+  const source = { ...runtime.completeReferenceDocuments.business, id: "embedded-company-report", plainText: "## Thèse\nCanonical body survives the API boundary.", notionBlocks: undefined };
+  const normalizedAnalysis = JSON.parse(JSON.stringify(runtime.normalizeAnalysisDocument(source)));
+  const invalid = { ...normalizedAnalysis, analysis: { ...normalizedAnalysis.analysis, content: { ...normalizedAnalysis.analysis.content, blocks: null } } };
+  const render = () => renderToStaticMarkup(createElement(runtime.CompanyAnalysisDocument, { preview: { ...source, plainText: "", notionBlocks: undefined }, companyName: "Société A" }));
+  try {
+    globalThis.__companyAnalysisResource = { data: { document: { ...source, id: "another-report", plainText: "", notionBlocks: undefined, normalizedAnalysis } }, loading: false, error: "", refresh() {} };
+    assert.match(render(), /Document indisponible/);
+    const mismatchedCanonical = { ...normalizedAnalysis, analysis: { ...normalizedAnalysis.analysis, header: { ...normalizedAnalysis.analysis.header, id: "another-canonical-report" } } };
+    assert.equal(runtime.isAnalysis(mismatchedCanonical.analysis), true, "the canonical contract remains valid while its internal identity differs");
+    globalThis.__companyAnalysisResource = { data: { document: { ...source, plainText: "", notionBlocks: undefined, normalizedAnalysis: mismatchedCanonical } }, loading: false, error: "", refresh() {} };
+    assert.match(render(), /Document indisponible/, "the envelope ID guard alone cannot authorize a different canonical body");
+    globalThis.__companyAnalysisResource = { data: { document: { ...source, plainText: "", notionBlocks: undefined, normalizedAnalysis: invalid } }, loading: false, error: "", refresh() {} };
+    assert.match(render(), /Document indisponible/);
+    globalThis.__companyAnalysisResource = { data: undefined, loading: false, error: "", refresh() {} };
+    const legacy = renderToStaticMarkup(createElement(runtime.CompanyAnalysisDocument, { preview: { ...source, plainText: "## Thèse\nLegacy text remains supported.", notionBlocks: undefined }, companyName: "Société A" }));
+    assert.match(legacy, /Legacy text remains supported/);
+  } finally { delete globalThis.__companyAnalysisResource; }
 });
 
 test("citation numbers and source list share the same sorted order", () => {
