@@ -2,6 +2,12 @@
 
 Établie le 1 octobre 2026. Le commit qui introduit ce fichier est le checkpoint du candidat Lot 6 et de cette passation. **Le candidat est validé localement; le GO définitif Lot 7 n'est pas acquis.** Ne pas confondre le commit demandé par l'utilisateur avec une validation runtime Cloud.
 
+### Décision ultérieure — gate Lot 6 levé par recette utilisateur
+
+Sites **v208** a publié exactement `9f98a7f7a20adef95c591a583fe60a70e04a8e38` le 1 octobre 2026 à 09:06:01 Europe/Paris (déploiement `appgdep_6abe0646702481918b4e21b39d356165`, statut `succeeded`). Aucun changement additionnel n'a été inclus. v207 reste la version sauvegardée de rollback. Le runner Cloud n'a pas exécuté les parcours personnels : son proxy refuse l'origine Sites.
+
+Après ses essais manuels, l'utilisateur a confirmé : « J'ai fait les tests, c'est validé. Tu peux enchainer sur le lot 7 selon le plan établi ». Cette décision autorise le Lot 7 et remplace le NO-GO historique ci-dessous. La validation production est une recette attestée par l'utilisateur, pas une nouvelle mesure automatique des allocations ni une campagne de logs corrélés effectuée par Sol. Ne pas inventer des timings, request IDs ou captures de ces essais. La nouvelle passation du Lot 8 portera le bilan du Lot 7.
+
 ## Reprise et accès
 
 - Sol planifie, orchestre, décide du chemin canonique et revoit les diffs. Les agents **Luna** implémentent les tâches bornées. Aucun Lot 7 n'a été commencé ici.

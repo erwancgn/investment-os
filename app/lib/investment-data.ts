@@ -1,5 +1,8 @@
 import { normalizeAnalysisDocument, type NormalizedAnalysisDocument } from "./document-presentation";
 import { getQuotes, type QuoteView } from "./quotes";
+import { calculatePortfolioAggregates } from "../../core/portfolio";
+import type { CurrentAnalysisFamily, CurrentSelectionInput } from "../../core/analysis/current-selection";
+import type { AnalysisFamily } from "../../core/contracts/analysis";
 import { documentCompanyLinks, documentPrimaryCompanyLinks, ensureRelationTable, normalizeNotionPageId, snapshotPlainText } from "./notion-sync";
 import { humanReadableNotionBlocks, type AnalysisPresentationProjection, type ProjectionStatus, verifyPresentationProjection } from "./presentation-projection";
 
@@ -433,6 +436,61 @@ export function currentCompanyDocumentLinks(companyRows:StoredDocument[]):Curren
   }
   return result;
 }
+function explicitCurrentIdsFor(properties:JsonRecord,family:CurrentAnalysisFamily):string[]{
+  const names:Record<CurrentAnalysisFamily,string[]>={
+    business:["Current Business Analysis"], valuation:["Current Valuation Analysis"], short:["Current Short Analysis"],
+    portfolio:["Current Portfolio Analysis"], cio_memo:["Current Investment Memo"], decision:currentDecisionProperties, earnings:currentEarningsProperties,
+  };
+  return relationIds(properties,names[family]);
+}
+function currentFamilyFor(row:StoredContentDocument,plainText:string,properties:JsonRecord):AnalysisFamily|null{
+  const category=classifyDocument(row.source_key,row.title,plainText,properties);
+  if(row.source_key==="decisions")return "decision";
+  if(category==="earnings")return "earnings";
+  if(category==="business")return "business";
+  if(category==="valuation")return "valuation";
+  if(category==="risques")return "short";
+  if(category==="portfolio")return "portfolio";
+  if(category==="synthese"&&String(propertyValue(properties,"Agent")??"").trim().toLowerCase().includes("memo"))return "cio_memo";
+  if(category==="analyses")return "unknown";
+  return null;
+}
+function safeReadError(code:"invalid_input"|"not_found",message:string):Error{return Object.assign(new Error(message),{code});}
+/** Builds normalized Current-selection input from lightweight D1 headers; it does not choose or mutate a Current analysis. */
+export async function readCurrentAnalysisContext(db:D1Database,companyId:string,family:CurrentAnalysisFamily):Promise<CurrentSelectionInput>{
+  const canonicalCompanyId=normalizeNotionPageId(companyId);
+  if(!canonicalCompanyId||!family)throw safeReadError("invalid_input","Les paramètres de sélection sont invalides.");
+  const companyRows=(await db.prepare("SELECT page_id,title,notion_url,properties_json FROM notion_documents WHERE source_key='companies' ORDER BY title COLLATE NOCASE").all<StoredDocument>()).results??[];
+  const companyRow=companyRows.find(row=>normalizeNotionPageId(row.page_id)===canonicalCompanyId);
+  if(!companyRow)throw safeReadError("not_found","L'entreprise demandée est introuvable.");
+  const companyProperties=props(companyRow);
+  const explicitCurrentIds=explicitCurrentIdsFor(companyProperties,family);
+  const primaryLinks=await documentPrimaryCompanyLinks(db);
+  const listSql="SELECT page_id,title,source_key,notion_url,last_edited_time,SUBSTR(plain_text,1,500) AS plain_text,properties_json FROM notion_documents WHERE source_key IN ('analyses','earnings','decisions','portfolio') ORDER BY last_edited_time DESC";
+  const headerRows=(await db.prepare(listSql).all<StoredContentDocument>()).results??[];
+  const explicitRows:StoredContentDocument[]=[];
+  for(let index=0;index<explicitCurrentIds.length;index+=80){
+    const ids=explicitCurrentIds.slice(index,index+80);
+    const rows=(await db.prepare(`SELECT page_id,title,source_key,notion_url,last_edited_time,SUBSTR(plain_text,1,500) AS plain_text,properties_json FROM notion_documents WHERE source_key IN ('analyses','earnings','decisions','portfolio') AND LOWER(REPLACE(page_id,'-','')) IN (${ids.map(()=>"?").join(",")})`).bind(...ids).all<StoredContentDocument>()).results??[];
+    explicitRows.push(...rows);
+  }
+  const rowsById=new Map<string,StoredContentDocument>();
+  for(const row of [...headerRows,...explicitRows])rowsById.set(normalizeNotionPageId(row.page_id),row);
+  const candidates=[...rowsById.values()].flatMap(row=>{
+    const properties=props(row);
+    const rowPlainText=row.plain_text??"";
+    const candidateFamily=currentFamilyFor(row,rowPlainText,properties);
+    if(!candidateFamily)return [];
+    const id=normalizeNotionPageId(row.page_id);
+    const companyIds=documentCompanyIds(row,companyRows,primaryLinks);
+    const dates=["Analysis Date","Date","Decision Date","Earnings Date"].flatMap(name=>{const value=propertyValue(properties,name);return value===null||value===undefined||value===""?[]:[String(value)];});
+    const primaryDate=["Earnings Date","Date","Analysis Date","Decision Date"].map(name=>propertyValue(properties,name)).find(value=>value!==null&&value!==undefined&&value!=="");
+    const status=String(propertyValue(properties,"Status")??"");
+    const sourceFreshness:CurrentSelectionInput["candidates"][number]["sourceFreshness"]=String(propertyValue(properties,"Source Freshness")??"").trim().toLowerCase()==="current"?"fresh":"unknown";
+    return [{id,family:candidateFamily,sourceKind:row.source_key==="decisions"?"decision" as const:"analysis" as const,agent:propertyValue(properties,"Agent")===null?null:String(propertyValue(properties,"Agent")),status,date:primaryDate===undefined?null:primaryDate===null?null:String(primaryDate),lastEditedTime:row.last_edited_time,companyIds,sourceFreshness,archived:explicitlyArchived(row),relatedDates:dates}];
+  });
+  return {companyId:canonicalCompanyId,family,explicitCurrentIds,candidates};
+}
 function currentDocumentIds(companyRows:StoredDocument[]):Set<string>{const ids=new Set<string>();for(const byCategory of currentCompanyDocumentLinks(companyRows).values())for(const categoryIds of byCategory.values())for(const id of categoryIds)ids.add(normalizeNotionPageId(id));return ids;}
 function canonicalOwners(links:CurrentCompanyDocumentLinks):Map<string,string[]>{const result=new Map<string,string[]>();for(const [companyId,byCategory] of links)for(const ids of byCategory.values())for(const id of ids){const key=normalizeNotionPageId(id);const owners=result.get(key)??[];if(!owners.includes(companyId))owners.push(companyId);result.set(key,owners);}return result;}
 function canonicalIdsForCategory(links:CurrentCompanyDocumentLinks,companyId:string,category:CurrentDocumentCategory):Set<string>{return links.get(normalizeNotionPageId(companyId))?.get(category)??new Set<string>();}
@@ -655,7 +713,7 @@ export async function getLivePortfolio(db: D1Database, force = false, cacheOnly 
     const themeExposures=etfExposures?.get("theme")??[];
     return { id:row.page_id, targetId, name, instrumentType, account, sector:String(propertyValue(p,"Sector") ?? linkedCompany?.sector ?? "Autres"), industry:linkedCompany?.industry ?? "", themes:linkedCompany?.themes ?? [], primaryTheme:String(propertyValue(p,"Primary Theme")??"").trim(), country, countryExposures, sectorExposures, themeExposures, quantity, pruEur, brokerPruEur, pruSource, costBasisEur, brokerCostBasisEur, marketValueEur, pnlEur, pnlPercent:pnlEur == null || costBasisEur === 0 ? null : pnlEur/costBasisEur*100, brokerPnlEur, brokerPnlPercent:brokerPnlEur == null || brokerCostBasisEur === 0 ? null : brokerPnlEur/brokerCostBasisEur*100, weight:null, targetWeight, targetEur:targetWeight/100*25000, target10kWeight, target10kEur:target10kWeight/100*10000, quoteSymbol:quoteId ?? null, nativePrice:isCash ? 1 : quote?.nativePrice ?? manualPrice, nativeCurrency:isCash ? "EUR" : (quote?.nativeCurrency ?? (priceCurrency || "EUR")), eurPrice, fxRate:isCash ? 1 : quote?.fxRate ?? (usesManualPrice ? manualFxToEur : null), fxMarketTime:isCash ? null : quote?.fxMarketTime ?? null, fetchedAt:quote?.fetchedAt ?? null, quoteWarnings:quote?.warnings ?? [], changePercent:quote?.changePercent ?? null, quoteSource:isCash ? "cash" : usesManualPrice ? "notion-manual" : quote?.source ?? "unavailable", quoteFreshness:isCash ? "fresh" : usesManualPrice ? "manual" : quote?.freshness ?? "unavailable", marketTime:quote?.marketTime ?? null, companyIds, notionUrl:row.notion_url, warning };
   });
-  const marketValueEur = preliminary.reduce((sum,p) => sum + (p.marketValueEur ?? 0),0); const investedValueEur = preliminary.reduce((sum,p) => sum + (isCashName(p.name,p.instrumentType) ? 0 : (p.marketValueEur ?? 0)),0); const cashValueEur = preliminary.reduce((sum,p) => sum + (isCashName(p.name,p.instrumentType) ? (p.marketValueEur ?? 0) : 0),0); const costBasisEur = preliminary.reduce((sum,p) => sum + (isCashName(p.name,p.instrumentType) ? 0 : p.costBasisEur),0); const brokerCostBasisEur = preliminary.reduce((sum,p) => sum + (isCashName(p.name,p.instrumentType) ? 0 : p.brokerCostBasisEur),0); const positions = preliminary.map(p => ({...p,weight:marketValueEur > 0 && p.marketValueEur != null ? p.marketValueEur/marketValueEur*100 : null})).sort((a,b) => (b.marketValueEur ?? -1) - (a.marketValueEur ?? -1)); const sectorMap = new Map<string,number>(); const slices:Record<string,PortfolioSlice>={}; const addSlice=(key:string,p:typeof positions[number])=>{const slice=slices[key]??={marketValueEur:0,investedValueEur:0,cashValueEur:0,costBasisEur:0,pnlEur:0,pnlPercent:null,brokerCostBasisEur:0,brokerPnlEur:0,brokerPnlPercent:null,positions:0}; const value=p.marketValueEur??0; const cash=isCashName(p.name,p.instrumentType); slice.marketValueEur+=value; slice.investedValueEur+=cash?0:value; slice.cashValueEur+=cash?value:0; slice.costBasisEur+=cash?0:p.costBasisEur; slice.pnlEur+=cash?0:(p.pnlEur??0); slice.brokerCostBasisEur+=cash?0:p.brokerCostBasisEur; slice.brokerPnlEur+=cash?0:(p.brokerPnlEur??0); slice.positions+=1; }; for (const p of positions) { sectorMap.set(p.sector,(sectorMap.get(p.sector) ?? 0) + (p.marketValueEur ?? 0)); addSlice("total",p); if(p.account)addSlice(p.account,p); } for (const slice of Object.values(slices)) { slice.pnlPercent=slice.costBasisEur>0?slice.pnlEur/slice.costBasisEur*100:null; slice.brokerPnlPercent=slice.brokerCostBasisEur>0?slice.brokerPnlEur/slice.brokerCostBasisEur*100:null; } slices.total={...slices.total,marketValueEur,investedValueEur,cashValueEur,costBasisEur,pnlEur:marketValueEur-cashValueEur-costBasisEur,pnlPercent:costBasisEur>0?(marketValueEur-cashValueEur-costBasisEur)/costBasisEur*100:null,brokerCostBasisEur,brokerPnlEur:marketValueEur-cashValueEur-brokerCostBasisEur,brokerPnlPercent:brokerCostBasisEur>0?(marketValueEur-cashValueEur-brokerCostBasisEur)/brokerCostBasisEur*100:null}; const sectors = [...sectorMap].map(([name,valueEur]) => ({name,valueEur,weight:marketValueEur ? valueEur/marketValueEur*100 : 0})).sort((a,b) => b.valueEur-a.valueEur); const live = positions.filter(p => p.quoteSource.startsWith("yahoo") || p.quoteSource === "google-finance").length; const manual = positions.filter(p => p.quoteSource === "notion-manual").length; const stale = positions.filter(p => p.quoteFreshness === "stale").length; const unavailable = positions.filter(p => p.marketValueEur == null && !isCashName(p.name,p.instrumentType)).length; const cash = positions.filter(p => isCashName(p.name,p.instrumentType)).length;
+  const { positions, sectors, slices, coverage } = calculatePortfolioAggregates(preliminary);
   const issues:ReconciliationIssue[]=[];
   for(const position of positions){
     if(position.quantity<=0)issues.push({positionId:position.id,positionName:position.name,severity:"error",code:"quantity_missing",message:"Quantité absente ou nulle dans Notion."});
@@ -685,7 +743,7 @@ export async function getLivePortfolio(db: D1Database, force = false, cacheOnly 
     generatedAt:new Date().toISOString(),quoteAsOf:quoteDates.at(-1)??null,oldestQuoteAsOf:quoteDates.at(0)??null,
     targetSource:"Notion Portfolio · Target Weight 10k + Target Weight",targetLines,targetTotals,
     totals:slices.total,slices,positions,sectors,
-    coverage:{live,manual,stale,unavailable,cash,total:positions.length},
+    coverage,
     reconciliation:{status:errors?"error":warnings?"warning":"ok",coherent:Math.max(0,positions.length-new Set(issues.map(issue=>issue.positionId).filter(Boolean)).size),warnings,errors,issues,accountChecks},
     calculation:{pnlScope:"unrealized-open-positions",realizedPnlAvailable:false,feesIncluded:false,dividendsIncluded:false,source:"Notion PRU + live quotes + FX"},
   };
