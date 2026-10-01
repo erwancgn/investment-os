@@ -2,6 +2,12 @@
 
 Établie le 1 octobre 2026, consolidée en fin de fenêtre après le Lot 7.1. Checkpoint **implémentation Lot 7 : `0d8853eced6d28e5bd861916c92ac9da16c5499b`**. Le commit documentaire ultérieur ne modifie pas ce checkpoint produit. Ne pas utiliser le dernier commit touchant ce fichier pour retrouver le SHA de l’implémentation. Ne pas annoncer le Lot 7 intégralement clos : les services/migrations des lecteurs sont livrés, le parity gate reste ouvert.
 
+## Vision figée pour les Lots 8–13
+
+La décision d’architecture post-Lot 7 est détaillée dans [openai-first-execution-plan.md](openai-first-execution-plan.md). Cette note fige l’orientation **OpenAI-first, pas OpenAI-locked**, les responsabilités PWA/Core/Adapter/Skills/MCP, l’état production vs branche, et les gates détaillés des Lots 8 à 13.
+
+Pour toute reprise après le parity gate, lire cette note **avant** de concevoir le Lot 8 ou le MCP. Elle ne change pas la mission immédiate : Lot 7.2 reste le seul chantier actif et Lot 8 reste NO-GO jusqu’à fermeture du gate. Elle précise notamment que les Lots 10–12 restent dans le plan initial mais que le contrat MCP doit être runtime-agnostic, Sites est la première cible de runtime MCP, et la migration du plugin doit rester infrastructure-only sans changement de méthodologie.
+
 ## État immédiat et prochaine mission
 
 Lots 0–6 terminés selon leurs gates; gate production Lot 6 validé humainement, Sites actuellement v208. Implémentation Lot 7 réalisée et committée au checkpoint ci-dessus, sans déploiement Lot 7. Lot 7 parity gate encore ouvert; **Lot 8 NO-GO** tant que ce gate n’est pas clôturé. Prochaine mission exclusivement : **Lot 7.2 — Final Real Corpus Parity Gate**, avec les preuves manquantes précisées en fin de document. Aucun résumé conversationnel ou artefact de session n’est nécessaire.
