@@ -6,6 +6,12 @@ Trois revues factuelles Luna ont couvert données/cache, renderer/mobile/tests e
 
 La préparation de la preuve de reproductibilité Codex Cloud avant le Lot 4 est suivie dans le [Lot 3.5 — préparation Codex Cloud](codex-cloud-environment.md).
 
+## Décision d’exploitation OpenAI-first — 1 octobre 2026
+
+La cible fonctionnelle de ce document reste valide. La décision d’exploitation est désormais explicitée dans [openai-first-execution-plan.md](openai-first-execution-plan.md) : Investment OS reste **OpenAI-first** pour l’usage réel (ChatGPT/Codex, plugin, Skills, Sites et MCP), mais le Core, les contrats, les règles métier et les adapters restent indépendants du runtime OpenAI afin de permettre une sortie future sans réécriture métier.
+
+Cette décision ne réouvre pas les Lots 0–9 et ne modifie pas l’ordre du chantier. Elle précise les Lots 10–12 : contrat MCP runtime-agnostic, serveur MCP mince sur le Core avec ChatGPT Sites comme première cible d’hébergement, puis migration infrastructure du plugin vers MCP sans changement méthodologique. Le choix d’utiliser le Site Investment OS existant ou un Site technique séparé est différé au Lot 11 et doit être justifié par sécurité/runtime/déploiement, pas décidé par principe.
+
 ## Décisions et limites
 
 Notion demeure la source des documents, propriétés métier, relations et pointeurs Current. D1 conserve les snapshots synchronisés, index, jobs, verrous et caches techniques déjà utilisés. Le Worker Sites reste la frontière HTTP, d'authentification et de composition. React reste la présentation mobile first. Les analyses continuent d'être produites par les workflows existants ; le Core ne produit aucun jugement financier avec un LLM.
@@ -152,8 +158,8 @@ Le port de lecture snapshot retourne le dernier état synchronisé ; le port d'�
 | 7 — Core | Services/ports indépendants, contrats testés avec adapters fake ; conservation calculs et routage existants |
 | 8 — adapter Notion | Mapping/sync/écriture isolés, reprise/concurrence et receipts vérifiés ; aucun secret exposé |
 | 9 — Skill permanent | Documenter le chemin réel stabilisé, les gates et les interdits de duplication |
-| 10/11 — MCP | Contract/auth/hébergement validés, puis serveur mince sur le Core ; tests erreurs/scope et sept opérations |
-| 12 — plugin | Migration infrastructure seulement ; comparaison outputs/receipts et persistance sans changement méthodologique |
+| 10/11 — MCP | Contrat runtime-agnostic (schemas/version/auth/scopes), puis serveur mince MCP → Core ; ChatGPT Sites première cible de runtime, Site existant préféré si compatible ; tests erreurs/scope et opérations réellement exposées |
+| 12 — plugin | Migration infrastructure du plugin vers les tools MCP ; Skills/méthodologie inchangés ; comparaison inputs/outputs/receipts/persistance avant/après |
 | 13 — clôture | Non-régression globale, mobile, sécurité, perf, docs et retrait des wrappers restants |
 
 Les gates de code devront inclure les suites existantes et leurs consommateurs, avec correction explicite des limites de portabilité au lot pertinent. La baseline distingue typecheck PASS, build direct PASS, wrapper build macOS FAIL, lint préexistant FAIL, et les 160 tests PASS dans le chemin temporaire compatible contre 159/160 dans le checkout avec espaces. On ne transforme pas ces constats en « tous les checks passent ».
