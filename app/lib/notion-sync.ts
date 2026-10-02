@@ -321,13 +321,18 @@ export async function documentCompanyLinks(db: D1Database): Promise<Map<string, 
   return links;
 }
 
-/** Primary ownership edges: explicit Notion relations and title matches only. */
+/** Primary ownership edges: explicit Notion relations, with title matches as fallback. */
 export async function documentPrimaryCompanyLinks(db: D1Database): Promise<Map<string, string[]>> {
   await ensureCompanyLinkTable(db);
-  const rows = (await db.prepare("SELECT document_page_id,company_page_id FROM notion_document_companies WHERE match_method IN ('notion-relation','title')").all<{document_page_id:string;company_page_id:string}>()).results ?? [];
+  const rows = (await db.prepare("SELECT document_page_id,company_page_id,match_method FROM notion_document_companies WHERE match_method IN ('notion-relation','title')").all<{document_page_id:string;company_page_id:string;match_method:string}>()).results ?? [];
+  const explicitByDocument = new Set(rows.filter(row => row.match_method === "notion-relation").map(row => normalizeNotionPageId(row.document_page_id)));
   const links = new Map<string, string[]>();
   for (const row of rows) {
     const documentId = normalizeNotionPageId(row.document_page_id);
+    // A valid Notion Company relation is authoritative. Title edges remain a
+    // fallback for documents without one; secondary title/content edges stay
+    // available through documentCompanyLinks.
+    if (row.match_method === "title" && explicitByDocument.has(documentId)) continue;
     const companyId = normalizeNotionPageId(row.company_page_id);
     const current = links.get(documentId) ?? [];
     if (!current.includes(companyId)) current.push(companyId);

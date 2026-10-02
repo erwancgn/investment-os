@@ -16,6 +16,8 @@ async function apis() {
   modules = {
     adapter: await bundle("adapters/notion/investment-reads.ts"),
     legacy: await bundle("app/lib/investment-data.ts"),
+    sync: await bundle("app/lib/notion-sync.ts"),
+    selection: await bundle("core/analysis/current-selection.ts"),
     preview: await bundle("app/lib/company-preview.ts"),
     contracts: await bundle("core/contracts/investment.ts"),
   };
@@ -31,7 +33,7 @@ async function fixture() {
   sqlite.exec(`CREATE TABLE notion_document_companies (document_page_id TEXT NOT NULL, company_page_id TEXT NOT NULL, match_method TEXT NOT NULL, matched_at TEXT NOT NULL, PRIMARY KEY(document_page_id, company_page_id));
     CREATE TABLE notion_relations (source_page_id TEXT NOT NULL, source_key TEXT NOT NULL, property_name TEXT NOT NULL, target_page_id TEXT NOT NULL, target_source_key TEXT, matched_at TEXT NOT NULL, PRIMARY KEY(source_page_id, property_name, target_page_id));`);
   const reads = { bodyIds: new Set() };
-  const db = { prepare(query) {
+  const db = { async batch(statements) { return Promise.all(statements.map(statement => statement.run())); }, prepare(query) {
     const statement = sqlite.prepare(query); let bindings = [];
     const observe = rows => { for (const row of rows) if (row.blocks_json) reads.bodyIds.add(row.page_id); };
     const prepared = {
@@ -254,5 +256,63 @@ test("integrity listing retains historical body metadata and date/projection sta
   assert.equal(archived.normalizedAnalysis.analysis.header.revision, "2025-10-01T10:00:00Z");
   assert.equal(archived.normalizedAnalysis.analysis.header.provenance.sourceId, data.ids.archive);
   assert.equal(data.reads.bodyIds.has(data.ids.archive), true, "integrity explicitly asks for normalized analysis bodies");
+  data.sqlite.close();
+});
+
+test("explicit Company relations own primary links; title fallback and secondary links remain intact", async () => {
+  const [{ rebuildDocumentCompanyLinks, rebuildNotionRelations, documentCompanyLinks, documentPrimaryCompanyLinks }, { readCurrentAnalysisContext }, { selectCurrentAnalysis }] = await Promise.all([
+    apis().then(result => result.sync), apis().then(result => result.legacy), apis().then(result => result.selection),
+  ]);
+  const data = await fixture();
+  const ids = {
+    optoelectronics: "18888888-1888-4888-8888-188888888888",
+    materials: "29999999-2999-4999-8999-299999999999",
+    fallback: "3aaaaaaa-3aaa-4aaa-8aaa-3aaaaaaaaaaa",
+    explicit: "4bbbbbbb-4bbb-4bbb-8bbb-4bbbbbbbbbbb",
+    joint: "5ccccccc-5ccc-4ccc-8ccc-5ccccccccccc",
+    titleOnly: "6ddddddd-6ddd-4ddd-8ddd-6dddddddddd6",
+    contentOnly: "7eeeeeee-7eee-4eee-8eee-7eeeeeeeeeee",
+  };
+  const title = value => ({ type: "title", title: [{ plain_text: value }] });
+  const relation = (...pageIds) => ({ type: "relation", relation: pageIds.map(id => ({ id })) });
+  const select = value => ({ type: "select", select: { name: value } });
+  const save = (id, source, name, properties, plainText = "") => data.sqlite.prepare("INSERT INTO notion_documents VALUES(?,?,?,?,?,?,?,?,?)")
+    .run(id, source, name, `https://notion.so/${id}`, "2026-09-30T10:00:00Z", JSON.stringify(properties), "[]", plainText, "2026-09-30T10:00:00Z");
+
+  save(ids.optoelectronics, "companies", "Applied Optoelectronics", { Company: title("Applied Optoelectronics"), Ticker: { type: "rich_text", rich_text: [{ plain_text: "AAOI" }] } });
+  save(ids.materials, "companies", "Applied Materials", { Company: title("Applied Materials"), Ticker: { type: "rich_text", rich_text: [{ plain_text: "AMAT" }] } });
+  save(ids.fallback, "companies", "Fallback Systems", { Company: title("Fallback Systems"), Ticker: { type: "rich_text", rich_text: [{ plain_text: "FBS" }] } });
+  // The explicit owner is unique; the shared first token "Applied" must not
+  // promote the neighboring company to primary ownership through a title edge.
+  save(ids.explicit, "analyses", "Applied Optoelectronics Business Analysis", { Company: relation(ids.optoelectronics), Agent: select("Business Analyst"), Status: select("Validated") });
+  // Multiple owners remain valid when both are explicitly present in Notion.
+  save(ids.joint, "analyses", "Joint Valuation Analysis", { Company: relation(ids.optoelectronics, ids.materials), Agent: select("Valuation Analyst"), Status: select("Validated") });
+  // Title inference remains a primary fallback where Company is absent.
+  save(ids.titleOnly, "analyses", "Fallback Systems Business Analysis", { Agent: select("Business Analyst"), Status: select("Validated") });
+  // Body matches remain in the complete secondary index but never become owners.
+  save(ids.contentOnly, "analyses", "Quarterly Sector Update", { Agent: select("Valuation Analyst"), Status: select("Validated") }, "Fallback Systems valuation notes.");
+
+  await rebuildDocumentCompanyLinks(data.db);
+  await rebuildNotionRelations(data.db);
+  const canonical = value => value.replaceAll("-", "").toLowerCase();
+  const secondary = await documentCompanyLinks(data.db);
+  const primary = await documentPrimaryCompanyLinks(data.db);
+  assert.deepEqual(primary.get(canonical(ids.explicit)), [canonical(ids.optoelectronics)]);
+  assert.deepEqual(secondary.get(canonical(ids.explicit)).sort(), [canonical(ids.materials), canonical(ids.optoelectronics)].sort(), "the secondary index keeps the inferred title edge");
+  assert.deepEqual(primary.get(canonical(ids.joint)).sort(), [canonical(ids.materials), canonical(ids.optoelectronics)].sort(), "all explicit Company relations remain primary owners");
+  assert.deepEqual(primary.get(canonical(ids.titleOnly)), [canonical(ids.fallback)], "title ownership still works when no Company relation exists");
+  assert.deepEqual(secondary.get(canonical(ids.contentOnly)), [canonical(ids.fallback)], "content-only match remains available in the secondary index");
+  assert.equal(primary.has(canonical(ids.contentOnly)), false, "content-only match is excluded from primary ownership");
+  assert.equal(data.sqlite.prepare("SELECT COUNT(*) AS count FROM notion_relations WHERE source_page_id=? AND property_name='Company'").get(ids.joint).count, 2, "the real Notion relation graph retains explicit multi-owner edges");
+
+  const materialsBusiness = await readCurrentAnalysisContext(data.db, ids.materials, "business");
+  const materialsBusinessSelection = selectCurrentAnalysis(materialsBusiness);
+  assert.equal(materialsBusinessSelection.status, "absent", "a title-only false positive must not select the AOLO report for Applied Materials");
+  const materialsValuation = await readCurrentAnalysisContext(data.db, ids.materials, "valuation");
+  const materialsValuationSelection = selectCurrentAnalysis(materialsValuation);
+  assert.equal(materialsValuationSelection.status, "selected", "an explicitly shared analysis stays selectable by both companies");
+  assert.deepEqual(materialsValuationSelection.analysis.companyIds.sort(), [canonical(ids.materials), canonical(ids.optoelectronics)].sort());
+  const fallbackValuation = await readCurrentAnalysisContext(data.db, ids.fallback, "valuation");
+  assert.equal(selectCurrentAnalysis(fallbackValuation).status, "absent", "a content-only edge never makes a document selectable as owned research");
   data.sqlite.close();
 });
