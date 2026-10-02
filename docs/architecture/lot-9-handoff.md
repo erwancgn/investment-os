@@ -2,7 +2,7 @@
 
 2 octobre 2026. Branche `chore/architecture-stabilization-mcp`, parent Lot 7 `d2566aa`, désormais poussé. Lot 7 reste clos; aucun replay du gate 7. Le Lot 9 n’a pas commencé. Un seul Luna a audité le writer du plugin en lecture seule; aucune Skill ni aucun plugin n’est modifié.
 
-**Verdict : NO-GO Lot 9 — implémentation et fixtures livrées, validation d’écriture réelle encore non exécutée.** Le runner n’expose aucun jeton Notion à l’adapter HTTP. Ce reste de validation ne rouvre pas le Lot 7. Aucun bug critique démontré ne reste dans les chemins couverts; ne pas annoncer un succès de persistance production.
+**Verdict : NO-GO Lot 9 — implémentation et fixtures livrées, validation d’écriture réelle non aboutie.** La tentative contrôlée autorisée a échoué avant mutation : le runner ne résout pas `api.notion.com` (`getaddrinfo EAI_AGAIN`). Ce reste de validation ne rouvre pas le Lot 7. Aucun bug critique démontré ne reste dans les chemins couverts; ne pas annoncer un succès de persistance production.
 
 ## Propriétaires et changements
 
@@ -45,8 +45,10 @@ Le test de sécurité conserve l’injection du normalizer défaillant au nouvea
 
 ## Validation réelle et limites
 
-Sonde nominale du writer : `dependency`, jeton absent, **zéro appel HTTP et zéro mutation**. Aucun `NOTION_TOKEN`, `NOTION_API_KEY` ou `NOTION_SECRET` fourni au runner. Le fallback natif a confirmé que le connecteur Notion autorise create/update, mais il n’expose ni jeton ni transport REST brut réutilisable par ce writer. Une mutation directe du connecteur ne prouverait pas l’exécution de l’adapter et de son receipt; aucun writer parallèle ou contournement n’est créé. Pas de campagne supplémentaire, audit D1, sondes HTTP Sites ou mutation de production.
+La première sonde sans authentification avait échoué avant tout appel HTTP. Une tentative contrôlée autorisée a ensuite chargé l’authentification uniquement dans la mémoire et l’environnement du processus. Le premier accès aux schémas a échoué avant création de Company ou d’analyse; aucun receipt live ni replay live n’a pu être validé. Une sonde réseau sans authentification a isolé le blocage : `TypeError: fetch failed`, cause `getaddrinfo EAI_AGAIN api.notion.com`. Aucun contournement ou nouvelle campagne n’a été lancé. Zéro mutation Notion.
 
-Reste avant GO : une seule campagne contrôlée dans un runtime disposant du jeton, avec une Company de test isolée et les schémas réels, démontrant création/relation/Run ID/Current/relectures/receipt du **même adapter**, sans écraser une analyse existante. Vérifier les champs requis des sources effectivement écrites, dont Run ID et types Agent/Status/date; les fixtures ne certifient pas les schémas live Earnings/Decisions. Aucun secret ou export privé dans Git.
+Le contrôle en mémoire a recherché une copie du secret dans les fichiers du checkout (hors dépendances et objets Git), `/tmp`, `git diff`, le diff indexé et `git status` : zéro correspondance. Le processus a effacé sa copie de session et terminé; le runner temporaire sans secret a été supprimé. Aucune valeur d’authentification ni export privé n’est conservé dans cette passation.
+
+Reste avant GO : une seule campagne contrôlée dans un runtime disposant du jeton, avec accès DNS/HTTPS fonctionnel à Notion, une Company de test isolée et les schémas réels, démontrant création/relation/Run ID/Current/relectures/receipt du **même adapter**, sans écraser une analyse existante. Vérifier les champs requis des sources effectivement écrites, dont Run ID et types Agent/Status/date; les fixtures ne certifient pas les schémas live Earnings/Decisions. Aucun secret ou export privé dans Git.
 
 Limites explicites : absence de CAS/transaction Notion, writers externes hors lease D1, états ambigus nécessitant une réconciliation positive ou intervention, blocs unsupported/heading >3 et payload >450 KB refusés avant mutation, update de contenu existant non destructif uniquement via nouveau run/page. Pas de déploiement ni migration D1 live appliquée. Ce checkpoint livre le code testable; **le gate Lot 9 reste NO-GO uniquement tant que la validation réelle ci-dessus manque**.
