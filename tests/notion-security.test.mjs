@@ -26,7 +26,7 @@ async function loadWorker({ stubNormalizer = false } = {}) {
     plugins.push({
       name: 'stub-analysis-normalizer',
       setup(buildContext) {
-        buildContext.onResolve({ filter: /^\.\/document-presentation$/ }, () => ({
+        buildContext.onResolve({ filter: /(?:^\.\/|^\.\.\/\.\.\/app\/lib\/)document-presentation$/ }, () => ({
           path: 'document-presentation-stub',
           namespace: 'normalizer-stub',
         }));

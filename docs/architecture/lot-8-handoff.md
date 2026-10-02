@@ -6,11 +6,11 @@
 
 La décision d’architecture post-Lot 7 est détaillée dans [openai-first-execution-plan.md](openai-first-execution-plan.md). Cette note fige l’orientation **OpenAI-first, pas OpenAI-locked**, les responsabilités PWA/Core/Adapter/Skills/MCP, l’état production vs branche, et les gates détaillés des Lots 8 à 13.
 
-Pour toute reprise après le parity gate, lire cette note **avant** de concevoir le Lot 8 ou le MCP. Le gate final Lot 7 est clos; aucun travail Lot 8 n’a commencé. Elle précise notamment que les Lots 10–12 restent dans le plan initial mais que le contrat MCP doit être runtime-agnostic, Sites est la première cible de runtime MCP, et la migration du plugin doit rester infrastructure-only sans changement de méthodologie.
+Pour toute reprise après le parity gate, lire cette note **avant** de concevoir le Lot 8 ou le MCP. Le gate final Lot 7 est clos; le checkpoint suivant du Lot 8 est décrit dans lot-9-handoff.md. Elle précise notamment que les Lots 10–12 restent dans le plan initial mais que le contrat MCP doit être runtime-agnostic, Sites est la première cible de runtime MCP, et la migration du plugin doit rester infrastructure-only sans changement de méthodologie.
 
 ## État immédiat et prochaine mission
 
-Lots 0–6 terminés selon leurs gates; gate production Lot 6 validé humainement, Sites actuellement v208. Implémentation Lot 7 réalisée et committée au checkpoint ci-dessus, sans déploiement Lot 7. La reconstruction locale D1, le replay final Lot 7 et leur revue sont terminés. **Lot 7 clos — GO Lot 8. Lot 8 n’a pas commencé.** Les NO-GO plus anciens des passes 7.1/7.2 sont conservés comme historique et remplacés par les résultats du gate final ci-dessous.
+Lot 7 clos — GO Lot 8, checkpoint `d2566aa` poussé après autorisation explicite. Lot 8 a ensuite été implémenté dans cette même fenêtre; ses preuves et limites sont consignées dans [lot-9-handoff.md](lot-9-handoff.md). **NO-GO Lot 9 tant que la validation contrôlée du writer réel reste impossible faute de jeton dans le runner.** Aucun Lot 9 commencé et aucun déploiement Lot 7/8. Les verdicts plus anciens ci-dessous sont historiques.
 
 ## Reprise et état déployé
 

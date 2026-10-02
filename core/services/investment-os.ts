@@ -94,7 +94,8 @@ function validReceipt(receipt: unknown, input: SaveAnalysisInput): receipt is Sa
   const lifecycleConsistent = (!value.promoted || value.persisted) && (!value.verified || value.promoted);
   const statusConsistent = lifecycleConsistent && (value.status === "verified" ? flags.every(Boolean) : value.status === "persisted" ? value.persisted && !value.promoted && !value.verified : value.status === "promotion_pending" ? value.persisted && !value.promoted && !value.verified : value.status === "partial");
   return Object.keys(value).length === 9 && value.schemaVersion === SCHEMA_VERSION && ["persisted", "promotion_pending", "verified", "partial"].includes(value.status) &&
-    value.analysisId === input.analysis.header.id && value.runId === input.runId &&
+    // Create ports may assign identity; revisioned updates must preserve it.
+    validId(value.analysisId) && (input.expectedRevision === null || value.analysisId === input.analysis.header.id) && value.runId === input.runId &&
     (value.revision === null || validId(value.revision)) && flags.every(flag => typeof flag === "boolean") && statusConsistent &&
     Array.isArray(value.diagnostics) && value.diagnostics.every(d => !!d && typeof d.code === "string" && typeof d.message === "string" && ["info", "warning", "error"].includes(d.severity));
 }

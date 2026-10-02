@@ -1,12 +1,14 @@
+import { createNotionAnalysisWriter, type NotionWriteOptions } from "./analysis-writes";
+import type { SaveAnalysisInput } from "../../core/services/ports";
 import { createInvestmentCore, type ReadOptions } from "../../core/services/investment-os";
 import { SCHEMA_VERSION, isIsoDateOrDateTime, type Provenance, type ServiceResult } from "../../core/contracts/common";
 import type { AnalysisPreview } from "../../core/contracts/analysis";
 import type { CurrentAnalysisFamily, CurrentSelectionInput } from "../../core/analysis/current-selection";
 import type { CompanyPreview, Portfolio, Quote } from "../../core/contracts/investment";
-import { getCompanyDetail, getLivePortfolio, getResearchDocument, listResearchDocuments, readCurrentAnalysisContext, type CompanyDetail, type CompanyDocument, type LivePortfolio, type ResearchDocument } from "../../app/lib/investment-data";
+import { getCompanyDetail, getLivePortfolio, getResearchDocument, listResearchDocuments, readCurrentAnalysisContext, type CompanyDetail, type CompanyDocument, type LivePortfolio, type ResearchDocument, readPosition } from "./investment-data";
 import { companyPreview } from "../../app/lib/company-preview";
 import { normalizeAnalysisDocument } from "../../app/lib/document-presentation";
-import { normalizeNotionPageId } from "../../app/lib/notion-sync";
+import { normalizeNotionPageId } from "./sync";
 import { getQuotes, type QuoteView } from "../../app/lib/quotes";
 
 const provenance = (sourceId: string | null, revision: string | null, capturedAt: string | null): Provenance => ({ kind: "notion", sourceId, revision, capturedAt });
@@ -73,8 +75,19 @@ function requireResult<T>(result: ServiceResult<T>): T {
 }
 
 /** Request-local bridge: legacy JSON stays at the HTTP boundary, domain validation is mandatory. */
-export function createInvestmentReadAdapter(db: D1Database) {
+export function createInvestmentAdapter(db: D1Database, writes?:NotionWriteOptions) {
   return {
+    getPosition(id:string,options?:ReadOptions){
+      return createInvestmentCore({readPosition: (id,options)=>readPosition(db,id,options)}).getPosition(typeof id==="string"?normalizeNotionPageId(id):id,options);
+    },
+    saveAnalysis(input:SaveAnalysisInput){
+      if(input?.analysis?.header && typeof input.analysis.header.id==="string" && Array.isArray(input.companyIds) && input.companyIds.every(id=>typeof id==="string") && Array.isArray(input.analysis.header.companyIds) && input.analysis.header.companyIds.every(id=>typeof id==="string")){
+        const analysis={...input.analysis};
+        analysis.header={...analysis.header,id:normalizeNotionPageId(analysis.header.id),companyIds:analysis.header.companyIds.map(normalizeNotionPageId)};
+        input={...input,companyIds:input.companyIds.map(normalizeNotionPageId),analysis};
+      }
+      return createInvestmentCore({...(writes?{writeAnalysis:createNotionAnalysisWriter(db,writes)}:{})}).saveAnalysis(input);
+    },
     /** Canonical policy available for parity checks; legacy UI selection remains unchanged. */
     async getCurrentAnalysis(companyId: string, family: CurrentAnalysisFamily) {
       let context: CurrentSelectionInput | undefined;
@@ -150,3 +163,6 @@ export function createInvestmentReadAdapter(db: D1Database) {
     },
   };
 }
+
+/** Existing HTTP consumers keep their transport payloads and import name. */
+export const createInvestmentReadAdapter = createInvestmentAdapter;
