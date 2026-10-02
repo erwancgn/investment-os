@@ -10,7 +10,7 @@ Pour toute reprise après le parity gate, lire cette note **avant** de concevoir
 
 ## État immédiat et prochaine mission
 
-Lot 7 clos — GO Lot 8, checkpoint `d2566aa` poussé après autorisation explicite. Lot 8 a ensuite été implémenté dans cette même fenêtre; ses preuves et limites sont consignées dans [lot-9-handoff.md](lot-9-handoff.md). **NO-GO Lot 9 : la tentative contrôlée du writer réel reste bloquée avant mutation par la résolution DNS de `api.notion.com` (`EAI_AGAIN`).** Aucun Lot 9 commencé et aucun déploiement Lot 7/8. Les verdicts plus anciens ci-dessous sont historiques.
+Lot 7 clos — GO Lot 8, checkpoint `d2566aa` poussé après autorisation explicite. Lot 8 a ensuite été implémenté dans cette même fenêtre; ses preuves et limites sont consignées dans [lot-9-handoff.md](lot-9-handoff.md). **Lot 8 clos — GO Lot 9 : validation live locale du writer acquise, deux replays `verified` sans doublon et nettoyage des pages de test vérifié.** Le blocage DNS Cloud est historique; la passation Lot 9 détaille les preuves, les limites et le prochain livrable documentaire. Aucun Lot 9 commencé et aucun déploiement Lot 7/8. Les verdicts plus anciens ci-dessous sont historiques.
 
 ## Reprise et état déployé
 

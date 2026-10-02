@@ -1,8 +1,16 @@
-# Checkpoint Lot 8 — Adapter Notion lecture/écriture
+# Passation Lot 9 — Lot 8 clos, adapter Notion lecture/écriture validé
 
 2 octobre 2026. Branche `chore/architecture-stabilization-mcp`, parent Lot 7 `d2566aa`, désormais poussé. Lot 7 reste clos; aucun replay du gate 7. Le Lot 9 n’a pas commencé. Un seul Luna a audité le writer du plugin en lecture seule; aucune Skill ni aucun plugin n’est modifié.
 
-**Verdict : NO-GO Lot 9 — implémentation et fixtures livrées, validation d’écriture réelle non aboutie.** La tentative contrôlée autorisée a échoué avant mutation : le runner ne résout pas `api.notion.com` (`getaddrinfo EAI_AGAIN`). Ce reste de validation ne rouvre pas le Lot 7. Aucun bug critique démontré ne reste dans les chemins couverts; ne pas annoncer un succès de persistance production.
+**Verdict final : Lot 8 clos — GO Lot 9.** La validation contrôlée a été exécutée sur le Mac de l’utilisateur avec le véritable adapter du checkpoint `5d8baad`. Les sorties locales rapportées dans cette session confirment la persistance réelle, les relations, Current, les relectures, le receipt `verified`, deux replays sans création ni doublon, puis le nettoyage. Le blocage DNS du runner Cloud est historique; il ne bloque plus le gate. Le Lot 9 n’est pas commencé.
+
+## Checkpoints et état de livraison
+
+- Branche : `chore/architecture-stabilization-mcp`; miroir GitHub : `erwancgn/investment-os`.
+- Lot 7 clos : `d2566aa`. Implémentation Lot 8 : `2d35478`. Checkpoint local validé : `5d8baad`; ce dernier commit documentait le blocage Cloud, sans changer le produit.
+- Cette passation clôt le gate par un commit documentaire ultérieur; le SHA du produit reste `2d35478`. Aucun changement de code nécessaire à la validation locale.
+- Aucun déploiement Sites ni migration D1 live : la production reste au checkpoint Lot 6 indiqué dans `lot-8-handoff.md`. La validation locale du writer n’est pas un déploiement du Worker.
+- Aucun corpus, secret ou harness de validation live committé. Les harnesses ont été créés seulement sous `/tmp`, avec nettoyage à la sortie. L’authentification locale a été lue depuis `process.env.NOTION_TOKEN`; aucune valeur ni instruction de réutilisation de cette session n’est conservée ici.
 
 ## Propriétaires et changements
 
@@ -43,12 +51,44 @@ Exécutions directes : nouvelle suite Notion **25/25**; Core **7/7**; adaptateur
 
 Le test de sécurité conserve l’injection du normalizer défaillant au nouveau chemin du propriétaire. La suite nouvelle est enregistrée dans `npm test`, mais aucun `npm test` global PASS n’est revendiqué. Aucun test CSS modifié. Typecheck, ESLint ciblé, build Worker/manifest via `npm run build` et diff-check sont verts. Avertissement SQLite expérimental seulement.
 
-## Validation réelle et limites
+## Validation live locale acquise
 
-La première sonde sans authentification avait échoué avant tout appel HTTP. Une tentative contrôlée autorisée a ensuite chargé l’authentification uniquement dans la mémoire et l’environnement du processus. Le premier accès aux schémas a échoué avant création de Company ou d’analyse; aucun receipt live ni replay live n’a pu être validé. Une sonde réseau sans authentification a isolé le blocage : `TypeError: fetch failed`, cause `getaddrinfo EAI_AGAIN api.notion.com`. Aucun contournement ou nouvelle campagne n’a été lancé. Zéro mutation Notion.
+Preuve : sorties terminal fournies par l’utilisateur sur son Mac, checkout propre `5d8baad`, Node `v22.23.1`, accès à Notion. Sol n’a pas exécuté cette campagne depuis Cloud. Le harness temporaire a bundlé les modules du dépôt avec esbuild; il a utilisé `createInvestmentAdapter`, une SQLite en mémoire avec les migrations réelles `0000`–`0006`, et le véritable transport REST du writer. Aucune logique d’index ou de persistance de l’analyse n’a été réimplémentée.
 
-Le contrôle en mémoire a recherché une copie du secret dans les fichiers du checkout (hors dépendances et objets Git), `/tmp`, `git diff`, le diff indexé et `git status` : zéro correspondance. Le processus a effacé sa copie de session et terminé; le runner temporaire sans secret a été supprimé. Aucune valeur d’authentification ni export privé n’est conservé dans cette passation.
+Une Company de test isolée, au Current initial vide, et une analyse Business technique ont été créées. Aucune analyse existante n’a été écrasée. Après une interruption du harness, la reprise a utilisé ces mêmes pages et ce même Run ID, avec toute nouvelle création explicitement interdite.
 
-Reste avant GO : une seule campagne contrôlée dans un runtime disposant du jeton, avec accès DNS/HTTPS fonctionnel à Notion, une Company de test isolée et les schémas réels, démontrant création/relation/Run ID/Current/relectures/receipt du **même adapter**, sans écraser une analyse existante. Vérifier les champs requis des sources effectivement écrites, dont Run ID et types Agent/Status/date; les fixtures ne certifient pas les schémas live Earnings/Decisions. Aucun secret ou export privé dans Git.
+| Gate contrôlé | Preuve acquise |
+| --- | --- |
+| Create / persist | Page créée par le writer de production, persistée et relue; identité attribuée par Notion |
+| Relation Company | Relation de l’analyse égale exactement à la Company de test |
+| Run ID | Texte relu égal au Run ID de la campagne |
+| Promotion Current | Relation Current Business de la Company relue égale exactement à cette analyse |
+| Re-read | Page, Company et corps relus via REST; corps attendu identique |
+| Receipt verified | Reprise et second replay retournent `verified`, `persisted=true`, `promoted=true`, `verified=true` |
+| Replay sans doublon | Deux replays, même ID; zéro nouvelle création; recherche paginée du Run ID : une seule analyse |
+| Nettoyage | Current restauré vide; Company et analyse mises à la corbeille, `in_trash=true` relu pour chacune |
 
-Limites explicites : absence de CAS/transaction Notion, writers externes hors lease D1, états ambigus nécessitant une réconciliation positive ou intervention, blocs unsupported/heading >3 et payload >450 KB refusés avant mutation, update de contenu existant non destructif uniquement via nouveau run/page. Pas de déploiement ni migration D1 live appliquée. Ce checkpoint livre le code testable; **le gate Lot 9 reste NO-GO uniquement tant que la validation réelle ci-dessus manque**.
+Sortie finale rapportée : `VALIDATION LIVE PASS`, `NETTOYAGE VÉRIFIÉ`, `GO LOT 9`, code de sortie `0`.
+
+Les obstacles intermédiaires sont résolus : DNS Cloud indisponible, puis HTTP 403 de création avant campagne autorisée côté Mac. Le premier harness local employait à tort une assertion `archived === false` et le PATCH de nettoyage `{archived:true}`. Avec Notion-Version `2026-03-11`, le champ observé/accepté est `in_trash`; l’API a explicitement rejeté `archived` en nettoyage. Correction du harness uniquement, puis reprise sans nouvelle création et nettoyage vérifié avec `{in_trash:true}`. Le writer ne réalise pas cet archivage de test et contrôle déjà les deux indicateurs de lecture; aucun CORE_BUG ou MAPPING_BUG démontré par cet incident.
+
+Les contrôles locaux initiaux et de reprise ont rapporté `HYGIÈNE SECRET OK — Git propre`; le runner Cloud avait également vérifié fichiers, temporaires et sorties Git sans correspondance du secret. Le dernier harness de clôture, sans log sur disque, a supprimé son environnement d’authentification de processus et ses artefacts `/tmp` à la sortie. Cela ne prétend pas effacer une variable déjà définie dans le shell personnel de l’utilisateur.
+
+## Limites conservées, sans rouvrir le gate
+
+- La preuve live porte sur Business, les Companies et Analyses réelles et le replay; elle ne certifie pas une campagne live des sept familles ni les schémas Earnings/Decisions. Les cas d’erreur et autres variantes restent ceux des fixtures acquises.
+- Absence de CAS/transaction Notion et d’unicité globale face aux writers externes hors lease D1. Les états ambigus exigent une réconciliation positive ou une intervention.
+- Les blocs unsupported, headings >3 et payloads >450 KB sont refusés avant mutation. Le contenu d’une page existante n’est pas remplacé destructivement; nouveau contenu → nouveau run/page.
+- La persistance du journal, les migrations D1 live, le déploiement/auth du runtime, le contrat MCP et la migration infrastructure du plugin sont des travaux distincts. Aucun succès de déploiement ni `npm test` global PASS n’est revendiqué.
+
+## Démarrage Lot 9 — prochaine session
+
+Objectif canonique : **Skill permanent de développement / instructions permanentes ou documentation équivalente**, selon `openai-first-execution-plan.md`, section 9. Documenter le chemin stabilisé, figer les responsabilités et empêcher le retour de logique dupliquée. Le plugin Investment OS Analysis reste la source canonique de la méthodologie financière; le ZIP `investment-os-analysis-1.3.0-runtime.zip` a servi de référence Lot 8.
+
+1. Synchroniser le checkout local avec le commit de cette passation, en fast-forward uniquement et avec Git propre. Lire `AGENTS.md`, cette passation et la section 9 du plan; consulter uniquement les contrats/propriétaires utiles à ce livrable.
+2. Établir les instructions permanentes autour du chemin réel : consommateur → services Core → ports → adapter Notion → sources/projection. Le chemin futur Skills → MCP → Core est une cible des Lots 10–12, pas un transport déjà déployé.
+3. Figer les propriétaires canoniques et les contrôles de développement : réutilisation du mapping/parser/index/agrégats, validation des contrats/receipts, tests proportionnés aux changements et secrets hors fichiers/outputs.
+4. Interdire dans les Skills la policy Current, le mapping Notion, les calculs Portfolio dupliqués, les détails d’hébergement OpenAI et toute modification de méthode financière liée à la migration.
+5. Relire et vérifier le livrable documentaire, puis checkpoint et passation Lot 10. Ne pas créer le serveur ni le contrat MCP au Lot 9; ne pas modifier les Skills financières, le plugin, la production ou les schémas live pour ce livrable.
+
+Ne pas refaire l’audit générique du repo, le gate Lot 7, l’export D1, les tentatives réseau Cloud, la campagne live Lot 8 ou les suites déjà vertes sans changement pertinent. Aucun sous-agent nécessaire par défaut. Le gate Lot 9 évaluera la cohérence des instructions avec les propriétaires et interdits ci-dessus; GO Lot 9 ici autorise son démarrage, pas sa clôture anticipée.
