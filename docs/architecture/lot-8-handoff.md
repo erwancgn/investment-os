@@ -10,7 +10,7 @@ Pour toute reprise après le parity gate, lire cette note **avant** de concevoir
 
 ## État immédiat et prochaine mission
 
-Lots 0–6 terminés selon leurs gates; gate production Lot 6 validé humainement, Sites actuellement v208. Implémentation Lot 7 réalisée et committée au checkpoint ci-dessus, sans déploiement Lot 7. Lot 7 parity gate encore ouvert; **Lot 8 NO-GO** tant que ce gate n’est pas clôturé. Prochaine mission exclusivement : **Lot 7.2 — Final Real Corpus Parity Gate**, avec les preuves manquantes précisées en fin de document. Aucun résumé conversationnel ou artefact de session n’est nécessaire.
+Lots 0–6 terminés selon leurs gates; gate production Lot 6 validé humainement, Sites actuellement v208. Implémentation Lot 7 réalisée et committée au checkpoint ci-dessus, sans déploiement Lot 7. La passe documentaire et d’audit Lot 7.2 du 2 octobre 2026 est terminée; elle a renforcé les preuves source, mais le gate de parité reste bloqué faute de corpus D1 complet et de comparaisons legacy/Core nouvelles. **Lot 7 n’est pas déclaré clos et Lot 8 reste NO-GO.** Voir les résultats de passe 7.2 ci-dessous; aucune clôture du gate n’est implicite.
 
 ## Reprise et état déployé
 
@@ -75,11 +75,48 @@ Comparaison ciblée read-only via Notion autorisé, replay temporaire des foncti
 
 ### Lot 7.2 — preuves réellement manquantes et verdict
 
-Vérifier d’abord que le quota **Notion Query Data Source** est de nouveau disponible : il a été atteint pendant le Lot 7.1. Aucun contournement ni répétition automatique d’une requête refusée. Si le quota demeure indisponible et empêche la preuve, conserver NO-GO avec ce blocage exact.
+**Instruction historique du démarrage 7.2 (2 octobre 2026) :** le quota **Notion Query Data Source** avait été atteint pendant le Lot 7.1. Lors de la passe 7.2, `get_site` live a confirmé Sites v208 et `available_with_limit` a permis les lectures nécessaires; ne pas présenter l’ancien blocage de quota comme le blocage actuel.
 
 Travail read-only sur données complètes autorisées : vérifier le comportement des index/relations D1 nécessaires à la sélection Current, les conflits éventuels d’owner, et uniquement les cas réels supplémentaires nécessaires aux branches du graphe encore non prouvées. Many-to-many, fallback et dates ne sont à compléter que si leur couverture acquise ne suffit pas. Comparer IDs legacy/Core, famille, owner, archive/current, date, relation Company et usage du fallback; garder séparés owner et liens inter-rapports. Ne pas committer de données personnelles ou d’export brut; ne pas traiter le viewer D1 tronqué comme une preuve complète.
 
-Classer toute nouvelle divergence exclusivement **EXPECTED_POLICY_CHANGE**, **LEGACY_BUG**, **CORE_BUG** ou **DATA_INCONSISTENCY**. **Aucun changement de code sans CORE_BUG démontré.** Si aucun écart Core n’est démontré et que les branches restantes sont suffisamment couvertes, clôturer Lot 7 et prononcer GO Lot 8; sinon NO-GO avec le blocage précis. La mission Lot 7.2 ne commence pas elle-même le Lot 8.
+Classer toute nouvelle divergence exclusivement **EXPECTED_POLICY_CHANGE**, **LEGACY_BUG**, **CORE_BUG**, **MAPPING_BUG** ou **DATA_INCONSISTENCY**. **Aucun changement de code sans CORE_BUG ou MAPPING_BUG démontré.** Si aucun écart Core ou mapping n’est démontré et que les branches restantes sont suffisamment couvertes, clôturer Lot 7 et prononcer GO Lot 8; sinon NO-GO avec le blocage précis. La mission Lot 7.2 ne commence pas elle-même le Lot 8.
+
+### Lot 7.2 — passe du 2 octobre 2026
+
+Environnement contrôlé avant travail : checkout initial `/workspace/investment-os`, branche `work`, HEAD `930442a`, propre, Node 22.23.1 et npm 11.9.0. Après fetch par accès réseau supporté, worktree isolé `/workspace/investment-os-lot72` créé sur `chore/lot-7.2-parity-gate`, HEAD exact `42c73e9c7bc6b1d6d5b4bc3f4f22d79326c4790a`. La référence locale canonique a ensuite été alignée sur ce HEAD et le worktree est sur `chore/architecture-stabilization-mcp`. Hashes du lockfile et du test CSS identiques à la passation.
+
+**Résultat : NO-GO Lot 8.** L’audit source est utile et cohérent, mais n’est pas une preuve exhaustive de parité D1 ni une comparaison legacy/Core. Il n’a démontré aucun **CORE_BUG** ni **MAPPING_BUG**; aucune correction de code n’est autorisée par les faits observés.
+
+- Sites live confirmé v208. La requête Notion `available_with_limit` a réussi; la source compte **114 Companies**. Projection SQL de graphe (champs, pas corps) : Companies 114 sur 2 pages et Analyses 589 sur 6 pages, pagination keyset URL jusqu’à `has_more=false`; le total Analyses 589 a aussi été vérifié par `COUNT(*) OVER()`.
+- Audit source de 193 cibles Current couvrant les cinq familles : aucun pointeur multiple, manquant ou relation Company incohérente. Chacune des 589 analyses a exactement un owner; aucune n’est sans owner. Le graphe contient 495 arêtes Previous Version et 35 arêtes Earnings + Investment Decisions. Ces liens inter-rapports restent distincts de l’ownership; le fait de n’observer qu’un owner par analyse ne prouve pas l’absence de graphe many-to-many.
+- Le corpus obtenu couvre uniquement les projections Companies et Analyses demandées. Earnings, Decisions et Portfolio n’ont pas été projetés; il n’y a ni snapshot D1 ni transaction snapshot simultanée. Les comparaisons legacy/Core n’ont pas été refaites, car les entrées D1 complètes étaient indisponibles. Les constats Lot 7.1 restent acquis et leurs classifications ne sont pas rejouées.
+- D1 overview expose 13 tables sous `DB`, dont les trois tables pertinentes au gate. Lecture d’une ligne `notion_documents` : `model_projection.truncated=true`, `truncated_values=1` et `properties_json` tronqué. Une ligne de chacune des tables `notion_document_companies` et `notion_relations` est non tronquée, mais reste un échantillon; cela ne fournit pas un corpus complet.
+- La sonde GET `/api/session` via le proxy supporté s’est arrêtée sur curl exit 56, CONNECT 403, HTTP 000. Ne pas tenter de contournement. Aucun export daté complet local ni credential runtime Cloudflare/Notion n’a été fourni. L’endpoint integrity existant agrège les résultats, borne plusieurs listes de problèmes à 50 et n’exporte pas les propriétés; aucun endpoint de graphe complet n’a été identifié.
+- Le tableau de divergences n’a reçu aucun écart mesuré dans cette passe. Une limitation d’accès ne constitue pas une divergence et ne reçoit pas de classification bug. Les égalités acquises et les deux constats KLA de Lot 7.1 restent inchangés : **DATA_INCONSISTENCY** pour les relations source incohérentes et **EXPECTED_POLICY_CHANGE** pour le refus du fallback legacy.
+- Couverture source observée : Current dans les cinq familles, unicité des pointeurs, relation Company, owner unique des 589 analyses et arêtes inter-rapports comptées. Couverture encore bloquée : corpus D1 complet, Earnings/Decisions/Portfolio, snapshot cohérent et comparaisons legacy/Core sur entrées identiques pour les branches insuffisamment prouvées. Lot 7.1 n’a pas été rejoué.
+- Vérifications ciblées rapportées par Luna : exécution directe selector **14/14 sous-tests**, Core **7/7**, adapter **5/5**; typecheck exit 0. Le lancement root `node --test` sur trois fichiers n’a donné que trois enveloppes sans détail; ces enveloppes ne sont pas comptées comme assertions. L’avertissement SQLite expérimental est signalé. La fixture adapter ne couvre pas la reconstruction d’index ni un document à plusieurs owners; le selector couvre le cas multi-owner avec une entrée synthétique. Revue d’accès : les index reconstruits sont `notion-relation`, `title` et `content`, puis le filtre primary sélectionne deux méthodes; les snapshots de propriétés restent nécessaires pour les sources analyses, earnings, decisions et portfolio.
+- La limitation préexistante des subprocess du test CSS ownership n’a pas été rejouée dans cette passe documentaire; aucun `npm test` global n’est revendiqué. Les hashes lockfile et test CSS sont restés identiques.
+- Aucun ID de page privé, export brut ou contenu d’analyse n’est ajouté à Git. Aucune mutation production, synchronisation, publication/déploiement, correction de code ou début du Lot 8 n’a eu lieu.
+
+Matrice de conclusions, sans nouveau replay des cas acquis :
+
+| Cas / constat | Legacy | Core | Classification explicite | Portée |
+| --- | --- | --- | --- | --- |
+| Cadence Business; Advantest Business et Valuation | Même ID | Même ID | Aucune divergence | Acquis Lot 7.1, non rejoué |
+| KLA Business et Valuation : relation source Current vers v1 Superseded | Masquée par fallback v2 | Cible explicite inadmissible | DATA_INCONSISTENCY | Constat source acquis Lot 7.1 |
+| KLA Business et Valuation : traitement du pointeur invalide | Fallback v2 | Refus sans fallback | EXPECTED_POLICY_CHANGE | Écart de policy acquis Lot 7.1 |
+| Audit 7.2 des relations source Companies/Analyses | Non exécuté | Non exécuté | Aucune divergence mesurée | Audit de graphe, pas parité runtime |
+
+| Branche du gate | Preuve de cette passe | Limite restante |
+| --- | --- | --- |
+| Pointeurs Current des cinq familles d’Analyses et relation Company | 193 cibles résolues, zéro multiple/missing/wrong owner source | N’atteste pas l’index primaire D1 ni ses éventuels conflits |
+| Ownership vs liens historiques | Un owner par analyse; Previous Version et liens Earnings/Décisions comptés séparément | Pas de preuve de l’inférence title/content ou d’un owner périmé dans D1 |
+| Index primaire et index relations réels | Tables accessibles, une ligne non tronquée de chaque index | Pas de propriétés snapshot complètes permettant leur réconciliation |
+| Autres sources et branches de sélection | Fixtures existantes vertes pour les sept familles | Pas de nouveau replay réel Earnings/Decision/Portfolio, fallback ou dates |
+
+Source minimale requise à la reprise : headers D1 datés et non tronqués des Companies et des sources analyses/earnings/decisions/portfolio (IDs, titres, propriétés, dates d’édition, texte de classification utilisé), avec les tables complètes `notion_document_companies` (`match_method` inclus) et `notion_relations`, ou extraction autorisée équivalente attestant le même état. Conserver les corps hors Git et ne les charger que si l’hydratation choisie doit être vérifiée. Des fetchs Notion unitaires peuvent compléter un cas source fermé, mais ne certifient pas à eux seuls la fraîcheur de l’index D1.
+
+La passe 7.2 est terminée comme campagne de collecte/analyse, mais le gate reste ouvert faute de corpus complet et de comparaison suffisante : **Lot 8 NO-GO**. Une prochaine clôture exige une preuve autorisée des branches D1 restantes et les comparaisons de parité correspondantes; elle devra préserver les catégories déjà acquises.
 
 ### Fin de fenêtre et hygiène
 
