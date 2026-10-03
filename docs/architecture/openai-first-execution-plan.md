@@ -281,7 +281,7 @@ La sortie future d’OpenAI n’est **pas** un lot du chantier actuel. Elle est 
 | 7 | Core | implémenté, **gate final ouvert** | parité réelle Current |
 | 8 | Adapter Notion lecture/écriture | NO-GO avant clôture Lot 7 | mapping complet + writer vérifié |
 | 9 | Skill permanent | futur | chemin stabilisé et règles anti-duplication |
-| 10 | Contrat MCP | futur | schémas/auth/version/scope runtime-agnostic |
+| 10 | Contrat MCP | clos | contrat 1.0.0 ; passation `lot-10-handoff.md` |
 | 11 | Serveur MCP | futur | serveur mince sur Core, runtime validé |
 | 12 | Migration plugin → MCP | futur | parité méthodologique, receipts et persistence |
 | 13 | Clôture | futur | non-régression globale, sécurité, perf, docs |
@@ -428,57 +428,79 @@ Définir le langage stable entre Investment OS et les agents avant de choisir le
 
 Le contrat MCP est **runtime-agnostic**. Le même contrat doit pouvoir être servi depuis Sites ou un runtime indépendant.
 
-### Surface initiale
+### Contrat canonique 1.0.0 (Lot 10 clos)
 
-La surface exacte est décidée au Lot 10 à partir des consommateurs réels. Point de départ :
+Définition normative : `contracts/mcp.ts` (types, noms, descriptions, mapping et limites), avec les schémas JSON Schema draft-07 dans `contracts/mcp.v1.schema.json`. Le présent paragraphe porte les règles opérationnelles communes à **chacun** des tools. Aucun serveur ni dispatcher n'est implémenté. Le dossier `contracts/`, déjà envisagé par l'architecture cible et absent du checkout, distingue le contrat de transport des contrats de domaine `core/contracts/` ; le Core n'importe jamais MCP.
 
-- `get_company` ;
-- `get_portfolio` ;
-- `get_position` ;
-- `get_current_analysis` ;
-- `list_analyses` ;
-- `save_analysis` ;
-- `get_quote`.
+Les schémas sont générés depuis les types avec la dépendance TypeScript déjà installée (`node scripts/generate-mcp-schemas.mjs`, contrôle `--check`). Ils décrivent la structure JSON ; la validité métier, les relations entre champs, les dates, la sélection Current, les agrégats et la cohérence des receipts restent vérifiés par les validateurs/services Core existants. Une conformité JSON Schema seule n'autorise donc jamais une écriture. Le générateur ne constitue pas un validateur métier alternatif.
 
-L’accès historique par ID peut être exposé si un workflow réel le justifie ; le fait que `getAnalysisById` existe dans le Core ne force pas automatiquement un huitième tool public.
+### Surface minimale et mapping exact
 
-### Chaque tool doit spécifier
+Tous les inputs ont `contractVersion: "1.0.0"` et `scope: "personal" | "demo"`, obligatoires. Les propriétés inconnues sont refusées. Les identifiants sont opaques, non vides, sans espaces périphériques, de 512 caractères maximum ; aucun format physique ou normalizer de source dans MCP. Les arguments supplémentaires figurent ci-dessous. Les schémas de chaque tool sont `tools.<nom>.inputSchema` et `tools.<nom>.outputSchema` dans le bundle, à résoudre **avec ses definitions locales** ; le Lot 11 devra les rendre autonomes lors de leur annonce au protocole.
 
-- nom stable ;
-- description ;
-- version de contrat ;
-- schéma d’entrée ;
-- schéma de sortie ;
-- mapping exact vers une opération Core ;
-- erreurs et diagnostics ;
-- READ ou WRITE ;
-- scope personnel/démo le cas échéant ;
-- auth requise ;
-- règles d’idempotence ;
-- comportement en cas de stale data ;
-- limites de pagination/taille ;
-- politique de timeout/retry du transport.
+| Tool stable | Mode | Arguments métier → appel Core exact | Donnée du résultat Core | Justification |
+| --- | --- | --- | --- | --- |
+| `get_company` | READ | `id` → `getCompany(id)` | `CompanyPreview \| null` | Worker `/api/companies/:id`, Company : identité, aperçus et archives nécessaires à la recherche |
+| `get_portfolio` | READ | `options?` → `getPortfolio(options)` | `Portfolio` | Worker `/api/portfolio/live`, holdings et contexte de portefeuille existants |
+| `get_position` | READ | `id, options?` → `getPosition(id, options)` | `Position \| null` | Besoin d'une position fermée adressable hors holdings, couvert par le service et les tests Lot 8 ; pas encore de route UI dédiée |
+| `get_current_analysis` | READ | `companyId, family` → `getCurrentAnalysis(companyId, family)` | `Analysis \| null` | Dépendances analytiques de la cible Skills ; politique Core déjà implémentée/testée, pas une nouvelle sélection UI |
+| `get_analysis_by_id` | READ | `id` → `getAnalysisById(id)` | `Analysis \| null` | Worker `/api/analyses/:id`, navigation et `DocumentHistory` dans Company : lecture historique/archivée réelle, inaccessible via Current seul |
+| `save_analysis` | WRITE | `input` → `saveAnalysis(input)` | `SaveAnalysisReceipt` | Publication/reprise validée au Lot 8 ; future migration de la persistance des agents |
+| `get_quote` | READ | `assetId, options?` → `getQuote(assetId, options)` | `Quote` | Batch de quotes du Worker et besoins de prix explicites, sans recalcul dans les Skills/transport |
 
-### Interdits
+`options` réutilise exactement `ReadOptions` : `force?: boolean`, `cacheOnly?: boolean`. Aucun défaut de transport ne transforme ces valeurs. Les deux champs peuvent coexister ; leur traitement reste celui du port. `family` Current : business, valuation, short, portfolio, cio_memo, decision, earnings.
 
-Le contrat MCP ne doit pas exposer :
+**Écarté : `list_analyses`.** Le seul appel runtime Core trouvé est `listAnalysesForIntegrity` de l'audit technique `/api/notion/integrity`. Cet audit global ne justifie pas un tool agent supplémentaire. Les aperçus Company comprennent les historiques/archives et le tool par ID hydrate leur corps. Pas de tool d'intégrité, de sync, de batch ou de CRUD ajouté mécaniquement. Les usages du Worker justifient la surface, mais ses wrappers HTTP historiques ne sont pas les sorties MCP : le Lot 11 doit composer les ports Core, pas retourner ces wrappers.
 
-- noms de colonnes/propriétés Notion ;
-- tables D1 ;
-- détails d’implémentation Worker ;
-- erreurs DB brutes ;
-- secrets ;
-- objets React/UI ;
-- règles financières propres aux Skills.
+### Sortie, erreurs et diagnostics
+
+Sortie normale : `{ contractVersion, scope, status: "completed", result: ServiceResult<T> }`. `result` est le résultat Core, sans recalcul ni interprétation de succès. `result.schemaVersion` reste la version de domaine, indépendante du contrat MCP. Une absence peut être `status: "ok", data: null` ; elle n'est pas convertie mécaniquement en `not_found`.
+
+Rejet transport : `{ contractVersion: "1.0.0", scope: personal | demo | null, status: "rejected", error: { code, message, retryable, outcome }, diagnostics }`. `scope: null` si aucun scope valide n'a été obtenu. `outcome: "not_started"` garantit qu'aucun appel Core n'a commencé ; `"unknown"` signifie que l'appel a commencé sans résultat observable. Un WRITE avec outcome unknown **ne prouve ni échec ni rollback**. Une panne du canal peut empêcher toute réponse ; le caller doit alors considérer le résultat du WRITE inconnu.
+
+Erreurs Core préservées : `invalid_input`, `unsupported_version`, `not_found`, `unauthorized`, `forbidden`, `mapping`, `normalization`, `storage`, `dependency`, `rate_limit`, `timeout`, `network`, `cache`, `stale_request`. Erreurs transport : `invalid_input` (JSON/structure), `unsupported_version` (contrat absent du catalogue), `unauthorized` (identité absente/invalide), `forbidden` (permission/scope/ressource), `confirmation_required`, `limit_exceeded`, `timeout`, `network`, `rate_limit`. Les erreurs de validation/auth/version/limite ne sont pas retryable ; timeout/network/rate_limit peuvent l'être pour READ, jamais comme permission de retry aveugle WRITE. Le champ Core `retryable` reste intact et n'écrase pas cette règle transport.
+
+Diagnostics : `Diagnostic` existant (`code`, message humain, severity info/warning/error, path optionnel). Ceux du Core et du receipt sont conservés dans leurs propriétaires, notamment les avertissements Current, fraîcheur et persistance. Les diagnostics transport utilisent des codes fixes (`input_schema`, `contract_version`, `caller_auth`, `scope_permission`, `mutation_confirmation`, `payload_limit`, `transport_timeout`, `transport_network`, `transport_rate_limit`) et des messages génériques. Aucune exception brute, SQL, table, propriété physique, stack, credential ou en-tête d'auth ne doit être exposé. Le Lot 11 doit contrôler l'innocuité des messages produits avant exposition, sans traduire un diagnostic métier en nouvelle décision métier.
+
+Les données réutilisent les contrats Core tels quels. Les libellés hérités `notionUrl`, `provenance.kind` ou `pruSource` sont des métadonnées opaques du domaine existant, **pas** des noms de propriétés physiques ni des instructions d'accès à une source. Le transport ne les interprète pas, ne normalise pas les UUID et ne mappe aucune propriété Notion. Une source future peut fournir ses liens/provenances via son adapter. Pas de schéma physique Notion/D1, React, Worker, secret, SDK OpenAI ou méthode financière ajouté.
+
+### Identité, permissions et confirmation
+
+Le contexte d'identité est vérifié hors payload par le futur transport : sujet opaque authentifié, droits READ/WRITE, scopes autorisés et rattachement au jeu de données personnel. Aucun `callerId`, rôle, tenant, token ou propriétaire auto-déclaré par l'agent dans les arguments. Le mécanisme d'auth (session, jeton, délégation) et le runtime restent ouverts au Lot 11.
+
+Pour chaque READ : permission `investment:read` et accès au scope demandé ; pour `save_analysis` : `investment:write` et accès personnel, **sans déduire WRITE de READ**. Les deux permissions restent distinctes. READ démo exige aussi une identité reconnue et un droit démo ; un contexte démo anonyme doit être attribué explicitement par une politique runtime future, jamais déduit de `scope`. WRITE démo est toujours forbidden en v1, sans appel Core. Toute référence doit appartenir au jeu de données autorisé : autoriser le scope seul ne suffit pas ; le Lot 11 devra composer des ports isolés et vérifier l'accès aux ressources/références avant mutation. Refus sans révéler l'existence d'une ressource hors périmètre, et aucun fallback personal → demo.
+
+La confirmation d'une mutation relève de la politique de délégation du caller vérifié. Une délégation WRITE explicite peut couvrir les opérations normales ; sinon `confirmation_required` avant Core. Aucune confirmation booléenne auto-déclarée dans le payload, aucun changement de cette politique par le tool. Une approbation est liée à l'identité, au scope et à l'intention exacte ; une intention modifiée exige une nouvelle approbation. L'implémentation du mécanisme est Lot 11.
+
+Logs permis : identifiant de corrélation généré par le transport, tool, version, scope, mode, code d'erreur et durée. Pas de payload complet, corps d'analyse, données personnelles, valeur de runId, token, credential ou secret. Les secrets restent dans le contexte serveur/adapter et ne sont jamais des arguments ni des sorties.
+
+### Idempotence, succès partiel et fraîcheur
+
+READ est sans mutation métier ; `force` peut rafraîchir la projection technique selon le port. Aucune stabilité temporelle de la valeur n'est promise.
+
+`save_analysis.input` est **exactement** `SaveAnalysisInput` : analysis canonique, runId inchangé, expectedRevision obligatoire (`null` pour création ou révision opaque pour update), companyIds inchangés. Le transport ne génère jamais runId, ne remplace jamais expectedRevision et n'altère pas l'intention lors d'une reprise. L'idempotence est celle du writer : même runId/module et intention compatible → relecture/reprise ; intention incompatible → `stale_request`. Aucun stockage, lease, retry de mutation, fingerprint, promotion Current ou preuve de persistance dans MCP. Les limites Lot 8 restent applicables (pas de CAS atomique de source, writers externes et mutation ambiguë).
+
+Les quatre receipts sont retournés comme succès Core **sans les rabattre sur verified** : `persisted`, `promotion_pending`, `verified`, `partial`. Les indicateurs persisted/promoted/verified, analysisId, runId, revision et diagnostics sont préservés. `partial` reste observable, sans rollback ni retry automatique. La cohérence des indicateurs et des identités reste validée par le Core ; la preuve de persistance reste au writer. Une reprise explicite de la même intention est déléguée au writer, jamais implémentée dans le transport.
+
+Pour tous les READ, stale/unknown n'est pas une erreur synthétique : préserver `metadata.freshness`, provenance/revision, freshness métier Quote (fresh/closed/stale/unavailable), warnings et diagnostics. Ne pas masquer un prix null/unavailable ni lui substituer un prix calculé. Les analyses et Company n'acceptent pas une option de refresh inexistante dans le Core. Aucun TTL, âge maximal ou politique Current nouvelle. WRITE ne reçoit pas de garantie de fraîcheur (`unknown` dans les métadonnées du receipt).
+
+### Pagination, taille, délais et retry
+
+V1 n'expose **aucune collection autonome** ni pagination/cursor : Company et Portfolio sont des snapshots complets, Analysis un document entier, Position et Quote des objets unitaires. Aucune troncature silencieuse des listes imbriquées, blocs, diagnostics ou receipts. Les sorties trop grandes sont rejetées `limit_exceeded` ; aucun sous-ensemble n'est prétendu complet. Un futur besoin de pagination requerra un contrat explicite et un véritable consommateur, pas un cursor artificiel sur les méthodes actuelles.
+
+Limites communes à chaque tool : JSON UTF-8 sérialisé, hors framing protocole, entrée ≤ 2 097 152 octets, sortie ≤ 4 194 304 octets. Contrôler l'entrée avant Core et la sortie avant envoi. Ces plafonds couvrent les tableaux imbriqués et les corps ; pas de limite de blocs source ni de découpage de persistance MCP. Une sortie WRITE trop grande a `outcome: unknown` et ne permet pas de rejouer automatiquement. Les diagnostics de rejet restent compacts. Les plafonds sont des maxima contractuels : le Lot 11 doit prouver qu'ils passent dans le runtime retenu, ou proposer explicitement une évolution du contrat, sans plafonds cachés.
+
+Budget transport total, retry compris : READ 30 000 ms, WRITE 120 000 ms. L'échéance démarre à réception de la requête valide. Un timeout ne certifie pas l'annulation du Core/writer. Maximum READ deux tentatives, uniquement timeout/network/rate_limit, avec attente de 250 ms (ou Retry-After si connu et compatible avec le budget). Ne pas multiplier les retries déjà internes à l'adapter. Maximum WRITE **une** tentative ; aucun retry transport automatique, même si le Core annonce retryable. Les reprises explicites conservent le même runId et la même intention et repassent auth/confirmation. Aucune continuation WRITE concurrente après échéance. La gestion effective des appels en cours et des signaux d'annulation doit être démontrée au Lot 11.
+
+### Versioning et compatibilité
+
+Version de contrat indépendante : `MCP_CONTRACT_VERSION = 1.0.0`. Noms stables sans suffixe de version ; la version exacte est obligatoire dans chaque input et retournée dans chaque output. Le catalogue v1 ne supporte que 1.0.0 ; une autre valeur renvoie `unsupported_version` avant Core, jamais une conversion silencieuse. Le rejet annonce la version serveur 1.0.0. Pas de négociation spécifique à un fournisseur.
+
+Patch : correction documentaire/générateur sans changement du langage accepté. Minor : nouveaux tools ou champs optionnels via un nouveau catalogue, en conservant le catalogue ancien et son comportement pour les callers qui le demandent. Les lecteurs du nouveau catalogue doivent tolérer les ajouts déclarés par sa version ; les schémas stricts d'un ancien catalogue ne sont pas modifiés en place. Major : champ requis, suppression/renommage, nouveau sens d'un receipt, restriction de valeurs/plafonds ou autre rupture ; conserver l'ancien catalogue pendant la migration explicite. Aucune période de compatibilité ni second catalogue hypothétique implémenté au Lot 10. Toute modification des types Core doit déclencher le contrôle de drift et une revue de compatibilité MCP avant régénération.
 
 ### Gate Lot 10
 
-- schemas versionnés ;
-- tests contractuels ;
-- erreur/scope/auth documentés ;
-- READ/WRITE séparés ;
-- aucune logique métier créée dans le transport ;
-- décision claire sur la surface minimale.
+Contrat versionné et surface justifiée ; schémas stables ; mapping exact ; READ/WRITE/auth/scope ; idempotence, receipts, stale, limites et délais explicites ; tests contractuels purs PASS ; aucune logique métier/serveur/runtime OpenAI ni changement financier. Livraison et reprise : `docs/architecture/lot-10-handoff.md`. Le GO Lot 11 autorise sa préparation séparée, pas son démarrage dans ce lot.
 
 ## 11. Lot 11 — serveur MCP et runtime
 
