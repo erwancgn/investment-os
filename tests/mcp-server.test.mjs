@@ -55,7 +55,17 @@ test("permissions, scope isolation, mutation confirmation and unauthorized never
   let calls = 0; const core = { saveAnalysis: async () => { calls++; throw new Error("must not happen"); }, getCompany: async () => { calls++; throw new Error("must not happen"); } };
   for (const [identity, args, code] of [[{ ...caller, scopes: ["demo"] }, { ...base, id: "c" }, "forbidden"], [{ ...caller, permissions: ["investment:read"] }, { ...base, input: writeInput() }, "forbidden"], [caller, { ...base, scope: "demo", input: writeInput() }, "forbidden"], [{ ...caller, writeApproved: false }, { ...base, input: writeInput() }, "confirmation_required"]]) {
     const name = args.input ? "save_analysis" : "get_company";
-    assert.equal((await call(handler(core, identity), name, args)).error.code, code);
+    const response = await (await handler(core, identity)(request(name, args))).json();
+    assert.equal(response.result.structuredContent.error.code, code);
+    // Hosted error consumers can discard structuredContent: the text must still
+    // prove the denial before Core, without echoing the write intent or identity.
+    const textOnly = JSON.parse(response.result.content[0].text);
+    assert.equal(response.result.isError, true);
+    assert.equal(textOnly.error.code, code);
+    assert.equal(textOnly.error.outcome, "not_started");
+    assert.equal(textOnly.diagnostics[0].code, code === "forbidden" ? "scope_permission" : "mutation_confirmation");
+    assert.equal(response.result.content[0].text.includes(identity.subject), false);
+    if (args.input) assert.equal(response.result.content[0].text.includes(args.input.runId), false);
   }
   assert.equal(calls, 0);
 });

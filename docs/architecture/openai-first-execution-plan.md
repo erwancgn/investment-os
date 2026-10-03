@@ -28,16 +28,16 @@ Conséquence : le Core et les contrats ne doivent dépendre ni de ChatGPT, ni de
 
 ### 2.1 Production réellement déployée
 
-La production reste **Sites v208**, issue du Lot 6 :
+La production est **Sites v209 READ-only**, publiée au Lot 11 depuis `f4616585630a657f40de6e5fc9aed9f6d4ed0151` ; v208 reste le rollback immédiat :
 
-- source Lot 6 : `9f98a7f7a20adef95c591a583fe60a70e04a8e38` ;
-- le Lot 7 n’est pas déployé ;
+- source de rollback v208 (Lot 6) : `9f98a7f7a20adef95c591a583fe60a70e04a8e38` ;
+- les prérequis canoniques des Lots 7–10 et le serveur MCP sont embarqués ; aucune migration D1 n'a été appliquée ;
 - Notion reste la vérité documentaire ;
 - D1 reste le snapshot/cache technique et la file technique ;
 - le Worker Sites sert les routes HTTP, auth, sync et composition ;
 - la PWA React/Vinext consomme ces routes.
 
-Le runtime de production ne contient donc pas encore la cible Core complète du chantier et ne contient pas de serveur MCP Investment OS.
+Le runtime publié contient le chemin Core et le serveur MCP. WRITE reste fermé et non délégué ; les preuves hébergées et limites restantes sont consignées dans `lot-11-handoff.md`.
 
 ### 2.2 Branche d’architecture
 
@@ -86,11 +86,11 @@ Le Core fournit les opérations suivantes :
 | `getAnalysisById` | pont Core actif ; archives et historiques restent adressables |
 | `getQuote` | pont Core actif via le batch de quotes existant |
 | `listAnalyses` | utilisé pour l’intégrité dans le mode prévu |
-| `getCurrentAnalysis` | implémenté et testé, mais **pas encore basculé comme politique Current unique du runtime/UI** |
-| `getPosition` | contrat/service présent, pas d’adapter runtime réel final |
-| `saveAnalysis` | contrat/service présent, aucun writer Notion réel final ; une sync D1 n’est pas une sauvegarde métier |
+| `getCurrentAnalysis` | politique Core adoptée après le gate Lot 7 clos ; consommée par MCP |
+| `getPosition` | service et port de l'adapter réel validés au Lot 8 ; consommés par MCP |
+| `saveAnalysis` | writer Notion réel validé au Lot 8 ; transport MCP implémenté, WRITE hébergé fermé |
 
-Le Core n’est donc pas « terminé » au sens migration. Il est suffisamment matérialisé pour tester ses frontières, mais son adoption finale dépend des gates du Lot 7.2 et du Lot 8.
+Les gates Lots 7–10 sont clos. La validation hébergée du Lot 11 reste le gate courant ; la migration du plugin financier relève exclusivement du Lot 12, non commencé.
 
 ## 3. Où vivent les responsabilités dans la cible
 
@@ -278,17 +278,17 @@ La sortie future d’OpenAI n’est **pas** un lot du chantier actuel. Elle est 
 | 4 / 4.1 | Renderer canonique | terminé | rendu partagé, corrections ciblées |
 | 5 | Nettoyage | terminé | code remplacé retiré avec preuves |
 | 6 | Performance / lectures ciblées | terminé et déployé | recette production v208 |
-| 7 | Core | implémenté, **gate final ouvert** | parité réelle Current |
-| 8 | Adapter Notion lecture/écriture | NO-GO avant clôture Lot 7 | mapping complet + writer vérifié |
-| 9 | Skill permanent | futur | chemin stabilisé et règles anti-duplication |
+| 7 | Core | clos | parité Current ; passation `lot-8-handoff.md` |
+| 8 | Adapter Notion lecture/écriture | clos | writer réel et nettoyage validés ; passation `lot-9-handoff.md` |
+| 9 | Skill permanent | clos | règles canoniques dans AGENTS.md ; passation `lot-9-handoff.md` |
 | 10 | Contrat MCP | clos | contrat 1.0.0 ; passation `lot-10-handoff.md` |
-| 11 | Serveur MCP | futur | serveur mince sur Core, runtime validé |
+| 11 | Serveur MCP | implémenté et publié v209 READ-only ; gate hébergé ouvert | preuves et limites dans `lot-11-handoff.md` |
 | 12 | Migration plugin → MCP | futur | parité méthodologique, receipts et persistence |
 | 13 | Clôture | futur | non-régression globale, sécurité, perf, docs |
 
-## 7. Lot 7.2 — mission immédiate
+## 7. Lot 7.2 — mission historique close
 
-Le Lot 7.2 est le seul travail autorisé avant le Lot 8, sauf documentation explicitement demandée.
+Le gate final Lot 7 est clos au checkpoint `d2566aa` ; les exigences ci-dessous sont historiques et leurs résultats sont dans `lot-8-handoff.md`. Ne pas rejouer cette mission à la reprise du Lot 11.
 
 Objectif : démontrer que la politique `getCurrentAnalysis()` du Core peut remplacer la politique legacy sans masquer d’écart inexpliqué.
 
@@ -299,7 +299,7 @@ Résultats Lot 7.1 déjà acquis :
 - Advantest Valuation : même sélection ;
 - KLA Business/Valuation : legacy fallback vers v2 ; pointeur réel vers v1 Superseded ; classification `DATA_INCONSISTENCY` + `EXPECTED_POLICY_CHANGE` ; aucun `CORE_BUG`.
 
-Preuves encore requises :
+Preuves requises lors de cette mission (désormais consolidées dans la passation) :
 
 - index/relations D1 nécessaires à la sélection ;
 - conflits d’owner éventuels ;
@@ -588,7 +588,9 @@ Les limites 2/4 MiB portent sur les enveloppes contractuelles JSON UTF-8 ; le fr
 
 Références officielles revalidées le 3 octobre 2026 : [plugin hébergé par Sites](https://help.openai.com/en/articles/20001547-hosting-a-plugin-with-chatgpt-sites), [runtime Sites](https://learn.chatgpt.com/docs/sites), [permissions Sites](https://learn.chatgpt.com/docs/enterprise/sites), [serveur MCP](https://developers.openai.com/plugins/build/mcp-server), [MCP dans Codex](https://learn.chatgpt.com/docs/extend/mcp?surface=cli). Elles permettent un Site existant, publication/republication du plugin et permissions distinctes Site/plugin/services connectés. Le runtime fournit une identité au dispatch ; les tests locaux la simulent et ne prouvent pas le rejet d'en-têtes forgés par la plateforme. Elles ne suffisent pas à certifier les budgets exacts du proxy hébergé.
 
-**NO-GO Lot 12 à cette livraison.** Déploiement 209 succeeded/has_mcp=true, auth anonyme et headers/cookie forgés refusés en HTTP 401 ; flags WRITE absents, env revision 4 et inventaire D1 inchangés. Plugin Site provisionné mais non installé/connecté : les six READ MCP OAuth, l'isolation personnel/démo, le refus WRITE authentifié et les plafonds/délais proxy restent à prouver dans la même campagne bornée. Décision B : READ-only jusqu'à gate WRITE séparé ; aucune permission externe modifiée, aucune mutation WRITE autorisée. L'utilisateur doit terminer la connexion OAuth pour poursuivre ; aucun travail Lot 12 ni nouvelle publication automatique. Passation et preuves : `docs/architecture/lot-11-handoff.md`.
+**NO-GO Lot 12 à cette reprise ; Lot 11 non clos.** Déploiement 209 inchangé, succeeded/has_mcp=true ; auth anonyme refusée 401. Le plugin Site a été installé et connecté via OAuth réel dans ChatGPT : discovery, six READ personnel/démo et isolation des références personnelles testées acquis. Le plugin financier installé 1.3.0 est distinct ; les Skills de la référence ZIP utilisateur correspondent au cache installé et restent intacts. Le connecteur de gestion Codex indique encore not_installed : sa connexion n'est pas déclarée acquise.
+
+WRITE fermé/non délégué, flags absents, env revision 4. Un appel conforme save_analysis est rejeté dans le runtime hébergé, sans mutation ni confirmation mutante, mais ChatGPT masque les détails typés de structuredContent et ne montre que le résumé version/status du texte. Correctif ciblé préparé localement : enveloppe typée sûre également dans le texte des rejets, sans changement de schémas, auth ou métier ; test du consumer texte seul. Aucune nouvelle publication : son intégration demande un gate explicite séparé. Les plafonds/deadlines maximaux 2/4 MiB et 30/120 s à travers le proxy restent non certifiés ; des READ rapides et un préflight schéma ne les prouvent pas. Décision B maintenue, aucune permission WRITE activée, aucune mutation Notion/migration D1, aucun travail Lot 12. Preuves, tests, limites et action restante : `docs/architecture/lot-11-handoff.md`.
 
 ## 12. Lot 12 — migration du plugin Investment OS Analysis vers MCP
 
@@ -827,4 +829,4 @@ Le changement de vision produit n’ajoute pas un nouveau lot et ne réouvre pas
 - **Lot 11** : serveur MCP mince, Sites comme première cible d’hébergement, Site existant préféré si compatible ;
 - **Lot 12** : migration infrastructure du plugin vers MCP, sans changement de méthodologie.
 
-La priorité immédiate ne change pas : **finir le Lot 7.2 et son parity gate avant tout Lot 8 ou MCP**.
+La priorité actuelle est **terminer les preuves hébergées du Lot 11 sur v209, WRITE fermé, avant toute décision de passage au Lot 12**. Les Lots 7–10 sont clos et ne sont pas rejoués.
