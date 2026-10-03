@@ -1,3 +1,31 @@
+# Clôture Lot 9 — instructions permanentes / passation Lot 10
+
+3 octobre 2026. Checkout local `investment-os`, branche `chore/architecture-stabilization-mcp`, HEAD d'entrée `5d8baad84c04c153967be88c9a60669864dfbbe7`, propre. L'instruction utilisateur de cette session fixe **Lot 8 clos et GO Lot 9 acquis** ; la clôture et les preuves de validation live du Lot 8, consignées dans `95d9bba`, sont conservées intégralement ci-dessous après réconciliation Git. Aucune validation live ni gate Lot 7 n'a été rejoué ; aucune nouvelle preuve live n'est revendiquée.
+
+**Lot 9 clos — GO pour la reprise Lot 10**, sans démarrer le Lot 10 dans cette session.
+
+## Livrable canonique
+
+`AGENTS.md` porte désormais le chemin actuel et la cible future, la table des propriétaires réels, les interdits anti-duplication, la règle de réutilisation documentaire et les règles de secrets. La section 9 du plan renvoie à cette source permanente. Aucun nouveau Skill ni document d'instructions parallèle. Aucun code runtime, UI, schéma, plugin, méthode financière ou contrat MCP modifié. Aucune écriture Notion/D1, migration ou déploiement.
+
+Relecture ciblée : contrats/ports/services du Core, sélection Current, agrégats Portfolio, assemblage de l'adapter, mapping, sync/index, writer et consommateurs HTTP du Worker. Les imports Core restent internes ; l'adapter appelle l'agrégation Core et réutilise normalizer, mapping et index. Les chemins HTTP historiques de projection technique ne sont pas présentés comme une migration complète de tous les endpoints.
+
+## Reprise Lot 10
+
+1. Vérifier pwd, branche, HEAD, état Git et remote, puis lire `AGENTS.md`, cette clôture et la section 10 du plan d'exécution.
+2. Partir des contrats/services/ports existants et des consommateurs réellement utilisés pour définir le contrat MCP portable et indépendant du runtime. La surface reste à décider au Lot 10 ; aucun contrat n'est fixé ici.
+3. Conserver la méthode financière dans Investment OS Analysis et les responsabilités de `AGENTS.md`. Ne pas réimplémenter Current, Portfolio, parser, mapping ou index dans le transport.
+4. Ne pas rouvrir les gates Lot 7/8. Conserver les limites techniques du writer listées dans le checkpoint historique (absence de CAS Notion, writers externes hors lease, mutations ambiguës).
+5. Aucun serveur MCP (Lot 11), aucune modification des Skills (Lot 12), aucune écriture live ni déploiement sans autorisation correspondant à ce périmètre.
+
+## Vérification Lot 9
+
+Contrôles proportionnés à trois fichiers Markdown : relecture du diff et des propriétaires, cohérence avec la section 9, résolution des chemins documentés, contrôle des règles et de l'absence de changement runtime, recherche des valeurs locales de secrets dans les seuls livrables/diff en mémoire sans affichage, `git diff --check`. Aucun test runtime, build ou audit CSS nécessaire pour ces instructions seules. Le fichier `.env.local` est ignoré et non suivi ; une clé d'authentification Notion existe mais sa valeur est vide, et aucun jeton Notion non vide n'est présent dans l'environnement du processus. Aucun secret n'est requis ou utilisé pour le Lot 9.
+
+Relecture indépendante ciblée par un agent Luna : PASS, aucune anomalie ni contradiction avec la section 9. Contrôles des chemins, du périmètre Markdown, des dépendances internes Core et de l'absence de valeurs secrètes : PASS. Le premier contrôle de présence d'une valeur Notion a échoué (clé vide) ; le constat ci-dessus a été corrigé, sans effet sur les prérequis de ce lot.
+
+## Passation antérieure — clôture Lot 8 acquise (contenu conservé)
+
 # Passation Lot 9 — Lot 8 clos, adapter Notion lecture/écriture validé
 
 2 octobre 2026. Branche `chore/architecture-stabilization-mcp`, parent Lot 7 `d2566aa`, désormais poussé. Lot 7 reste clos; aucun replay du gate 7. Le Lot 9 n’a pas commencé. Un seul Luna a audité le writer du plugin en lecture seule; aucune Skill ni aucun plugin n’est modifié.

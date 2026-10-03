@@ -71,6 +71,45 @@ Ne pas déclarer un déploiement réussi avant sa confirmation par Sites.
 
 La synchronisation GitHub est une opération séparée, effectuée à partir d’un état Sites validé. Une tâche Sites ne doit pas être bloquée parce que GitHub n’est pas encore synchronisé.
 
+## Architecture permanente et propriétaires canoniques
+
+Chemin actuel des services Investment OS : `consumer → Core services → ports → adapter Notion → Notion/D1`. L'assemblage est `createInvestmentAdapter` dans `adapters/notion/investment-reads.ts` ; `createInvestmentReadAdapter` est son alias de compatibilité, pas une seconde implémentation. Le Worker HTTP et la PWA sont des consommateurs. Les projections techniques existantes restent dans leurs propriétaires ; ce chemin ne signifie pas que tous les endpoints historiques passent déjà par le Core.
+
+Cible future uniquement : `Skills → MCP → Core → ports/adapters`. MCP sera un transport mince, sans logique métier. Son contrat relève du Lot 10 et son serveur du Lot 11 ; ces instructions n'en constituent pas une implémentation.
+
+| Nouvelle logique | Propriétaire à compléter ou réutiliser |
+| --- | --- |
+| Contrats de domaine | `core/contracts/` |
+| Politique de sélection Current | `core/analysis/current-selection.ts` |
+| Agrégats Portfolio | `core/portfolio.ts`, déjà appelé par l'adapter |
+| Orchestration métier, validation des entrées et receipts | `core/services/investment-os.ts` ; ports de domaine dans `core/services/ports.ts` |
+| Propriétés physiques Notion, relations, aliases, UUID, statuts, dates et lecture des pointeurs Current physiques | `adapters/notion/investment-data.ts` et `adapters/notion/sync.ts` selon l'implémentation existante |
+| Lecture/écriture et projection D1 | `adapters/notion/` ; assemblage dans `investment-reads.ts`, sources/snapshots/index/sync dans `sync.ts` |
+| Writer : promotion des pointeurs physiques, retries, reprise, idempotence et relectures de persistance | `adapters/notion/analysis-writes.ts`, en réutilisant mapping et index existants |
+| Cache, snapshots, index, jobs et locks | D1 : projection technique uniquement, jamais propriétaire d'une règle métier |
+| Méthodologie financière et orchestration analytique | Skills du plugin Investment OS Analysis, source canonique de la méthode ; jamais stockage, mapping Notion ou politique Current |
+| Affichage et interactions | PWA/UI : consommation des résultats, sans recalcul métier |
+
+La décision Current appartient au Core ; la lecture/écriture des relations Current physiques appartient à l'adapter. La validation métier d'un receipt appartient au Core ; la preuve de persistance par relectures appartient au writer. Ne pas confondre agrégation Portfolio du Core et mapping des positions dans l'adapter.
+
+Avant tout nouveau document, Skill ou fichier d'instructions : chercher l'emplacement canonique, compléter ou corriger l'existant, et ne créer un fichier que si l'existant ne peut raisonnablement porter cette responsabilité. `AGENTS.md` porte les règles permanentes de développement ; le plan d'exécution porte la roadmap et les passations portent l'état des lots. Ne pas empiler une seconde couche documentaire.
+
+Avant toute nouvelle logique : identifier son propriétaire dans ce tableau, rechercher son implémentation et ses consommateurs, puis corriger ou réutiliser cette implémentation. Réutiliser notamment le normalizer `app/lib/document-presentation.ts`, le parser/renderer existant (`app/lib/notion-renderer.ts`, `app/lib/notion-block-parser.ts`) et les index de `adapters/notion/sync.ts`. Les réexports `app/lib/investment-data.ts` et `app/lib/notion-sync.ts` ne sont pas des propriétaires alternatifs.
+
+Interdits permanents :
+
+- aucune politique Current, aucun mapping Notion ni calcul Portfolio dupliqué dans un Skill ou dans la PWA/UI ;
+- aucun stockage dans les Skills ; aucune méthode financière dans le Core ;
+- aucune logique d'hébergement OpenAI/Sites dans les Skills ;
+- aucune seconde implémentation d'un parser, mapping, index, policy ou autre logique déjà possédée par un propriétaire canonique ;
+- aucune modification de méthodologie financière sous prétexte de migration MCP ;
+- aucune dépendance du Core vers React, Notion physique, D1, Sites, MCP ou OpenAI : les détails techniques restent derrière les ports ;
+- aucune logique métier dans le futur transport MCP.
+
+## Secrets
+
+Aucun secret dans le repo, les logs, fixtures, rapports ou outputs. Avant utilisation, vérifier que le fichier local de secrets est ignoré et non suivi par Git, puis contrôler uniquement la présence des valeurs nécessaires, sans les afficher. Utiliser les secrets configurés seulement si le lot les exige ; ne pas copier leur contenu dans une commande, un diff ou une passation. Aucune valeur secrète ne doit parvenir au client.
+
 ## Design system de référence
 
 Le design system partagé est celui réellement exécuté par l’application :

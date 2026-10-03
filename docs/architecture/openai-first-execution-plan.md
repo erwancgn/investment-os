@@ -416,6 +416,8 @@ Interdits :
 
 Livrable attendu : instructions permanentes/skill de développement ou documentation équivalente qui force les prochains changements à respecter le chemin canonique.
 
+Source permanente de développement : `AGENTS.md`, sections « Architecture permanente et propriétaires canoniques » et « Secrets ». Compléter cette source plutôt que créer une seconde couche d’instructions. État de clôture et passation Lot 10 : `docs/architecture/lot-9-handoff.md`.
+
 ## 10. Lot 10 — contrat MCP
 
 ### Rôle
