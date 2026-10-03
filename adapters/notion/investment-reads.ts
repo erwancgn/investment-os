@@ -1,5 +1,5 @@
 import { createNotionAnalysisWriter, type NotionWriteOptions } from "./analysis-writes";
-import type { SaveAnalysisInput } from "../../core/services/ports";
+import type { InvestmentPorts, SaveAnalysisInput } from "../../core/services/ports";
 import { createInvestmentCore, type ReadOptions } from "../../core/services/investment-os";
 import { SCHEMA_VERSION, isIsoDateOrDateTime, type Provenance, type ServiceResult } from "../../core/contracts/common";
 import type { AnalysisPreview } from "../../core/contracts/analysis";
@@ -11,8 +11,7 @@ import { normalizeAnalysisDocument } from "../../app/lib/document-presentation";
 import { normalizeNotionPageId } from "./sync";
 import { getQuotes, type QuoteView } from "../../app/lib/quotes";
 
-const provenance = (sourceId: string | null, revision: string | null, capturedAt: string | null): Provenance => ({ kind: "notion", sourceId, revision, capturedAt });
-const analysisOf = (document: CompanyDocument, normalized = document.normalizedAnalysis ?? normalizeAnalysisDocument(document)) => {
+export const analysisOf = (document: CompanyDocument, normalized = document.normalizedAnalysis ?? normalizeAnalysisDocument(document)) => {
   const analysis = normalized.analysis;
   const canonical = { ...analysis };
   canonical.header = { ...canonical.header };
@@ -35,30 +34,30 @@ export function analysisPreview(document: CompanyDocument): AnalysisPreview {
   };
 }
 
-export function canonicalCompany(company: CompanyDetail): CompanyPreview {
+export function canonicalCompany(company: CompanyDetail, provenanceKind: Provenance["kind"] = "notion"): CompanyPreview {
   const { analyses, earnings, decisions, portfolioDocuments, archives, researchReferences, ...identity } = company;
   return {
     ...identity, id: normalizeNotionPageId(company.id), schemaVersion: SCHEMA_VERSION,
     lastAnalysis: company.lastAnalysis && isIsoDateOrDateTime(company.lastAnalysis) ? company.lastAnalysis : null,
     // Companies has no source revision in the existing read model. Do not invent one.
-    provenance: provenance(normalizeNotionPageId(company.id), null, null),
+    provenance: { kind: provenanceKind, sourceId: normalizeNotionPageId(company.id), revision: null, capturedAt: null },
     researchReferences: researchReferences.map(reference => ({
       ...reference, id: normalizeNotionPageId(reference.id), schemaVersion: SCHEMA_VERSION,
-      provenance: provenance(normalizeNotionPageId(reference.id), reference.lastEditedTime, reference.lastEditedTime),
+      provenance: { kind: provenanceKind, sourceId: normalizeNotionPageId(reference.id), revision: reference.lastEditedTime, capturedAt: reference.lastEditedTime },
     })),
     analyses: analyses.map(analysisPreview), earnings: earnings.map(analysisPreview),
     decisions: decisions.map(analysisPreview), portfolioDocuments: portfolioDocuments.map(analysisPreview), archives: archives.map(analysisPreview),
   };
 }
 
-export function canonicalPortfolio(portfolio: LivePortfolio): Portfolio {
+export function canonicalPortfolio(portfolio: LivePortfolio, positionProvenance: Provenance["kind"] = "notion"): Portfolio {
   return {
     ...portfolio, schemaVersion: SCHEMA_VERSION,
     provenance: { kind: "derived", sourceId: null, revision: null, capturedAt: portfolio.generatedAt },
     positions: portfolio.positions.map(position => ({
       ...position, id: normalizeNotionPageId(position.id), companyIds: position.companyIds.map(normalizeNotionPageId),
       schemaVersion: SCHEMA_VERSION, lifecycle: "open",
-      provenance: provenance(normalizeNotionPageId(position.id), null, null),
+      provenance: { kind: positionProvenance, sourceId: normalizeNotionPageId(position.id), revision: null, capturedAt: null },
     })),
   };
 }
@@ -74,11 +73,52 @@ function requireResult<T>(result: ServiceResult<T>): T {
   throw Object.assign(new Error(result.error.message), { code: result.error.code, stage: result.error.code === "normalization" ? "normalization" : "read", retryable: result.error.retryable });
 }
 
+/** Assemble the Core once at the storage boundary; IDs passed through Core stay canonical and opaque. */
+function notionPorts(db: D1Database, writes?: NotionWriteOptions): InvestmentPorts {
+  const currentCandidates = new Map<string, CurrentSelectionInput["candidates"][number]>();
+  return {
+    readPosition: (id, options) => readPosition(db, id, options),
+    ...(writes ? { writeAnalysis: createNotionAnalysisWriter(db, writes) } : {}),
+    readCurrentContext: async (companyId, family) => {
+      const context = await readCurrentAnalysisContext(db, companyId, family);
+      for (const candidate of context.candidates) currentCandidates.set(candidate.id, candidate);
+      return context;
+    },
+    readAnalysis: async id => {
+      const document = await getResearchDocument(db, id);
+      if (!document) return null;
+      const analysis = analysisOf(document);
+      const candidate = currentCandidates.get(id);
+      if (candidate) {
+        analysis.header.companyIds = candidate.companyIds.slice();
+        analysis.header.sourceFreshness = candidate.sourceFreshness;
+        analysis.header.archived = candidate.archived;
+      }
+      return analysis;
+    },
+    readCompany: async id => {
+      const company = await getCompanyDetail(db, id);
+      return company ? canonicalCompany(company) : null;
+    },
+    readPortfolio: async options => canonicalPortfolio(await getLivePortfolio(db, options?.force ?? false, options?.cacheOnly ?? false)),
+    readQuote: async (assetId, options) => {
+      const quotes = await getQuotes([assetId], options?.force ?? false, db, options?.cacheOnly ?? false);
+      const quote = quotes.find(item => item.assetId === assetId);
+      if (!quote) throw Object.assign(new Error("Cours introuvable."), { code: "not_found" });
+      return canonicalQuote(quote);
+    },
+  };
+}
+
+export function createInvestmentService(db: D1Database, writes?: NotionWriteOptions) {
+  return createInvestmentCore(notionPorts(db, writes));
+}
+
 /** Request-local bridge: legacy JSON stays at the HTTP boundary, domain validation is mandatory. */
 export function createInvestmentAdapter(db: D1Database, writes?:NotionWriteOptions) {
   return {
     getPosition(id:string,options?:ReadOptions){
-      return createInvestmentCore({readPosition: (id,options)=>readPosition(db,id,options)}).getPosition(typeof id==="string"?normalizeNotionPageId(id):id,options);
+      return createInvestmentService(db,writes).getPosition(typeof id==="string"?normalizeNotionPageId(id):id,options);
     },
     saveAnalysis(input:SaveAnalysisInput){
       if(input?.analysis?.header && typeof input.analysis.header.id==="string" && Array.isArray(input.companyIds) && input.companyIds.every(id=>typeof id==="string") && Array.isArray(input.analysis.header.companyIds) && input.analysis.header.companyIds.every(id=>typeof id==="string")){
@@ -86,31 +126,11 @@ export function createInvestmentAdapter(db: D1Database, writes?:NotionWriteOptio
         analysis.header={...analysis.header,id:normalizeNotionPageId(analysis.header.id),companyIds:analysis.header.companyIds.map(normalizeNotionPageId)};
         input={...input,companyIds:input.companyIds.map(normalizeNotionPageId),analysis};
       }
-      return createInvestmentCore({...(writes?{writeAnalysis:createNotionAnalysisWriter(db,writes)}:{})}).saveAnalysis(input);
+      return createInvestmentService(db,writes).saveAnalysis(input);
     },
     /** Canonical policy available for parity checks; legacy UI selection remains unchanged. */
-    async getCurrentAnalysis(companyId: string, family: CurrentAnalysisFamily) {
-      let context: CurrentSelectionInput | undefined;
-      const core = createInvestmentCore({
-        readCurrentContext: async (id, requestedFamily) => {
-          context = await readCurrentAnalysisContext(db, id, requestedFamily);
-          return context;
-        },
-        readAnalysis: async id => {
-          const document = await getResearchDocument(db, id);
-          if (!document) return null;
-          const analysis = analysisOf(document);
-          const candidate = context?.candidates.find(item => item.id === id);
-          // Ownership/freshness come from the same mapped source headers used by selection.
-          if (candidate) {
-            analysis.header.companyIds = candidate.companyIds.slice();
-            analysis.header.sourceFreshness = candidate.sourceFreshness;
-            analysis.header.archived = candidate.archived;
-          }
-          return analysis;
-        },
-      });
-      return core.getCurrentAnalysis(normalizeNotionPageId(companyId), family);
+    getCurrentAnalysis(companyId: string, family: CurrentAnalysisFamily) {
+      return createInvestmentService(db, writes).getCurrentAnalysis(normalizeNotionPageId(companyId), family);
     },
     async getCompany(id: string): Promise<CompanyDetail | null> {
       let transport: CompanyDetail | null = null;

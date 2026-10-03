@@ -4,7 +4,11 @@ import handler from "vinext/server/app-router-entry";
 import { instruments } from "../app/lib/quotes";
 import { acquireNotionSourceSyncLock, acquireNotionSyncLock, notionSources, notionStatus, syncNotionAllSources, syncNotionSource, rebuildDocumentCompanyLinks, rebuildNotionRelations, normalizeStoredDocumentText, documentCompanyLinks, finalizeNotionImports, processNextNotionImport, processNextNotionWebhookEvent, recordNotionWebhookEvent, configureNotionWebhook, notionWebhookVerificationToken, releaseNotionSourceSyncLock, releaseNotionSyncLock, type NotionSourceKey } from "../app/lib/notion-sync";
 import { auditCompanyWatchlistRelations, listCompanies } from "../app/lib/investment-data";
-import { createInvestmentReadAdapter } from "../adapters/notion/investment-reads";
+import { createInvestmentService, createInvestmentReadAdapter } from "../adapters/notion/investment-reads";
+
+import { createMcpHandler } from "../transports/mcp/server";
+import { authenticateSitesMcp } from "../transports/mcp/sites-auth";
+import { createDemoInvestmentService } from "../adapters/demo/investment-reads";
 
 import { companyPreview } from "../app/lib/company-preview";
 import { getThemeBaskets, parseBasketOptions } from "../app/lib/theme-baskets";
@@ -18,6 +22,8 @@ interface Env {
   NOTION_SYNC_AUTH_TOKEN?: string;
   /** Email address of the Site owner, set as a private runtime variable. */
   OWNER_EMAIL?: string;
+  MCP_WRITE_ENABLED?: string;
+  MCP_WRITE_DELEGATED?: string;
   IMAGES: {
     input(stream: ReadableStream): {
       transform(options: Record<string, unknown>): {
@@ -169,9 +175,24 @@ async function launchNotionRefresh(env:Env,ctx:ExecutionContext,{forceScan=false
 // dangerouslyAllowSVG: true in next.config.js and uncomment below:
 // const imageConfig: ImageConfig = { dangerouslyAllowSVG: true };
 
+// One handler per Worker isolate: retain active WRITE fences beyond response deadlines.
+const mcpHandlers = new WeakMap<Env, ReturnType<typeof createMcpHandler>>();
+function mcpHandler(env: Env) {
+  let mcp = mcpHandlers.get(env);
+  if (!mcp) {
+    mcp = createMcpHandler({
+      authenticate: request => authenticateSitesMcp(request, env),
+      service: scope => scope === "demo" ? createDemoInvestmentService() : createInvestmentService(env.DB, env.NOTION_TOKEN ? { token: env.NOTION_TOKEN } : undefined),
+    });
+    mcpHandlers.set(env, mcp);
+  }
+  return mcp;
+}
+
 const worker = {
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
     const url = new URL(request.url);
+    if (url.pathname === "/mcp") return mcpHandler(env)(request, task => ctx.waitUntil(task));
     const owner = hasOwnerIdentity(request, env);
     const scope = requestedScope(request, owner);
 
