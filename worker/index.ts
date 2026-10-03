@@ -7,6 +7,7 @@ import { auditCompanyWatchlistRelations, listCompanies } from "../app/lib/invest
 import { createInvestmentService, createInvestmentReadAdapter } from "../adapters/notion/investment-reads";
 
 import { createMcpHandler } from "../transports/mcp/server";
+import { lot11ProxyValidation } from "../transports/mcp/lot11-proxy-validation";
 import { authenticateSitesMcp } from "../transports/mcp/sites-auth";
 import { createDemoInvestmentService } from "../adapters/demo/investment-reads";
 
@@ -182,6 +183,7 @@ function mcpHandler(env: Env) {
   if (!mcp) {
     mcp = createMcpHandler({
       authenticate: request => authenticateSitesMcp(request, env),
+      validation: lot11ProxyValidation,
       service: scope => scope === "demo" ? createDemoInvestmentService() : createInvestmentService(env.DB, env.NOTION_TOKEN ? { token: env.NOTION_TOKEN } : undefined),
     });
     mcpHandlers.set(env, mcp);
