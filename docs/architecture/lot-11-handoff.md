@@ -2,7 +2,7 @@
 
 3 octobre 2026. Checkout local `investment-os`, branche `chore/architecture-stabilization-mcp`, HEAD d'entrée `6d9566c32e1f7cf42d40053eca0977022238bc05`. Checkpoint propre, origin vérifié après fetch (0/0). `.env.local` ignoré et non suivi ; présence des seules clés nécessaires contrôlée sans valeur affichée. Aucun secret réel utilisé pour les tests locaux initiaux ; les READ hébergés suivants utilisent les accès serveur et OAuth existants sans extraction ni affichage de secret. Le SHA de livraison est celui du commit contenant ce document, sans SHA autoréférentiel.
 
-**Serveur livré et version 210 publiée READ-only ; NO-GO Lot 12.** Le correctif `e0e7add293e4f930b3805c8ce69ef64c5f3b1be0` est publié après nouvelle autorisation explicite. OAuth ChatGPT et Codex, six READ personnel/démo, isolation ciblée et refus WRITE typé sont prouvés. Le passage d’une entrée de 2 MiB et le plafond HTTP sont observés. La sortie maximale de 4 MiB et les deadlines 30/120 s restent non certifiées à travers le proxy ; le Lot 11 n’est pas clos. Lots 7–10 non rejoués ; aucune migration du plugin financier ni modification des Skills/méthodes financières.
+**Serveur v210 READ-only restauré après la campagne synthétique v211 ; NO-GO Lot 12.** Sortie 4 MiB et deadline MCP 30 s prouvées via OAuth, façade mince revue ; réémissions 413 reproduites et incertitude bornée. Le timer Worker 120 s est observé, mais sa restitution échoue sur le chemin Codex (HTTP 504) et le cas haut ChatGPT est réémis/cancelé. Lot 11 non clos ; WRITE fermé/non délégué. Aucun changement financier ni Lot 12 commencé. Les états intermédiaires ci-dessous sont historiques ; le gate final et l’evidence terminent cette passation.
 
 ## Architecture et surface
 
@@ -22,7 +22,7 @@ Un cookie de scope UI ou un credential d'automatisation n'authentifie pas MCP. R
 
 `runId`, `expectedRevision` et l'intention sont transmis sans transformation. `persisted`, `promotion_pending`, `verified`, `partial`, stale/conflict restent distincts. Une tentative WRITE transport, aucune relance automatique ; le writer garde promotion, relectures et replay. Au timeout, outcome inconnu, tâche conservée via waitUntil et fence de sujet tant qu'elle est active. Ce fence est local à l'isolate ; aucune garantie distribuée supplémentaire au writer. Les limites Lot 8 (absence de CAS Notion atomique, writers externes et mutations ambiguës) restent applicables.
 
-2 MiB d'arguments / 4 MiB d'enveloppe de sortie, JSON UTF-8 ; framing HTTP borné à +4096 octets. READ 30 s / deux tentatives maximum, WRITE 120 s / une tentative. Un backoff READ ne déclenche aucun nouvel appel après deadline. Aucun snapshot tronqué ni pagination ajoutée. Ces limites sont validées dans le transport local ; leur passage à travers le proxy Sites hébergé n'est pas certifié.
+2 MiB d'arguments / 4 MiB d'enveloppe de sortie, JSON UTF-8 ; framing HTTP borné à +4096 octets. READ 30 s / deux tentatives maximum, WRITE 120 s / une tentative. Un backoff READ ne déclenche aucun nouvel appel après deadline. Aucun snapshot tronqué ni pagination ajoutée. Les preuves finales de sortie/30 s et l’incompatibilité de fin de budget 120 s sont détaillées dans le gate final ci-dessous ; ne pas confondre timer Worker et livraison au client.
 
 ## Runtime choisi et preuve « Site existant »
 
@@ -149,13 +149,13 @@ Cela démontre le passage effectif d’une entrée de 2 MiB avec OAuth réel, et
 
 Save_analysis reste annoncé selon le contrat (le catalogue indique isEnabled=true pour l’outil), mais cela ne confère **aucun droit WRITE ou délégation** : les deux flags serveur sont absents. Les [permissions officielles](https://help.openai.com/en/articles/20001495-managing-app-permissions-in-chatgpt) dépendent du compte/risque ; le défaut low-risk et l’absence de carte pour un rejet ne prouvent pas la confirmation d’une mutation activée. Décision **B : READ-only maintenu**, notamment en raison de la réémission amont observée. Aucune mutation Notion, migration D1, rotation de secret ni modification de permission externe.
 
-### Preuves acquises et impossibles dans les chemins actuels
+### Limites au checkpoint 4451d7a — historique avant instrumentation
 
 Les schémas READ bornent les identifiants à 512 caractères, les options sont booléennes ; le connecteur supprime les champs inconnus ou rejette le schéma avant MCP. Ils n’offrent aucun paramètre de délai/taille de sortie. WRITE est refusé avant la création du service et avant son timer 120 s. Aucun snapshot réel exercé n’approche 4 MiB. Le [runtime Sites officiel](https://learn.chatgpt.com/docs/sites) documente HTTP/WebSockets et le stockage, sans garantie exacte des maxima MCP 4 MiB/30/120 s. Le CLI/App Server a permis des preuves supplémentaires, mais ne fournit pas d’injection de délai/résultat dans le Worker publié.
 
 Une attente côté client, un timeout choisi plus court, une identité forgée, un résultat synthétique présenté comme lecture réelle ou un WRITE activé ne combleraient pas ces preuves. Aucun nouveau tool, ressource ou mode de test public ajouté à la production. Il reste nécessaire d’obtenir un moyen officiel de validation instrumentée OAuth du proxy, séparant données synthétiques et Core live, ou une garantie plateforme vérifiable des budgets, puis d’exercer les limites manquantes. L’autorisation de publication n’est plus un obstacle ; aucun consentement, secret à saisir ou MFA ne manque. La cause restante est la capacité de provoquer et observer ces conditions dans un environnement hébergé contrôlé, avec WRITE toujours fermé.
 
-## Gate restant avant Lot 12
+## Gate au checkpoint 4451d7a — historique
 
 **NO-GO Lot 12 ; Lot 11 non clos.** OAuth ChatGPT/Codex, discovery, six READ personnel/démo et isolation ciblée, anonymous refusé, détails typés forbidden/not_started, passage d’une entrée de 2 MiB et refus du framing trop grand acquis. Contrat 1.0.0 inchangé, mapping exclusif Core, aucune logique métier ni fuite de secret observée. Site existant confirmé acceptable pour ces usages ; rollback v209/v208 disponible, restauration non exercée.
 
@@ -166,3 +166,104 @@ Checks de cette reprise : audit exact du diff/manifest/auth/scopes/flags, archiv
 Le fetch final a rencontré deux fichiers de références Git invalides (nom de branche avec suffixe espace `2`, local et origin), pointant un objet indisponible. Ils ont été conservés octet par octet hors `.git/refs`, dans `.git/lot11-ref-quarantine`, puis le fetch canonique a réussi ; aucune branche valide ni donnée de travail remplacée/supprimée. Cette correction réversible concerne seulement les métadonnées Git locales.
 
 Livraison après validation : cette passation et le plan canonique uniquement ; commit/push normaux. La source publiée reste e0e7add, le commit documentaire final ne republie rien. Arbre suivi propre après commit ; `node_modules 2` reste non suivi/intact. Action restante : capacité de validation OAuth/proxy instrumentée des maxima/deadlines et qualification de la réémission amont, sans activation WRITE. Ne pas déclarer le lot clos ni démarrer Lot 12 sur ces preuves partielles.
+
+## Revue statique ciblée — façade MCP v1.0.0
+
+Revue Luna en lecture seule puis vérification par l’orchestrateur sur les sept handlers canoniques de `e0e7add` et leurs appels réellement assemblés. Aucun nouveau test fonctionnel ni refactor métier. `invoke` utilise exclusivement le manifeste `MCP_TOOLS` ; aucun handler individuel parallèle ni accès direct Notion/D1/provider dans MCP. La séparation MCP/Core/adapters est suffisamment saine pour poursuivre ; aucune violation architecturale bloquante trouvée. Le probe synthétique temporaire de la campagne proxy est traité séparément, jamais comme un huitième tool produit.
+
+| Sujet | Couche actuelle | Couche cible | Écart |
+| --- | --- | --- | --- |
+| scope/auth | `sites-auth.ts` : identité dispatch ; `server.ts` : scope, permissions, délégation, bornes | Auth/transport | `transport/auth` — acceptable ; assemblage personnel/démo dans Worker, aucune identité des arguments |
+| Current selection | Core `investment-os.ts:getCurrentAnalysis` → `current-selection.ts` ; pointeurs physiques lus par adapter | Core pour sélection ; adapter pour source | `ok` — aucune sélection ni mapping Notion MCP |
+| portfolio calculations | `core/portfolio.ts` : agrégats, weights et PnL d’ensemble ; `investment-data.ts` : projection des lignes/PRU/quotes et réconciliation | Core agrégats ; adapter projection des positions | `ok` — responsabilités existantes distinctes ; aucune arithmétique Portfolio dans MCP |
+| quote/FX/freshness | Port `readQuote` ; adapter appelle le helper serveur historique `app/lib/quotes.ts` (collecte/cache, FX, fraîcheur), Core valide Quote | Port/adapter de cotations, Core valide contrat | `compat legacy` — placement historique du helper dans `app/lib`, sans dépendance React ni duplication MCP ; dette non bloquante, non déplacée ici |
+| Analysis normalization | `investment-reads.ts:analysisOf` réutilise `app/lib/document-presentation.ts` ; Core valide Analysis | Adapter/normalizer canonique partagé puis Core | `ok` pour responsabilité ; emplacement historique partagé, aucune copie/parser/normalisation MCP |
+| diagnostics/provenance | Source/adapter et Core construisent metadata ; MCP transporte ServiceResult entier et ses rejets fixes | Source/Core ; transport pour ses seuls diagnostics | `ok` + `transport/auth` — aucun diagnostic transformé en décision métier ; texte de rejet hébergé n’est qu’un format transport |
+| WRITE idempotence/revision/receipt | MCP passe l’intention intacte et protège permission/concurrence locale ; Core valide ; writer journalise/reprend/relit | Core validation ; adapter writer persistance/idempotence | `ok` — runId/expectedRevision inchangés, aucune reprise métier dans MCP ; fence isolate n’est pas un journal durable |
+
+Références ciblées : `transports/mcp/server.ts` (manifest/invoke/call), `transports/mcp/sites-auth.ts`, `core/services/investment-os.ts`, `core/services/ports.ts`, `core/analysis/current-selection.ts`, `core/portfolio.ts`, `adapters/notion/investment-reads.ts`, `investment-data.ts:628–758`, `analysis-writes.ts:125–275`, `app/lib/quotes.ts:199–233`. Le bridge legacy de `createInvestmentAdapter` appartient aux consumers HTTP historiques ; MCP compose `createInvestmentService`, pas ce bridge. Les helpers historiques partagés ne sont pas une seconde implémentation dans le proxy. Aucune correction automatique de dette non bloquante et aucun travail Lot 12.
+
+## Campagne finale proxy OAuth — v211 temporaire, v210 restaurée
+
+Checkpoint de reprise `4451d7a9f94a11f2bb977a6f7f15799e51151739`, origin aligné, seul non-suivi `node_modules 2` préservé. Campagne unique du 3 octobre 2026, données exclusivement synthétiques/démo. Aucun READ canonique réexécuté pour fabriquer du volume, aucune mutation Investment OS/Notion ni migration D1. Contrats/Core/Skills/plugin financier 1.3.0/permissions OAuth/UI inchangés.
+
+L’instrumentation est le commit `08790f2dc03ef4fb61e390d34cf8df360cbe9bda` : module de validation isolé, tests purs, deux hooks temporaires transport/assemblage. Tool explicitement `lot11_proxy_validation`, READ-only, propriétaire authentifié seulement, sans port WRITE, source personnelle, DB ou provider ; une tâche active par isolate, bornes 4 MiB+1 et 125 s, expiration automatique à 18:30 UTC. Il construit une Company fictive via un port synthétique et le vrai Core, puis calibre **l’enveloppe JSON UTF-8 complète** ; ne teste aucune méthode financière. Le timer partagé est strictement équivalent à celui de v210, sans changement de règles métier. Le délai 120 s est exercé par un READ synthétique ; ce n’est pas un WRITE autorisé ni un receipt de persistance.
+
+Publication v211 : saved version `appgprj_6a7d7a1233a08191a8d35b746b284e95~appgver_e8c96e264c2481918be9da7e72102ac7`, deployment `appgdep_6ac11a78661c8191939d3f1cb158f78d`, succeeded/has_mcp=true à 15:09:31 UTC, env revision 4. Archive sans SQL/Drizzle/macOS/.env/valeur secrète locale ; octets runtime conservés après filtrage ; SHA-256 gzip `613ade01b67a5aba16aa1eb1f65e783ae5b41f9a30353e41c5dcffc6af93dfbf`. L’audience est conservée, les deux flags WRITE restent absents. Rollback v210 vérifié avant publication avec hash d’archive canonique inchangé.
+
+Les premiers essais voient un catalogue client figé à sept tools et sont refusés « Unknown tool » sans atteindre le probe. Après **Actualiser les outils** dans la gestion officielle du plugin Site et nouveau chat, le catalogue contient temporairement huit tools. Cette étape actualise les métadonnées, pas les permissions/délégations. Connexion OAuth existante réutilisée : aucune identité forgée, extraction de token, nouveau plugin ou serveur MCP local configuré. Codex CLI 0.160.0 utilise l’App Server officiel et une unique RPC par cas, sans turn d’inférence ; le harness attend au maximum 185 s. ChatGPT utilise le plugin Site connecté. Les identités de fixtures restent exclusivement dans les tests locaux acquis.
+
+### A — frontière de sortie
+
+| Client | Enveloppe demandée et sérialisée avant transport | JSON-RPC préparé, octets | HTTP Worker observé | Résultat client |
+| --- | ---: | ---: | --- | --- |
+| Codex | 16 384 | 16 897 | 200 | completed ; 16 384 octets client |
+| Codex | 4 194 304 | 4 194 823 | 200 | completed ; 4 194 304 octets client, 4 186 335 caractères X vérifiés sans troncature |
+| Codex | 4 194 305 proposée | 720 après rejet | 200 | rejected / limit_exceeded ; diagnostic lot11_limit_exceeded |
+| ChatGPT | 16 384 | 16 896 | 200 | completed, métriques et résultat structuré rapportés |
+| ChatGPT | 4 194 304 | 4 194 820 | 200 | completed, résultat structuré rapporté |
+| ChatGPT | 4 194 305 proposée | 716 après rejet | 200 | rejected / limit_exceeded visible ; diagnostics structurés non visibles dans l’UI |
+
+Le plafond contractuel porte sur l’enveloppe **hors framing**, pas sur le JSON-RPC : le chemin OAuth transporte bien plus de 4 MiB avec son framing à la frontière permise. À +1, le guard de validation refuse avant l’envoi du gros résultat, aucune troncature n’est utilisée. SHA-256 de l’enveloppe client Codex exacte : `a1ac391ad1ab7792054a8c4d08cb49e181fe38967173220f20b9a9198f6a5001`. SHA du JSON-RPC Worker correspondant : `6ad26859cc36ddae2517ea02a1675cfd38f6a110c5bc7977998fd8881f764e58`. L’UI ChatGPT ne donne ni octets client bruts ni preuve d’intégrité complète du padding ; son succès est corroboré par le HTTP 200/compteur/hash Worker, sans prétendre avoir audité son contexte modèle entier. Les rejets du probe ont un résumé textuel de métriques, distinct du texte complet des rejets canoniques v210 déjà validés ; leur manque de diagnostic dans l’UI ne redéfinit pas le contrat.
+
+### B — deadlines et couches
+
+| Chemin | Délai Core synthétique | Budget MCP | Observation |
+| --- | ---: | ---: | --- |
+| Codex | 29 s | 30 s | HTTP 200/completed ; Worker 29 s, client 31 814 ms |
+| Codex | 31 s | 30 s | MCP deadline à +30 000 ms, HTTP 200/rejected timeout ; client 32 061 ms |
+| ChatGPT | 29 s | 30 s | HTTP 200/completed ; Core fini à +29 000 ms |
+| ChatGPT | 31 s | 30 s | MCP timeout à +30 000 ms ; Core fini à +31 000 ms après la réponse |
+| Codex | 115 s | 120 s | HTTP 200/completed ; client 117 641 ms |
+| Codex | 119 s | 120 s | HTTP 504 amont à 120 699 ms client ; Core finit à +119 000 ms, invocation Worker canceled |
+| Codex | 121 s, essai indépendant | 120 s | HTTP 504 amont à 120 770 ms client ; MCP deadline à +120 000 ms, réponse préparée de 699 octets puis Core fini à +121 000 ms ; Worker canceled |
+| ChatGPT | 119 s | 120 s | HTTP 200/completed, métriques visibles ; Core fini à +119 000 ms |
+| ChatGPT | 121 s | 120 s | Deux requêtes pour la même invocation, seconde à +61 135 ms ; seconde refusée busy ; première canceled après 89 551 ms, aucun événement MCP deadline/Core end capturé |
+
+L’essai Codex 121 s immédiatement après le premier 504 avait reçu busy : la première lecture était encore active. Cet essai est conservé dans l’evidence et **exclu** de la preuve de deadline ; un unique essai indépendant le remplace. Pas de retry WRITE, aucun WRITE du tout. Le verrou synthétique révèle la réémission ; il ne faut pas enlever ce verrou pour lui substituer un succès artificiel.
+
+**Couches prouvées :** les timers MCP du Worker à 30/120 s sont observés avec des timestamps handler/Core/départ/réponse préparée ; le Core synthétique n’a pas de timeout propre. Un HTTP 504 retourné au client Codex avant le rejet MCP vient de la chaîne HTTP amont du Site, pas du timer 185 s du harness ni d’une erreur Core. Le composant amont précis et son instant de réception ne sont pas exposés : `proxyReceivedTimestamp: null` dans l’evidence. Ne pas attribuer ce 504 à une limite universelle Sites ou à une bibliothèque déterminée. La lecture ChatGPT de 119 s réussit, tandis que son contrôle de 121 s subit une réémission et une cancellation avant le timer : aucun plafond stable de 60/90 s n’en est déduit. `Request.signal` n’a fourni aucun abort enregistré ; c’est distinct de l’outcome Cloudflare canceled. `preparedResponse.httpStatus=200` ne signifie pas livraison lorsque le fetch est canceled ou que le client a déjà reçu 504. Le transit hors Worker explique aussi que les mesures client READ dépassent 30 s.
+
+**Compatibilité 120 s non acquise.** Une deadline Worker observée ne suffit pas : le résultat typé de fin de budget ne traverse pas le chemin Codex exercé, et le cas haut ChatGPT ne démontre pas son retour à 120 s. Aucun plafond caché à 115 s, changement de contrat ou correctif spéculatif n’est introduit. Pas de preuve de mémoire maximale Worker ou d’annulation transactionnelle ; aucune telle garantie n’est revendiquée.
+
+### C — réémission HTTP 413 : cas B, attribution bornée
+
+| Client, une invocation | 1er POST 413 UTC / requestId | 2e POST 413 UTC / requestId | Corrélation |
+| --- | --- | --- | --- |
+| Codex | 15:32:43.852 / 699b679590b218b8242939561e66b691 | 15:32:44.055 / f928804f73a76fa01cfdb75b78b4f2db | même invocationId, deux attemptId, RPC MCP 0 puis 1, même trace amont avec spans distincts |
+| ChatGPT | 15:43:41.764 / 3a42962f7c14c063b3ced6f70ac14252 | 15:43:41.925 / 97ff4b9dd81d1244c345b9378faacc28 | même invocationId, deux attemptId, RPC MCP 0 puis 1, même trace amont avec spans distincts |
+
+Aucun Core commencé pour ces 413. Aucun mcp-session-id reçu ; user-agent absent/non discriminant. Des HTTP 200/202 intermédiaires sont visibles ; leurs corps JSON-RPC n’étant pas capturés, cette campagne ne les assimile pas à une méthode précise. Le statut HTTP 413 synthétique reproduit une réémission avec un tout petit payload, sans réutiliser la charge save_analysis du checkpoint précédent ; il ne prouve pas que chaque paramètre du frame original est identique. Codex expose le rejet sûr dans error_data.payload, enveloppé par McpServerError/INVALID_ARGUMENT ; ChatGPT affiche HTTP 413 sans diagnostic structuré visible.
+
+**Fait démontré :** les duplications arrivent en amont du Site pour une invocation logique ; elles ne sont pas causées par un deuxième appel Core ou une boucle du handler. **Root cause précise non démontrée :** aucune trace des tentatives entre Codex/ChatGPT, le connecteur MCP distant et le proxy interne OpenAI ; aucun code/configuration de leur politique de reconnexion/retry accessible. Le SDK JavaScript local 1.32.0 ne rejoue pas un 413 (`client/streamableHttp.js:320–378` : retry 401/auth ou 403/insufficient_scope seulement), mais cela ne prouve rien sur le SDK réellement utilisé en amont. La seule présence d’une même trace ou d’une RPC renumérotée n’identifie pas son auteur.
+
+Instrumentation minimale manquante pour l’attribution : identifiant d’appel et numéro de tentative à chaque hop client/connecteur/proxy, cause du retry/reconnect/timeout, horodatage de réception/départ et budget restant, corrélés aux requestId/trace/attemptId Site. Elle doit être fournie par le runtime amont, sans payload, token, cookie ou identité privée. L’instrumentation Site ajoutée ici ne peut fabriquer ces spans manquants. Même limite pour l’attribution de la réémission ChatGPT longue. Incertitude explicite, pas d’absence de reproductibilité présentée comme PASS.
+
+**Mitigation avant tout WRITE futur :** maintenir les deux flags désactivés/non délégués ; exiger une politique amont sans replay automatique des mutations, ou une reprise explicitement autorisée du **même runId/family, intention et expectedRevision**, après contrôle du receipt/journal/état. Le writer existant utilise la clé runId+family, une empreinte du contenu persisté, une lease/journal D1, le contrôle expectedRevision et des relectures ; il retourne persisted/promotion_pending/verified/partial ou stale_request, sans recréer un create ambigu au replay. Les tests locaux acquis couvrent ces chemins, aucun WRITE réel ajouté. Un timeout/504/rejet d’une tentative réémise ne certifie pas l’annulation de la première, ni un succès sans receipt. Le fence MCP est par isolate ; D1/Notion n’ont pas de transaction atomique commune et l’empreinte porte le contenu persisté, pas tous les champs transport. Ce design protège les reprises identiques sans fournir une garantie distribuée exactly-once. La mitigation est suffisante pour **garder READ-only**, pas une autorisation d’activer WRITE.
+
+### Retrait, rollback et checks
+
+Probe, tests temporaires, hooks Worker/transport et helper de deadline temporaire supprimés. Le code exécuté localement est octet pour octet celui de `4451d7a`/`e0e7add` pour transport/Worker/Core/contrats/adapters/manifest ; aucune nouvelle feature, règle métier ou compat proxy permanente. `node_modules 2` reste intact, non suivi et non inclus.
+
+**Rollback réellement exercé vers la v210 exacte**, pour retirer la validation : version `appgprj_6a7d7a1233a08191a8d35b746b284e95~appgver_8dd8c5dec3ec8191b2916d0e1854262f`, source e0e7add, hash de contenu `sha256:9dbe7de0d2eca96d06bc0cc0b5b39ac19082f1665789474dda654d9afab8294e`. Déploiement de restauration `appgdep_6ac12348880481919bbe053739738cc8`, succeeded/has_mcp=true à 15:46:28.923720 UTC, env revision 4. Catalogue officiel rafraîchi après restauration : App Server voit uniquement les sept tools canoniques, sans appel métier supplémentaire ; aucune trace du probe dans les sources ni le build. Aucune archive modifiée de v210 ni migration. V209/v208 restent les rollbacks historiques disponibles ; aucune restauration vers ces deux versions exercée. Une restauration exige le saved version ID exact, puis get_deployment_status jusqu’à succeeded.
+
+Checks proportionnés : tests MCP existants 22/22 PASS pendant l’ajout du hook ; tests temporaires purs 3/3 PASS (auth/expiration/bornes/timer partagé), Workerd synthétique isolé PASS sans provider ni opération DB ; typecheck, ESLint ciblé et build avec probe PASS ; typecheck/build/validation d’artefact après retrait PASS. Tests domaine/writer acquis conservés, aucune nouvelle campagne métier. Audit archive/secrets/publication et diff hors Lot 11 PASS. Les preuves runtime détaillées expurgées, timestamps et hashes sont dans [lot-11-proxy-evidence.json](lot-11-proxy-evidence.json) ; aucune charge X, identité privée, credential ou log brut n’y figure.
+
+## Gate final Lot 11 — décision avant Lot 12
+
+| Preuve | Hébergé OAuth | ChatGPT | Codex | Résultat | Evidence |
+| --- | --- | --- | --- | --- | --- |
+| READ canonique | déjà acquis | PASS | PASS | PASS | sections OAuth v210, 12 READ |
+| isolation scopes | déjà acquis | PASS | PASS | PASS | sections OAuth v210, 2 contrôles |
+| WRITE disabled | déjà acquis | PASS | PASS | PASS | forbidden/not_started/scope_permission, flags absents |
+| input 2 MiB | déjà acquis | non exercé à la frontière | PASS | PASS sur Codex | sondes v210 |
+| framing > limite | déjà acquis | non exercé à la frontière | HTTP 413 | 413 | sondes v210 |
+| output ~4 MiB | oui, synthétique | succès/rejet visibles ; intégrité client non mesurable | intégrité et frontière PASS | frontière comprise et prouvée | evidence cases sizes |
+| deadline ~30 s | oui, synthétique | PASS | PASS | timer MCP et retour prouvés ; pas d’annulation garantie | evidence cases time30 |
+| deadline ~120 s | oui, synthétique | 119 s succès ; cas haut busy/canceled | 115 s succès ; 119/121 s HTTP 504 | **NO-GO compatibilité bout de budget** | evidence cases time120 |
+| retry/replay 413 | oui, synthétique | 2 POST | 2 POST | cas B : duplication démontrée, auteur opaque ; WRITE fermé | evidence cases retry |
+| façade mince | revue statique | sans objet | sans objet | PASS, dette de placement non bloquante | tableau architectural ci-dessus |
+
+**NO-GO Lot 12 ; Lot 11 non clos.** Les maxima de sortie et le timer 30 s ont désormais des preuves OAuth réelles, et l’incertitude des réémissions est précisément bornée. Il reste un écart **observé**, pas simplement un manque de test : le chemin Codex perd le retour typé autour du budget 120 s, et le cas haut ChatGPT est réémis/cancelé avant preuve du timer. Le timer 120 s Worker lui-même est prouvé, sa compatibilité sur toute la chaîne ne l’est pas. Aucun changement de contrat, activation WRITE, migration ou travail Lot 12 pour masquer ce point.
+
+Action restante : obtenir observabilité/contrôle ou garantie vérifiable du timeout/replay des hops OpenAI concernés, résoudre cette incompatibilité puis revalider seulement les cas hauts manquants. Aucun nouveau consentement OAuth/MFA ni autorisation de publication ne manque ; le checkout ne permet pas de modifier les composants amont opaques. Un budget plus court demanderait une décision explicite de contrat, pas un plafond caché. La livraison reste READ-only, sur le Site existant avec runtime canonique restauré et rollback prouvé.

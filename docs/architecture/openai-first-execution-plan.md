@@ -28,7 +28,7 @@ Conséquence : le Core et les contrats ne doivent dépendre ni de ChatGPT, ni de
 
 ### 2.1 Production réellement déployée
 
-La production est **Sites v210 READ-only**, publiée au Lot 11 depuis `e0e7add293e4f930b3805c8ce69ef64c5f3b1be0` ; v209 est le rollback MCP immédiat et v208 conserve le rollback produit sans MCP :
+La production est **Sites v210 READ-only**, restaurée exactement après la campagne temporaire v211 du Lot 11, depuis `e0e7add293e4f930b3805c8ce69ef64c5f3b1be0` ; v209 est le rollback MCP immédiat et v208 conserve le rollback produit sans MCP :
 
 - source de rollback v208 (Lot 6) : `9f98a7f7a20adef95c591a583fe60a70e04a8e38` ;
 - les prérequis canoniques des Lots 7–10 et le serveur MCP sont embarqués ; aucune migration D1 n'a été appliquée ;
@@ -268,7 +268,7 @@ La sortie future d’OpenAI n’est **pas** un lot du chantier actuel. Elle est 
 
 ## 6. Roadmap globale figée
 
-| Lot | Objet | État au 01/10/2026 | Gate |
+| Lot | Objet | État au 03/10/2026 | Gate |
 | --- | --- | --- | --- |
 | 0 | Baseline | terminé | état restaurable et preuves baseline |
 | 1 | Debt map | terminé | dette et doublons factuels |
@@ -282,7 +282,7 @@ La sortie future d’OpenAI n’est **pas** un lot du chantier actuel. Elle est 
 | 8 | Adapter Notion lecture/écriture | clos | writer réel et nettoyage validés ; passation `lot-9-handoff.md` |
 | 9 | Skill permanent | clos | règles canoniques dans AGENTS.md ; passation `lot-9-handoff.md` |
 | 10 | Contrat MCP | clos | contrat 1.0.0 ; passation `lot-10-handoff.md` |
-| 11 | Serveur MCP | implémenté et publié v210 READ-only ; gate hébergé ouvert | preuves et limites dans `lot-11-handoff.md` |
+| 11 | Serveur MCP | v210 READ-only restaurée après campagne v211 ; 4 MiB/30 s prouvés ; NO-GO compatibilité 120 s | réémissions bornées, façade mince revue ; Lot 11 non clos |
 | 12 | Migration plugin → MCP | futur | parité méthodologique, receipts et persistence |
 | 13 | Clôture | futur | non-régression globale, sécurité, perf, docs |
 
@@ -588,11 +588,19 @@ Les limites 2/4 MiB portent sur les enveloppes contractuelles JSON UTF-8 ; le fr
 
 Références officielles revalidées le 3 octobre 2026 : [plugin hébergé par Sites](https://help.openai.com/en/articles/20001547-hosting-a-plugin-with-chatgpt-sites), [runtime Sites](https://learn.chatgpt.com/docs/sites), [permissions Sites](https://learn.chatgpt.com/docs/enterprise/sites), [serveur MCP](https://developers.openai.com/plugins/build/mcp-server), [MCP dans Codex](https://learn.chatgpt.com/docs/extend/mcp?surface=cli), [App Server Codex](https://learn.chatgpt.com/docs/app-server). Elles permettent un Site existant, publication/republication du plugin et permissions distinctes Site/plugin/services connectés. Le runtime fournit une identité au dispatch ; les tests locaux la simulent et ne prouvent pas le rejet d'en-têtes forgés par la plateforme. Elles ne suffisent pas à certifier les budgets exacts du proxy hébergé.
 
-**NO-GO Lot 12 à cette reprise ; Lot 11 non clos.** Déploiement 210 succeeded/has_mcp=true, env revision 4 ; anonymous 401. OAuth réel ChatGPT et Codex, discovery, six READ personnel/démo et isolation ciblée acquis. L’App Server officiel rafraîchi voit le plugin Site installé/callable et ses sept tools ; 12 READ + 2 isolation valident les outputSchema canoniques. L’inspection des permissions avec l’ID application exact confirme Use my default / Allow low-risk actions. Le plugin financier installé 1.3.0 est distinct et intact. Aucun nouveau plugin/MCP local, secret copié ou identité simulée.
+**NO-GO Lot 12 ; Lot 11 non clos.** Les preuves acquises v210 restent conservées : OAuth réel ChatGPT/Codex, discovery, six READ personnel/démo (12 READ + 2 isolation), anonymous 401, outputSchema canoniques, refus WRITE forbidden/not_started/scope_permission. WRITE fermé/non délégué, flags absents, env revision 4, permission low-risk inchangée ; plugin financier 1.3.0 distinct et intact. Entrée 2 MiB et framing HTTP 413 déjà acquis, aucune nouvelle campagne métier ni WRITE réel.
 
-WRITE fermé/non délégué, flags absents. Le correctif e0e7add publié rend le refus authentifié save_analysis visible : forbidden, retryable=false, outcome=not_started, diagnostic scope_permission. Aucune confirmation mutante ni mutation réelle. Une sonde conforme de 2 MiB traverse le proxy puis est refusée avant Core ; un frame > 2 MiB+4096 reçoit HTTP 413. Une sonde READ à champ inconnu est supprimée par le connecteur : elle ne constitue aucune preuve de limite.
+La campagne OAuth synthétique v211 (source 08790f2) calibre l’enveloppe UTF-8 à 16 KiB/4 MiB/4 MiB+1 : frontière prouvée, Codex vérifie l’intégrité des 4 194 304 octets ; le framing JSON-RPC ajoute environ 520 octets. ChatGPT affiche le succès/rejet, sans accès aux octets client bruts. Les délais 29/31 s prouvent le timer MCP 30 s et son retour sur les deux clients. Le Core peut finir après un timeout ; pas d’annulation certifiée.
 
-Restent non certifiés dans le proxy : sortie maximale 4 MiB, deadlines 30/120 s. Les READ ne proposent ni délai ni taille artificielle ; WRITE fermé ne démarre pas le timer 120 s, et la documentation officielle ne garantit pas ces maxima exacts. Le canal Codex/connecteur/SDK a produit deux POST 413 pour une seule invocation du harness, avec réinitialisation entre eux ; la réémission amont doit être qualifiée avant activation WRITE. L’absence de retry WRITE du serveur n’est pas une preuve globale de toute la chaîne. Décision **B : READ-only maintenu**. Aucun nouveau tool/mode de test public, changement d’UI/Skills/contrat, permission externe, mutation Notion, migration D1 ou travail Lot 12. L’autorisation de publication et la connexion OAuth ne sont plus les obstacles ; reste la capacité de validation instrumentée des maxima/deadlines via OAuth réel et la qualification du comportement amont. Preuves, IDs de publication/rollback, limites et checks : `docs/architecture/lot-11-handoff.md`.
+**Écart 120 s observé :** Codex reçoit HTTP 504 en amont à environ 120,7 s client pour une lecture synthétique de 119/121 s ; 115 s réussit. Le timer Worker 120 s et sa réponse préparée sont observés, mais le retour typé n’atteint pas Codex en bout de budget. ChatGPT réussit à 119 s ; son cas de 121 s génère deux requêtes, la seconde à +61,135 s reçoit busy, la première canceled après 89,551 s sans preuve du timer. Aucun plafond stable 60/90 s ni timeout universel Sites n’est déduit. Le budget 120 s n’est donc pas compatible de façon prouvée sur toute la chaîne ; aucun changement du contrat 1.0.0 ni plafond caché introduit.
+
+**Réémission 413 qualifiée, cas B :** une invocation synthétique produit deux POST 413 chez Codex et ChatGPT, corrélés par invocationId, attemptId, requête MCP et trace. Aucun Core commencé. SDK local 1.32.0 sans retry 413 ; auteur précis client/SDK distant/proxy opaque non attribuable avec les spans disponibles. Mitigation : WRITE reste fermé ; avant activation, maîtriser la politique amont et conserver runId/family/intention/expectedRevision sur toute reprise, contrôler journal/receipt/état. Le writer durable protège les replays identiques et signale les conflits/receipts partiels ; aucune garantie transactionnelle exactly-once Notion/D1 ou d’annulation après 504 n’est ajoutée.
+
+Revue statique des sept handlers par Luna puis orchestrateur : façade mince saine, mapping exclusif Core ; Current/agrégats au Core, physique/normalisation/writer derrière ports. Helper quotes/FX/fraîcheur historique dans app/lib consommé par adapter : dette de placement non bloquante, non refactorée. Tableau détaillé dans la passation.
+
+Instrumentation owner-only temporaire supprimée du transport/Worker et du build. **Rollback exercé vers v210 exacte**, déploiement appgdep_6ac12348880481919bbe053739738cc8 succeeded/has_mcp=true, env revision 4 ; v209/v208 toujours disponibles. Aucun changement UI/Skills/plugin financier, permission, mutation Notion, migration D1 ou Lot 12. Tests nouveaux bornés et tests MCP PASS, typecheck/lint/build/artefact/audit secrets PASS. Les preuves et leurs limites, matrice et données techniques expurgées sont dans `docs/architecture/lot-11-handoff.md` et `lot-11-proxy-evidence.json`.
+
+Action restante : résoudre/faire observer les budgets et réémissions des hops OpenAI opaques, puis revalider les seuls cas hauts 120 s manquants avant GO. Une deadline Worker seule ne remplace pas une preuve client. Aucune autorisation, connexion OAuth ou intervention MFA manquante ; ne pas ouvrir Lot 12.
 
 ## 12. Lot 12 — migration du plugin Investment OS Analysis vers MCP
 
@@ -831,4 +839,4 @@ Le changement de vision produit n’ajoute pas un nouveau lot et ne réouvre pas
 - **Lot 11** : serveur MCP mince, Sites comme première cible d’hébergement, Site existant préféré si compatible ;
 - **Lot 12** : migration infrastructure du plugin vers MCP, sans changement de méthodologie.
 
-La priorité actuelle est **terminer les preuves hébergées de taille de sortie/deadlines du Lot 11 sur v210 et qualifier les réémissions amont, WRITE fermé, avant toute décision de passage au Lot 12**. Les Lots 7–10 sont clos et ne sont pas rejoués.
+La priorité actuelle est **résoudre l’incompatibilité de fin de budget 120 s des chemins OAuth OpenAI, WRITE fermé, avant tout GO Lot 12**. Les preuves de sortie 4 MiB/30 s et la qualification bornée des réémissions sont désormais acquises ; runtime canonique v210 restauré, instrumentation retirée. Les Lots 7–10 sont clos et ne sont pas rejoués.

@@ -8,12 +8,6 @@ import { MCP_CONTRACT_VERSION, MCP_LIMITS, MCP_TOOLS, type McpInputs, type McpOu
 import { isRecord } from "../../core/contracts/common";
 import type { createInvestmentCore } from "../../core/services/investment-os";
 
-export type ValidationProbe = {
-  tool: Tool; expiresAt: number;
-  call: (args: unknown, request: Request, keepAlive?: McpRuntime["waitUntil"]) => Promise<{ structuredContent: Record<string, unknown>; content: { type: "text"; text: string }[]; isError?: boolean }>;
-  intercept: (body: unknown, request: Request) => Response | undefined;
-  response?: (body: unknown, response: Response) => Promise<void>;
-};
 type Core = ReturnType<typeof createInvestmentCore>;
 type ToolName = keyof McpInputs;
 /** Trusted runtime context, never parsed from tool arguments. */
@@ -22,8 +16,6 @@ export type McpRuntime = {
   authenticate: (request: Request) => Promise<McpCaller | null> | McpCaller | null;
   service: (scope: McpScope, caller: McpCaller) => Core;
   waitUntil?: (promise: Promise<unknown>) => void;
-  /** TEMPORARY Lot 11 owner-only synthetic instrumentation; removed after campaign. */
-  validation?: ValidationProbe;
 };
 const provider = new CfWorkerJsonSchemaValidator({ draft: "7" });
 const schemaFor = (name: ToolName, field: "inputSchema" | "outputSchema") => {
@@ -54,13 +46,6 @@ const rejected = (code: McpTransportErrorCode, scope: McpScope | null = null, ou
 const bytes = (value: unknown) => new TextEncoder().encode(JSON.stringify(value)).byteLength;
 const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
-/** The same deadline race for production and temporary synthetic READ budget probes. */
-export async function raceMcpDeadline<T>(task: Promise<T>, ms: number, expired: () => T): Promise<T> {
-  let timer: ReturnType<typeof setTimeout> | undefined;
-  try { return await Promise.race([task, new Promise<T>(resolve => { timer = setTimeout(() => resolve(expired()), ms); })]); }
-  finally { if (timer) clearTimeout(timer); }
-}
-
 /** Call arguments come exclusively from the canonical manifest, in its declared order. */
 function invoke(core: Core, name: ToolName, input: McpInputs[ToolName]) {
   const spec = MCP_TOOLS[name];
@@ -85,6 +70,7 @@ export function createMcpHandler(runtime: McpRuntime) {
     if (write && activeWrites.has(caller.subject)) return rejected("rate_limit", scope);
     if (write) activeWrites.add(caller.subject);
     const deadline = write ? MCP_LIMITS.writeTimeoutMs : MCP_LIMITS.readTimeoutMs;
+    let timer: ReturnType<typeof setTimeout> | undefined;
     let started = false;
     let expired = false;
     const task = (async (): Promise<McpOutput<unknown>> => {
@@ -106,7 +92,11 @@ export function createMcpHandler(runtime: McpRuntime) {
     })();
     // A response deadline cannot cancel ports with no cancellation API. Keep the task alive and fenced.
     keepAlive?.(task.then(() => undefined));
-    return raceMcpDeadline(task, deadline, () => { expired = true; return rejected("timeout", scope, started ? "unknown" : "not_started"); });
+    try {
+      return await Promise.race([task, new Promise<McpOutput<never>>(resolve => {
+        timer = setTimeout(() => { expired = true; resolve(rejected("timeout", scope, started ? "unknown" : "not_started")); }, deadline);
+      })]);
+    } finally { if (timer) clearTimeout(timer); }
   }
   return async (request: Request, keepAlive = runtime.waitUntil): Promise<Response> => {
     const headers = { "cache-control": "private, no-store" };
@@ -132,16 +122,12 @@ export function createMcpHandler(runtime: McpRuntime) {
     if (!isRecord(body) || Array.isArray(body) || body.jsonrpc !== "2.0") return Response.json(rejected("invalid_input"), { status: 400, headers });
     if (body.method === "tools/call" && body.id === undefined) return Response.json(rejected("invalid_input"), { status: 400, headers });
     if (isRecord(body.params) && body.params.task !== undefined) return Response.json(rejected("invalid_input"), { status: 400, headers });
-    const validation = runtime.validation && Date.now() < runtime.validation.expiresAt && caller.scopes.includes("personal") && caller.permissions.includes("investment:read") ? runtime.validation : undefined;
-    const intercepted = validation?.intercept(body, request);
-    if (intercepted) return intercepted;
     const server = new Server({ name: "investment-os", version: MCP_CONTRACT_VERSION }, {
       capabilities: { tools: {} }, jsonSchemaValidator: provider,
       instructions: "Contrat 1.0.0. Scope explicite requis. Aucun retry automatique save_analysis ; un timeout laisse le résultat inconnu. Les receipts sont la seule preuve retournée par le Core.",
     });
-    server.setRequestHandler(ListToolsRequestSchema, async () => ({ tools: validation ? [...mcpToolCatalog, validation.tool] : mcpToolCatalog }));
+    server.setRequestHandler(ListToolsRequestSchema, async () => ({ tools: mcpToolCatalog }));
     server.setRequestHandler(CallToolRequestSchema, async ({ params }) => {
-      if (validation && params.name === validation.tool.name) return validation.call(params.arguments, request, keepAlive);
       if (!Object.hasOwn(MCP_TOOLS, params.name)) throw new McpError(ErrorCode.InvalidParams, "Tool inconnu.");
       const output = await call(params.name as ToolName, params.arguments, caller!, keepAlive);
       // Some hosted clients expose only text when isError is true. Transport rejections
@@ -154,7 +140,6 @@ export function createMcpHandler(runtime: McpRuntime) {
     try {
       await server.connect(transport);
       const response = await transport.handleRequest(request, { parsedBody: body });
-      if (isRecord(body.params) && body.params.name === validation?.tool.name) await validation?.response?.(body, response.clone());
       response.headers.set("cache-control", headers["cache-control"]);
       return response;
     } catch { return Response.json(rejected("invalid_input"), { status: 400, headers }); }
