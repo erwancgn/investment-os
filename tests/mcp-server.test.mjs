@@ -51,6 +51,17 @@ test("auth excludes payload identity, cookies, bypass credentials and browser wr
   assert.deepEqual(other.scopes, ["demo"]); assert.deepEqual(other.permissions, ["investment:read"]);
 });
 
+test("Sites test WRITE fence admits only configured run IDs before reaching Core", async () => {
+  const identityRequest = new Request("https://site/mcp", { headers: { "oai-authenticated-user-id": "user", "oai-authenticated-user-email": "owner@example.test" } });
+  const identity = api.authenticateSitesMcp(identityRequest, { OWNER_EMAIL: "owner@example.test", MCP_WRITE_ENABLED: "1", MCP_WRITE_DELEGATED: "1", MCP_WRITE_TEST_RUN_IDS: "allowed-run" });
+  let calls = 0;
+  const core = { saveAnalysis: async () => { calls++; throw new Error("write reached"); } };
+  const denied = await call(handler(core, identity), "save_analysis", { ...base, input: { ...writeInput(), runId: "other-run" } });
+  assert.equal(denied.error.code, "forbidden"); assert.equal(denied.error.outcome, "not_started"); assert.equal(calls, 0);
+  await call(handler(core, identity), "save_analysis", { ...base, input: { ...writeInput(), runId: "allowed-run" } });
+  assert.equal(calls, 1);
+});
+
 test("permissions, scope isolation, mutation confirmation and unauthorized never reach Core", async () => {
   let calls = 0; const core = { saveAnalysis: async () => { calls++; throw new Error("must not happen"); }, getCompany: async () => { calls++; throw new Error("must not happen"); } };
   for (const [identity, args, code] of [[{ ...caller, scopes: ["demo"] }, { ...base, id: "c" }, "forbidden"], [{ ...caller, permissions: ["investment:read"] }, { ...base, input: writeInput() }, "forbidden"], [caller, { ...base, scope: "demo", input: writeInput() }, "forbidden"], [{ ...caller, writeApproved: false }, { ...base, input: writeInput() }, "confirmation_required"]]) {

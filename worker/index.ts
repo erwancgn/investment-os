@@ -24,6 +24,7 @@ interface Env {
   OWNER_EMAIL?: string;
   MCP_WRITE_ENABLED?: string;
   MCP_WRITE_DELEGATED?: string;
+  MCP_WRITE_TEST_RUN_IDS?: string;
   IMAGES: {
     input(stream: ReadableStream): {
       transform(options: Record<string, unknown>): {

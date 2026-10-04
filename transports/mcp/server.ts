@@ -11,7 +11,7 @@ import type { createInvestmentCore } from "../../core/services/investment-os";
 type Core = ReturnType<typeof createInvestmentCore>;
 type ToolName = keyof McpInputs;
 /** Trusted runtime context, never parsed from tool arguments. */
-export type McpCaller = { subject: string; scopes: McpScope[]; permissions: ("investment:read" | "investment:write")[]; writeApproved: boolean };
+export type McpCaller = { subject: string; scopes: McpScope[]; permissions: ("investment:read" | "investment:write")[]; writeApproved: boolean; allowedWriteRunIds?: string[] };
 export type McpRuntime = {
   authenticate: (request: Request) => Promise<McpCaller | null> | McpCaller | null;
   service: (scope: McpScope, caller: McpCaller) => Core;
@@ -67,6 +67,7 @@ export function createMcpHandler(runtime: McpRuntime) {
     if (bytes(raw) > MCP_LIMITS.requestBytes) return rejected("limit_exceeded", scope);
     if (!validators[name].input(raw).valid) return rejected("invalid_input", scope);
     const input = raw as McpInputs[ToolName];
+    if (write && caller.allowedWriteRunIds && !caller.allowedWriteRunIds.includes((input as McpInputs["save_analysis"]).input.runId)) return rejected("forbidden", scope);
     if (write && activeWrites.has(caller.subject)) return rejected("rate_limit", scope);
     if (write) activeWrites.add(caller.subject);
     const deadline = write ? MCP_LIMITS.writeTimeoutMs : MCP_LIMITS.readTimeoutMs;

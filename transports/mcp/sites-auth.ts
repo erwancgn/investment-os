@@ -1,5 +1,5 @@
 import type { McpCaller } from "./server";
-export type SitesMcpEnv = { OWNER_EMAIL?: string; MCP_WRITE_ENABLED?: string; MCP_WRITE_DELEGATED?: string };
+export type SitesMcpEnv = { OWNER_EMAIL?: string; MCP_WRITE_ENABLED?: string; MCP_WRITE_DELEGATED?: string; MCP_WRITE_TEST_RUN_IDS?: string };
 /** Only for Sites dispatch: it supplies verified identity; never mount this auth on a raw public Worker. */
 export function authenticateSitesMcp(request: Request, env: SitesMcpEnv): McpCaller | null {
   const subject = request.headers.get("oai-authenticated-user-id")?.trim();
@@ -8,5 +8,6 @@ export function authenticateSitesMcp(request: Request, env: SitesMcpEnv): McpCal
   const owner = Boolean(env.OWNER_EMAIL?.trim() && email === env.OWNER_EMAIL.trim().toLowerCase());
   return { subject, scopes: owner ? ["personal", "demo"] : ["demo"],
     permissions: owner && env.MCP_WRITE_ENABLED === "1" ? ["investment:read", "investment:write"] : ["investment:read"],
-    writeApproved: owner && env.MCP_WRITE_DELEGATED === "1" };
+    writeApproved: owner && env.MCP_WRITE_DELEGATED === "1",
+    allowedWriteRunIds: env.MCP_WRITE_TEST_RUN_IDS?.split(",").map(id => id.trim()).filter(Boolean) };
 }
