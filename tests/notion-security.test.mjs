@@ -59,6 +59,19 @@ const mutationPaths = [
   '/api/notion/sync-all',
 ];
 
+test('plugin domain challenge is public and does not touch private adapters', async () => {
+  const { default: worker } = await loadWorker();
+  const db = new Proxy({}, { get() { throw new Error('private D1 access attempted'); } });
+  const response = await worker.fetch(
+    new Request('https://investment-os.test/.well-known/openai-apps-challenge'),
+    { DB: db },
+    { waitUntil() {}, passThroughOnException() {} },
+  );
+  assert.equal(response.status, 200);
+  assert.match(response.headers.get('content-type'), /^text\/plain/);
+  assert.match(await response.text(), /^[A-Za-z0-9_-]{20,}$/);
+});
+
 test('all Notion mutation routes reject anonymous browser requests', async () => {
   const { default: worker } = await loadWorker();
   for (const path of mutationPaths) {

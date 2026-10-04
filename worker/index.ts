@@ -192,6 +192,11 @@ function mcpHandler(env: Env) {
 const worker = {
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
     const url = new URL(request.url);
+    if (url.pathname === "/.well-known/openai-apps-challenge" && request.method === "GET") {
+      return new Response("mpJR0O_0nS7S-EeztZzEmb3vDetAaOaA2jyVm67yHCo", {
+        headers: { "content-type": "text/plain; charset=utf-8", "cache-control": "public, max-age=300" },
+      });
+    }
     if (url.pathname === "/mcp") return mcpHandler(env)(request, task => ctx.waitUntil(task));
     const owner = hasOwnerIdentity(request, env);
     const scope = requestedScope(request, owner);
