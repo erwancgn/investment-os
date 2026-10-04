@@ -282,7 +282,7 @@ La sortie future d’OpenAI n’est **pas** un lot du chantier actuel. Elle est 
 | 8 | Adapter Notion lecture/écriture | clos | writer réel et nettoyage validés ; passation `lot-9-handoff.md` |
 | 9 | Skill permanent | clos | règles canoniques dans AGENTS.md ; passation `lot-9-handoff.md` |
 | 10 | Contrat MCP | clos | contrat 1.0.0 ; passation `lot-10-handoff.md` |
-| 11 | Serveur MCP | v210 READ-only restaurée après campagne v211 ; 4 MiB/30 s prouvés ; NO-GO compatibilité 120 s | réémissions bornées, façade mince revue ; Lot 11 non clos |
+| 11 | Serveur MCP | Clos READ-only : v212, budget READ/WRITE 30 s, preuves 4 MiB/30 s conservées | GO Lot 12 ; WRITE fermé, activation séparée |
 | 12 | Migration plugin → MCP | futur | parité méthodologique, receipts et persistence |
 | 13 | Clôture | futur | non-régression globale, sécurité, perf, docs |
 
@@ -600,7 +600,7 @@ Revue statique des sept handlers par Luna puis orchestrateur : façade mince sai
 
 Instrumentation owner-only temporaire supprimée du transport/Worker et du build. **Rollback exercé vers v210 exacte**, déploiement appgdep_6ac12348880481919bbe053739738cc8 succeeded/has_mcp=true, env revision 4 ; v209/v208 toujours disponibles. Aucun changement UI/Skills/plugin financier, permission, mutation Notion, migration D1 ou Lot 12. Tests nouveaux bornés et tests MCP PASS, typecheck/lint/build/artefact/audit secrets PASS. Les preuves et leurs limites, matrice et données techniques expurgées sont dans `docs/architecture/lot-11-handoff.md` et `lot-11-proxy-evidence.json`.
 
-Action restante : résoudre/faire observer les budgets et réémissions des hops OpenAI opaques, puis revalider les seuls cas hauts 120 s manquants avant GO. Une deadline Worker seule ne remplace pas une preuve client. Aucune autorisation, connexion OAuth ou intervention MFA manquante ; ne pas ouvrir Lot 12.
+Décision du 4 octobre : borne synchrone WRITE réduite explicitement à 30 s, sur la preuve OAuth 29/31 s existante et le mécanisme partagé READ/WRITE. V212 publiée et confirmée, tests de deadline/fence/abort et workerd PASS. Lot 11 clos READ-only ; GO Lot 12. Les preuves 120 s ci-dessus restent historiques, aucune garantie WRITE hébergée supplémentaire. Voir la clôture dans lot-11-handoff.md.
 
 ## 12. Lot 12 — migration du plugin Investment OS Analysis vers MCP
 
@@ -839,4 +839,4 @@ Le changement de vision produit n’ajoute pas un nouveau lot et ne réouvre pas
 - **Lot 11** : serveur MCP mince, Sites comme première cible d’hébergement, Site existant préféré si compatible ;
 - **Lot 12** : migration infrastructure du plugin vers MCP, sans changement de méthodologie.
 
-La priorité actuelle est **résoudre l’incompatibilité de fin de budget 120 s des chemins OAuth OpenAI, WRITE fermé, avant tout GO Lot 12**. Les preuves de sortie 4 MiB/30 s et la qualification bornée des réémissions sont désormais acquises ; runtime canonique v210 restauré, instrumentation retirée. Les Lots 7–10 sont clos et ne sont pas rejoués.
+La priorité actuelle est **Lot 12, migration du transport du plugin vers MCP**, après clôture READ-only du Lot 11 sur v212 et borne synchrone 30 s. Les preuves historiques restent conservées ; WRITE fermé et non délégué. Les Lots 7–10 ne sont pas rejoués.

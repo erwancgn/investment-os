@@ -2,6 +2,8 @@
 
 3 octobre 2026. Checkout local `investment-os`, branche `chore/architecture-stabilization-mcp`, HEAD d'entrée `6d9566c32e1f7cf42d40053eca0977022238bc05`. Checkpoint propre, origin vérifié après fetch (0/0). `.env.local` ignoré et non suivi ; présence des seules clés nécessaires contrôlée sans valeur affichée. Aucun secret réel utilisé pour les tests locaux initiaux ; les READ hébergés suivants utilisent les accès serveur et OAuth existants sans extraction ni affichage de secret. Le SHA de livraison est celui du commit contenant ce document, sans SHA autoréférentiel.
 
+**Lot 11 clos READ-only le 4 octobre : v212 publiée, budget synchrone 30 s ; GO Lot 12.** Voir la décision finale ci-dessous.
+
 **Historique au 3 octobre : serveur v210 READ-only restauré après la campagne synthétique v211 ; NO-GO Lot 12.** Sortie 4 MiB et deadline MCP 30 s prouvées via OAuth, façade mince revue ; réémissions 413 reproduites et incertitude bornée. Le timer Worker 120 s est observé, mais sa restitution échoue sur le chemin Codex (HTTP 504) et le cas haut ChatGPT est réémis/cancelé. Lot 11 non clos ; WRITE fermé/non délégué. Aucun changement financier ni Lot 12 commencé. Les états intermédiaires ci-dessous sont historiques ; le gate final et l’evidence terminent cette passation.
 
 ## Architecture et surface
@@ -279,3 +281,11 @@ Correction minimale : constante `MCP_LIMITS.writeTimeoutMs`, assertions de contr
 READ : deux tentatives au plus pour une erreur transitoire terminée dans le même budget, backoff 250 ms. WRITE : une tentative, aucune relance automatique. Les réémissions amont restent possibles ; 413 est refusé avant Core. WRITE reste fermé/non délégué en production ; toute activation future exige autorisation explicite, politique de reprise contrôlée et validation spécifique. Une reprise conserve runId, famille, intention et expectedRevision et examine receipt/journal/état. Le fence local ne remplace pas l'idempotence durable du writer.
 
 Validation locale : `test:mcp` 22/22 PASS après correction, avec receipts/replay/conflit via SDK HTTP et vrai writer sur fixtures isolées ; typecheck PASS. Publication et validation du nouvel artefact à consigner avant clôture.
+
+### Gate acquis — Lot 11 clos READ-only, GO Lot 12
+
+Publication v212 : `appgprj_6a7d7a1233a08191a8d35b746b284e95~appgver_cd3b5eb01abc8191854f4714a1113e56`, source `139a3e447550c9f527531f9ea2621b424f67908d`, déploiement `appgdep_6ac1f70fa0f081919158451253d40aae`, **succeeded** à 2026-10-04T06:50:05.993344Z, has_mcp=true, env revision 4. URL : https://investment-os.erwancognee94.chatgpt.site . Archive sans migrations ni secrets ; aucun flag modifié. Rollback v210 toujours identifié plus haut.
+
+Build, validation artefact, typecheck, ESLint ciblé et diff-check PASS. `verify:mcp-runtime` PASS dans workerd : six READ, auth, scopes, refus WRITE demo, vrai writer isolé verified/replay/conflit et READ personnel ; aucune mutation live. Appel officiel OAuth Codex `get_company` demo après publication : completed/ok, références et enveloppe complètes. Les READ/auth/scopes hébergés et frontières 4 MiB/30 s déjà acquis restent valables : seule constante WRITE réduite. Aucun nouveau test WRITE hébergé revendiqué.
+
+La compatibilité 120 s n'est plus requise : le contrat actif est 30 s. Réémissions opaques et cancellation sont documentées et bornées opérationnellement par READ-only ; aucune promesse exactly-once, d'annulation de mutation ou de terminaison durable. Activation WRITE constitue une gate séparée explicite. Ce statut satisfait la clôture Lot 11 et autorise la migration Lot 12 ; aucun Lot 13 commencé.
