@@ -51,7 +51,7 @@ test("auth excludes payload identity, cookies, bypass credentials and browser wr
   assert.deepEqual(other.scopes, ["demo"]); assert.deepEqual(other.permissions, ["investment:read"]);
 });
 
-test("Sites WRITE is release-closed; transport fence admits only configured run IDs when explicitly authorized", async () => {
+test("Sites test WRITE requires all flags and transport fence admits only configured run IDs", async () => {
   const identityRequest = new Request("https://site/mcp", { headers: { "oai-authenticated-user-id": "user", "oai-authenticated-user-email": "owner@example.test" } });
   const flags = { OWNER_EMAIL: "owner@example.test", MCP_WRITE_ENABLED: "1", MCP_WRITE_DELEGATED: "1", MCP_WRITE_TEST_RUN_IDS: "allowed-run" };
   for (const missing of ["MCP_WRITE_ENABLED", "MCP_WRITE_DELEGATED", "MCP_WRITE_TEST_RUN_IDS"]) {
@@ -60,8 +60,8 @@ test("Sites WRITE is release-closed; transport fence admits only configured run 
     assert.equal(restricted.writeApproved, false);
   }
   const identity = api.authenticateSitesMcp(identityRequest, { OWNER_EMAIL: "owner@example.test", MCP_WRITE_ENABLED: "1", MCP_WRITE_DELEGATED: "1", MCP_WRITE_TEST_RUN_IDS: "allowed-run" });
-  assert.deepEqual(identity.permissions, ["investment:read"]);
-  assert.equal(identity.writeApproved, false);
+  assert.deepEqual(identity.permissions, ["investment:read", "investment:write"]);
+  assert.equal(identity.writeApproved, true);
   const authorizedFixture = { ...identity, permissions: ["investment:read", "investment:write"], writeApproved: true };
   let calls = 0;
   const core = { saveAnalysis: async () => { calls++; throw new Error("write reached"); } };

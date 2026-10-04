@@ -123,6 +123,8 @@ export function createNotionAnalysisWriter(db:D1Database,options:NotionWriteOpti
     });
   }
   return async function writeAnalysis(input:SaveAnalysisInput):Promise<SaveAnalysisReceipt>{
+    const traceStart=Date.now();
+    const trace=(stage:string)=>console.info("notion-write timing",stage,Date.now()-traceStart);
     if(!isAnalysis(input.analysis)||!input.runId.trim()||!uuid(input.analysis.header.id)||!input.companyIds.length||input.companyIds.some(v=>!uuid(v))||new Set(input.companyIds.map(id)).size!==input.companyIds.length||!equal(input.companyIds.map(id).sort(),input.analysis.header.companyIds.map(id).sort())||input.analysis.header.archived)throw fault("invalid_input");
     if(input.analysis.header.sourceKind!==(input.analysis.kind==="decision"?"decision":"analysis")||/superseded|archiv|obsolet|historique|historical|remplac/i.test(input.analysis.header.status))throw fault("invalid_input");
     const desiredBlocks=blocksFor(input.analysis.content.blocks);
@@ -149,6 +151,7 @@ export function createNotionAnalysisWriter(db:D1Database,options:NotionWriteOpti
     if(!journal||journal.digest!==digest)throw fault("stale_request");
     const lease=await db.prepare("UPDATE notion_analysis_writes SET owner=?,lease_until=? WHERE run_id=? AND (owner IS NULL OR lease_until<?)").bind(owner,Date.now()+180000,writeKey,Date.now()).run();
     if(Number(lease.meta?.changes??0)!==1)throw fault("stale_request");
+    trace("preflight");
     let analysisId=journal.page_id??input.analysis.header.id,actualIdentityKnown=Boolean(journal.page_id),persisted=false,promoted=false,mutated=false,revision:string|null=null;
     const receipt=(status:SaveAnalysisReceipt["status"],code?:string):SaveAnalysisReceipt=>({schemaVersion:"1.0.0",status,analysisId:id(analysisId),runId:input.runId,revision,persisted,promoted,verified:status==="verified",diagnostics:code?[{code,message:"État relu ou reprise nécessaire; aucune transaction Notion atomique.",severity:status==="verified"?"info":"warning"}]:[]});
     const saveJournal=async(phase:string)=>{
@@ -157,12 +160,15 @@ export function createNotionAnalysisWriter(db:D1Database,options:NotionWriteOpti
     };
     try{
       const matches=await lookup(source,input.runId,moduleAgent,runProperty);
+      trace("lookup");
       if(matches.length>1)throw fault("stale_request");
       let existing=matches[0];
+      let matchedBlocks:RecordValue[]|null=null;
       if(existing&&journal.page_id&&id(existing.id)!==id(journal.page_id))throw fault("stale_request");
       if(existing&&input.expectedRevision!==null&&id(existing.id)!==id(input.analysis.header.id))throw fault("stale_request");
       if(existing){
-        const actualBlocks=(await children(existing.id)).map(semanticBlock),desired=desiredBlocks.map(semanticBlock);
+        matchedBlocks=await children(existing.id);
+        const actualBlocks=matchedBlocks.map(semanticBlock),desired=desiredBlocks.map(semanticBlock);
         const resumableDraft=journal.phase!=="new"&&propertyValue(existing.properties,"Status")==="Draft"&&actualBlocks.length<desired.length&&equal(actualBlocks,desired.slice(0,actualBlocks.length));
         if(!(propertiesMatch(existing,expected)||(publishing&&propertiesMatch(existing,draftExpected)))||(!equal(actualBlocks,desired)&&!resumableDraft))throw fault("stale_request");
       }
@@ -173,6 +179,7 @@ export function createNotionAnalysisWriter(db:D1Database,options:NotionWriteOpti
         if(target.last_edited_time!==input.expectedRevision&&!ownPersisted)throw fault("stale_request");
       }
       const companies=await Promise.all(input.companyIds.map(page));
+      trace("companies");
       for(const company of companies){if(company.archived||company.in_trash||id(object(company.parent).data_source_id)!==id(sources.companies))throw fault("not_found");}
       const pointers=companies.map(company=>{
         if(!publishing)return null;
@@ -206,7 +213,10 @@ export function createNotionAnalysisWriter(db:D1Database,options:NotionWriteOpti
         }
       }
       analysisId=existing.id;actualIdentityKnown=true;revision=existing.last_edited_time;
-      let observedBlocks=await children(analysisId);
+      trace("page_available");
+      // A new page receives its first 100 blocks in the create request. The final
+      // Notion read below verifies them; a partial create is reconciled on replay.
+      let observedBlocks=matchedBlocks??(desiredBlocks.length<=100?desiredBlocks:await children(analysisId));
       const desiredSemantics=desiredBlocks.map(semanticBlock);
       if(journal.phase.startsWith("appending:")&&observedBlocks.length<Number(journal.phase.split(":")[1]))return receipt("partial","append_unconfirmed");
       await saveJournal("persisting");
@@ -226,20 +236,26 @@ export function createNotionAnalysisWriter(db:D1Database,options:NotionWriteOpti
         await saveJournal("persisting");
       }
       // Persistence certification always uses a fresh GET and complete block re-read.
-      let stored=await page(analysisId);
+      let stored:Page;
+      let verifiedBlocks:RecordValue[]|null=null;
+      if(publishing)stored=await page(analysisId);
+      else [stored,verifiedBlocks]=await Promise.all([page(analysisId),children(analysisId)]);
       if(publishing&&propertiesMatch(stored,draftExpected)&&equal((await children(analysisId)).map(semanticBlock),desiredBlocks.map(semanticBlock))){
         persisted=true;mutated=true;await saveJournal("validating");
         try{await mutate(`/pages/${analysisId}`,"PATCH",{properties:{[statusName]:expected[statusName]}});}
         catch(error){if(!transient(error))throw error;}
         stored=await page(analysisId);
       }
-      if(id(object(stored.parent).data_source_id)!==id(source)||!propertiesMatch(stored,expected)||!equal((await children(analysisId)).map(semanticBlock),desiredBlocks.map(semanticBlock)))return receipt("partial","persistence_verification_failed");
+      verifiedBlocks??=await children(analysisId);
+      if(id(object(stored.parent).data_source_id)!==id(source)||!propertiesMatch(stored,expected)||!equal(verifiedBlocks.map(semanticBlock),desiredBlocks.map(semanticBlock)))return receipt("partial","persistence_verification_failed");
       persisted=true;revision=stored.last_edited_time;await saveJournal("persisted");
+      trace("notion_verified");
       if(pointers.every(p=>p===null)){
         // The Notion GET above certifies persistence; this D1 projection makes the
         // same Draft immediately available to MCP readback without claiming Current.
-        await db.batch([documentUpsertStatement(db,family==="decision"?"decisions":family==="earnings"?"earnings":"analyses",stored as unknown as RecordValue,await children(analysisId))]);
+        await db.batch([documentUpsertStatement(db,family==="decision"?"decisions":family==="earnings"?"earnings":"analyses",stored as unknown as RecordValue,verifiedBlocks)]);
         await rebuildDocumentCompanyLinks(db);await rebuildNotionRelations(db);
+        trace("projection_complete");
         return receipt("persisted","promotion_not_required");
       }
       const currentBefore=journal.previous_current?JSON.parse(journal.previous_current) as string[][]:pointers.map(p=>p?.ids??[]);
