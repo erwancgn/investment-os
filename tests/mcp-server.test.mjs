@@ -104,15 +104,30 @@ test("2 MiB streamed/declarative requests and 4 MiB output limits fail without t
   const out = await call(handler(api.createInvestmentCore({ readCompany: async () => company })), "get_company", { ...base, id: "company-1" }); assert.equal(out.error.code, "limit_exceeded"); assert.equal(out.error.outcome, "unknown");
 });
 
-test("READ 30s and WRITE 120s deadlines preserve unknown outcome and fence pending WRITE", async t => {
+test("READ and WRITE 30s deadlines preserve unknown outcome and fence pending WRITE", async t => {
   t.mock.timers.enable({ apis: ["setTimeout"] });
   try {
-    let resolveWrite; let attempts = 0;
-    const h = handler({ getCompany: async () => new Promise(() => {}), saveAnalysis: async () => { attempts++; return new Promise(resolve => { resolveWrite = resolve; }); } });
+    let resolveWrite; let attempts = 0; const retained = [];
+    const core = { getCompany: async () => new Promise(() => {}), saveAnalysis: async () => { attempts++; return new Promise(resolve => { resolveWrite = resolve; }); } };
+    const h = api.createMcpHandler({ authenticate: () => caller, service: () => core, waitUntil: task => retained.push(task) });
     const read = h(request("get_company", { ...base, id: "c" })); await turn(); t.mock.timers.tick(30001); await turn(); assert.equal((await output(await read)).error.code, "timeout");
-    const write = h(request("save_analysis", { ...base, input: writeInput() })); await turn(); t.mock.timers.tick(120001); await turn(); const out = await output(await write); assert.equal(out.error.code, "timeout"); assert.equal(out.error.outcome, "unknown");
+    const abort = new AbortController();
+    const write = h(new Request(request("save_analysis", { ...base, input: writeInput() }), { signal: abort.signal }));
+    await turn(); abort.abort(); await turn();
+    // A disconnected caller does not cancel a port or release its mutation fence.
+    assert.equal((await call(h, "save_analysis", { ...base, input: writeInput() })).error.code, "rate_limit");
+    let responded = false; void write.then(() => { responded = true; });
+    t.mock.timers.tick(29999); await turn(); assert.equal(responded, false);
+    t.mock.timers.tick(1); await turn(); const out = await output(await write); assert.equal(out.error.code, "timeout"); assert.equal(out.error.outcome, "unknown");
     assert.equal((await call(h, "save_analysis", { ...base, input: writeInput() })).error.code, "rate_limit"); assert.equal(attempts, 1);
-    resolveWrite({ invalid: true }); await turn();
+    assert.equal(out.error.retryable, false); assert.equal(retained.length, 2);
+    let settled = false; void retained[1].then(() => { settled = true; });
+    await turn(); assert.equal(settled, false);
+    resolveWrite({ invalid: true }); await retained[1]; assert.equal(settled, true);
+    // After the original task settles a new explicit attempt may enter.
+    core.saveAnalysis = async () => { attempts++; return { invalid: true }; };
+    assert.equal((await call(h, "save_analysis", { ...base, input: writeInput() })).error.code, "invalid_input");
+    assert.equal(attempts, 2);
   } finally { t.mock.timers.reset(); }
 });
 

@@ -44,4 +44,4 @@ export const MCP_TOOLS = {
   save_analysis: { description: "Soumettre une analyse au Core et recevoir le receipt de persistance sans altération.", operation: "saveAnalysis", arguments: ["input"], access: "WRITE" },
   get_quote: { description: "Lire une cotation et ses indications de fraîcheur, source et disponibilité.", operation: "getQuote", arguments: ["assetId", "options"], access: "READ" },
 } as const;
-export const MCP_LIMITS = { requestBytes: 2_097_152, responseBytes: 4_194_304, readTimeoutMs: 30_000, writeTimeoutMs: 120_000, readAttempts: 2, writeAttempts: 1 } as const;
+export const MCP_LIMITS = { requestBytes: 2_097_152, responseBytes: 4_194_304, readTimeoutMs: 30_000, writeTimeoutMs: 30_000, readAttempts: 2, writeAttempts: 1 } as const;
