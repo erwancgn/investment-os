@@ -235,7 +235,13 @@ export function createNotionAnalysisWriter(db:D1Database,options:NotionWriteOpti
       }
       if(id(object(stored.parent).data_source_id)!==id(source)||!propertiesMatch(stored,expected)||!equal((await children(analysisId)).map(semanticBlock),desiredBlocks.map(semanticBlock)))return receipt("partial","persistence_verification_failed");
       persisted=true;revision=stored.last_edited_time;await saveJournal("persisted");
-      if(pointers.every(p=>p===null))return receipt("persisted","promotion_not_required");
+      if(pointers.every(p=>p===null)){
+        // The Notion GET above certifies persistence; this D1 projection makes the
+        // same Draft immediately available to MCP readback without claiming Current.
+        await db.batch([documentUpsertStatement(db,family==="decision"?"decisions":family==="earnings"?"earnings":"analyses",stored as unknown as RecordValue,await children(analysisId))]);
+        await rebuildDocumentCompanyLinks(db);await rebuildNotionRelations(db);
+        return receipt("persisted","promotion_not_required");
+      }
       const currentBefore=journal.previous_current?JSON.parse(journal.previous_current) as string[][]:pointers.map(p=>p?.ids??[]);
       await db.prepare("UPDATE notion_analysis_writes SET previous_current=?,phase='promoting' WHERE run_id=? AND owner=?").bind(JSON.stringify(currentBefore),writeKey,owner).run();
       for(let n=0;n<pointers.length;n++){
