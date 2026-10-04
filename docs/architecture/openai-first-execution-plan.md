@@ -839,4 +839,4 @@ Le changement de vision produit n’ajoute pas un nouveau lot et ne réouvre pas
 - **Lot 11** : serveur MCP mince, Sites comme première cible d’hébergement, Site existant préféré si compatible ;
 - **Lot 12** : migration infrastructure du plugin vers MCP, sans changement de méthodologie.
 
-La priorité actuelle est **Lot 12, migration du transport du plugin vers MCP**, après clôture READ-only du Lot 11 sur v212 et borne synchrone 30 s. Les preuves historiques restent conservées ; WRITE fermé et non délégué. Les Lots 7–10 ne sont pas rejoués.
+La priorité actuelle est **Lot 12, migration du transport du plugin vers MCP**, après clôture READ-only du Lot 11 sur v212 et borne synchrone 30 s. Voir [lot-12-handoff.md](lot-12-handoff.md) : la source des Skills 1.3.1 est migrée, mais la connexion du brouillon public au Site MCP reste non autorisée/non prouvée. Le Site v213 porte seulement la preuve de domaine. WRITE reste fermé et non délégué ; Lot 13 attend le gate Lot 12. Les Lots 7–10 ne sont pas rejoués.
