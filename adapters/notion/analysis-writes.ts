@@ -1,6 +1,6 @@
 import { isAnalysis, type AnalysisBlock, type InlineSegment } from "../../core/contracts/analysis";
 import type { SaveAnalysisInput, SaveAnalysisReceipt } from "../../core/services/ports";
-import { normalizeNotionPageId, notionSources, documentUpsertStatement, rebuildDocumentCompanyLinks, rebuildNotionRelations } from "./sync";
+import { normalizeNotionPageId, notionSources, documentUpsertStatement, ensureCompanyLinkTable, ensureRelationTable } from "./sync";
 import { propertyEntry, propertyValue, propertyName } from "./investment-data";
 
 type RecordValue = Record<string, unknown>;
@@ -75,6 +75,29 @@ export function createNotionAnalysisWriter(db:D1Database,options:NotionWriteOpti
     const results:Page[]=[];let cursor:string|undefined;
     do{const r=await read(`/data_sources/${source}/query`,"POST",{filter:{property:runProperty,rich_text:{equals:runId}},page_size:100,...(cursor?{start_cursor:cursor}:{})});results.push(...(Array.isArray(r.results)?r.results:[]) as Page[]);cursor=r.has_more===true?String(r.next_cursor):undefined;}while(cursor);return results.filter(page=>propertyValue(page.properties,"Agent")===moduleAgent);
   }
+  function analysisIndexStatements(stored:Page,companies:Page[],sourceKey:string):D1PreparedStatement[]{
+    const relationName=propertyName(stored.properties,["Company","Companies"]);
+    if(!relationName)throw fault("mapping");
+    const now=new Date().toISOString(),pageId=id(stored.id);
+    return [
+      db.prepare("DELETE FROM notion_document_companies WHERE LOWER(REPLACE(document_page_id,'-',''))=?").bind(pageId),
+      db.prepare("DELETE FROM notion_relations WHERE LOWER(REPLACE(source_page_id,'-',''))=? AND property_name=?").bind(pageId,relationName),
+      ...companies.flatMap(company=>[
+        db.prepare("INSERT INTO notion_document_companies (document_page_id,company_page_id,match_method,matched_at) VALUES (?,?,?,?)").bind(stored.id,company.id,"notion-relation",now),
+        db.prepare("INSERT INTO notion_relations (source_page_id,source_key,property_name,target_page_id,target_source_key,matched_at) VALUES (?,?,?,?,?,?)").bind(stored.id,sourceKey,relationName,company.id,"companies",now),
+      ]),
+    ];
+  }
+  function currentIndexStatements(companies:Page[],pointers:({name:string}|null)[],sourceKey:string,analysisId:string):D1PreparedStatement[]{
+    const now=new Date().toISOString();
+    return companies.flatMap((company,n)=>{
+      const pointer=pointers[n];if(!pointer)return [];
+      return [
+        db.prepare("DELETE FROM notion_relations WHERE LOWER(REPLACE(source_page_id,'-',''))=? AND property_name=?").bind(id(company.id),pointer.name),
+        db.prepare("INSERT INTO notion_relations (source_page_id,source_key,property_name,target_page_id,target_source_key,matched_at) VALUES (?,?,?,?,?,?)").bind(company.id,"companies",pointer.name,analysisId,sourceKey,now),
+      ];
+    });
+  }
   function mappedProperties(input:SaveAnalysisInput,schema:RecordValue):RecordValue{
     const defs=object(schema.properties),out:RecordValue={};
     for(const [names,types] of [
@@ -145,6 +168,7 @@ export function createNotionAnalysisWriter(db:D1Database,options:NotionWriteOpti
     const hash=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(canonicalJson({source,expected,blocks:desiredBlocks})));
     const digest=Array.from(new Uint8Array(hash),byte=>byte.toString(16).padStart(2,"0")).join("");
     await db.prepare(`CREATE TABLE IF NOT EXISTS notion_analysis_writes (run_id TEXT PRIMARY KEY,digest TEXT NOT NULL,page_id TEXT,phase TEXT NOT NULL,owner TEXT,lease_until INTEGER NOT NULL DEFAULT 0,previous_current TEXT)`).run();
+    await ensureCompanyLinkTable(db);await ensureRelationTable(db);
     const owner=crypto.randomUUID();
     await db.prepare("INSERT INTO notion_analysis_writes(run_id,digest,phase) VALUES(?,?,'new') ON CONFLICT(run_id) DO NOTHING").bind(writeKey,digest).run();
     const journal=await db.prepare("SELECT * FROM notion_analysis_writes WHERE run_id=?").bind(writeKey).first<Journal>();
@@ -253,8 +277,8 @@ export function createNotionAnalysisWriter(db:D1Database,options:NotionWriteOpti
       if(pointers.every(p=>p===null)){
         // The Notion GET above certifies persistence; this D1 projection makes the
         // same Draft immediately available to MCP readback without claiming Current.
-        await db.batch([documentUpsertStatement(db,family==="decision"?"decisions":family==="earnings"?"earnings":"analyses",stored as unknown as RecordValue,verifiedBlocks)]);
-        await rebuildDocumentCompanyLinks(db);await rebuildNotionRelations(db);
+        const sourceKey=family==="decision"?"decisions":family==="earnings"?"earnings":"analyses";
+        await db.batch([documentUpsertStatement(db,sourceKey,stored as unknown as RecordValue,verifiedBlocks),...analysisIndexStatements(stored,companies,sourceKey)]);
         trace("projection_complete");
         return receipt("persisted","promotion_not_required");
       }
@@ -287,11 +311,13 @@ export function createNotionAnalysisWriter(db:D1Database,options:NotionWriteOpti
         let blocks:RecordValue[]=[];try{const value=JSON.parse(cached?.blocks_json??"[]");if(Array.isArray(value))blocks=value;}catch{ /* preserve only valid cached bodies; this mutation changes properties, not Company content */ }
         return documentUpsertStatement(db,"companies",company as unknown as RecordValue,blocks);
       }));
+      const sourceKey=family==="decision"?"decisions":family==="earnings"?"earnings":"analyses";
       await db.batch([
-        documentUpsertStatement(db,family==="decision"?"decisions":family==="earnings"?"earnings":"analyses",finalPage as unknown as RecordValue,finalBlocks),
+        documentUpsertStatement(db,sourceKey,finalPage as unknown as RecordValue,finalBlocks),
         ...companySnapshots,
+        ...analysisIndexStatements(finalPage,finalCompanies,sourceKey),
+        ...currentIndexStatements(finalCompanies,pointers,sourceKey,analysisId),
       ]);
-      await rebuildDocumentCompanyLinks(db);await rebuildNotionRelations(db);
       await saveJournal("verified");return receipt("verified");
     }catch(error){if(persisted||promoted||mutated)return receipt("partial",String(object(error).code??"verification_failed"));throw error;}
     finally{await db.prepare("UPDATE notion_analysis_writes SET owner=NULL,lease_until=0 WHERE run_id=? AND owner=?").bind(writeKey,owner).run();}
