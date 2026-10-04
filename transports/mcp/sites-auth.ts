@@ -6,8 +6,10 @@ export function authenticateSitesMcp(request: Request, env: SitesMcpEnv): McpCal
   const email = request.headers.get("oai-authenticated-user-email")?.trim().toLowerCase();
   if (!subject || !email) return null;
   const owner = Boolean(env.OWNER_EMAIL?.trim() && email === env.OWNER_EMAIL.trim().toLowerCase());
+  const allowedWriteRunIds = env.MCP_WRITE_TEST_RUN_IDS?.split(",").map(id => id.trim()).filter(Boolean) ?? [];
+  const writeEnabled = owner && env.MCP_WRITE_ENABLED === "1" && env.MCP_WRITE_DELEGATED === "1" && allowedWriteRunIds.length > 0;
   return { subject, scopes: owner ? ["personal", "demo"] : ["demo"],
-    permissions: owner && env.MCP_WRITE_ENABLED === "1" ? ["investment:read", "investment:write"] : ["investment:read"],
-    writeApproved: owner && env.MCP_WRITE_DELEGATED === "1",
-    allowedWriteRunIds: env.MCP_WRITE_TEST_RUN_IDS?.split(",").map(id => id.trim()).filter(Boolean) };
+    permissions: writeEnabled ? ["investment:read", "investment:write"] : ["investment:read"],
+    writeApproved: writeEnabled,
+    allowedWriteRunIds };
 }

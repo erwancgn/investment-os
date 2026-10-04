@@ -53,6 +53,12 @@ test("auth excludes payload identity, cookies, bypass credentials and browser wr
 
 test("Sites test WRITE fence admits only configured run IDs before reaching Core", async () => {
   const identityRequest = new Request("https://site/mcp", { headers: { "oai-authenticated-user-id": "user", "oai-authenticated-user-email": "owner@example.test" } });
+  const flags = { OWNER_EMAIL: "owner@example.test", MCP_WRITE_ENABLED: "1", MCP_WRITE_DELEGATED: "1", MCP_WRITE_TEST_RUN_IDS: "allowed-run" };
+  for (const missing of ["MCP_WRITE_ENABLED", "MCP_WRITE_DELEGATED", "MCP_WRITE_TEST_RUN_IDS"]) {
+    const restricted = api.authenticateSitesMcp(identityRequest, { ...flags, [missing]: undefined });
+    assert.deepEqual(restricted.permissions, ["investment:read"]);
+    assert.equal(restricted.writeApproved, false);
+  }
   const identity = api.authenticateSitesMcp(identityRequest, { OWNER_EMAIL: "owner@example.test", MCP_WRITE_ENABLED: "1", MCP_WRITE_DELEGATED: "1", MCP_WRITE_TEST_RUN_IDS: "allowed-run" });
   let calls = 0;
   const core = { saveAnalysis: async () => { calls++; throw new Error("write reached"); } };
