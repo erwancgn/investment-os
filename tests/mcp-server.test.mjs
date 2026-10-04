@@ -51,7 +51,7 @@ test("auth excludes payload identity, cookies, bypass credentials and browser wr
   assert.deepEqual(other.scopes, ["demo"]); assert.deepEqual(other.permissions, ["investment:read"]);
 });
 
-test("Sites test WRITE fence admits only configured run IDs before reaching Core", async () => {
+test("Sites WRITE is release-closed; transport fence admits only configured run IDs when explicitly authorized", async () => {
   const identityRequest = new Request("https://site/mcp", { headers: { "oai-authenticated-user-id": "user", "oai-authenticated-user-email": "owner@example.test" } });
   const flags = { OWNER_EMAIL: "owner@example.test", MCP_WRITE_ENABLED: "1", MCP_WRITE_DELEGATED: "1", MCP_WRITE_TEST_RUN_IDS: "allowed-run" };
   for (const missing of ["MCP_WRITE_ENABLED", "MCP_WRITE_DELEGATED", "MCP_WRITE_TEST_RUN_IDS"]) {
@@ -60,11 +60,14 @@ test("Sites test WRITE fence admits only configured run IDs before reaching Core
     assert.equal(restricted.writeApproved, false);
   }
   const identity = api.authenticateSitesMcp(identityRequest, { OWNER_EMAIL: "owner@example.test", MCP_WRITE_ENABLED: "1", MCP_WRITE_DELEGATED: "1", MCP_WRITE_TEST_RUN_IDS: "allowed-run" });
+  assert.deepEqual(identity.permissions, ["investment:read"]);
+  assert.equal(identity.writeApproved, false);
+  const authorizedFixture = { ...identity, permissions: ["investment:read", "investment:write"], writeApproved: true };
   let calls = 0;
   const core = { saveAnalysis: async () => { calls++; throw new Error("write reached"); } };
-  const denied = await call(handler(core, identity), "save_analysis", { ...base, input: { ...writeInput(), runId: "other-run" } });
+  const denied = await call(handler(core, authorizedFixture), "save_analysis", { ...base, input: { ...writeInput(), runId: "other-run" } });
   assert.equal(denied.error.code, "forbidden"); assert.equal(denied.error.outcome, "not_started"); assert.equal(calls, 0);
-  await call(handler(core, identity), "save_analysis", { ...base, input: { ...writeInput(), runId: "allowed-run" } });
+  await call(handler(core, authorizedFixture), "save_analysis", { ...base, input: { ...writeInput(), runId: "allowed-run" } });
   assert.equal(calls, 1);
 });
 
