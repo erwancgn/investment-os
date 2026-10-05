@@ -1,4 +1,5 @@
 import { isAnalysis, type AnalysisBlock, type InlineSegment } from "../../core/contracts/analysis";
+import type { Diagnostic } from "../../core/contracts/common";
 import type { SaveAnalysisInput, SaveAnalysisReceipt } from "../../core/services/ports";
 import { normalizeNotionPageId, notionSources, documentUpsertStatement, ensureCompanyLinkTable, ensureRelationTable } from "./sync";
 import { propertyEntry, propertyValue, propertyName } from "./investment-data";
@@ -6,7 +7,7 @@ import { propertyEntry, propertyValue, propertyName } from "./investment-data";
 type RecordValue = Record<string, unknown>;
 type Page = { id:string; last_edited_time:string; parent?:RecordValue; archived?:boolean; in_trash?:boolean; properties:RecordValue };
 type Journal = { digest:string; page_id:string|null; phase:string; owner:string|null; lease_until:number; previous_current:string|null };
-export type NotionWriteOptions = { token:string; fetch?:typeof fetch; sleep?:(ms:number)=>Promise<void>; attempts?:number; timeoutMs?:number; sources?:Partial<Record<keyof typeof notionSources,string>> };
+export type NotionWriteOptions = { onDiagnostic?:(diagnostic:Diagnostic)=>void; token:string; fetch?:typeof fetch; sleep?:(ms:number)=>Promise<void>; attempts?:number; timeoutMs?:number; sources?:Partial<Record<keyof typeof notionSources,string>> };
 const object=(value:unknown):RecordValue=>value&&typeof value==="object"?value as RecordValue:{};
 const id=(value:unknown)=>normalizeNotionPageId(String(value??""));
 const uuid=(value:string)=>/^[a-f0-9]{32}$/.test(id(value));
@@ -31,7 +32,7 @@ function blocksFor(blocks:AnalysisBlock[]):RecordValue[]{return blocks.flatMap(b
   }
   if(block.type==="heading"&&block.level>3)throw fault("invalid_input");
   const type=block.type==="heading"?`heading_${block.level}`:block.type;
-  return [wrap(type,{rich_text:richText(block.text),...(block.type==="callout"?{icon:block.icon?{type:"emoji",emoji:block.icon}:null}:{})})];
+  return [wrap(type,{rich_text:richText(block.text),...(block.type==="callout"&&block.icon?{icon:{type:"emoji",emoji:block.icon}}:{})})];
 });}
 // Ignore server-generated block IDs/timestamps and text annotations defaults in re-read comparisons.
 function semanticBlock(value:unknown):unknown {
@@ -40,6 +41,19 @@ function semanticBlock(value:unknown):unknown {
   if(type==="table")return {type,width:body.table_width,header:body.has_column_header===true,rowHeader:body.has_row_header===true,children:(Array.isArray(body.children)?body.children:[]).map(semanticBlock)};
   if(type==="table_row")return {type,cells:(Array.isArray(body.cells)?body.cells:[]).map(rich)};
   return {type,text:rich(body.rich_text),icon:body.icon??null};
+}
+// Provider limits apply to each emitted request, including nested table rows and rich text.
+function validateProviderBody(body:unknown){
+  if(new TextEncoder().encode(JSON.stringify(body)).byteLength>500000)throw fault("invalid_input");
+  let blocks=0;
+  function visit(value:unknown,key=""){
+    if(Array.isArray(value)){if(value.length>100)throw fault("invalid_input");value.forEach(item=>visit(item,key));}
+    else if(value&&typeof value==="object"){
+      if(object(value).object==="block"&&++blocks>1000)throw fault("invalid_input");
+      for(const [name,item] of Object.entries(value))visit(item,name);
+    }else if(typeof value==="string"&&(key==="content"||key==="url")&&value.length>2000)throw fault("invalid_input");
+  }
+  visit(body);
 }
 const canonicalJson=(value:unknown):string=>JSON.stringify(value,(_key,v)=>v&&typeof v==="object"&&!Array.isArray(v)?Object.fromEntries(Object.entries(v).sort(([a],[b])=>a.localeCompare(b))):v);
 const equal=(a:unknown,b:unknown)=>canonicalJson(a)===canonicalJson(b);
@@ -50,18 +64,31 @@ export function createNotionAnalysisWriter(db:D1Database,options:NotionWriteOpti
   const attempts=Math.max(1,Math.min(options.attempts??3,3))||3;
   async function request(path:string,method="GET",body?:unknown):Promise<RecordValue>{
     if(!options.token.trim())throw fault("dependency");
+    if(body!==undefined)validateProviderBody(body);
     let response:Response;
     try{response=await requestFetch(`https://api.notion.com/v1${path}`,{method,headers:{Authorization:`Bearer ${options.token}`,"Notion-Version":"2026-03-11","Content-Type":"application/json"},signal:AbortSignal.timeout(options.timeoutMs??15000),...(body===undefined?{}:{body:JSON.stringify(body)})});}
     catch(error){throw fault(["AbortError","TimeoutError"].includes(String(object(error).name))?"timeout":"network");}
-    if(!response.ok)throw fault(response.status===429?"rate_limit":response.status===404?"not_found":response.status===401?"unauthorized":response.status===403?"forbidden":response.status>=500?"network":"invalid_input");
+    if(!response.ok){
+      let rejected:RecordValue={};try{rejected=object(await response.json());}catch{ /* Never log an unparsed response body. */ }
+      const knownCodes=["validation_error","invalid_json","invalid_request_url","invalid_request","unauthorized","restricted_resource","object_not_found","conflict_error","rate_limited","internal_server_error","service_unavailable","database_connection_unavailable","service_overload"];
+      const structuralKeys=new Set(["body","children","properties","callout","icon","emoji","rich_text","text","content","annotations","type","table","table_row","cells","table_width","has_column_header","has_row_header","heading_1","heading_2","heading_3","paragraph","quote","bulleted_list_item","numbered_list_item","divider","title","relation","select","status","date","number","name","id","parent","data_source_id","start","end"]);
+      // Retain structural locators and expected types only, never echoed values or free-form messages.
+      const validation=Array.from(String(rejected.message??"").matchAll(/\b(body(?:\.[A-Za-z_][A-Za-z0-9_]*|\[\d+\])+)[^\n]*?should be (?:an? )?(object|string|number|boolean|array|undefined|null)\b/g),match=>({
+        path:match[1].replace(/[A-Za-z_][A-Za-z0-9_]*/g,key=>structuralKeys.has(key)?key:"redacted"),expected:match[2],
+      })).slice(0,20);
+      const notionDiagnostic={status:response.status,type:rejected.object==="error"?"error":"unknown",code:knownCodes.includes(String(rejected.code))?String(rejected.code):"unknown",validation};
+      console.error("notion_request_rejected",notionDiagnostic);
+      options.onDiagnostic?.({code:`notion_${notionDiagnostic.code}`,severity:"error",message:`Notion HTTP ${notionDiagnostic.status}; type=${notionDiagnostic.type}; code=${notionDiagnostic.code}${validation.length?`; ${validation.map(v=>`${v.path}: expected ${v.expected}`).join("; ")}`:""}.`,...(validation[0]?{path:validation[0].path}:{})});
+      throw Object.assign(fault(response.status===429?"rate_limit":response.status===404?"not_found":response.status===401?"unauthorized":response.status===403?"forbidden":response.status>=500?"network":"invalid_input"),{notionDiagnostic});
+    }
     try{return object(await response.json());}catch{throw fault("network");}
   }
   async function read(path:string,method="GET",body?:unknown){
     for(let n=0;;n++){try{return await request(path,method,body);}catch(error){if(!transient(error)||n+1>=attempts)throw error;await sleep(100*2**n);}}
   }
   async function mutate(path:string,method:string,body:unknown){
-    // 429 is a rejected request; all other ambiguous mutation failures must be reconciled by the caller.
-    for(let n=0;;n++){try{return await request(path,method,body);}catch(error){if(object(error).code!=="rate_limit"||n+1>=attempts)throw error;await sleep(100*2**n);}}
+    // Lot 12: exactly one provider attempt per mutation, including HTTP 429.
+    return request(path,method,body);
   }
   const page=async(pageId:string)=>await read(`/pages/${pageId}`) as unknown as Page;
   async function children(pageId:string):Promise<RecordValue[]>{
@@ -163,7 +190,10 @@ export function createNotionAnalysisWriter(db:D1Database,options:NotionWriteOpti
       {object:"block",type:"heading_2",heading_2:{rich_text:text("Rapport complet")}},
       ...blocksFor(input.analysis.content.blocks),
     ]:blocksFor(input.analysis.content.blocks);
-    if(JSON.stringify(desiredBlocks).length>450000)throw fault("invalid_input");
+    if(new TextEncoder().encode(JSON.stringify(desiredBlocks)).byteLength>450000)throw fault("invalid_input");
+    // Preflight all chunks before leasing a journal or performing any provider mutation.
+    validateProviderBody({parent:{type:"data_source_id",data_source_id:source},properties:expected,children:desiredBlocks.slice(0,100)});
+    for(let start=100;start<desiredBlocks.length;start+=100)validateProviderBody({children:desiredBlocks.slice(start,start+100)});
     const runProperty=propertyName(object(schema.properties),["Run ID"])!;
     const statusName=propertyName(expected,["Status"])!;
     const statusType=Object.keys(object(expected[statusName]))[0];

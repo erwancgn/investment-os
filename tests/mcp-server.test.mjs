@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import { build } from "esbuild";
 import { mkdir, writeFile } from "node:fs/promises";
 import { setImmediate as turn } from "node:timers/promises";
+import { ToolSchema } from "@modelcontextprotocol/sdk/types.js";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/streamableHttp.js";
 import { createServer } from "node:http";
@@ -28,7 +29,7 @@ test("transport import boundary and canonical discovery schemas", async () => {
   const result = await handler()(request("", base, { body: { method: "tools/list", params: {} } }));
   const json = await result.json(); assert.equal(json.result.tools.length, 8);
   assert.equal(json.result.tools.some(t => t.name === "list_analyses"), false);
-  for (const tool of json.result.tools) { assert.equal(tool.inputSchema.type, "object"); assert.equal(JSON.stringify(tool.inputSchema).includes('"$ref"'), false); assert.equal(tool.annotations.readOnlyHint, tool.name !== "save_analysis"); }
+  for (const tool of json.result.tools) { assert.equal(ToolSchema.safeParse(tool).success,true); assert.equal(tool.outputSchema.type,"object"); assert.equal(tool.inputSchema.type, "object"); assert.equal(JSON.stringify(tool.inputSchema).includes('"$ref"'), false); assert.equal(tool.annotations.readOnlyHint, tool.name !== "save_analysis"); }
   const input = json.result.tools.find(t => t.name === "save_analysis").inputSchema.properties.input;
   assert.deepEqual(input.required, ["analysis", "runId", "expectedRevision", "companyIds"]);
   assert.ok(input.properties.analysis.anyOf.every(schema => schema.properties.header.required.includes("companyIds")));
@@ -40,7 +41,7 @@ test("unknown tools, invalid versions, invalid schemas, output schemas and scope
   assert.equal((await call(h, "get_company", { ...base, id: "c", contractVersion: "9" })).error.code, "unsupported_version");
   for (const bad of [{ ...base, id: 3 }, { ...base, id: "c", callerId: "owner" }, { ...base, id: "c", scope: "all" }]) assert.equal((await call(h, "get_company", bad)).error.code, "invalid_input");
   const badCore = handler({ getCompany: async () => ({ status: "ok", data: null }) });
-  const badOutput = await call(badCore, "get_company", { ...base, id: "c" }); assert.equal(badOutput.error.code, "invalid_input"); assert.equal(badOutput.error.outcome, "unknown");
+  const badOutput = await call(badCore, "get_company", { ...base, id: "c" }); assert.equal(badOutput.error.code, "invalid_input"); assert.equal(badOutput.error.outcome, "unknown"); assert.deepEqual(badOutput.diagnostics, [{ code: "output_schema", message: "Résultat transport invalide.", severity: "error", path: "output" }]);
 });
 
 test("auth excludes payload identity, cookies, bypass credentials and browser writes", async () => {

@@ -93,7 +93,7 @@ export function createMcpHandler(runtime: McpRuntime) {
           started = true;
           const result = await invoke(core, name, input);
           const output: McpOutput<unknown> = { contractVersion: MCP_CONTRACT_VERSION, scope, status: "completed", result };
-          if (!validators[name].output(output).valid) { const error = rejected("invalid_input", scope, "unknown"); if (error.status === "rejected") error.diagnostics[0].path = "output"; return error; }
+          if (!validators[name].output(output).valid) { const error = rejected("invalid_input", scope, "unknown"); if (error.status === "rejected") error.diagnostics[0] = { code: "output_schema", message: "Résultat transport invalide.", severity: "error", path: "output" }; return error; }
           // Retry only completed transient READ failures; the deadline never resets.
           if (!expired && !write && attempt + 1 < MCP_LIMITS.readAttempts && result.status === "error" && ["network", "timeout", "rate_limit"].includes(result.error.code)) { await sleep(250); continue; }
           if (bytes(output) > MCP_LIMITS.responseBytes) return rejected("limit_exceeded", scope, "unknown");

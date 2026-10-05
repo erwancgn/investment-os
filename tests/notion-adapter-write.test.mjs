@@ -1,6 +1,32 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { withFixture, input, compact, companyId, proposedId } from './fixtures/notion-write-harness.mjs';
+for(const icon of [null,'⭐'])test(`callout ${icon===null?'without icon omits icon entirely':'with emoji preserves the Notion icon DTO'}`,()=>withFixture({},async f=>{
+ const draft=input();draft.analysis.header.status='Draft';draft.analysis.content.blocks=[{id:'callout-1',sourceIds:['fixture-source'],type:'callout',text:[{text:'Canonical callout.',marks:[],href:null}],icon}];
+ const writer=f.api.createNotionAnalysisWriter(f.db,{...f.options,fetch:async(url,options)=>{
+  if(options.method==='POST'&&new URL(url).pathname==='/v1/pages'){
+   const callout=JSON.parse(options.body).children[0].callout;
+   assert.notEqual(callout.icon,null,'icon:null must never reach Notion');
+   if(icon===null)assert.equal(Object.hasOwn(callout,'icon'),false);
+   else assert.deepEqual(callout.icon,{type:'emoji',emoji:icon});
+  }
+  return f.options.fetch(url,options);
+ }});
+ const saved=await writer(draft);assert.equal(saved.status,'persisted');assert.equal(f.creates,1);
+ assert.equal(f.blocks.get(saved.analysisId)[0].callout.rich_text[0].text.content,'Canonical callout.');
+}));
+test('Notion rejection diagnostics retain structural validation paths without echoed payload or secrets',t=>withFixture({},async f=>{
+ const logged=[];t.mock.method(console,'error',(...args)=>logged.push(args));
+ const secret='sensitive_payload_value';let attempts=0;
+ const writer=f.api.createNotionAnalysisWriter(f.db,{...f.options,fetch:async(url,options)=>{
+  if(options.method==='POST'&&new URL(url).pathname==='/v1/pages'){attempts++;return Response.json({code:'validation_error',message:`body.children[6].callout.icon should be an object, instead was ${secret}.\nbody.properties.${secret}.title should be an array, instead was ${secret}.`,request_id:secret},{status:400});}
+  return f.options.fetch(url,options);
+ }});
+ await assert.rejects(writer(input()),error=>{
+  assert.equal(error.code,'invalid_input');assert.deepEqual(error.notionDiagnostic,{status:400,type:'unknown',code:'validation_error',validation:[{path:'body.children[6].callout.icon',expected:'object'},{path:'body.properties.redacted.title',expected:'array'}]});return true;
+ });
+ assert.equal(attempts,1);assert.equal(logged.length,1);assert.equal(logged[0][0],'notion_request_rejected');assert.equal(JSON.stringify(logged).includes(secret),false);assert.equal(f.creates,0);
+}));
 test('nominal save re-reads Notion and verifies the server-assigned identity through Core',()=>withFixture({},async f=>{const r=await f.adapter.saveAnalysis(input());assert.equal(r.status,'ok');assert.equal(r.data.status,'verified');assert.notEqual(r.data.analysisId,compact(proposedId));assert.equal(f.creates,1);assert.equal(f.promotions,1);const current=await f.adapter.getCurrentAnalysis(compact(companyId),'business');assert.equal(current.status,'ok');assert.equal(current.data.header.id,r.data.analysisId);assert.ok(f.calls.filter(c=>c.method==='GET'&&c.path.startsWith('/pages/')).length>=6);}));
 test('creation accepts a canonical intent identity without requiring a physical Notion UUID',()=>withFixture({},async f=>{const draft=input();draft.analysis.header.id='derived:business:canonical-run';draft.analysis.header.status='Draft';const saved=await f.adapter.saveAnalysis(draft);assert.equal(saved.status,'ok');assert.equal(saved.data.persisted,true);assert.notEqual(saved.data.analysisId,draft.analysis.header.id);assert.equal(f.creates,1);const update={...draft,runId:'invalid-target-update',expectedRevision:saved.data.revision};await assert.rejects(f.writer(update),{code:'invalid_input'});assert.equal(f.creates,1);}));
 test('same run re-reads actual state without duplicate or repeat promotion',()=>withFixture({},async f=>{const first=await f.writer(input());const again=await f.writer(input());assert.equal(again.status,'verified');assert.equal(again.analysisId,first.analysisId);assert.equal(f.creates,1);assert.equal(f.promotions,1);}));
@@ -13,7 +39,7 @@ test('persistence OK / promotion KO returns resumable pending and safely resumes
 test('promotion OK / final verification KO never returns verified',()=>withFixture({failFinalRead:true},async f=>{const r=await f.writer(input());assert.equal(r.status,'partial');assert.equal(r.persisted,true);assert.equal(r.promoted,true);assert.equal(r.verified,false);}));
 test('ambiguous create timeout reconciles Run ID before any mutation retry',()=>withFixture({createTimeout:true},async f=>{const r=await f.writer(input());assert.equal(r.status,'verified');assert.equal(f.creates,1);const creation=f.calls.findIndex(c=>c.path==='/pages');assert.ok(f.calls.slice(creation+1).some(c=>c.path.endsWith('/query')));}));
 test('ambiguous promotion reconciles Company rather than blindly repeating PATCH',()=>withFixture({promotionTimeout:true},async f=>{assert.equal((await f.writer(input())).status,'verified');assert.equal(f.promotions,1);}));
-test('rate limit mutation retries are bounded and do not certify persistence',()=>withFixture({rateLimit:true},async f=>{await assert.rejects(f.writer(input()),{code:'rate_limit'});assert.equal(f.calls.filter(c=>c.path==='/pages').length,3);assert.equal(f.creates,0);}));
+test('rate limited mutation is attempted once and does not certify persistence',()=>withFixture({rateLimit:true},async f=>{await assert.rejects(f.writer(input()),{code:'rate_limit'});assert.equal(f.calls.filter(c=>c.path==='/pages').length,1);assert.equal(f.creates,0);}));
 test('wrong final Current returns partial, never verified',()=>withFixture({wrongFinalCurrent:true},async f=>{const r=await f.writer(input());assert.equal(r.status,'partial');assert.equal(r.verified,false);}));
 test('concurrent same-run writers share the D1 lease and create at most one page',()=>withFixture({},async f=>{const results=await Promise.allSettled([f.writer(input()),f.writer(input())]);assert.equal(f.creates,1);assert.ok(results.some(r=>r.status==='fulfilled'));for(const result of results)if(result.status==='rejected')assert.equal(result.reason.code,'stale_request');else assert.equal(result.value.status,'verified');}));
 test('metadata update checks source revision and preserves the existing report body',()=>withFixture({},async f=>{const r=await f.writer(input());const p=f.pages.get(r.analysisId);const changed=input({runId:'update-run',expectedRevision:p.last_edited_time});changed.analysis.header.id=r.analysisId;changed.analysis.header.title='Updated fixture';const saved=await f.writer(changed);assert.equal(saved.status,'verified');assert.equal(saved.analysisId,r.analysisId);assert.equal(f.creates,1);}));
@@ -70,3 +96,44 @@ test('production source without a Summary property preserves the canonical summa
 test('Company archived during final verification cannot yield verified',()=>withFixture({archiveFinalCompany:true},async f=>{const r=await f.writer(input());assert.equal(r.status,'partial');assert.equal(r.verified,false);}));
 
 test('revisioned update cannot retype a Business Current page as Valuation',()=>withFixture({},async f=>{const saved=await f.writer(input()),existing=f.pages.get(saved.analysisId);const changed=input({runId:'different-module-update',expectedRevision:existing.last_edited_time});changed.analysis.kind='valuation';changed.analysis.header.family='valuation';changed.analysis.header.agent='Valuation Analyst';changed.analysis.header.id=saved.analysisId;await assert.rejects(f.writer(changed),{code:'stale_request'});assert.equal(existing.properties.Agent.select.name,'Business Analyst');assert.equal(f.creates,1);assert.equal(f.promotions,1);}));
+
+ test('provider diagnostic survives the adapter Core bridge without sensitive content',()=>withFixture({},async f=>{
+ const secret='SECRET_VALUE_OR_DOCUMENT';let attempts=0;
+ const options={...f.options,fetch:async(url,options)=>{
+  if(options.method==='POST'&&new URL(url).pathname==='/v1/pages'){attempts++;return Response.json({object:'error',code:'validation_error',message:`body.children[6].callout.icon should be an object, instead was ${secret}.`,request_id:secret},{status:400});}
+  return f.options.fetch(url,options);
+ }};
+ const result=await f.api.createInvestmentService(f.db,options).saveAnalysis(input());
+ assert.equal(result.status,'error');assert.equal(result.error.code,'invalid_input');
+ const diagnostic=result.metadata.diagnostics.find(d=>d.code==='notion_validation_error');
+ assert.equal(diagnostic.path,'body.children[6].callout.icon');
+ assert.match(diagnostic.message,/HTTP 400; type=error; code=validation_error/);assert.match(diagnostic.message,/expected object/);
+ assert.equal(JSON.stringify(result).includes(secret),false);assert.equal(attempts,1);assert.equal(f.creates,0);
+}));
+
+for(const shape of ['rich-text-array','table-children','link-url','utf8-size'])test(`provider ${shape} limit rejects before a mutation`,()=>withFixture({},async f=>{
+ const draft=input();draft.analysis.header.status='Draft';
+ const segment={text:'x',marks:[],href:null};
+ if(shape==='rich-text-array')draft.analysis.content.blocks[0].text=Array.from({length:101},()=>({...segment}));
+ if(shape==='table-children')draft.analysis.content.blocks=[{id:'table',sourceIds:['fixture-source'],type:'table',header:false,rows:Array.from({length:101},()=>[[{...segment}]])}];
+ if(shape==='link-url')draft.analysis.content.blocks[0].text=[{...segment,href:'https://example.test/'+ 'x'.repeat(2000)}];
+ if(shape==='utf8-size')draft.analysis.content.blocks=Array.from({length:80},(_,n)=>({id:`p-${n}`,sourceIds:['fixture-source'],type:'paragraph',text:[{...segment,text:'界'.repeat(2000)}]}));
+ await assert.rejects(f.writer(draft),{code:'invalid_input'});assert.equal(f.creates,0);assert.equal(f.calls.some(c=>c.method==='PATCH'||c.path==='/pages'),false);
+}));
+
+test('supported block DTOs omit absent optional values while nullable properties remain valid',()=>withFixture({},async f=>{
+ const draft=input();draft.analysis.header.status='Draft';const segment={text:'Provider shape.',marks:['bold'],href:'https://example.test/source'};
+ const block=(type,extra={})=>({id:`fixture-${type}`,sourceIds:['fixture-source'],type,...extra});
+ draft.analysis.content.blocks=[...['paragraph','quote','callout'].map(type=>block(type,{text:[segment],...(type==='callout'?{icon:null}:{})})),... [1,2,3].map(level=>block('heading',{id:`heading-${level}`,level,text:[segment]})),block('list',{ordered:false,items:[[segment]]}),block('list',{id:'ordered-list',ordered:true,items:[[segment]]}),block('divider'),block('table',{header:true,rows:[[[segment]]]})];
+ let captured;
+ const writer=f.api.createNotionAnalysisWriter(f.db,{...f.options,fetch:async(url,options)=>{
+  if(options.method==='GET'&&new URL(url).pathname.startsWith('/v1/data_sources/')){const schema=await (await f.options.fetch(url,options)).json();Object.assign(schema.properties,{Score:{type:'number'},Confidence:{type:'select'}});return Response.json(schema);}
+  if(options.method==='POST'&&new URL(url).pathname==='/v1/pages')captured=JSON.parse(options.body);
+  return f.options.fetch(url,options);
+ }});
+ assert.equal((await writer(draft)).status,'persisted');
+ assert.deepEqual(captured.properties.Score,{number:null});assert.deepEqual(captured.properties.Confidence,{select:null});
+ assert.deepEqual(captured.children.map(b=>b.type),['paragraph','quote','callout','heading_1','heading_2','heading_3','bulleted_list_item','numbered_list_item','divider','table']);
+ function check(value,key=''){if(value===null){assert.ok(['select','status','date','number'].includes(key),`optional ${key} must be omitted`);return;}if(Array.isArray(value))value.forEach(v=>check(v,key));else if(value&&typeof value==='object')for(const [k,v]of Object.entries(value))check(v,k);}
+ check(captured);assert.deepEqual(captured.children[0].paragraph.rich_text[0].text.link,{url:segment.href});
+}));

@@ -1,7 +1,7 @@
 import { createNotionAnalysisWriter, type NotionWriteOptions } from "./analysis-writes";
 import type { CompanyIdentity, InvestmentPorts, SaveAnalysisInput } from "../../core/services/ports";
 import { createInvestmentCore, type ReadOptions } from "../../core/services/investment-os";
-import { SCHEMA_VERSION, isIsoDateOrDateTime, type Provenance, type ServiceResult } from "../../core/contracts/common";
+import { SCHEMA_VERSION, isIsoDateOrDateTime, type Provenance, type ServiceResult, type Diagnostic } from "../../core/contracts/common";
 import type { AnalysisPreview } from "../../core/contracts/analysis";
 import type { CurrentAnalysisFamily, CurrentSelectionInput } from "../../core/analysis/current-selection";
 import type { CompanyPreview, Portfolio, Quote } from "../../core/contracts/investment";
@@ -133,7 +133,13 @@ function notionPorts(db: D1Database, writes?: NotionWriteOptions): InvestmentPor
 }
 
 export function createInvestmentService(db: D1Database, writes?: NotionWriteOptions) {
-  return createInvestmentCore(notionPorts(db, writes));
+  const service=createInvestmentCore(notionPorts(db, writes));
+  if(!writes)return service;
+  return {...service,async saveAnalysis(input:SaveAnalysisInput){
+    const diagnostics:Diagnostic[]=[];
+    const result=await createInvestmentCore(notionPorts(db,{...writes,onDiagnostic:diagnostic=>{diagnostics.push(diagnostic);writes.onDiagnostic?.(diagnostic);}})).saveAnalysis(input);
+    return {...result,metadata:{...result.metadata,diagnostics:[...result.metadata.diagnostics,...diagnostics]}};
+  }};
 }
 
 /** Request-local bridge: legacy JSON stays at the HTTP boundary, domain validation is mandatory. */
