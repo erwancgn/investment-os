@@ -1,0 +1,75 @@
+{
+  "description": "Read-only serialization repair. derived:artifact sourceIds identify original document blocks, not primary financial evidence. Unsafe href removed; visible locator text retained. No source/claim/evidence/value changes, no WRITE.",
+  "changes": [
+    {
+      "file": "lot12_lite_reviewable_inline_ed_complete.json",
+      "kind": "business",
+      "sourceHash": "110e844f86cdeab0706f6efcf1fcf9f3d760ce5ca1db8cf55eed562c11b96484",
+      "documentOriginsAdded": 62,
+      "unsafeLinkHrefsCleared": 0,
+      "financialTextUnchanged": true,
+      "evidenceGapsUnchanged": true
+    },
+    {
+      "file": "lot12_lite_reviewable_inline_ed_complete.json",
+      "kind": "valuation",
+      "sourceHash": "110e844f86cdeab0706f6efcf1fcf9f3d760ce5ca1db8cf55eed562c11b96484",
+      "documentOriginsAdded": 95,
+      "unsafeLinkHrefsCleared": 0,
+      "financialTextUnchanged": true,
+      "evidenceGapsUnchanged": true
+    },
+    {
+      "file": "nvda_full_analysis_bundle.json",
+      "kind": "business",
+      "sourceHash": "a06492617908f57190322113ff5702f0148fe91f73dfd588a31a5ff8dde23065",
+      "documentOriginsAdded": 50,
+      "unsafeLinkHrefsCleared": 0,
+      "financialTextUnchanged": true,
+      "evidenceGapsUnchanged": true
+    },
+    {
+      "file": "nvda_full_analysis_bundle.json",
+      "kind": "valuation",
+      "sourceHash": "a06492617908f57190322113ff5702f0148fe91f73dfd588a31a5ff8dde23065",
+      "documentOriginsAdded": 53,
+      "unsafeLinkHrefsCleared": 1,
+      "financialTextUnchanged": true,
+      "evidenceGapsUnchanged": true
+    },
+    {
+      "file": "nvda_full_analysis_bundle.json",
+      "kind": "short",
+      "sourceHash": "a06492617908f57190322113ff5702f0148fe91f73dfd588a31a5ff8dde23065",
+      "documentOriginsAdded": 55,
+      "unsafeLinkHrefsCleared": 0,
+      "financialTextUnchanged": true,
+      "evidenceGapsUnchanged": true
+    },
+    {
+      "file": "nvda_full_analysis_bundle.json",
+      "kind": "portfolio",
+      "sourceHash": "a06492617908f57190322113ff5702f0148fe91f73dfd588a31a5ff8dde23065",
+      "documentOriginsAdded": 51,
+      "unsafeLinkHrefsCleared": 2,
+      "financialTextUnchanged": true,
+      "evidenceGapsUnchanged": true
+    },
+    {
+      "file": "nvda_full_analysis_bundle.json",
+      "kind": "cio_memo",
+      "sourceHash": "a06492617908f57190322113ff5702f0148fe91f73dfd588a31a5ff8dde23065",
+      "documentOriginsAdded": 54,
+      "unsafeLinkHrefsCleared": 4,
+      "financialTextUnchanged": true,
+      "evidenceGapsUnchanged": true
+    }
+  ],
+  "additionalChanges": [
+    "short: removed unsupported null score",
+    "portfolio: removed unsupported null score",
+    "cio_memo: removed unsupported null score",
+    "cio_memo: original decision retained in bundle sidecar; handoffSummary copied verbatim from existing c53",
+    "cio_memo: foreign scenario refs v14 mapped to matching local scenario table c17; v18 mapped to threshold paragraph c20"
+  ]
+}

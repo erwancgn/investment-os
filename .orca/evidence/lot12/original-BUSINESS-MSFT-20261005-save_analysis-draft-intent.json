@@ -1,0 +1,308 @@
+{
+  "contractVersion": "1.0.0",
+  "scope": "personal",
+  "input": {
+    "analysis": {
+      "schemaVersion": "1.0.0",
+      "kind": "business",
+      "header": {
+        "schemaVersion": "1.0.0",
+        "id": "derived:business:msft:BUSINESS-MSFT-20261005",
+        "title": "Microsoft — Business Check — Full — BUSINESS-MSFT-20261005",
+        "sourceUrl": null,
+        "family": "business",
+        "originalFamily": null,
+        "sourceKind": "analysis",
+        "agent": "Business Analyst",
+        "status": "Draft",
+        "date": "2026-10-05",
+        "lastEditedTime": "2026-10-05T11:01:43+02:00",
+        "companyIds": [
+          "3b337ea7af3581038c01ec1b0f33d8c4"
+        ],
+        "revision": "derived:draft:BUSINESS-MSFT-20261005",
+        "sourceFreshness": "fresh",
+        "archived": false,
+        "provenance": {
+          "kind": "derived",
+          "sourceId": null,
+          "revision": null,
+          "capturedAt": "2026-10-05T11:01:43+02:00"
+        }
+      },
+      "content": {
+        "schemaVersion": "1.0.0",
+        "blocks": [
+          {
+            "id": "report-full",
+            "sourceIds": [
+              "E01",
+              "E02",
+              "E03",
+              "E04",
+              "E05",
+              "E06",
+              "E07",
+              "E08",
+              "E09",
+              "E10",
+              "E11",
+              "E12",
+              "E13",
+              "E14",
+              "E15",
+              "E16",
+              "E17",
+              "E18",
+              "E19",
+              "E20",
+              "E21",
+              "E22",
+              "E23",
+              "E24",
+              "E25",
+              "D01",
+              "D02",
+              "D03",
+              "D04",
+              "D05",
+              "D06",
+              "I01",
+              "I02",
+              "I03",
+              "I04",
+              "I05",
+              "I06",
+              "I07",
+              "I08",
+              "I09",
+              "I10",
+              "I11",
+              "I12",
+              "I13",
+              "I14",
+              "I15",
+              "I16",
+              "I17",
+              "I18",
+              "I19",
+              "I20",
+              "I21",
+              "I22",
+              "I23",
+              "I24",
+              "I25",
+              "I26",
+              "I27",
+              "I28",
+              "I29",
+              "I30",
+              "I31",
+              "I32",
+              "I33",
+              "I34",
+              "I35",
+              "I36",
+              "I37",
+              "I38",
+              "I39",
+              "I40",
+              "I41",
+              "I42",
+              "I43",
+              "I44",
+              "I45",
+              "I46",
+              "I47",
+              "I48",
+              "I49",
+              "I50",
+              "I51",
+              "I52",
+              "I53",
+              "I54",
+              "I55",
+              "I56",
+              "I57",
+              "I58",
+              "I59",
+              "I60",
+              "I61",
+              "M01",
+              "M02",
+              "M03",
+              "M04",
+              "M05",
+              "M06",
+              "M07"
+            ],
+            "type": "paragraph",
+            "text": [
+              {
+                "text": "# Business Check — Microsoft Corporation\n\nRun ID : BUSINESS-MSFT-20261005\nModule : Business\nTicker : MSFT — Nasdaq [E01]\nDate d’analyse : 5 octobre 2026\nDernier exercice disponible : FY2026, clos le 30 juin 2026 [E01]\nDernier trimestre publié utilisé : Q4 FY2026 [E02]\nDevise : USD\nFormat : Full\nBusiness Current antérieur : 5 septembre 2026 — 94/100\nMéthode : Business Framework 1.3 — thèse non recalculée\n\n# TL;DR\n\nBusiness Verdict : Excellente — 94/100.\n\nMicrosoft conserve une combinaison exceptionnelle de logiciels enterprise récurrents, cloud hyperscale, identité, sécurité, outils développeurs, data et distribution mondiale. [I01]\n\nFY2026 confirme la puissance opérationnelle du modèle : chiffre d’affaires de 331,839 Md$, +18 %, résultat opérationnel de 155,237 Md$, +21 %, résultat net GAAP de 133,749 Md$, +31 %. [E03]\n\nAzure a dépassé 100 Md$ de chiffre d’affaires annuel et a progressé de 43 % au Q4 ; Microsoft Cloud a atteint 59,3 Md$ au Q4 et 214,4 Md$ sur l’exercice. [E04][E05]\n\nLe principal risque Business n’est pas aujourd’hui l’absence de demande : Microsoft indiquait au Q4 que la demande Azure restait supérieure à la capacité disponible. Le risque central est désormais le rendement économique du capital massivement engagé dans l’infrastructure AI. [E06][I02]\n\nDepuis le Business précédent, Microsoft a renforcé sa proposition agentique avec Home, Code et Autopilot et a explicitement affirmé une stratégie multi-modèles intégrant notamment OpenAI et Anthropic. [E17][E18] Cela renforce qualitativement l’écosystème sans justifier de modification du score à ce stade. [I03]\n\nÉlément | Évaluation | Nature\nBusiness Verdict | Excellente | Conclusion analytique [I04]\nScore | 94/100 | Score conservé du run original\nBusiness model | Fort | Inférence [I05]\nMoat | Fort | Inférence [I06]\nCroissance structurelle | Forte | Inférence [I07]\nQualité financière | Forte | Inférence [I08]\nManagement | Fort | Inférence [I09]\nCyclicité | Faible à moyenne | Inférence [I10]\nRésilience | Forte | Inférence [I11]\nAnalyse de valorisation justifiée | Oui | Conclusion Business [I12]\n\nTrois forces : distribution enterprise ; intégration Azure/data/identity/developer ; capacité financière. [I13]\n\nTrois risques : rendement du capex AI ; pression sur les marges cloud ; concurrence et réglementation. [I14]\n\n# 1. Comprendre le business\n\nEntreprises et développeurs → Microsoft 365 / Entra / GitHub → Azure / données / infrastructure AI → Copilot / agents / applications → workflows et utilisateurs finaux.\n\nMicrosoft monétise plusieurs couches complémentaires via abonnements, consommation cloud, licences, services, publicité et gaming. [E19]\n\nL’intérêt économique vient de l’intégration du stack : identité, productivité, développement, données, sécurité et cloud peuvent être distribués à la même clientèle enterprise. [I15]\n\nCette architecture crée des coûts de changement organisationnels et techniques et améliore la capacité de cross-sell. [I16]\n\n# 2. Produits et segments\n\nQ4 FY2026 :\n- Productivity & Business Processes : 37,8 Md$, +14 % [E07] — base logicielle fortement récurrente [I17].\n- Intelligent Cloud : 39,3 Md$, +32 % [E07] — principal moteur actuel [I18].\n- More Personal Computing : 12,9 Md$, -4 % [E07] — activités plus matures/cycliques [I19].\n\nAzure and other cloud services a progressé de 43 % au Q4. [E04]\n\nFY2026 :\nLe mix annuel confirme le poids désormais considérable du cloud et des services : Server products and cloud services représentent 129,425 Md$ de revenus et Microsoft 365 Commercial 101,997 Md$. [E08]\n\nAucun client individuel ni aucun pays hors États-Unis n’a représenté plus de 10 % du chiffre d’affaires FY2026, FY2025 ou FY2024. [E09]\n\n# 3. Évolution financière — graphiques Full\n\nGraphique 1 — Chiffre d’affaires, Md$ :\nFY2024 | ████████████████████ 245,1\nFY2025 | ███████████████████████ 281,7\nFY2026 | ███████████████████████████ 331,8\n[E10]\n\nLe chiffre d’affaires a progressé d’environ 35,4 % entre FY2024 et FY2026. [D01] L’accélération FY2026 est officiellement de +18 % sur un an. [E03]\n\nGraphique 2 — Résultat opérationnel, Md$ :\nFY2024 | ███████████████████ 109,4\nFY2025 | ██████████████████████ 128,5\nFY2026 | ██████████████████████████ 155,2\n[E10]\n\nMarge opérationnelle dérivée :\n- FY2024 : ~44,6 % [D02]\n- FY2025 : ~45,6 % [D03]\n- FY2026 : ~46,8 % [D04]\n\nLa progression simultanée du chiffre d’affaires et de la marge opérationnelle indique encore de l’operating leverage au niveau consolidé. [I20]\n\nGraphique 3 — Cash-flow opérationnel, Md$ :\nFY2024 | █████████████████ 118,5\nFY2025 | ███████████████████ 136,2\nFY2026 | █████████████████████████ 182,9\n[E11]\n\nLe CFO FY2026 atteint exactement 182,935 Md$, contre 136,162 Md$ en FY2025 et 118,548 Md$ en FY2024. [E11]\n\n# 4. Marché et chaîne de valeur\n\nLe TAM pertinent de Microsoft ne correspond pas à un marché unique : le groupe adresse cloud infrastructure, productivité, cybersécurité, bases de données, développement logiciel, applications métier et AI. [E19][I21]\n\nUne addition arithmétique de TAM provenant de ces marchés créerait un double comptage important. Aucun TAM/SAM/SOM agrégé n’est donc présenté comme fait. [I22]\n\nBridge causal AI :\nDemande AI → besoin de compute → datacenters / GPU / networking / énergie → Azure → modèles → data / Foundry / GitHub / Copilot → applications et agents → consommation et abonnements.\n\nCette chaîne montre que Microsoft possède plusieurs points de capture potentiels, de l’infrastructure jusqu’aux applications. [I23]\n\nCe potentiel ne prouve toutefois pas que le surplus économique final restera chez Microsoft : c’est précisément l’une des grandes incertitudes du dossier. [I24]\n\n# 5. Moat\n\n- Switching costs enterprise : Fort — intégration identité/productivité/workflows [I25].\n- Distribution : Fort — large base installée enterprise [I26].\n- Écosystème développeurs : Fort — GitHub + Azure + outils développeurs [I27].\n- Scale cloud : Fort — infrastructure mondiale et investissements massifs [E20][I28].\n- Data / identity integration : Fort — Entra, M365, Azure et data stack [I29].\n- Marque / confiance enterprise : Fort — positionnement établi dans les systèmes critiques [I30].\n\nMicrosoft indique que ses datacenters dépendent notamment de l’accès au foncier, à l’énergie, aux réseaux, aux serveurs, aux GPU et autres composants et qu’il existe peu de fournisseurs qualifiés pour certains composants. [E20]\n\nMoat global : Fort. [I31]\n\nLe risque principal n’est pas une disparition rapide du moat, mais une diminution de la rentabilité marginale du capital si le compute et les modèles deviennent davantage commoditisés. [I32]\n\n# 6. KPI opérationnels\n\n- Azure growth Q4 : +43 % [E04] — très favorable — fait.\n- Microsoft Cloud Q4 : 59,3 Md$, +27 % [E05] — favorable — fait.\n- Commercial RPO : 678 Md$, +84 % [E12] — très favorable — fait.\n- Microsoft Cloud gross margin Q4 : 65 % [E13] — sous pression y/y — fait.\n- Azure Q1 FY27 guide : ~45 % cc [E14] — forte croissance attendue — guidance management.\n- Q1 FY27 capex : >50 Md$ attendu [E15] — très forte intensité capitalistique — guidance management.\n- CFO FY26 : 182,935 Md$ [E11] — forte génération de cash — fait.\n\nLeading indicators :\nAzure growth — mécanisme : demande cloud/AI et gains de workloads ; signal actuel +43 % au Q4 [E04] ; amélioration : maintien d’une croissance élevée malgré l’effet de base ; détérioration : décélération nettement plus rapide que celle des investissements ; modules affectés : Business / Valuation ; review trigger méthodologique : <25 % durablement [M01].\n\nM01 est un seuil analytique, non une guidance Microsoft et non un fait publié.\n\nMicrosoft Cloud gross margin — mécanisme : mesure indirecte du coût économique du mix Azure/AI ; signal actuel 65 %, en baisse y/y [E13] ; amélioration : stabilisation/reprise malgré le mix AI ; détérioration : poursuite de la compression ; review trigger méthodologique : <60 % durablement [M02].\n\nM02 est un seuil de méthode.\n\nCommercial RPO — signal actuel : 678 Md$, +84 % [E12]. Microsoft indique que toute la croissance séquentielle du RPO commercial du Q4 provenait de clients hors frontier-model companies. [E12] Review trigger [M03] : décélération matérielle hors effets de très grands contrats.\n\nFree cash-flow / capex — Q4 CFO = 55,4 Md$ et FCF = 19,6 Md$. [E16] Le différentiel illustre l’impact des investissements physiques sur le cash-flow disponible. [I33] Review trigger [M04] : stagnation prolongée du FCF par action alors que chiffre d’affaires et bénéfice restent en croissance à deux chiffres.\n\n# 7. Qualité financière\n\nRevenue : 331,839 Md$ [E03]\nOperating income : 155,237 Md$ [E03]\nNet income GAAP : 133,749 Md$ [E03]\nCFO : 182,935 Md$ [E11]\nCash + cash equivalents + ST investments : 76,843 Md$ [E21]\nStock-based compensation : 12,405 Md$ [E22]\nWeighted diluted shares : 7,453 Md [E23]\nFY2025 weighted diluted shares : 7,465 Md [E23]\n\nSBC représente environ 3,74 % du chiffre d’affaires FY2026. [D05]\n\nLe nombre moyen dilué d’actions a reculé d’environ 0,16 % entre FY2025 et FY2026. [D06]\n\nCes deux dérivations supportent l’inférence que la SBC reste significative mais que la dilution nette n’a pas augmenté sur la période considérée. [I34]\n\nMicrosoft indique que ses liquidités, investissements court terme, cash-flow opérationnel et accès aux marchés de capitaux sont suffisants pour financer ses activités et engagements prévisibles. [E24]\n\nQualité financière : Forte. [I35]\n\n# 8. Intensité capitalistique AI\n\nAu Q4 FY2026, Microsoft a généré 55,4 Md$ de CFO et 19,6 Md$ de FCF. [E16]\n\nLe management guidait par ailleurs un capex Q1 FY27 supérieur à 50 Md$, incluant l’impact de reclassification des leases. [E15]\n\nMicrosoft explique également dans son 10-K que la baisse de la marge Microsoft Cloud est notamment liée aux investissements continus dans l’infrastructure AI et à la croissance de l’usage des produits AI. [E25]\n\nConclusion analytique : le changement économique majeur du Microsoft actuel est son intensité capitalistique nettement supérieure au modèle software historique. [I36]\n\nCe changement ne dégrade pas actuellement la solidité financière, mais augmente l’importance du ROIC marginal et de la conversion en FCF. [I37]\n\n# 9. Management et allocation du capital\n\nLe management a conduit plusieurs changements majeurs de plateforme — cloud, abonnements, GitHub, sécurité, données et AI — tout en maintenant une croissance très élevée à l’échelle atteinte aujourd’hui. [I38]\n\nL’évaluation Fort — 9/10 est conservée. [I39]\n\nLe point de surveillance n’est plus principalement l’exécution commerciale : c’est la discipline d’allocation du capital dans un contexte où le capex AI atteint des niveaux historiquement très élevés. [I40]\n\n# 10. Évolution stratégique depuis le précédent Business\n\nMicrosoft a présenté le 25 septembre 2026 une nouvelle organisation de Copilot autour de Home, Code et Autopilot. Autopilot est décrit par Microsoft comme un agent persistant, proactif et hébergé dans le cloud. [E17]\n\nMicrosoft a également déclaré le 23 septembre qu’aucun modèle n’est le meilleur pour tous les usages et que sa plateforme apporte notamment des modèles d’Anthropic, d’OpenAI et d’autres fournisseurs. [E18]\n\nL’inférence analytique est que Microsoft cherche à posséder la couche de distribution, de contexte, de gouvernance et d’orchestration plutôt qu’à dépendre exclusivement du leadership durable d’un modèle unique. [I41]\n\nCette évolution est favorable au moat, mais son impact économique reste encore à démontrer. [I42]\n\n# 11. Moteurs de croissance\n\n- Azure / migration cloud : Confirmé ; 5–10 ans [E04][I43].\n- AI infrastructure : Confirmé ; 3–10 ans [E06][E15][I44].\n- Copilot : Confirmé comme produit, monétisation encore à prouver ; 2–7 ans [E17][I45].\n- Agents / Autopilot : Probable ; 2–7 ans [E17][I46].\n- Cybersecurity : Confirmé ; 5–10 ans [I47].\n- GitHub / developer AI : Confirmé ; 3–10 ans [E17][I48].\n- Data / Fabric : Probable ; 3–10 ans [I49].\n- Custom silicon : Possible ; 3–8 ans [I50].\n\nLe plus gros potentiel non encore démontré économiquement reste la conversion de l’usage AI en revenus logiciels et agentiques à forte marge au-dessus de l’infrastructure. [I51]\n\n# 12. Risques\n\nRendement du capex AI :\nProbabilité analytique : moyenne. Impact : élevé.\nLes montants investis augmentent rapidement [E15] alors que Microsoft Cloud gross margin subit déjà la pression du mix infrastructure/AI [E13][E25]. Le risque est que la croissance du capital investi devance durablement celle du FCF. [I52]\n\nCompression des marges cloud :\nMicrosoft Cloud gross margin Q4 = 65 %, en baisse y/y. [E13] Microsoft attribue notamment cette pression au mix Azure, aux investissements AI infrastructure et à l’augmentation de l’usage. [E25]\n\nConcurrence AI et cloud :\nLa concurrence reste structurellement forte. [I53] Aucun chiffre exact de part de marché cloud provenant d’une source primaire Microsoft/SEC n’est utilisé dans le scoring consolidé.\n\nFournisseurs et capacité :\nMicrosoft identifie explicitement la disponibilité de l’énergie, networking, serveurs, GPU et autres composants comme dépendances de ses datacenters et indique qu’il existe peu de fournisseurs qualifiés pour certains composants. [E20]\n\nRéglementation :\nLe bundling, le cloud et les plateformes AI constituent des surfaces réglementaires potentielles. [I54] Aucun impact financier précis n’est posé sans preuve publiée.\n\n# 13. Bear case industriel\n\nLe bear case reste une inférence scénarisée, pas une prévision. [I55]\n\n1. Microsoft construit énormément de capacité AI.\n2. L’offre mondiale de compute finit par rattraper la demande.\n3. Le prix du compute et des modèles se comprime.\n4. La concurrence réduit une partie du surplus économique capturé.\n5. Copilot et les agents sont adoptés, mais leur monétisation ne compense pas assez vite l’amortissement et le capex.\n6. Azure décélère fortement.\n7. Les marges cloud restent comprimées.\n8. Le FCF par action progresse nettement moins vite que le chiffre d’affaires.\n\nDans ce cas Microsoft pourrait rester un excellent business tout en générant un ROIC marginal sensiblement inférieur. [I56]\n\nLes valeurs <25 % Azure, <60 % cloud GM et FCF/share stagnant sont des review triggers méthodologiques [M01][M02][M04], pas des prédictions ni des seuils communiqués par Microsoft.\n\n# 14. Institutional Debate\n\nQuestion : Microsoft pourra-t-il conserver suffisamment du surplus économique généré par l’AI pour justifier l’explosion de l’intensité capitalistique ? [I57]\n\nBull [I58] : Microsoft possède plusieurs couches de monétisation : infrastructure, données, développement, identité, applications et agents.\n\nBear [I59] : le compute devient plus capitalistique tandis que la concurrence entre hyperscalers, modèles et plateformes peut faire baisser les economics unitaires.\n\nDonnées qui résoudront progressivement le débat [I60] : croissance Azure [E04][E14] ; Microsoft Cloud gross margin [E13] ; capex [E15] ; CFO / FCF [E11][E16] ; preuves de monétisation de Copilot et agents.\n\n# 15. Conditions d’invalidation\n\nCes conditions sont des seuils analytiques du framework, pas des faits Microsoft :\n- [M01] Azure <25 % durablement sans normalisation correspondante des investissements.\n- [M02] Microsoft Cloud gross margin <60 % durablement.\n- [M04] FCF/action stagnant sur plusieurs années malgré croissance durable du CA.\n- [M05] perte durable et prouvée de position concurrentielle dans cloud + développement.\n- [M06] absence de monétisation significative des couches Copilot/agents malgré usage élevé.\n- [M07] dilution structurelle redevenant significative ou détérioration du bilan liée au financement de l’AI.\n\nAucune de ces conditions n’est démontrée par les données utilisées dans ce run. [I61]\n\n# 16. Scoring\n\nLe scoring original n’est pas recalculé.\n\nBusiness model : 15 / 15\nMarché & croissance structurelle : 14 / 15\nMoat : 20 / 20\nQualité financière : 14 / 15\nManagement & allocation : 9 / 10\nPosition concurrentielle : 9 / 10\nRésilience : 8 / 10\nVisibilité / données : 5 / 5\nTotal : 94 / 100\n\nLe présent travail porte exclusivement sur la complétude des preuves.\n\n# 17. Evidence Ledger\n\nE01 — Microsoft Corporation ; MSFT ; Nasdaq ; FY ended June 30 2026. Période : FY26. Source : SEC Form 10-K — cover page.\nE02 — Q4 FY26 ended June 30 2026. Source : Microsoft Earnings Release — header.\nE03 — Revenue 331,839 ; operating income 155,237 ; net income 133,749 Md$ ; +18/+21/+31 %. Source : 10-K Item 8 Income Statements + Earnings Release.\nE04 — Azure >100 Md$ FY26 ; Azure +43 % Q4. Source : Earnings Release — CEO quote + Business Highlights.\nE05 — Microsoft Cloud 59,3 Md$ Q4 ; 214,4 Md$ FY26. Source : Earnings Release / 10-K XBRL Microsoft Cloud.\nE06 — Azure demand exceeds available capacity. Source : Earnings call — Intelligent Cloud commentary.\nE07 — Q4 segment revenue/growth: PBP 37,8/+14 %, IC 39,3/+32 %, MPC 12,9/-4 %. Source : Earnings Release — Business Highlights.\nE08 — Server/cloud 129,425 ; M365 Commercial 101,997 Md$. Source : 10-K Item 8 — Revenue by product/service.\nE09 — No single customer or non-US country >10 % revenue. Source : 10-K Note on geographic/customer concentration.\nE10 — Revenue and operating-income series FY24–26. Source : 10-K Item 8 Income Statements.\nE11 — CFO 118,548 / 136,162 / 182,935 Md$. Source : 10-K Item 8 Cash Flow Statements.\nE12 — Commercial RPO 678 Md$, +84 % ; sequential growth outside frontier model companies. Source : Earnings call — commercial results.\nE13 — Microsoft Cloud GM 65 %, down y/y. Source : Earnings call — cloud results.\nE14 — Azure guide ≈45 % cc. Source : Earnings call — guidance.\nE15 — Q1 FY27 capex expected >50 Md$. Source : Earnings call — capital expenditures guidance.\nE16 — Q4 CFO 55,4 Md$ ; FCF 19,6 Md$. Source : Earnings call — cash flow.\nE17 — New Copilot: Home, Code, Autopilot ; Autopilot persistent/cloud-hosted. Source : Official Microsoft Blog, 25 Sep 2026.\nE18 — Multi-model strategy; Anthropic, OpenAI and others. Source : Microsoft AI at Work Blog, 23 Sep 2026.\nE19 — Business/product portfolio and operating structure. Source : Form 10-K Item 1.\nE20 — Datacenter dependencies: land, power, networking, servers, GPU; limited qualified suppliers for some components. Source : Form 10-K Item 1 — Operations.\nE21 — Cash + equivalents + ST investments = 76,843 Md$. Source : Form 10-K Item 7 / Balance Sheet.\nE22 — SBC = 12,405 Md$. Source : Form 10-K Cash Flows / Note 17.\nE23 — Diluted average shares = 7,453 Md vs 7,465 Md FY25. Source : Form 10-K EPS table.\nE24 — Management states liquidity/access to capital sufficient for foreseeable obligations. Source : Form 10-K Item 7 Liquidity.\nE25 — Cloud margin pressure linked to AI infrastructure/product usage and mix. Source : Form 10-K MD&A.\n\nSources primaires exactes :\nMicrosoft FY26 Q4 Earnings Release — https://www.microsoft.com/en-us/investor/earnings/fy-2026-q4/press-release-webcast\nMicrosoft FY26 Q4 Earnings Call — https://www.microsoft.com/en-us/investor/events/fy-2026/earnings-fy-2026-q4\nMicrosoft FY2026 Form 10-K — https://www.sec.gov/Archives/edgar/data/789019/000119312526323660/msft-20260630.htm\nMicrosoft — Building the system for AI at work — https://www.microsoft.com/en-us/copilot/blog/2026/09/23/building-the-system-for-ai-at-work/\nMicrosoft — Introducing the new Copilot with Home, Code and Autopilot — https://blogs.microsoft.com/blog/2026/09/25/introducing-the-new-copilot-with-home-code-and-autopilot/\n\n# 18. Derivation Ledger\n\nD01 — Croissance revenue FY24→FY26 ≈ +35,4 %. Inputs : 331,839 / 245,122 − 1 ; [E10].\nD02 — Operating margin FY24 ≈ 44,6 %. Inputs : 109,433 / 245,122 ; [E10].\nD03 — Operating margin FY25 ≈ 45,6 %. Inputs : 128,528 / 281,724 ; [E10].\nD04 — Operating margin FY26 ≈ 46,8 %. Inputs : 155,237 / 331,839 ; [E10].\nD05 — SBC / revenue ≈ 3,74 %. Inputs : 12,405 / 331,839 ; [E22][E03].\nD06 — Variation diluted shares ≈ -0,16 %. Inputs : 7,453 / 7,465 − 1 ; [E23].\n\nAucune autre valeur dérivée n’est nécessaire au verdict.\n\n# 19. Registre des inférences\n\nLes IDs Ixx désignent explicitement des conclusions analytiques et non des faits publiés. Ils reposent sur les Exx cités dans les sections correspondantes. Aucune inférence n’est présentée comme donnée de management ou comme preuve externe.\n\n# 20. Registre des seuils méthodologiques\n\nLes IDs Mxx sont des review triggers définis par l’analyse. Ils ne sont ni une guidance Microsoft, ni un consensus, ni une prévision, ni un niveau historiquement garanti. Ils servent exclusivement à déterminer quand la thèse Business doit être réexaminée.\n\n# 21. Gaps réels\n\nG1 — Parts de marché cloud exactes : le précédent rapport utilisait des chiffres AWS/Microsoft/Google provenant d’une source sectorielle externe. Ils ne sont pas nécessaires au score Business et ne sont pas retenus comme faits probants dans cette version consolidée. Gap : absence volontaire de preuve primaire équivalente.\n\nG2 — Marge Azure standalone : Microsoft ne publie pas une marge Azure standalone suffisamment détaillée pour le besoin analytique. Aucune valeur n’est inventée.\n\nG3 — ROI par cohorte de datacenters : non publié. C’est une question analytique centrale mais sans donnée publique directe suffisante.\n\nG4 — Economics détaillés de Copilot / Autopilot : Microsoft fournit des informations d’usage, de produit et de pricing, mais pas un P&L suffisamment désagrégé permettant de prouver les unit economics. Aucune marge ou ROIC Copilot n’est donc estimé comme fait.\n\nCes gaps sont non bloquants pour l’évaluation de qualité Business actuelle, mais importants pour le suivi futur.\n\n# 22. Evidence Gate final\n\nIdentité Company cohérente : PASS\nTicker / marché prouvés : PASS\nPériode financière prouvée : PASS\nSources primaires présentes : PASS\nDerniers résultats disponibles vérifiés : PASS\nChaque chiffre matériel conservé possède un E: ou D: : PASS\nChaque dérivation visible possède formule + inputs : PASS\nDéclarations management séparées des faits : PASS\nInférences explicitement marquées I: : PASS\nSeuils méthodologiques explicitement marqués M: : PASS\nClaims non prouvés retirés ou déclarés en gap : PASS\nGraphiques basés uniquement sur données sourcées : PASS\nScoring non modifié sans recalcul : PASS\nAucune citation orpheline utilisée pour justifier une donnée : PASS\nAucun WRITE / aucune persistance : PASS\n\nStatut analytique du run consolidé : COMPLETE\nPersistence status : NOT_REQUIRED\nAucun save_analysis n’a été exécuté.\n\n# HANDOFF — BUSINESS\n\nContract version : 1.3.0\nPlugin version : 1.3.5\nRun ID : BUSINESS-MSFT-20261005\nModule : business\nEntreprise : Microsoft Corporation\nTicker : MSFT\nPériode : FY2026 / Q4 FY2026\nScore : 94/100\nBusiness Verdict : Excellente\nConfiance : Élevée\n\nDrivers : Azure/cloud ; AI infrastructure ; Microsoft 365 ; Copilot/agents ; security ; GitHub/developer ecosystem ; data.\nRisques : ROI du capex AI ; compression des marges cloud ; concurrence ; contraintes physiques de capacité ; réglementation.\nHypothèses à transmettre à Valuation : croissance structurelle intacte ; Azure moteur principal ; potentiel applicatif AI supplémentaire mais economics encore partiellement inconnus ; intensité capitalistique durablement supérieure au Microsoft historique ; FCF à surveiller parallèlement au bénéfice comptable.\nGaps : marge Azure standalone ; ROI des cohortes datacenters ; unit economics Copilot/Autopilot ; parts de marché cloud exactes non retenues dans le ledger primaire.\n\n# VERDICT RÉEL DU MODULE\n\nBUSINESS : EXCELLENTE — 94/100 — CONFIANCE ÉLEVÉE.\n\nMicrosoft mérite une analyse de valorisation approfondie.\n\nLe dossier Business reste intact. La question déterminante n’est plus la capacité de Microsoft à générer de la demande AI, mais sa capacité à convertir cette demande en rendement durable sur le capital supplémentaire engagé.",
+                "marks": [],
+                "href": null
+              }
+            ]
+          }
+        ]
+      },
+      "summary": "Business Verdict : Excellente — 94/100. Microsoft conserve un moat exceptionnel fondé sur la distribution enterprise, Azure, l’identité, les données, la sécurité et l’écosystème développeurs. FY2026 confirme une forte croissance, tandis que le principal risque économique devient le rendement du capital investi dans l’infrastructure AI.",
+      "verdict": "Excellente",
+      "confidence": "High",
+      "presentation": {
+        "facts": [
+          {
+            "id": "fact:ticker",
+            "label": "Ticker",
+            "value": "MSFT",
+            "unit": null,
+            "status": "known",
+            "asOf": "2026-10-05",
+            "sourceBlockIds": [
+              "report-full"
+            ],
+            "provenance": {
+              "kind": "derived",
+              "sourceId": null,
+              "revision": null,
+              "capturedAt": "2026-10-05T11:01:43+02:00"
+            }
+          },
+          {
+            "id": "fact:score",
+            "label": "Business score",
+            "value": "94",
+            "unit": "/100",
+            "status": "known",
+            "asOf": "2026-10-05",
+            "sourceBlockIds": [
+              "report-full"
+            ],
+            "provenance": {
+              "kind": "derived",
+              "sourceId": null,
+              "revision": null,
+              "capturedAt": "2026-10-05T11:01:43+02:00"
+            }
+          },
+          {
+            "id": "fact:verdict",
+            "label": "Business verdict",
+            "value": "Excellente",
+            "unit": null,
+            "status": "known",
+            "asOf": "2026-10-05",
+            "sourceBlockIds": [
+              "report-full"
+            ],
+            "provenance": {
+              "kind": "derived",
+              "sourceId": null,
+              "revision": null,
+              "capturedAt": "2026-10-05T11:01:43+02:00"
+            }
+          },
+          {
+            "id": "fact:revenue-fy26",
+            "label": "FY2026 revenue",
+            "value": 331.839,
+            "unit": "USD bn",
+            "status": "known",
+            "asOf": "2026-06-30",
+            "sourceBlockIds": [
+              "report-full"
+            ],
+            "provenance": {
+              "kind": "derived",
+              "sourceId": null,
+              "revision": null,
+              "capturedAt": "2026-10-05T11:01:43+02:00"
+            }
+          },
+          {
+            "id": "fact:azure-q4-growth",
+            "label": "Azure Q4 growth",
+            "value": 43,
+            "unit": "%",
+            "status": "known",
+            "asOf": "2026-06-30",
+            "sourceBlockIds": [
+              "report-full"
+            ],
+            "provenance": {
+              "kind": "derived",
+              "sourceId": null,
+              "revision": null,
+              "capturedAt": "2026-10-05T11:01:43+02:00"
+            }
+          },
+          {
+            "id": "fact:cloud-gm",
+            "label": "Microsoft Cloud gross margin Q4",
+            "value": 65,
+            "unit": "%",
+            "status": "known",
+            "asOf": "2026-06-30",
+            "sourceBlockIds": [
+              "report-full"
+            ],
+            "provenance": {
+              "kind": "derived",
+              "sourceId": null,
+              "revision": null,
+              "capturedAt": "2026-10-05T11:01:43+02:00"
+            }
+          }
+        ],
+        "scenarios": [],
+        "thresholds": [
+          {
+            "id": "M01",
+            "label": "Azure durable growth review trigger",
+            "value": 25,
+            "unit": "%",
+            "status": "known",
+            "asOf": "2026-10-05",
+            "sourceBlockIds": [
+              "report-full"
+            ],
+            "provenance": {
+              "kind": "derived",
+              "sourceId": null,
+              "revision": null,
+              "capturedAt": "2026-10-05T11:01:43+02:00"
+            }
+          },
+          {
+            "id": "M02",
+            "label": "Microsoft Cloud gross margin review trigger",
+            "value": 60,
+            "unit": "%",
+            "status": "known",
+            "asOf": "2026-10-05",
+            "sourceBlockIds": [
+              "report-full"
+            ],
+            "provenance": {
+              "kind": "derived",
+              "sourceId": null,
+              "revision": null,
+              "capturedAt": "2026-10-05T11:01:43+02:00"
+            }
+          }
+        ]
+      },
+      "projection": {
+        "status": "absent"
+      },
+      "diagnostics": [],
+      "score": "94"
+    },
+    "runId": "BUSINESS-MSFT-20261005",
+    "expectedRevision": null,
+    "companyIds": [
+      "3b337ea7af3581038c01ec1b0f33d8c4"
+    ]
+  }
+}

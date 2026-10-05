@@ -1,0 +1,149 @@
+[
+  {
+    "file": "/tmp/investment-os-lot12-evidence/lot12_lite_reviewable_inline_ed_complete.json",
+    "bytes": 489161,
+    "sha256": "90c6b3576d44e84f9979a4dd22b2d4ed37f57aebe2429a881e71f1355f5ccc32",
+    "validations": [
+      {
+        "kind": "business",
+        "runId": "FV-LITE-20261005-1013",
+        "intentId": "derived:FV-LITE-20261005-1013:business:draft:final",
+        "companyIds": [
+          "3b537ea7af358169b697e2d437379f51"
+        ],
+        "expectedRevision": null,
+        "header": true,
+        "content": true,
+        "canonicalAnalysis": true,
+        "coreInputAccepted": true,
+        "coreResult": "dependency",
+        "blocks": 62,
+        "headingCount": 24,
+        "status": "Draft",
+        "localFixtureOnly": true,
+        "notionMutation": false
+      },
+      {
+        "kind": "valuation",
+        "runId": "FV-LITE-20261005-1013",
+        "intentId": "derived:FV-LITE-20261005-1013:valuation:draft:final",
+        "companyIds": [
+          "3b537ea7af358169b697e2d437379f51"
+        ],
+        "expectedRevision": null,
+        "header": true,
+        "content": true,
+        "canonicalAnalysis": true,
+        "coreInputAccepted": true,
+        "coreResult": "dependency",
+        "blocks": 95,
+        "headingCount": 33,
+        "status": "Draft",
+        "localFixtureOnly": true,
+        "notionMutation": false
+      }
+    ]
+  },
+  {
+    "file": "/tmp/investment-os-lot12-evidence/nvda_full_analysis_bundle.json",
+    "bytes": 407852,
+    "sha256": "26cd0733919caf4b1ba88a34bc420de263415a73213e025708f9a5499c32e0fc",
+    "validations": [
+      {
+        "kind": "business",
+        "runId": "NVDA-FA-20261005-1021",
+        "intentId": "derived:NVDA-FA-20261005-1021:business",
+        "companyIds": [
+          "3b337ea7af35811eb7e5e934f832c389"
+        ],
+        "expectedRevision": null,
+        "header": true,
+        "content": true,
+        "canonicalAnalysis": true,
+        "coreInputAccepted": true,
+        "coreResult": "dependency",
+        "blocks": 50,
+        "headingCount": 22,
+        "status": "Draft",
+        "localFixtureOnly": true,
+        "notionMutation": false
+      },
+      {
+        "kind": "valuation",
+        "runId": "NVDA-FA-20261005-1021",
+        "intentId": "derived:NVDA-FA-20261005-1021:valuation",
+        "companyIds": [
+          "3b337ea7af35811eb7e5e934f832c389"
+        ],
+        "expectedRevision": null,
+        "header": true,
+        "content": true,
+        "canonicalAnalysis": true,
+        "coreInputAccepted": true,
+        "coreResult": "dependency",
+        "blocks": 53,
+        "headingCount": 23,
+        "status": "Draft",
+        "localFixtureOnly": true,
+        "notionMutation": false
+      },
+      {
+        "kind": "short",
+        "runId": "NVDA-FA-20261005-1021",
+        "intentId": "derived:NVDA-FA-20261005-1021:short",
+        "companyIds": [
+          "3b337ea7af35811eb7e5e934f832c389"
+        ],
+        "expectedRevision": null,
+        "header": true,
+        "content": true,
+        "canonicalAnalysis": true,
+        "coreInputAccepted": true,
+        "coreResult": "dependency",
+        "blocks": 55,
+        "headingCount": 24,
+        "status": "Draft",
+        "localFixtureOnly": true,
+        "notionMutation": false
+      },
+      {
+        "kind": "portfolio",
+        "runId": "NVDA-FA-20261005-1021",
+        "intentId": "derived:NVDA-FA-20261005-1021:portfolio",
+        "companyIds": [
+          "3b337ea7af35811eb7e5e934f832c389"
+        ],
+        "expectedRevision": null,
+        "header": true,
+        "content": true,
+        "canonicalAnalysis": true,
+        "coreInputAccepted": true,
+        "coreResult": "dependency",
+        "blocks": 51,
+        "headingCount": 22,
+        "status": "Draft",
+        "localFixtureOnly": true,
+        "notionMutation": false
+      },
+      {
+        "kind": "cio_memo",
+        "runId": "NVDA-FA-20261005-1021",
+        "intentId": "derived:NVDA-FA-20261005-1021:cio_memo",
+        "companyIds": [
+          "3b337ea7af35811eb7e5e934f832c389"
+        ],
+        "expectedRevision": null,
+        "header": true,
+        "content": true,
+        "canonicalAnalysis": true,
+        "coreInputAccepted": true,
+        "coreResult": "dependency",
+        "blocks": 54,
+        "headingCount": 25,
+        "status": "Draft",
+        "localFixtureOnly": true,
+        "notionMutation": false
+      }
+    ]
+  }
+]

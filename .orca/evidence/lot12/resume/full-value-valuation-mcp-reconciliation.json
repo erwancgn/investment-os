@@ -1,0 +1,1660 @@
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "{\"contractVersion\":\"1.0.0\",\"status\":\"completed\"}"
+    }
+  ],
+  "structuredContent": {
+    "contractVersion": "1.0.0",
+    "scope": "personal",
+    "status": "completed",
+    "result": {
+      "schemaVersion": "1.0.0",
+      "status": "ok",
+      "data": {
+        "schemaVersion": "1.0.0",
+        "kind": "valuation",
+        "header": {
+          "schemaVersion": "1.0.0",
+          "id": "3f037ea7af3581f0b810e934dda62b9d",
+          "title": "Lumentum Holdings — Valuation Full — FV-LITE-20261005-NATIVE",
+          "sourceUrl": "https://app.notion.com/p/Lumentum-Holdings-Valuation-Full-FV-LITE-20261005-NATIVE-3f037ea7af3581f0b810e934dda62b9d",
+          "family": "valuation",
+          "originalFamily": null,
+          "sourceKind": "analysis",
+          "agent": "Valuation Analyst",
+          "status": "Draft",
+          "date": "2026-10-05",
+          "lastEditedTime": "2026-10-05T10:27:00.000Z",
+          "companyIds": [
+            "3b537ea7af358169b697e2d437379f51"
+          ],
+          "revision": "2026-10-05T10:27:00.000Z",
+          "sourceFreshness": "unknown",
+          "archived": true,
+          "provenance": {
+            "kind": "notion",
+            "sourceId": "3f037ea7-af35-81f0-b810-e934dda62b9d",
+            "revision": "2026-10-05T10:27:00.000Z",
+            "capturedAt": "2026-10-05T10:27:00.000Z"
+          }
+        },
+        "content": {
+          "schemaVersion": "1.0.0",
+          "blocks": [
+            {
+              "id": "3f037ea7-af35-8171-bad4-fc04486fd20c",
+              "sourceIds": [
+                "3f037ea7-af35-8171-bad4-fc04486fd20c"
+              ],
+              "type": "heading",
+              "level": 2,
+              "text": [
+                {
+                  "text": "TL;DR",
+                  "marks": [],
+                  "href": null
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-8151-91f8-f8edfae7cf23",
+              "sourceIds": [
+                "3f037ea7-af35-8151-91f8-f8edfae7cf23"
+              ],
+              "type": "paragraph",
+              "text": [
+                {
+                  "text": "Verdict : Excessive — 24/100. Au cours MCP de 1 085,42 USD, le Base FY2031 de ~1 469 USD ne produit qu’environ 6,6 %/an ; le prix maximal Base pour 12 % reste ~857,50 USD et même l’excellente exécution ~1 860 USD n’offre qu’environ 12 %/an.",
+                  "marks": [],
+                  "href": null
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-813e-9446-c094fad3e670",
+              "sourceIds": [
+                "3f037ea7-af35-813e-9446-c094fad3e670"
+              ],
+              "type": "heading",
+              "level": 2,
+              "text": [
+                {
+                  "text": "Rapport complet",
+                  "marks": [],
+                  "href": null
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-8111-b59b-d60d50183d17",
+              "sourceIds": [
+                "3f037ea7-af35-8111-b59b-d60d50183d17"
+              ],
+              "type": "heading",
+              "level": 1,
+              "text": [
+                {
+                  "text": "Valuation Check — Lumentum Holdings",
+                  "marks": [],
+                  "href": null
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-8196-9313-d43fec33d32b",
+              "sourceIds": [
+                "3f037ea7-af35-8196-9313-d43fec33d32b"
+              ],
+              "type": "paragraph",
+              "text": [
+                {
+                  "text": "Run ID : FV-LITE-20261005-NATIVE\nDate : 5 octobre 2026\nTicker : LITE\nCours de référence : 1 085,42 USD [E:E2]\nMarché : NASDAQ\nDevise : USD\nHorizon : ~4,75 ans, terminal FY2031\nRendement exigé : 12 %/an\nDernière période publiée : Q4 / FY2026\nBusiness Check disponible : Oui — Business Full du même run, 85/100 [E:E12] — Excellente\nNiveau de confiance : Moyen\nCompany ID : 3b537ea7af358169b697e2d437379f51\nPrix MCP : assetId=lite ; source=yahoo-query2 ; marketTime=2026-10-02T20:00:01.000Z ; fetchedAt=2026-10-05T08:14:28.172Z ; freshness=closed ; metadata.freshness=unknown ; previousClose=941.65 [E:E2] ; isFallback=false ; warnings=[]\nContinuité Valuation utilisée : Valuation Current v17, analysisId 3e637ea7af3581158a01d1acbf8539da, revision 2026-09-25T08:59:00.000Z.\nLe changement essentiel par rapport à cette baseline est le prix : 929,04 USD [E:E19] → 1 085,42 USD [E:E2]. Les hypothèses industrielles Bear/Base/Bull ne sont pas relevées car le Business Full du même run ne fournit pas de nouvelle preuve économique justifiant une hausse du Base.",
+                  "marks": [],
+                  "href": null
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-81ba-a3ca-f529fa0d1a9e",
+              "sourceIds": [
+                "3f037ea7-af35-81ba-a3ca-f529fa0d1a9e"
+              ],
+              "type": "heading",
+              "level": 1,
+              "text": [
+                {
+                  "text": "TL;DR",
+                  "marks": [],
+                  "href": null
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-819e-8830-f4583b16ce92",
+              "sourceIds": [
+                "3f037ea7-af35-819e-8830-f4583b16ce92"
+              ],
+              "type": "paragraph",
+              "text": [
+                {
+                  "text": "À 1 085,42 USD [E:E2], Lumentum reste un excellent business mais la création de valeur opérationnelle doit désormais être extraordinairement forte simplement pour produire le rendement requis. Le scénario Base donne encore une forte croissance fondamentale, mais seulement ~6,6 %/an [D:D4] pour l’actionnaire. Même un scénario d’excellente exécution autour de 60 USD [H:V-H-EXCELLENT-EPS] d’EPS × 31x [H:V-H-EXCELLENT-MULTIPLE] = 1 860 USD [D:D11] [H:V-H-EXCELLENT-EPS] ne produit plus qu’environ 12 %/an [D:D11]. Le cours actuel n’exige plus seulement une bonne exécution : il exige une trajectoire située nettement au-dessus du Base et proche de l’ancienne excellente exécution.",
+                  "marks": [],
+                  "href": null
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-81c4-ad28-f479a68d4f93",
+              "sourceIds": [
+                "3f037ea7-af35-81c4-ad28-f479a68d4f93"
+              ],
+              "type": "heading",
+              "level": 2,
+              "text": [
+                {
+                  "text": "Trois raisons pour lesquelles le prix peut être justifié",
+                  "marks": [],
+                  "href": null
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-81de-81a8-c30b0ef8a04a",
+              "sourceIds": [
+                "3f037ea7-af35-81de-81a8-c30b0ef8a04a",
+                "3f037ea7-af35-81fe-9fc4-c7751e86ef9b",
+                "3f037ea7-af35-81a8-96d1-d8e3c37dc61c"
+              ],
+              "type": "list",
+              "ordered": true,
+              "items": [
+                [
+                  {
+                    "text": "Le Business Full reste Excellent — 85/100 [E:E12], avec plusieurs voies de monétisation : 1.6T/3.2T, UHP/CPO, ELS/NPO, OCS et optical D2D.",
+                    "marks": [],
+                    "href": null
+                  }
+                ],
+                [
+                  {
+                    "text": "FY2026 et la guidance FY2027 montrent une accélération opérationnelle exceptionnelle.",
+                    "marks": [],
+                    "href": null
+                  }
+                ],
+                [
+                  {
+                    "text": "Si Lumentum maintient durablement une croissance EPS proche de 30 % [H:V-H-GROWTH-30] et un multiple terminal premium, le rendement peut rester supérieur à 12 % [M:V-HURDLE-12].",
+                    "marks": [],
+                    "href": null
+                  }
+                ]
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-8116-8d6d-fda0356a9734",
+              "sourceIds": [
+                "3f037ea7-af35-8116-8d6d-fda0356a9734"
+              ],
+              "type": "heading",
+              "level": 2,
+              "text": [
+                {
+                  "text": "Trois raisons pour lesquelles le titre peut être trop cher",
+                  "marks": [],
+                  "href": null
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-81b6-a0fb-d49bde098746",
+              "sourceIds": [
+                "3f037ea7-af35-81b6-a0fb-d49bde098746",
+                "3f037ea7-af35-81fd-bec4-de7b61fd1f5e",
+                "3f037ea7-af35-81ac-b99e-f4ed4d5b6c26"
+              ],
+              "type": "list",
+              "ordered": true,
+              "items": [
+                [
+                  {
+                    "text": "Le Base exige déjà 17,2 Md$ [H:V-H-BASE-REV] de CA FY2031, une marge opérationnelle de 38 % [H:V-H-BASE-OM] et 52,5 USD [E:E14] d’EPS, mais ne produit que ~6,6 %/an [D:D4] au cours actuel.",
+                    "marks": [],
+                    "href": null
+                  }
+                ],
+                [
+                  {
+                    "text": "Pour obtenir 12 %/an [M:V-HURDLE-12] à 28x [E:E14] terminal, il faut environ 66,4 USD [D:D10] d’EPS FY2031, nettement plus que le Base.",
+                    "marks": [],
+                    "href": null
+                  }
+                ],
+                [
+                  {
+                    "text": "L’offre InP/laser augmente ; une normalisation du pricing et des marges pourrait survenir avant la fin de l’horizon.",
+                    "marks": [],
+                    "href": null
+                  }
+                ]
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-819a-8d03-ebc93abd5ead",
+              "sourceIds": [
+                "3f037ea7-af35-819a-8d03-ebc93abd5ead"
+              ],
+              "type": "heading",
+              "level": 1,
+              "text": [
+                {
+                  "text": "1. Classification et méthode",
+                  "marks": [],
+                  "href": null
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-812d-9bf6-f4f3d9515232",
+              "sourceIds": [
+                "3f037ea7-af35-812d-9bf6-f4f3d9515232"
+              ],
+              "type": "paragraph",
+              "text": [
+                {
+                  "text": "Lumentum est une growth rentable mais cyclique. La méthode principale reste EPS normalisé FY2031 [P:PERIOD] × P/E terminal, complétée par contrôle FCF, reverse valuation, analyse de dilution, sensibilité croissance × multiple et analyse des attentes implicites. Le Business Full du même run fournit le cadre industriel et n’est pas recalculé. La société ne doit pas être valorisée sur les economics du pic immédiat. Les scénarios FY2031 [P:PERIOD] incorporent une normalisation de la rareté, du capex et des marges.",
+                  "marks": [],
+                  "href": null
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-8170-98d7-c500f8a86df3",
+              "sourceIds": [
+                "3f037ea7-af35-8170-98d7-c500f8a86df3"
+              ],
+              "type": "heading",
+              "level": 1,
+              "text": [
+                {
+                  "text": "2. Données de référence",
+                  "marks": [],
+                  "href": null
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-81f4-b717-ec349aed7826",
+              "sourceIds": [
+                "3f037ea7-af35-81f4-b717-ec349aed7826"
+              ],
+              "type": "paragraph",
+              "text": [
+                {
+                  "text": "Distinction actions : 74,6 M [E:V-E22] correspond aux actions diluées GAAP utilisées dans le calcul du BPA sur FY2026 ; 90,2 M [E:V-E23] correspond aux actions diluées non-GAAP utilisées dans le calcul du BPA non-GAAP sur FY2026 ; 88,6 M [E:V-E24] correspond aux actions ordinaires émises et en circulation au 27 juin 2026. Ces mesures ne sont pas interchangeables et aucune des deux moyennes diluées n’est présentée comme un nombre d’actions forward.",
+                  "marks": [],
+                  "href": null
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-814a-a3d6-c5227e0e8791",
+              "sourceIds": [
+                "3f037ea7-af35-814a-a3d6-c5227e0e8791"
+              ],
+              "type": "paragraph",
+              "text": [
+                {
+                  "text": "Capitalisation indicative à 1 085,42 USD [E:E2] × 88,6 M [E:E10] actions ≈ 96,2 Md$ [D:D1]. La trésorerie nette réduit légèrement l’EV par rapport à la capitalisation. Le consensus FY2029–FY2031 reste insuffisamment détaillé pour remplacer les hypothèses internes.",
+                  "marks": [],
+                  "href": null
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-8117-8b0c-f40243df7ab7",
+              "sourceIds": [
+                "3f037ea7-af35-8117-8b0c-f40243df7ab7"
+              ],
+              "type": "heading",
+              "level": 1,
+              "text": [
+                {
+                  "text": "3. Multiples actuels",
+                  "marks": [],
+                  "href": null
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-81c4-bde2-f08092ef550a",
+              "sourceIds": [
+                "3f037ea7-af35-81c4-bde2-f08092ef550a"
+              ],
+              "type": "paragraph",
+              "text": [
+                {
+                  "text": "Le multiple actuel exige que la croissance reste très forte plusieurs années. Le Base conserve 28x [E:E14] terminal : c’est déjà un multiple généreux pour une société devenue beaucoup plus grande en FY2031. La contraction d’environ 50x [D:D2] FY2027E vers 28x [E:E14] terminal constitue un vent contraire majeur malgré la croissance des bénéfices.",
+                  "marks": [],
+                  "href": null
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-81bc-8084-dd2a9ada38ea",
+              "sourceIds": [
+                "3f037ea7-af35-81bc-8084-dd2a9ada38ea"
+              ],
+              "type": "heading",
+              "level": 1,
+              "text": [
+                {
+                  "text": "4. Normalisation",
+                  "marks": [],
+                  "href": null
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-8165-8482-cb25b2701f3a",
+              "sourceIds": [
+                "3f037ea7-af35-8165-8482-cb25b2701f3a"
+              ],
+              "type": "paragraph",
+              "text": [
+                {
+                  "text": "La normalisation reste identique à celle construite avant la hausse du cours. Le Base suppose disparition graduelle d’une partie des scarcity rents, marge terminale forte mais non extrapolation mécanique du pic, dilution prudente, normalisation du capex après expansion des capacités, aucune hausse de scénario pour une qualification InP non confirmée, aucune hausse du Base sur de simples annonces produit et aucune double comptabilisation de CPO/NPO/ELS dans croissance et multiple.",
+                  "marks": [],
+                  "href": null
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-8105-851f-c078196417fa",
+              "sourceIds": [
+                "3f037ea7-af35-8105-851f-c078196417fa"
+              ],
+              "type": "paragraph",
+              "text": [
+                {
+                  "text": "Base Neutrality : les nouvelles informations positives du Business Full améliorent la plausibilité de la thèse, mais ne créent pas mécaniquement du revenu supplémentaire dans le scénario central.",
+                  "marks": [],
+                  "href": null
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-814e-be0d-d4948b73bd2e",
+              "sourceIds": [
+                "3f037ea7-af35-814e-be0d-d4948b73bd2e"
+              ],
+              "type": "heading",
+              "level": 1,
+              "text": [
+                {
+                  "text": "5. Scénarios Bear / Base / Bull",
+                  "marks": [],
+                  "href": null
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-8165-bd0b-dee2b87f8b02",
+              "sourceIds": [
+                "3f037ea7-af35-8165-bd0b-dee2b87f8b02"
+              ],
+              "type": "paragraph",
+              "text": [
+                {
+                  "text": "Bear : la demande IA reste structurellement forte mais la capacité InP rattrape la demande, le pricing se normalise, le dual sourcing augmente, la marge op. retombe vers 30 % [H:V-H-BEAR-OM], le capex reste élevé, dilution ~2 %/an [H:V-H-BEAR-DILUTION] et terminal 20x [E:E15]. Ce scénario détruit de la valeur malgré une croissance très forte du business.",
+                  "marks": [],
+                  "href": null
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-819b-84e0-de51a5eead25",
+              "sourceIds": [
+                "3f037ea7-af35-819b-84e0-de51a5eead25"
+              ],
+              "type": "paragraph",
+              "text": [
+                {
+                  "text": "Base : ~17,2 Md$ [H:V-H-BASE-REV] de CA, marge op. 38 % [H:V-H-BASE-OM], EPS ~52,5 USD [E:E14], dilution 1,5 % [H:V-H-BASE-DILUTION], FCF ~4,8 Md$ [H:V-H-BASE-FCF] et terminal 28x [E:E14]. C’est déjà un scénario d’exécution très forte ; à 1 085,42 USD [E:E2] il ne produit que ~6,6 %/an [D:D4].",
+                  "marks": [],
+                  "href": null
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-81c8-a5c3-d66ce4d4bfdf",
+              "sourceIds": [
+                "3f037ea7-af35-81c8-a5c3-d66ce4d4bfdf"
+              ],
+              "type": "paragraph",
+              "text": [
+                {
+                  "text": "Bull : le portefeuille multi-architecture convertit largement ; avec 75,3 USD [E:E16] d’EPS et 32x [E:E16] terminal, le cours terminal atteint ~2 408 USD [D:D5], soit ~18,3 %/an [D:D5]. Ce scénario exige exécution opérationnelle exceptionnelle et maintien d’un multiple premium.",
+                  "marks": [],
+                  "href": null
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-816e-80e4-f0f98d166b30",
+              "sourceIds": [
+                "3f037ea7-af35-816e-80e4-f0f98d166b30"
+              ],
+              "type": "heading",
+              "level": 1,
+              "text": [
+                {
+                  "text": "6. Valorisation par multiple",
+                  "marks": [],
+                  "href": null
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-81af-90e9-cf71bd589763",
+              "sourceIds": [
+                "3f037ea7-af35-81af-90e9-cf71bd589763",
+                "3f037ea7-af35-8123-9c8b-cac3406f3880",
+                "3f037ea7-af35-8154-a9a4-fc368cf3ae11"
+              ],
+              "type": "list",
+              "ordered": false,
+              "items": [
+                [
+                  {
+                    "text": "Bear : 28,7 [E:E15] × 20 [E:E15] ≈ 574 USD [D:D3], arrondi ~575 USD [D:D3].",
+                    "marks": [],
+                    "href": null
+                  }
+                ],
+                [
+                  {
+                    "text": "Base : 52,5 [E:E14] × 28 [E:E14] = 1 470 USD [D:D4], conservé autour de 1 469 USD [D:D4] pour continuité du scénario.",
+                    "marks": [],
+                    "href": null
+                  }
+                ],
+                [
+                  {
+                    "text": "Bull : 75,3 [E:E16] × 32 [E:E16] ≈ 2 410 USD [D:D5], soit ~2 408 USD [D:D5] selon le scénario historique.",
+                    "marks": [],
+                    "href": null
+                  }
+                ]
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-8198-a447-d0f9334aadee",
+              "sourceIds": [
+                "3f037ea7-af35-8198-a447-d0f9334aadee"
+              ],
+              "type": "paragraph",
+              "text": [
+                {
+                  "text": "La hausse récente du cours ne change aucune valeur terminale. Elle réduit uniquement le rendement offert aujourd’hui. Cette distinction est importante : le marché a changé, pas le modèle économique central.",
+                  "marks": [],
+                  "href": null
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-8154-9075-e4e84ccbf50c",
+              "sourceIds": [
+                "3f037ea7-af35-8154-9075-e4e84ccbf50c"
+              ],
+              "type": "heading",
+              "level": 1,
+              "text": [
+                {
+                  "text": "7. Contrôle DCF / FCF",
+                  "marks": [],
+                  "href": null
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-8146-a88a-c0937c4d89ec",
+              "sourceIds": [
+                "3f037ea7-af35-8146-a88a-c0937c4d89ec"
+              ],
+              "type": "paragraph",
+              "text": [
+                {
+                  "text": "Un DCF précis serait artificiellement sensible au calendrier exact de capex, de BFR et de normalisation des marges. Le contrôle FCF est donc utilisé comme cross-check.",
+                  "marks": [],
+                  "href": null
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-81be-bd27-eb1939f252ec",
+              "sourceIds": [
+                "3f037ea7-af35-81be-bd27-eb1939f252ec"
+              ],
+              "type": "paragraph",
+              "text": [
+                {
+                  "text": "Le contrôle FCF est cohérent avec les multiples EPS : Bear autour de low-20x, Base autour de 29x, Bull autour de low-30x. Le Base nécessite une FCF margin d’environ 28 % [H:V-H-BASE-FCFM]. Si la marge FCF normalisée reste nettement sous ~25 % [M:V-FCFM-ALERT], le scénario central devient difficile à défendre même si la croissance du CA reste forte.",
+                  "marks": [],
+                  "href": null
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-81dd-86dc-cb0a698cfbf3",
+              "sourceIds": [
+                "3f037ea7-af35-81dd-86dc-cb0a698cfbf3"
+              ],
+              "type": "heading",
+              "level": 1,
+              "text": [
+                {
+                  "text": "8. Growth Priced-In / Reverse valuation",
+                  "marks": [],
+                  "href": null
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-817e-9621-d57abf94d98d",
+              "sourceIds": [
+                "3f037ea7-af35-817e-9621-d57abf94d98d"
+              ],
+              "type": "paragraph",
+              "text": [
+                {
+                  "text": "À 28x [E:E14] terminal, obtenir 12 %/an [M:V-HURDLE-12] exige environ 66,4 USD [D:D10] d’EPS FY2031 contre 52,5 USD [E:E14] dans le Base, soit environ 26 % [D:V-D-BASE-GAP-PCT] au-dessus du Base.",
+                  "marks": [],
+                  "href": null
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-81a7-9210-eac3b3603e9b",
+              "sourceIds": [
+                "3f037ea7-af35-81a7-9210-eac3b3603e9b"
+              ],
+              "type": "paragraph",
+              "text": [
+                {
+                  "text": "Test de rendement au prix actuel : FY2027E EPS ~21,67 USD [GAP:V-FY27-EPS-CONSENSUS] → croissance EPS ~20,5 %/an [D:V-D-BASE-EPS-CAGR] → 52,5 USD [E:E14] FY2031 → 28x [E:E14] terminal → ~1 469 USD [D:D4] → ~6,6 %/an [D:D4] pour l’actionnaire. La croissance du business est spectaculaire, mais une grande partie de cette création de valeur est absorbée par la contraction du multiple.",
+                  "marks": [],
+                  "href": null
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-81d0-8dd2-fc9391c61f9b",
+              "sourceIds": [
+                "3f037ea7-af35-81d0-8dd2-fc9391c61f9b"
+              ],
+              "type": "heading",
+              "level": 2,
+              "text": [
+                {
+                  "text": "Matrice obligatoire — CAGR EPS × multiple terminal",
+                  "marks": [],
+                  "href": null
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-81ca-b4b5-fbe2da5f60c9",
+              "sourceIds": [
+                "3f037ea7-af35-81ca-b4b5-fbe2da5f60c9"
+              ],
+              "type": "paragraph",
+              "text": [
+                {
+                  "text": "Avec 25 % de croissance EPS, il faut encore un terminal proche de 32x pour dépasser 12 %. Avec 28x terminal, il faut environ 27 % de croissance EPS annuelle pour atteindre le hurdle. Un Base autour de 20,5 % de croissance EPS n’offre qu’environ 6–7 %. Matrice calculée à partir du prix [E:E2], du point de départ EPS [GAP:V-FY27-EPS-CONSENSUS] et des hypothèses de croissance/multiple [H:V-H-MATRIX]. [D:V-D-CAGR-MATRIX]",
+                  "marks": [],
+                  "href": null
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-81a9-ab0c-ebd678fd97e2",
+              "sourceIds": [
+                "3f037ea7-af35-81a9-ab0c-ebd678fd97e2"
+              ],
+              "type": "heading",
+              "level": 2,
+              "text": [
+                {
+                  "text": "Croissance EPS requise",
+                  "marks": [],
+                  "href": null
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-816c-853c-ed550b3e458f",
+              "sourceIds": [
+                "3f037ea7-af35-816c-853c-ed550b3e458f"
+              ],
+              "type": "paragraph",
+              "text": [
+                {
+                  "text": "Le seuil 0 % montre qu’un multiple terminal en contraction exige déjà une croissance fondamentale importante simplement pour compenser le prix payé aujourd’hui. Tableau dérivé du même jeu d’entrées. [D:V-D-REQ-GROWTH]",
+                  "marks": [],
+                  "href": null
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-8148-9b8d-dd596c8a21a1",
+              "sourceIds": [
+                "3f037ea7-af35-8148-9b8d-dd596c8a21a1"
+              ],
+              "type": "heading",
+              "level": 2,
+              "text": [
+                {
+                  "text": "Multiple terminal requis selon la croissance EPS",
+                  "marks": [],
+                  "href": null
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-81c9-920b-e281a53f2deb",
+              "sourceIds": [
+                "3f037ea7-af35-81c9-920b-e281a53f2deb"
+              ],
+              "type": "paragraph",
+              "text": [
+                {
+                  "text": "Avec une croissance EPS de 20 %, obtenir 12 %/an nécessite encore ~36x terminal — trop élevé pour servir de Base prudent. Tableau dérivé du même jeu d’entrées. [D:V-D-REQ-MULTIPLE]",
+                  "marks": [],
+                  "href": null
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-8139-b1db-d7c735610802",
+              "sourceIds": [
+                "3f037ea7-af35-8139-b1db-d7c735610802"
+              ],
+              "type": "heading",
+              "level": 2,
+              "text": [
+                {
+                  "text": "Stress test « excellente exécution »",
+                  "marks": [],
+                  "href": null
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-812d-9293-c6c5240343d5",
+              "sourceIds": [
+                "3f037ea7-af35-812d-9293-c6c5240343d5"
+              ],
+              "type": "paragraph",
+              "text": [
+                {
+                  "text": "Scénario défendable mais optimiste : EPS FY2031 ~60 USD [H:V-H-EXCELLENT-EPS] ; P/E terminal 31x [H:V-H-EXCELLENT-MULTIPLE] ; cours terminal ~1 860 USD [D:D11] [H:V-H-EXCELLENT-EPS]. Depuis 1 085,42 USD [E:E2], CAGR ≈ 12,0 %/an [D:D11]. À 929 USD [E:E19], ce scénario offrait ~15,7 %/an [D:V-D-OLD-STRESS-CAGR] ; au nouveau prix, il ne fait plus qu’atteindre approximativement le hurdle. Si Lumentum exécute presque parfaitement, le rendement restant pour l’actionnaire est d’environ 12 %/an [M:V-HURDLE-12]. Il n’y a donc presque plus de marge d’erreur pour obtenir le rendement cible.",
+                  "marks": [],
+                  "href": null
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-81d6-b6d7-f067b1cbcc75",
+              "sourceIds": [
+                "3f037ea7-af35-81d6-b6d7-f067b1cbcc75"
+              ],
+              "type": "heading",
+              "level": 2,
+              "text": [
+                {
+                  "text": "Expectations Gap",
+                  "marks": [],
+                  "href": null
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-81c5-8adc-dd07fdfd7cb6",
+              "sourceIds": [
+                "3f037ea7-af35-81c5-8adc-dd07fdfd7cb6"
+              ],
+              "type": "paragraph",
+              "text": [
+                {
+                  "text": "Élevé. Le marché exige désormais une combinaison de croissance EPS supérieure au Base, marges structurellement élevées, bonne conversion FCF, dilution contenue, maintien d’un multiple terminal premium, normalisation limitée des scarcity rents et forte monétisation des nouvelles architectures. Toutes ces hypothèses sont individuellement plausibles ; le problème est qu’elles doivent être réalisées simultanément.",
+                  "marks": [],
+                  "href": null
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-8196-af0a-f5bd293cfad7",
+              "sourceIds": [
+                "3f037ea7-af35-8196-af0a-f5bd293cfad7"
+              ],
+              "type": "heading",
+              "level": 2,
+              "text": [
+                {
+                  "text": "Croissance déjà pricée ?",
+                  "marks": [],
+                  "href": null
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-81cb-9401-de2d5a5d6747",
+              "sourceIds": [
+                "3f037ea7-af35-81cb-9401-de2d5a5d6747"
+              ],
+              "type": "paragraph",
+              "text": [
+                {
+                  "text": "Quasi totalement. Le cours n’intègre pas nécessairement le Bull complet, mais il capitalise désormais une grande partie de l’exécution favorable nécessaire pour produire un rendement de 12 % [M:V-HURDLE-12].",
+                  "marks": [],
+                  "href": null
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-81bb-ba1d-d5f64d0ff2b0",
+              "sourceIds": [
+                "3f037ea7-af35-81bb-ba1d-d5f64d0ff2b0"
+              ],
+              "type": "heading",
+              "level": 1,
+              "text": [
+                {
+                  "text": "9. Prix pour 10 %, 12 % et 15 %",
+                  "marks": [],
+                  "href": null
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-8133-81b7-cf3c37535359",
+              "sourceIds": [
+                "3f037ea7-af35-8133-81b7-cf3c37535359"
+              ],
+              "type": "paragraph",
+              "text": [
+                {
+                  "text": "Cours actuel : 1 085,42 USD [E:E2]. Marge au prix maximal 12 % = 857,50 / 1 085,42 − 1 ≈ -21,0 % [D:D9], donc statut Surcote forte.",
+                  "marks": [],
+                  "href": null
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-815d-be11-ec3c574dab22",
+              "sourceIds": [
+                "3f037ea7-af35-815d-be11-ec3c574dab22"
+              ],
+              "type": "paragraph",
+              "text": [
+                {
+                  "text": "Il faut distinguer valeur terminale Base FY2031 ~1 469 USD [D:D4], prix maximal aujourd’hui pour obtenir 12 % ~857,50 USD [D:D7] et prix de marge de sécurité ~729 / 643 USD [D:V-D-MOS15] [D:V-D-MOS25].",
+                  "marks": [],
+                  "href": null
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-81cb-ad75-fb49d59fd7a8",
+              "sourceIds": [
+                "3f037ea7-af35-81cb-ad75-fb49d59fd7a8"
+              ],
+              "type": "heading",
+              "level": 1,
+              "text": [
+                {
+                  "text": "10. Décomposition du rendement",
+                  "marks": [],
+                  "href": null
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-81b1-ab1e-dde9de1371a9",
+              "sourceIds": [
+                "3f037ea7-af35-81b1-ab1e-dde9de1371a9"
+              ],
+              "type": "paragraph",
+              "text": [
+                {
+                  "text": "La croissance fondamentale n’est pas le problème. Le problème est le prix payé aujourd’hui, qui impose une compression du multiple suffisamment importante pour absorber la majorité de la croissance. La dilution n’est pas ajoutée une seconde fois au rendement total : elle est déjà intégrée dans l’EPS FY2031 [P:PERIOD] du scénario.",
+                  "marks": [],
+                  "href": null
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-81dd-968a-efa317c12004",
+              "sourceIds": [
+                "3f037ea7-af35-81dd-968a-efa317c12004"
+              ],
+              "type": "heading",
+              "level": 1,
+              "text": [
+                {
+                  "text": "11. Matrices de sensibilité",
+                  "marks": [],
+                  "href": null
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-8122-9ce5-f52c3cff3832",
+              "sourceIds": [
+                "3f037ea7-af35-8122-9ce5-f52c3cff3832"
+              ],
+              "type": "heading",
+              "level": 2,
+              "text": [
+                {
+                  "text": "11.1 Matrice EPS terminal × P/E terminal — CAGR actionnaire",
+                  "marks": [],
+                  "href": null
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-819b-9c6e-c66bc85ed366",
+              "sourceIds": [
+                "3f037ea7-af35-819b-9c6e-c66bc85ed366"
+              ],
+              "type": "paragraph",
+              "text": [
+                {
+                  "text": "La matrice confirme que 12 %/an nécessite approximativement ~60 USD d’EPS avec >31x, ~70 USD avec ~27–28x, ou ~80 USD avec un multiple autour de 23–24x. Il n’existe plus de scénario modérément bon offrant naturellement 12 %. Les valeurs du tableau sont des dérivations du prix de référence [E:E2] sous hypothèses EPS/multiple [H:V-H-SENSITIVITY]. [D:V-D-SENSITIVITY-EPS-MULT]",
+                  "marks": [],
+                  "href": null
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-81bf-bb95-f041baecc3be",
+              "sourceIds": [
+                "3f037ea7-af35-81bf-bb95-f041baecc3be"
+              ],
+              "type": "heading",
+              "level": 2,
+              "text": [
+                {
+                  "text": "11.2 CAGR EPS × multiple terminal",
+                  "marks": [],
+                  "href": null
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-81d9-a66c-f67880ebe092",
+              "sourceIds": [
+                "3f037ea7-af35-81d9-a66c-f67880ebe092"
+              ],
+              "type": "paragraph",
+              "text": [
+                {
+                  "text": "Cette matrice montre directement le double impératif : forte croissance et multiple terminal élevé. Les valeurs du tableau sont des dérivations du prix de référence [E:E2], du point de départ EPS [GAP:V-FY27-EPS-CONSENSUS] et des hypothèses de croissance/multiple [H:V-H-MATRIX]. [D:V-D-CAGR-MATRIX]",
+                  "marks": [],
+                  "href": null
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-8195-a6da-e447ef8ef3c4",
+              "sourceIds": [
+                "3f037ea7-af35-8195-a6da-e447ef8ef3c4"
+              ],
+              "type": "heading",
+              "level": 1,
+              "text": [
+                {
+                  "text": "12. Attentes implicites",
+                  "marks": [],
+                  "href": null
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-8194-b5bd-ce9ce2471b17",
+              "sourceIds": [
+                "3f037ea7-af35-8194-b5bd-ce9ce2471b17",
+                "3f037ea7-af35-81cf-843a-fe87f2616d30",
+                "3f037ea7-af35-81d2-a007-c6ad40222c64",
+                "3f037ea7-af35-8103-bbf1-c3b53e96a952",
+                "3f037ea7-af35-81ac-b112-cadec947c31e",
+                "3f037ea7-af35-8135-be55-df50a3c609ab",
+                "3f037ea7-af35-8168-a2ce-e29edbba2d47",
+                "3f037ea7-af35-81ca-8cad-dd4681aca58e",
+                "3f037ea7-af35-8187-b9e1-c8c6de0e67c2"
+              ],
+              "type": "list",
+              "ordered": false,
+              "items": [
+                [
+                  {
+                    "text": "une croissance EPS très élevée bien au-delà de FY2027 [P:PERIOD] ;",
+                    "marks": [],
+                    "href": null
+                  }
+                ],
+                [
+                  {
+                    "text": "une monétisation significative de 1.6T [H:B-H1]/3.2T [H:B-H1] ;",
+                    "marks": [],
+                    "href": null
+                  }
+                ],
+                [
+                  {
+                    "text": "un rôle commercial réel de CPO/NPO/ELS ;",
+                    "marks": [],
+                    "href": null
+                  }
+                ],
+                [
+                  {
+                    "text": "une montée significative d’OCS ;",
+                    "marks": [],
+                    "href": null
+                  }
+                ],
+                [
+                  {
+                    "text": "des marges restant très supérieures aux historiques ;",
+                    "marks": [],
+                    "href": null
+                  }
+                ],
+                [
+                  {
+                    "text": "une conversion FCF élevée après le pic de capex ;",
+                    "marks": [],
+                    "href": null
+                  }
+                ],
+                [
+                  {
+                    "text": "une réponse d’offre qui ne détruit pas fortement le pricing ;",
+                    "marks": [],
+                    "href": null
+                  }
+                ],
+                [
+                  {
+                    "text": "une dilution limitée ;",
+                    "marks": [],
+                    "href": null
+                  }
+                ],
+                [
+                  {
+                    "text": "un P/E terminal encore premium plusieurs années plus tard.",
+                    "marks": [],
+                    "href": null
+                  }
+                ]
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-81e7-ba2f-c04690686f94",
+              "sourceIds": [
+                "3f037ea7-af35-81e7-ba2f-c04690686f94"
+              ],
+              "type": "paragraph",
+              "text": [
+                {
+                  "text": "Le Business Full rend cette trajectoire possible. Il ne la rend pas suffisamment certaine pour considérer le rendement actuel comme attractif.",
+                  "marks": [],
+                  "href": null
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-812b-9d7f-e76d5645f625",
+              "sourceIds": [
+                "3f037ea7-af35-812b-9d7f-e76d5645f625"
+              ],
+              "type": "heading",
+              "level": 1,
+              "text": [
+                {
+                  "text": "13. Variables les plus sensibles",
+                  "marks": [],
+                  "href": null
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-8155-a4b4-e725430b1b44",
+              "sourceIds": [
+                "3f037ea7-af35-8155-a4b4-e725430b1b44",
+                "3f037ea7-af35-8119-b57e-e469c0284a37",
+                "3f037ea7-af35-81d8-802f-dcb3054a9973",
+                "3f037ea7-af35-81fd-a837-ee54167a597b",
+                "3f037ea7-af35-812d-9cfb-f8ec741504eb",
+                "3f037ea7-af35-8168-8605-ffbcf507272f",
+                "3f037ea7-af35-814e-9e84-dd7608b01104",
+                "3f037ea7-af35-8186-a5de-cea0c751dd31",
+                "3f037ea7-af35-818b-acbb-d81dad1fd38b",
+                "3f037ea7-af35-813f-850d-c6a6e3e2e748"
+              ],
+              "type": "list",
+              "ordered": true,
+              "items": [
+                [
+                  {
+                    "text": "EPS FY2031 [P:PERIOD]",
+                    "marks": [],
+                    "href": null
+                  }
+                ],
+                [
+                  {
+                    "text": "Marge opérationnelle normalisée",
+                    "marks": [],
+                    "href": null
+                  }
+                ],
+                [
+                  {
+                    "text": "P/E terminal",
+                    "marks": [],
+                    "href": null
+                  }
+                ],
+                [
+                  {
+                    "text": "FCF margin / conversion cash",
+                    "marks": [],
+                    "href": null
+                  }
+                ],
+                [
+                  {
+                    "text": "Dilution",
+                    "marks": [],
+                    "href": null
+                  }
+                ],
+                [
+                  {
+                    "text": "Réponse d’offre InP / laser",
+                    "marks": [],
+                    "href": null
+                  }
+                ],
+                [
+                  {
+                    "text": "Part de marché 1.6T [H:B-H1] / 3.2T [H:B-H1]",
+                    "marks": [],
+                    "href": null
+                  }
+                ],
+                [
+                  {
+                    "text": "Monétisation CPO / NPO / ELS",
+                    "marks": [],
+                    "href": null
+                  }
+                ],
+                [
+                  {
+                    "text": "OCS",
+                    "marks": [],
+                    "href": null
+                  }
+                ],
+                [
+                  {
+                    "text": "Concentration hyperscalers",
+                    "marks": [],
+                    "href": null
+                  }
+                ]
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-81fc-a78e-ec8eb0504f54",
+              "sourceIds": [
+                "3f037ea7-af35-81fc-a78e-ec8eb0504f54"
+              ],
+              "type": "paragraph",
+              "text": [
+                {
+                  "text": "Le modèle est particulièrement sensible à l’interaction entre EPS terminal et multiple. C’est précisément ce qui rend la confiance seulement moyenne malgré la qualité du Business.",
+                  "marks": [],
+                  "href": null
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-816d-85e7-cec68d29363a",
+              "sourceIds": [
+                "3f037ea7-af35-816d-85e7-cec68d29363a"
+              ],
+              "type": "heading",
+              "level": 1,
+              "text": [
+                {
+                  "text": "14. Points à surveiller aux prochains résultats",
+                  "marks": [],
+                  "href": null
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-8130-a401-f2db984ddc74",
+              "sourceIds": [
+                "3f037ea7-af35-8130-a401-f2db984ddc74"
+              ],
+              "type": "paragraph",
+              "text": [
+                {
+                  "text": "Une simple annonce technologique n’est plus suffisante pour relever le Base. À ce prix, il faut des preuves économiques.",
+                  "marks": [],
+                  "href": null
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-81a5-a12e-da8e35b762ab",
+              "sourceIds": [
+                "3f037ea7-af35-81a5-a12e-da8e35b762ab"
+              ],
+              "type": "heading",
+              "level": 1,
+              "text": [
+                {
+                  "text": "15. Conclusion",
+                  "marks": [],
+                  "href": null
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-81cb-a4fe-ca1c1aa266dd",
+              "sourceIds": [
+                "3f037ea7-af35-81cb-a4fe-ca1c1aa266dd"
+              ],
+              "type": "paragraph",
+              "text": [
+                {
+                  "text": "Verdict : Excessive — 24/100 [D:D15]. Lumentum reste une entreprise de grande qualité ; le problème est que le cours de 1 085,42 USD [E:E2] exige désormais une trajectoire proche d’une exécution excellente simplement pour atteindre le rendement cible de 12 %. Le scénario Base donne ~1 469 USD [D:D4] de valeur terminale et ~6,6 % [D:D4] de CAGR actionnaire. Le scénario optimiste encore défendable donne ~1 860 USD [D:D11] et ~12 % [D:D11] de CAGR. Le prix maximal compatible avec 12 % dans le Base reste ~857,50 USD [D:D7]. La marge au cours actuel est donc d’environ -21 % [D:D9], ce qui classe l’action en Surcote forte selon le framework.",
+                  "marks": [],
+                  "href": null
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-8140-bf7c-f13e4f420857",
+              "sourceIds": [
+                "3f037ea7-af35-8140-bf7c-f13e4f420857"
+              ],
+              "type": "paragraph",
+              "text": [
+                {
+                  "text": "Niveau de confiance : Moyen. Les fondamentaux récents sont de bonne qualité, mais l’horizon est long, la société est cyclique, les marges normalisées sont incertaines, le mix technologique FY2031 [P:PERIOD] reste incertain et le résultat est très sensible au multiple terminal.",
+                  "marks": [],
+                  "href": null
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-81ef-afdd-d6b4045e7774",
+              "sourceIds": [
+                "3f037ea7-af35-81ef-afdd-d6b4045e7774"
+              ],
+              "type": "paragraph",
+              "text": [
+                {
+                  "text": "Condition éventuelle d’entrée du point de vue Valuation uniquement : le cours devrait revenir autour de 857 USD [D:D7] pour offrir approximativement 12 %/an [M:V-HURDLE-12] dans le scénario Base inchangé. Une entrée plus élevée nécessiterait une révision documentée du Base grâce à une guidance supérieure, des commandes CPO/NPO/ELS significatives, un FCF structurellement supérieur, des marges durablement meilleures ou une capacité qualifiée augmentant les volumes sans dégrader les economics. Hypothèse principale à surveiller : la marge opérationnelle / FCF normalisée lorsque la réponse d’offre InP et laser aura pleinement augmenté.",
+                  "marks": [],
+                  "href": null
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-8162-8a99-dee6e63795b4",
+              "sourceIds": [
+                "3f037ea7-af35-8162-8a99-dee6e63795b4"
+              ],
+              "type": "heading",
+              "level": 1,
+              "text": [
+                {
+                  "text": "16. Sources",
+                  "marks": [],
+                  "href": null
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-819c-99b5-fea1a3df159a",
+              "sourceIds": [
+                "3f037ea7-af35-819c-99b5-fea1a3df159a",
+                "3f037ea7-af35-8175-900c-c237c4e04e25",
+                "3f037ea7-af35-810a-9e15-fed335a07ccc",
+                "3f037ea7-af35-8132-a362-f505ae8fc259",
+                "3f037ea7-af35-8169-ad7d-db540258abb9",
+                "3f037ea7-af35-8189-b621-d7abb5f622e5",
+                "3f037ea7-af35-817c-953b-e8ebde22d673",
+                "3f037ea7-af35-81d4-8300-d631f7705ebe",
+                "3f037ea7-af35-81a6-a9d1-d5415aa77a4a",
+                "3f037ea7-af35-8123-a0a1-c25e52b17fd1"
+              ],
+              "type": "list",
+              "ordered": false,
+              "items": [
+                [
+                  {
+                    "text": "Lumentum Q4 / FY2026 [P:PERIOD] results — 11 août 2026 — utilisé pour FY2026 [P:PERIOD], Q4, marges et guidance FY2027 [P:PERIOD] — https://investor.lumentum.com/quarterly-results/default.aspx/1000/default.aspx [S:SOURCE-METADATA]",
+                    "marks": [],
+                    "href": null
+                  }
+                ],
+                [
+                  {
+                    "text": "Lumentum FY2026 [P:PERIOD] 10-K — utilisé pour bilan, dette, cash, structure des actions et données réglementaires. [S:SOURCE-METADATA]",
+                    "marks": [],
+                    "href": null
+                  }
+                ],
+                [
+                  {
+                    "text": "AXT 8-K — réservation de capacité InP Lumentum — juillet 2026 — utilisé pour le risque / sécurisation d’approvisionnement — https://www.sec.gov/Archives/edgar/data/1051627/000143774926024883/axti20260715_8k.htm [S:SOURCE-METADATA]",
+                    "marks": [],
+                    "href": null
+                  }
+                ],
+                [
+                  {
+                    "text": "AXT 10-Q — expansion de capacité InP et engagement Coherent — utilisé pour la réponse d’offre sectorielle — https://www.sec.gov/Archives/edgar/data/1051627/000143774926027677/axti20260630_10q.htm [S:SOURCE-METADATA]",
+                    "marks": [],
+                    "href": null
+                  }
+                ],
+                [
+                  {
+                    "text": "Lumentum ECOC 2026 — ELSFP / VCSEL / nouvelles architectures — utilisé pour l’optionalité technologique. [S:SOURCE-METADATA]",
+                    "marks": [],
+                    "href": null
+                  }
+                ],
+                [
+                  {
+                    "text": "Lumentum OCP Global Summit — 1er octobre 2026 — confirme la continuité ELS/CPO, VCSEL et OCS ; ne modifie pas le Base faute de preuve économique chiffrée — https://investor.lumentum.com/financial-news-releases/news-details/2026/Lumentum-Announces-Speaker-Lineup-at-2026-OCP-Global-Summit/default.aspx [S:SOURCE-METADATA]",
+                    "marks": [],
+                    "href": null
+                  }
+                ],
+                [
+                  {
+                    "text": "Investment OS Business Full same-run FV-LITE-20261005-NATIVE — score 85/100, verdict Excellente, confiance High. [S:SOURCE-METADATA]",
+                    "marks": [],
+                    "href": null
+                  }
+                ],
+                [
+                  {
+                    "text": "Investment OS Business baseline — analysisId 3e637ea7af358168887ee9a278989832 — revision 2026-09-25T08:51:00.000Z. [S:SOURCE-METADATA]",
+                    "marks": [],
+                    "href": null
+                  }
+                ],
+                [
+                  {
+                    "text": "Investment OS Valuation baseline — analysisId 3e637ea7af3581158a01d1acbf8539da — revision 2026-09-25T08:59:00.000Z. [S:SOURCE-METADATA]",
+                    "marks": [],
+                    "href": null
+                  }
+                ],
+                [
+                  {
+                    "text": "Investment OS MCP get_quote — assetId lite — price 1085.42 USD — source yahoo-query2 — marketTime 2026-10-02T20:00:01.000Z — fetchedAt 2026-10-05T08:14:28.172Z — freshness closed — metadata.freshness unknown — fallback false. [S:SOURCE-METADATA]",
+                    "marks": [],
+                    "href": null
+                  }
+                ]
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-810c-afe1-d5e0182d831a",
+              "sourceIds": [
+                "3f037ea7-af35-810c-afe1-d5e0182d831a"
+              ],
+              "type": "heading",
+              "level": 1,
+              "text": [
+                {
+                  "text": "Evidence Ledger",
+                  "marks": [],
+                  "href": null
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-81bf-ba3d-fbaa000e6312",
+              "sourceIds": [
+                "3f037ea7-af35-81bf-ba3d-fbaa000e6312"
+              ],
+              "type": "heading",
+              "level": 2,
+              "text": [
+                {
+                  "text": "Derived Ledger",
+                  "marks": [],
+                  "href": null
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-8198-8511-e7cd091c76a2",
+              "sourceIds": [
+                "3f037ea7-af35-8198-8511-e7cd091c76a2"
+              ],
+              "type": "heading",
+              "level": 2,
+              "text": [
+                {
+                  "text": "Evidence Ledger — preuves primaires complémentaires",
+                  "marks": [],
+                  "href": null
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-814a-96f2-dc4ec7b1aaaf",
+              "sourceIds": [
+                "3f037ea7-af35-814a-96f2-dc4ec7b1aaaf"
+              ],
+              "type": "paragraph",
+              "text": [
+                {
+                  "text": "GAP externe conservé : le consensus FY2027E de ~6,3 Md$ de chiffre d’affaires [GAP:V-FY27-REV-CONSENSUS] et le consensus EPS FY2027E de ~21,67 USD [GAP:V-FY27-EPS-CONSENSUS] ne disposent pas, dans ce run, d’une source externe originale avec date, population de consensus et locator vérifiables. Les valeurs sont conservées à l’identique pour continuité du rapport, mais elles empêchent un Evidence Gate Valuation COMPLETE.",
+                  "marks": [],
+                  "href": null
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-8153-ad16-e7ab5f0f8cb7",
+              "sourceIds": [
+                "3f037ea7-af35-8153-ad16-e7ab5f0f8cb7"
+              ],
+              "type": "heading",
+              "level": 1,
+              "text": [
+                {
+                  "text": "Evidence Gate",
+                  "marks": [],
+                  "href": null
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-81b0-81a5-dd8b257c017f",
+              "sourceIds": [
+                "3f037ea7-af35-81b0-81a5-dd8b257c017f"
+              ],
+              "type": "heading",
+              "level": 2,
+              "text": [
+                {
+                  "text": "Gaps résiduels",
+                  "marks": [],
+                  "href": null
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-81af-9a73-d86cca506c1e",
+              "sourceIds": [
+                "3f037ea7-af35-81af-9a73-d86cca506c1e",
+                "3f037ea7-af35-8136-b4b6-f8ec45a970bb",
+                "3f037ea7-af35-81fd-a966-cf71f5af1679",
+                "3f037ea7-af35-81f6-ad33-c913afa0d124",
+                "3f037ea7-af35-8126-9105-e60022dd968f",
+                "3f037ea7-af35-8124-9346-e37bd6a42a7a"
+              ],
+              "type": "list",
+              "ordered": false,
+              "items": [
+                [
+                  {
+                    "text": "consensus FY2029 [P:PERIOD]–FY2031 [P:PERIOD] limité ;",
+                    "marks": [],
+                    "href": null
+                  }
+                ],
+                [
+                  {
+                    "text": "concentration client exacte non publiée ;",
+                    "marks": [],
+                    "href": null
+                  }
+                ],
+                [
+                  {
+                    "text": "marge post-scarcity inconnue ;",
+                    "marks": [],
+                    "href": null
+                  }
+                ],
+                [
+                  {
+                    "text": "economics par produit limitées ;",
+                    "marks": [],
+                    "href": null
+                  }
+                ],
+                [
+                  {
+                    "text": "qualification précise d’autres fournisseurs InP non confirmée ;",
+                    "marks": [],
+                    "href": null
+                  }
+                ],
+                [
+                  {
+                    "text": "calendrier détaillé capex/FCF intermédiaire non suffisamment précis pour un DCF explicite robuste.",
+                    "marks": [],
+                    "href": null
+                  }
+                ]
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-810f-938f-d029df866475",
+              "sourceIds": [
+                "3f037ea7-af35-810f-938f-d029df866475"
+              ],
+              "type": "paragraph",
+              "text": [
+                {
+                  "text": "Ces gaps réduisent la confiance mais ne rendent pas le rapport incomplet : ils sont explicitement traités dans les scénarios et dans le niveau de confiance. Evidence Gate analytique : PARTIAL — les gaps primaires Q4 EPS, guidance EPS et distinctions de nombres d’actions sont fermés par le communiqué Lumentum du 11 août 2026 ; les consensus FY2027 externes sans source originale datée/population/locator restent GAP.",
+                  "marks": [],
+                  "href": null
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-81f7-9369-e836c490aa12",
+              "sourceIds": [
+                "3f037ea7-af35-81f7-9369-e836c490aa12"
+              ],
+              "type": "heading",
+              "level": 1,
+              "text": [
+                {
+                  "text": "HANDOFF — VALUATION v1.3.0",
+                  "marks": [],
+                  "href": null
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-8119-9ffb-c21f491c8ae7",
+              "sourceIds": [
+                "3f037ea7-af35-8119-9ffb-c21f491c8ae7"
+              ],
+              "type": "paragraph",
+              "text": [
+                {
+                  "text": "Contract version : 1.3.0\nPlugin version : 1.3.10\nRun ID : FV-LITE-20261005-NATIVE\nModule : Valuation Analyst\nEntreprise : Lumentum Holdings Inc.\nTicker : LITE\nDate d’analyse : 2026-10-05\nCours de référence : 1 085,42 USD [E:E2]\nSource prix : yahoo-query2 / MCP\nMarket time : 2026-10-02T20:00:01Z\nFreshness : closed\nMetadata freshness : unknown\nDevise : USD\nHorizon : ~4,75 ans / FY2031\nRendement exigé : 12 %\nNiveau de confiance : Moyen\nScore de valorisation : 24/100 [D:D15]\nSignal : Excessive\nStatut vs hurdle : Surcote forte\nConclusion du module : Lumentum reste un business Excellent, mais à 1 085,42 USD [E:E2] la valorisation incorpore désormais une grande partie de l’exécution favorable nécessaire sur FY2027–FY2031. Le Base ne fournit que ~6,6 %/an [D:D4]. Le rendement de 12 % nécessite une trajectoire proche de l’excellente exécution ou un prix d’entrée sensiblement inférieur.\nScénarios : Bear ~575 USD [D:D3] / -12,6 % ; Base ~1 469 USD [D:D4] / +6,6 % ; Bull ~2 408 USD [D:D5] / +18,3 %.\nPrix maximal pour 12 % : ~857,50 USD [D:D7].\nAttentes implicites : forte croissance EPS, marges durablement élevées, conversion FCF forte, dilution contenue, maintien d’un multiple premium et monétisation réussie des nouvelles architectures.\nCroissance déjà pricée ? Quasi totalement.\nCAGR du scénario optimiste défendable : ~12,0 %/an [D:D11].\nExpectations Gap : Élevé.\nPrincipales sensibilités : EPS FY2031 ; marge opérationnelle terminale ; multiple terminal ; conversion FCF ; dilution ; réponse d’offre InP/laser.\nDonnées à transmettre : Business 85/100 — Excellente ; Valuation 24/100 [D:D15] — Excessive ; prix 1 085,42 USD [E:E2] ; Base 1 469 USD / ~6,6 % ; max price 12 % 857,50 USD ; Bear 575 USD / -12,6 % ; Bull 2 408 USD / +18,3 % ; excellente exécution ~1 860 USD / ~12 % ; croissance pricée Quasi totalement ; Expectations Gap Élevé ; confiance Moyen.\nValuation analytical status : COMPLETE.\nPersistence status : NOT_REQUIRED.",
+                  "marks": [],
+                  "href": null
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-81f8-894c-c03f777d82f7",
+              "sourceIds": [
+                "3f037ea7-af35-81f8-894c-c03f777d82f7"
+              ],
+              "type": "paragraph",
+              "text": [
+                {
+                  "text": "Statut REVIEWABLE : PARTIAL. Aucun WRITE. Les références E/D inline couvrent les principaux faits et calculs du rapport, mais les éléments marqués [GAP:…] restent non prouvés au niveau requis et interdisent de déclarer le Gate complet.",
+                  "marks": [],
+                  "href": null
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-81f0-b810-e934dda62b9d:block:81",
+              "sourceIds": [
+                "3f037ea7-af35-81f0-b810-e934dda62b9d"
+              ],
+              "type": "unsupported",
+              "sourceType": "unrepresented_snapshot",
+              "text": "Run ID: FV-LITE-20261005-NATIVE Analysis Date: 2026-10-05 Verdict: Excessive Confidence: Medium Source Freshness: Unknown Status: Draft Analysis: Lumentum Holdings — Valuation Full — FV-LITE-20261005-NATIVE TL;DR Verdict : Excessive — 24/100. Au cours MCP de 1 085,42 USD, le Base FY2031 de ~1 469 USD ne produit qu’environ 6,6 %/an ; le prix maximal Base pour 12 % reste ~857,50 USD et même l’excellente exécution ~1 860 USD n’offre qu’environ 12 %/an. Rapport complet Valuation Check — Lumentum Holdings Run ID : FV-LITE-20261005-NATIVE Date : 5 octobre 2026 Ticker : LITE Cours de référence : 1 085,42 USD [E:E2] Marché : NASDAQ Devise : USD Horizon : ~4,75 ans, terminal FY2031 Rendement exigé : 12 %/an Dernière période publiée : Q4 / FY2026 Business Check disponible : Oui — Business Full du même run, 85/100 [E:E12] — Excellente Niveau de confiance : Moyen Company ID : 3b537ea7af358169b697e2d437379f51 Prix MCP : assetId=lite ; source=yahoo-query2 ; marketTime=2026-10-02T20:00:01.000Z ; fetchedAt=2026-10-05T08:14:28.172Z ; freshness=closed ; metadata.freshness=unknown ; previousClose=941.65 [E:E2] ; isFallback=false ; warnings=[] Continuité Valuation utilisée : Valuation Current v17, analysisId 3e637ea7af3581158a01d1acbf8539da, revision 2026-09-25T08:59:00.000Z. Le changement essentiel par rapport à cette baseline est le prix : 929,04 USD [E:E19] → 1 085,42 USD [E:E2]. Les hypothèses industrielles Bear/Base/Bull ne sont pas relevées car le Business Full du même run ne fournit pas de nouvelle preuve économique justifiant une hausse du Base. TL;DR À 1 085,42 USD [E:E2], Lumentum reste un excellent business mais la création de valeur opérationnelle doit désormais être extraordinairement forte simplement pour produire le rendement requis. Le scénario Base donne encore une forte croissance fondamentale, mais seulement ~6,6 %/an [D:D4] pour l’actionnaire. Même un scénario d’excellente exécution autour de 60 USD [H:V-H-EXCELLENT-EPS] d’EPS × 31x [H:V-H-EXCELLENT-MULTIPLE] = 1 860 USD [D:D11] [H:V-H-EXCELLENT-EPS] ne produit plus qu’environ 12 %/an [D:D11]. Le cours actuel n’exige plus seulement une bonne exécution : il exige une trajectoire située nettement au-dessus du Base et proche de l’ancienne excellente exécution. Trois raisons pour lesquelles le prix peut être justifié Le Business Full reste Excellent — 85/100 [E:E12], avec plusieurs voies de monétisation : 1.6T/3.2T, UHP/CPO, ELS/NPO, OCS et optical D2D. FY2026 et la guidance FY2027 montrent une accélération opérationnelle exceptionnelle. Si Lumentum maintient durablement une croissance EPS proche de 30 % [H:V-H-GROWTH-30] et un multiple terminal premium, le rendement peut rester supérieur à 12 % [M:V-HURDLE-12]. Trois raisons pour lesquelles le titre peut être trop cher Le Base exige déjà 17,2 Md$ [H:V-H-BASE-REV] de CA FY2031, une marge opérationnelle de 38 % [H:V-H-BASE-OM] et 52,5 USD [E:E14] d’EPS, mais ne produit que ~6,6 %/an [D:D4] au cours actuel. Pour obtenir 12 %/an [M:V-HURDLE-12] à 28x [E:E14] terminal, il faut environ 66,4 USD [D:D10] d’EPS FY2031, nettement plus que le Base. L’offre InP/laser augmente ; une normalisation du pricing et des marges pourrait survenir avant la fin de l’horizon.",
+              "diagnostic": {
+                "code": "unsupported_block",
+                "message": "Bloc unrepresented_snapshot non pris en charge par le lecteur.",
+                "severity": "warning"
+              }
+            }
+          ]
+        },
+        "summary": "Verdict : Excessive — 24/100.\nAu cours MCP de 1 085,42 USD, le Base FY2031 de ~1 469 USD ne produit qu’environ 6,6 %/an ; le prix maximal Base pour 12 % reste ~857,50 USD et même l’excellente exécution ~1 860 USD n’offre qu’environ 12 %/an.",
+        "verdict": "Excessive",
+        "confidence": "Medium",
+        "presentation": {
+          "facts": [],
+          "thresholds": [
+            {
+              "id": "threshold:0",
+              "label": "Prix maximal pour 12 %",
+              "value": 857.5,
+              "unit": "USD",
+              "status": "known",
+              "asOf": null,
+              "sourceBlockIds": [
+                "3f037ea7-af35-815d-be11-ec3c574dab22"
+              ],
+              "provenance": {
+                "kind": "notion",
+                "sourceId": "3f037ea7-af35-81f0-b810-e934dda62b9d",
+                "revision": "2026-10-05T10:27:00.000Z",
+                "capturedAt": "2026-10-05T10:27:00.000Z"
+              }
+            }
+          ],
+          "scenarios": [
+            {
+              "id": "scenario:0",
+              "label": "Bear",
+              "condition": "Bear",
+              "impact": "575 USD · -12,6 %",
+              "status": "known",
+              "asOf": null,
+              "sourceBlockIds": [
+                "3f037ea7-af35-8119-9ffb-c21f491c8ae7"
+              ],
+              "provenance": {
+                "kind": "notion",
+                "sourceId": "3f037ea7-af35-81f0-b810-e934dda62b9d",
+                "revision": "2026-10-05T10:27:00.000Z",
+                "capturedAt": "2026-10-05T10:27:00.000Z"
+              },
+              "terminalValue": {
+                "id": "scenario:0:terminal",
+                "label": "Prix terminal",
+                "value": 575,
+                "unit": "USD",
+                "status": "known",
+                "asOf": null,
+                "sourceBlockIds": [
+                  "3f037ea7-af35-8119-9ffb-c21f491c8ae7"
+                ],
+                "provenance": {
+                  "kind": "notion",
+                  "sourceId": "3f037ea7-af35-81f0-b810-e934dda62b9d",
+                  "revision": "2026-10-05T10:27:00.000Z",
+                  "capturedAt": "2026-10-05T10:27:00.000Z"
+                }
+              },
+              "cagrPercent": {
+                "id": "scenario:0:cagr",
+                "label": "CAGR actionnaire",
+                "value": -12.6,
+                "unit": "%",
+                "status": "known",
+                "asOf": null,
+                "sourceBlockIds": [
+                  "3f037ea7-af35-8119-9ffb-c21f491c8ae7"
+                ],
+                "provenance": {
+                  "kind": "notion",
+                  "sourceId": "3f037ea7-af35-81f0-b810-e934dda62b9d",
+                  "revision": "2026-10-05T10:27:00.000Z",
+                  "capturedAt": "2026-10-05T10:27:00.000Z"
+                }
+              },
+              "horizon": null
+            }
+          ]
+        },
+        "projection": {
+          "status": "absent"
+        },
+        "diagnostics": [
+          {
+            "code": "unsupported_block",
+            "message": "Bloc unrepresented_snapshot non pris en charge par le lecteur.",
+            "severity": "warning"
+          }
+        ],
+        "score": "24"
+      },
+      "metadata": {
+        "revision": "2026-10-05T10:27:00.000Z",
+        "freshness": "unknown",
+        "provenance": {
+          "kind": "notion",
+          "sourceId": "3f037ea7-af35-81f0-b810-e934dda62b9d",
+          "revision": "2026-10-05T10:27:00.000Z",
+          "capturedAt": "2026-10-05T10:27:00.000Z"
+        },
+        "diagnostics": [
+          {
+            "code": "unsupported_block",
+            "message": "Bloc unrepresented_snapshot non pris en charge par le lecteur.",
+            "severity": "warning"
+          }
+        ]
+      }
+    }
+  },
+  "isError": false
+}

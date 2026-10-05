@@ -1,0 +1,1764 @@
+
+> investment-os@0.1.0 test
+> npm run typecheck && npm run build && node --test tests/ai-prompt.test.mjs tests/demo-data.test.mjs tests/resource-cache-scope.test.mjs tests/rendered-html.test.mjs tests/analysis-reference-fixtures.test.mjs tests/analysis-inline-format.test.mjs tests/analysis-canonical-renderer.test.mjs tests/cio-summary-routing.test.mjs tests/presentation-projection.test.mjs tests/performance.test.mjs tests/notion-security.test.mjs tests/quotes-startup.test.mjs tests/theme-baskets.test.mjs tests/theme-basket-warmup.test.mjs tests/audit-css-governance.test.mjs tests/audit-css-ownership.test.mjs tests/storybook-coverage.test.mjs tests/domain-current-selection.test.mjs tests/domain-analysis-contracts.test.mjs tests/domain-investment-contracts.test.mjs tests/domain-portfolio.test.mjs tests/investment-core.test.mjs tests/investment-read-adapter.test.mjs tests/notion-adapter-write.test.mjs tests/mcp-contract.test.mjs tests/mcp-server.test.mjs
+
+
+> investment-os@0.1.0 typecheck
+> tsc --noEmit --pretty false
+
+
+> investment-os@0.1.0 build
+> bash scripts/build-verified.sh
+
+/usr/local/bin/timeout
+Running bounded vinext build...
+
+  vinext build  (Vite 8.0.13)
+
+[1/5] analyze client references...
+[2Ktransforming...✓ 322 modules transformed.
+rendering chunks...
+✓ built in 1.39s
+[2/5] analyze server references...
+[2Ktransforming...✓ 142 modules transformed.
+rendering chunks...
+✓ built in 204ms
+[3/5] build rsc environment...
+[2Ktransforming...✓ 397 modules transformed.
+rendering chunks...
+computing gzip size...
+✓ built in 1.13s
+[4/5] build client environment...
+[2Ktransforming...✓ 150 modules transformed.
+rendering chunks...
+computing gzip size...
+✓ built in 642ms
+[5/5] build ssr environment...
+[2Ktransforming...✓ 148 modules transformed.
+rendering chunks...
+computing gzip size...
+✓ built in 695ms
+[0m
+  Route (app)
+  ─ ? /
+
+  ? Unknown
+
+  ? Some routes could not be classified. vinext currently uses static analysis
+    and cannot detect dynamic API usage (headers(), cookies(), etc.) at build time.
+    Automatic classification will be improved in a future release.
+
+  Build complete. Run `vinext start` to start the production server.
+
+Validated Sites artifact: ESM Worker default.fetch and hosting manifest are present.
+TAP version 13
+# Subtest: AI launcher exposes only the canonical investment workflows
+ok 1 - AI launcher exposes only the canonical investment workflows
+  ---
+  duration_ms: 30.670214
+  type: 'test'
+  ...
+# Subtest: AI prompt includes the company, ticker, profile, and French output instruction
+ok 2 - AI prompt includes the company, ticker, profile, and French output instruction
+  ---
+  duration_ms: 3.620858
+  type: 'test'
+  ...
+# Subtest: demo AI prompt names a fictitious profile and excludes the personal Notion profile
+ok 3 - demo AI prompt names a fictitious profile and excludes the personal Notion profile
+  ---
+  duration_ms: 2.286167
+  type: 'test'
+  ...
+# Subtest: demo AI selector uses only the local public company examples
+ok 4 - demo AI selector uses only the local public company examples
+  ---
+  duration_ms: 0.469602
+  type: 'test'
+  ...
+# Subtest: plugin mention is the first text in every generated prompt
+ok 5 - plugin mention is the first text in every generated prompt
+  ---
+  duration_ms: 1.31876
+  type: 'test'
+  ...
+# Subtest: ChatGPT URL encodes the prompt and does not send it
+ok 6 - ChatGPT URL encodes the prompt and does not send it
+  ---
+  duration_ms: 0.707894
+  type: 'test'
+  ...
+# Subtest: a supported paragraph plus an unsupported Notion task both survive normalization
+ok 7 - a supported paragraph plus an unsupported Notion task both survive normalization
+  ---
+  duration_ms: 338.902462
+  type: 'test'
+  ...
+# Subtest: list and table residual markup is detected and cleaned without losing cell text
+ok 8 - list and table residual markup is detected and cleaned without losing cell text
+  ---
+  duration_ms: 2.126876
+  type: 'test'
+  ...
+# Subtest: two-column HTML tables become canonical typed table blocks
+ok 9 - two-column HTML tables become canonical typed table blocks
+  ---
+  duration_ms: 1.773701
+  type: 'test'
+  ...
+# Subtest: nested Notion descendants, bookmarks and table descendants retain canonical content and source IDs
+ok 10 - nested Notion descendants, bookmarks and table descendants retain canonical content and source IDs
+  ---
+  duration_ms: 1.584464
+  type: 'test'
+  ...
+# Subtest: adjacent ordered Notion items keep one continuous list and all source IDs
+ok 11 - adjacent ordered Notion items keep one continuous list and all source IDs
+  ---
+  duration_ms: 240.422092
+  type: 'test'
+  ...
+# Subtest: legacy Advantest and partial scenario facts become numeric canonical metrics with source blocks
+ok 12 - legacy Advantest and partial scenario facts become numeric canonical metrics with source blocks
+  ---
+  duration_ms: 11.257542
+  type: 'test'
+  ...
+# Subtest: scenario punctuation variants share valuation-summary extraction and normalize to equal numbers
+ok 13 - scenario punctuation variants share valuation-summary extraction and normalize to equal numbers
+  ---
+  duration_ms: 6.101674
+  type: 'test'
+  ...
+# Subtest: TL;DR tables remain visible in server-rendered analysis even when not summarized
+ok 14 - TL;DR tables remain visible in server-rendered analysis even when not summarized
+  ---
+  duration_ms: 197.48437
+  type: 'test'
+  ...
+# Subtest: scenario table with an extra hypothesis column stays visible and is not promoted
+ok 15 - scenario table with an extra hypothesis column stays visible and is not promoted
+  ---
+  duration_ms: 7.322378
+  type: 'test'
+  ...
+# Subtest: horizontal scenarios choose shareholder CAGR over EPS CAGR and retain dividend-inclusive values
+ok 16 - horizontal scenarios choose shareholder CAGR over EPS CAGR and retain dividend-inclusive values
+  ---
+  duration_ms: 0.650074
+  type: 'test'
+  ...
+# Subtest: invalid legacy dates are diagnosed while the normalized contract stays valid
+ok 17 - invalid legacy dates are diagnosed while the normalized contract stays valid
+  ---
+  duration_ms: 1.695076
+  type: 'test'
+  ...
+# Subtest: unmapped runtime document categories retain their original family as unknown
+ok 18 - unmapped runtime document categories retain their original family as unknown
+  ---
+  duration_ms: 81.230919
+  type: 'test'
+  ...
+# Subtest: company preview keeps the reader summary and removes canonical body from serialized payload
+ok 19 - company preview keeps the reader summary and removes canonical body from serialized payload
+  ---
+  duration_ms: 25.219163
+  type: 'test'
+  ...
+# Subtest: valid projection evidence hydrates canonical numeric metrics without copying evidenceIds into metric contracts
+ok 20 - valid projection evidence hydrates canonical numeric metrics without copying evidenceIds into metric contracts
+  ---
+  duration_ms: 7.942224
+  type: 'test'
+  ...
+# Subtest: absent, invalid, null, malformed and family-mismatched projections fall back to report content
+ok 21 - absent, invalid, null, malformed and family-mismatched projections fall back to report content
+  ---
+  duration_ms: 68.873809
+  type: 'test'
+  ...
+# Subtest: production reader renders the same business structure for distinct companies and keeps family compositions
+ok 22 - production reader renders the same business structure for distinct companies and keeps family compositions
+  ---
+  duration_ms: 178.666215
+  type: 'test'
+  ...
+# Subtest: CIO memo reasoning keeps canonical links after API serialization
+ok 23 - CIO memo reasoning keeps canonical links after API serialization
+  ---
+  duration_ms: 3.612727
+  type: 'test'
+  ...
+# Subtest: CompanyAnalysisDocument accepts validated canonical API bodies and keeps stale content on refresh failure
+ok 24 - CompanyAnalysisDocument accepts validated canonical API bodies and keeps stale content on refresh failure
+  ---
+  duration_ms: 12.408734
+  type: 'test'
+  ...
+# Subtest: CompanyAnalysisDocument rejects wrong-ID or invalid canonical bodies and still accepts legacy text
+ok 25 - CompanyAnalysisDocument rejects wrong-ID or invalid canonical bodies and still accepts legacy text
+  ---
+  duration_ms: 5.802847
+  type: 'test'
+  ...
+# Subtest: citation numbers and source list share the same sorted order
+ok 26 - citation numbers and source list share the same sorted order
+  ---
+  duration_ms: 5.828099
+  type: 'test'
+  ...
+# Subtest: Notion rich text annotations render emphasis without visible Markdown markers
+ok 27 - Notion rich text annotations render emphasis without visible Markdown markers
+  ---
+  duration_ms: 74.264212
+  type: 'test'
+  ...
+# Subtest: adjacent emphasis and malformed bold delimiters do not leak double asterisks
+ok 28 - adjacent emphasis and malformed bold delimiters do not leak double asterisks
+  ---
+  duration_ms: 1.196931
+  type: 'test'
+  ...
+# Subtest: supported HTML emphasis becomes semantic formatting without literal tags
+ok 29 - supported HTML emphasis becomes semantic formatting without literal tags
+  ---
+  duration_ms: 2.086494
+  type: 'test'
+  ...
+# Subtest: analysis reference registry covers the six canonical Notion templates
+ok 30 - analysis reference registry covers the six canonical Notion templates
+  ---
+  duration_ms: 26.30257
+  type: 'test'
+  ...
+# Subtest: TSMC and Advantest display fixtures preserve the reviewed valuation examples
+ok 31 - TSMC and Advantest display fixtures preserve the reviewed valuation examples
+  ---
+  duration_ms: 1.637693
+  type: 'test'
+  ...
+# Subtest: TSMC fixture values are extracted as scenarios and thresholds without changing their meaning
+ok 32 - TSMC fixture values are extracted as scenarios and thresholds without changing their meaning
+  ---
+  duration_ms: 86.668792
+  type: 'test'
+  ...
+# Subtest: runtime routes and package identity have no isolated legacy template remnants
+ok 33 - runtime routes and package identity have no isolated legacy template remnants
+  ---
+  duration_ms: 246.278767
+  type: 'test'
+  ...
+# Subtest: the unified renderer is the documented parser entry point
+ok 34 - the unified renderer is the documented parser entry point
+  ---
+  duration_ms: 1.22562
+  type: 'test'
+  ...
+# Subtest: the semantic template registry covers every company section
+ok 35 - the semantic template registry covers every company section
+  ---
+  duration_ms: 2.29887
+  type: 'test'
+  ...
+# Subtest: valuation scenario extraction keeps terminal prices, CAGR and thresholds distinct
+ok 36 - valuation scenario extraction keeps terminal prices, CAGR and thresholds distinct
+  ---
+  duration_ms: 49.910617
+  type: 'test'
+  ...
+# Subtest: metadata discovery queues only missing or edited Notion pages
+ok 37 - metadata discovery queues only missing or edited Notion pages
+  ---
+  duration_ms: 4.057006
+  type: 'test'
+  ...
+# Subtest: large Notion imports are durable, bounded and atomically published
+ok 38 - large Notion imports are durable, bounded and atomically published
+  ---
+  duration_ms: 25.887955
+  type: 'test'
+  ...
+# Subtest: browser Notion surfaces preserve read-only data access except the dedicated owner-private refresh
+ok 39 - browser Notion surfaces preserve read-only data access except the dedicated owner-private refresh
+  ---
+  duration_ms: 6.675235
+  type: 'test'
+  ...
+# Subtest: Notion webhook is authenticated, durable and coalesces on the latest page version
+ok 40 - Notion webhook is authenticated, durable and coalesces on the latest page version
+  ---
+  duration_ms: 4.486215
+  type: 'test'
+  ...
+# Subtest: app, document and market refreshes keep separate responsibilities
+ok 41 - app, document and market refreshes keep separate responsibilities
+  ---
+  duration_ms: 2.344576
+  type: 'test'
+  ...
+# Subtest: portfolio keeps documentary freshness visible without redundant status cards
+ok 42 - portfolio keeps documentary freshness visible without redundant status cards
+  ---
+  duration_ms: 1.319322
+  type: 'test'
+  ...
+# Subtest: Notion status panel exposes source freshness without manual mutation controls
+ok 43 - Notion status panel exposes source freshness without manual mutation controls
+  ---
+  duration_ms: 1.445827
+  type: 'test'
+  ...
+# Subtest: portfolio refresh uses structured properties without downloading page blocks
+ok 44 - portfolio refresh uses structured properties without downloading page blocks
+  ---
+  duration_ms: 2.977744
+  type: 'test'
+  ...
+# Subtest: trajectory reads both targets from Notion and keeps active positions outside target visible
+ok 45 - trajectory reads both targets from Notion and keeps active positions outside target visible
+  ---
+  duration_ms: 4.27282
+  type: 'test'
+  ...
+# Subtest: company ownership is projected from active positive Portfolio positions
+ok 46 - company ownership is projected from active positive Portfolio positions
+  ---
+  duration_ms: 1.470937
+  type: 'test'
+  ...
+# Subtest: company directory derives membership only from explicit Notion relations
+ok 47 - company directory derives membership only from explicit Notion relations
+  ---
+  duration_ms: 1.083529
+  type: 'test'
+  ...
+# Subtest: browser history canonicalizes removed company tabs to Entreprises
+ok 48 - browser history canonicalizes removed company tabs to Entreprises
+  ---
+  duration_ms: 0.69085
+  type: 'test'
+  ...
+# Subtest: CIO verdict requires the linked Current validated Investment Memo
+ok 49 - CIO verdict requires the linked Current validated Investment Memo
+  ---
+  duration_ms: 1.818881
+  type: 'test'
+  ...
+# Subtest: Notion integrity audits explicit Watchlist relation cardinality and inverse status
+ok 50 - Notion integrity audits explicit Watchlist relation cardinality and inverse status
+  ---
+  duration_ms: 1.159391
+  type: 'test'
+  ...
+# Subtest: company detail stays dynamic instead of using the legacy Nebius cockpit
+ok 51 - company detail stays dynamic instead of using the legacy Nebius cockpit
+  ---
+  duration_ms: 0.81293
+  type: 'test'
+  ...
+# Subtest: earnings expose the five canonical refresh routes in the company design system
+ok 52 - earnings expose the five canonical refresh routes in the company design system
+  ---
+  duration_ms: 5.02043
+  type: 'test'
+  ...
+# Subtest: two-column earnings tables prioritize result readability on mobile
+ok 53 - two-column earnings tables prioritize result readability on mobile
+  ---
+  duration_ms: 3.338468
+  type: 'test'
+  ...
+# Subtest: removed top-level analysis and search APIs have no worker routes
+ok 54 - removed top-level analysis and search APIs have no worker routes
+  ---
+  duration_ms: 0.710665
+  type: 'test'
+  ...
+# Subtest: archive policy keeps one latest document per company and section
+ok 55 - archive policy keeps one latest document per company and section
+  ---
+  duration_ms: 0.93066
+  type: 'test'
+  ...
+# Subtest: company fiches use primary ownership links while preserving secondary mentions
+ok 56 - company fiches use primary ownership links while preserving secondary mentions
+  ---
+  duration_ms: 1.132586
+  type: 'test'
+  ...
+# Subtest: company fiches resolve current analyses from canonical Companies relations
+ok 57 - company fiches resolve current analyses from canonical Companies relations
+  ---
+  duration_ms: 0.906049
+  type: 'test'
+  ...
+# Subtest: company and analysis layouts preserve the Notion parser contract
+ok 58 - company and analysis layouts preserve the Notion parser contract
+  ---
+  duration_ms: 2.02386
+  type: 'test'
+  ...
+# Subtest: all canonical analysis families share one summary presentation contract
+ok 59 - all canonical analysis families share one summary presentation contract
+  ---
+  duration_ms: 115.563628
+  type: 'test'
+  ...
+# Subtest: analysis facts split only on explicit separators and preserve prose punctuation
+ok 60 - analysis facts split only on explicit separators and preserve prose punctuation
+  ---
+  duration_ms: 117.800814
+  type: 'test'
+  ...
+# Subtest: each canonical analysis family promotes only its decision-useful facts
+ok 61 - each canonical analysis family promotes only its decision-useful facts
+  ---
+  duration_ms: 2.586404
+  type: 'test'
+  ...
+# Subtest: standard analyses and CIO memo reuse the shared hero and fact grid
+ok 62 - standard analyses and CIO memo reuse the shared hero and fact grid
+  ---
+  duration_ms: 8.886407
+  type: 'test'
+  ...
+# Subtest: standard analysis hero uses concise titles and formats scores without a duplicate metadata grid
+ok 63 - standard analysis hero uses concise titles and formats scores without a duplicate metadata grid
+  ---
+  duration_ms: 1.625311
+  type: 'test'
+  ...
+# Subtest: analysis reader leads with editorial analysis and keeps sources after the report
+ok 64 - analysis reader leads with editorial analysis and keeps sources after the report
+  ---
+  duration_ms: 1.598637
+  type: 'test'
+  ...
+# Subtest: Investment Memo CIO has a dedicated decision view without a numeric memo score
+ok 65 - Investment Memo CIO has a dedicated decision view without a numeric memo score
+  ---
+  duration_ms: 3.833495
+  type: 'test'
+  ...
+# Subtest: Notion tables use one adaptive reusable component
+ok 66 - Notion tables use one adaptive reusable component
+  ---
+  duration_ms: 38.564447
+  type: 'test'
+  ...
+# Subtest: analysis disclosures use the company width while keeping prose readable
+ok 67 - analysis disclosures use the company width while keeping prose readable
+  ---
+  duration_ms: 3.025003
+  type: 'test'
+  ...
+# Subtest: company summaries are segmented for a scannable mobile preview
+ok 68 - company summaries are segmented for a scannable mobile preview
+  ---
+  duration_ms: 0.690572
+  type: 'test'
+  ...
+# Subtest: research copy uses the shared readable text token
+ok 69 - research copy uses the shared readable text token
+  ---
+  duration_ms: 1.815857
+  type: 'test'
+  ...
+# Subtest: company directory keeps stable identities and accessible row actions
+ok 70 - company directory keeps stable identities and accessible row actions
+  ---
+  duration_ms: 0.567317
+  type: 'test'
+  ...
+# Subtest: Apple Light theme stays isolated from data and parser contracts
+ok 71 - Apple Light theme stays isolated from data and parser contracts
+  ---
+  duration_ms: 2.001792
+  type: 'test'
+  ...
+# Subtest: Apple Light theme covers shared surfaces and aligns financial figures
+ok 72 - Apple Light theme covers shared surfaces and aligns financial figures
+  ---
+  duration_ms: 1.821258
+  type: 'test'
+  ...
+# Subtest: portfolio hides internal calculation and method panels
+ok 73 - portfolio hides internal calculation and method panels
+  ---
+  duration_ms: 1.003511
+  type: 'test'
+  ...
+# Subtest: shared UI primitives drive progress bars and segmented filters
+ok 74 - shared UI primitives drive progress bars and segmented filters
+  ---
+  duration_ms: 2.98987
+  type: 'test'
+  ...
+# Subtest: the company directory uses production discovery and search primitives
+ok 75 - the company directory uses production discovery and search primitives
+  ---
+  duration_ms: 1.010208
+  type: 'test'
+  ...
+# Subtest: UI-2 keeps the primitive manifest and unified company reference states
+ok 76 - UI-2 keeps the primitive manifest and unified company reference states
+  ---
+  duration_ms: 3.726442
+  type: 'test'
+  ...
+# Subtest: research actions and coverage use the shared mobile UI primitives
+ok 77 - research actions and coverage use the shared mobile UI primitives
+  ---
+  duration_ms: 2.952008
+  type: 'test'
+  ...
+# Subtest: analysis and company details share the same liquid-glass primitives without table card nesting
+ok 78 - analysis and company details share the same liquid-glass primitives without table card nesting
+  ---
+  duration_ms: 8.094429
+  type: 'test'
+  ...
+# Subtest: analysis section headings stay contained without an extra surface
+ok 79 - analysis section headings stay contained without an extra surface
+  ---
+  duration_ms: 6.000047
+  type: 'test'
+  ...
+# Subtest: company list no longer includes Radar, analysis index or search page code
+ok 80 - company list no longer includes Radar, analysis index or search page code
+  ---
+  duration_ms: 1.403489
+  type: 'test'
+  ...
+# Subtest: portfolio exposure keeps ETF look-through and exclusive primary themes
+ok 81 - portfolio exposure keeps ETF look-through and exclusive primary themes
+  ---
+  duration_ms: 1.354209
+  type: 'test'
+  ...
+# Subtest: portfolio trajectories keep Notion targets and active positions isolated
+ok 82 - portfolio trajectories keep Notion targets and active positions isolated
+  ---
+  duration_ms: 1.785005
+  type: 'test'
+  ...
+# Subtest: Run Receipt is hidden as a complete presentation section without mutating source blocks
+ok 83 - Run Receipt is hidden as a complete presentation section without mutating source blocks
+  ---
+  duration_ms: 170.713033
+  type: 'test'
+  ...
+# Subtest: short analytical tables are not assigned horizontal scrolling solely by column count
+ok 84 - short analytical tables are not assigned horizontal scrolling solely by column count
+  ---
+  duration_ms: 66.60072
+  type: 'test'
+  ...
+# Subtest: valuation promotion keeps JPY scenario and hurdle values once with source indexes
+ok 85 - valuation promotion keeps JPY scenario and hurdle values once with source indexes
+  ---
+  duration_ms: 0.635729
+  type: 'test'
+  ...
+# Subtest: promoted valuation tables hide only their duplicate data and empty headings
+ok 86 - promoted valuation tables hide only their duplicate data and empty headings
+  ---
+  duration_ms: 12.739701
+  type: 'test'
+  ...
+# Subtest: company analysis labels stay short and numeric scores state their denominator
+ok 87 - company analysis labels stay short and numeric scores state their denominator
+  ---
+  duration_ms: 3.180911
+  type: 'test'
+  ...
+# Subtest: valuation extraction recognizes explicit hurdle heading and reference market data
+ok 88 - valuation extraction recognizes explicit hurdle heading and reference market data
+  ---
+  duration_ms: 0.727438
+  type: 'test'
+  ...
+# Subtest: valuation presentation extracts safe partial facts without hiding partial source blocks
+ok 89 - valuation presentation extracts safe partial facts without hiding partial source blocks
+  ---
+  duration_ms: 4.344766
+  type: 'test'
+  ...
+# Subtest: Amazon-style scenario prose keeps final punctuation, approximations, and shareholder CAGR distinct from EBIT CAGR
+ok 90 - Amazon-style scenario prose keeps final punctuation, approximations, and shareholder CAGR distinct from EBIT CAGR
+  ---
+  duration_ms: 3.399766
+  type: 'test'
+  ...
+# Subtest: Amazon Notion lines extract partial facts with exact source indexes and scenario word boundaries
+ok 91 - Amazon Notion lines extract partial facts with exact source indexes and scenario word boundaries
+  ---
+  duration_ms: 0.867086
+  type: 'test'
+  ...
+# Subtest: analysis sections render H1-only roots and retain Advantest H2/H3 content
+ok 92 - analysis sections render H1-only roots and retain Advantest H2/H3 content
+  ---
+  duration_ms: 303.340727
+  type: 'test'
+  ...
+# Subtest: valuation presentation recognizes semantic row and column tables while rejecting unlabeled or currency-conflicted data
+ok 93 - valuation presentation recognizes semantic row and column tables while rejecting unlabeled or currency-conflicted data
+  ---
+  duration_ms: 4.991462
+  type: 'test'
+  ...
+# Subtest: company analysis route keeps the company shell mounted and presents the selected document inside its panel
+ok 94 - company analysis route keeps the company shell mounted and presents the selected document inside its panel
+  ---
+  duration_ms: 3.442996
+  type: 'test'
+  ...
+# Subtest: global surfaces use white content materials and shell has no blue radial canvas
+ok 95 - global surfaces use white content materials and shell has no blue radial canvas
+  ---
+  duration_ms: 78.17213
+  type: 'test'
+  ...
+# Subtest: embedded company analysis fetches its full document instead of rendering the stripped company preview
+ok 96 - embedded company analysis fetches its full document instead of rendering the stripped company preview
+  ---
+  duration_ms: 2.118753
+  type: 'test'
+  ...
+# Subtest: the company back button returns to the Companies list regardless of visited analyses
+ok 97 - the company back button returns to the Companies list regardless of visited analyses
+  ---
+  duration_ms: 8.906636
+  type: 'test'
+  ...
+# Subtest: CSS governance matches the checked-in debt baseline
+ok 98 - CSS governance matches the checked-in debt baseline
+  ---
+  duration_ms: 787.93783
+  type: 'test'
+  ...
+# Subtest: the audit keeps generated primitives and scoped state selectors out of orphan findings
+ok 99 - the audit keeps generated primitives and scoped state selectors out of orphan findings
+  ---
+  duration_ms: 544.529051
+  type: 'test'
+  ...
+# Subtest: production and Storybook import the same public CSS entry
+ok 100 - production and Storybook import the same public CSS entry
+  ---
+  duration_ms: 2.358704
+  type: 'test'
+  ...
+# Subtest: responsive contexts are canonicalized before conflict classification
+ok 101 - responsive contexts are canonicalized before conflict classification
+  ---
+  duration_ms: 621.881636
+  type: 'test'
+  ...
+# Subtest: dead CSS audit uses the canonical dynamic registry and scans object column classes
+ok 102 - dead CSS audit uses the canonical dynamic registry and scans object column classes
+  ---
+  duration_ms: 3.950749
+  type: 'test'
+  ...
+# Subtest: CSS ownership audit exits successfully when contract metrics stay at zero
+ok 103 - CSS ownership audit exits successfully when contract metrics stay at zero
+  ---
+  duration_ms: 325.550808
+  type: 'test'
+  ...
+# Subtest: CSS ownership audit exits nonzero when a globals-to-UX collision is injected
+ok 104 - CSS ownership audit exits nonzero when a globals-to-UX collision is injected
+  ---
+  duration_ms: 406.876719
+  type: 'test'
+  ...
+# Subtest: CIO memo uses its human introduction instead of the technical handoff
+ok 105 - CIO memo uses its human introduction instead of the technical handoff
+  ---
+  duration_ms: 30.34588
+  type: 'test'
+  ...
+# Subtest: CIO memo humanizes a historical handoff only as a last resort
+ok 106 - CIO memo humanizes a historical handoff only as a last resort
+  ---
+  duration_ms: 0.947175
+  type: 'test'
+  ...
+# Subtest: other analysis families preserve their property-first fallback
+ok 107 - other analysis families preserve their property-first fallback
+  ---
+  duration_ms: 0.654607
+  type: 'test'
+  ...
+# Subtest: analysis summaries split sentence runs while preserving French abbreviations and decimal values
+ok 108 - analysis summaries split sentence runs while preserving French abbreviations and decimal values
+  ---
+  duration_ms: 0.273681
+  type: 'test'
+  ...
+# Subtest: demo company and research endpoints resolve only fictional demo ids
+ok 109 - demo company and research endpoints resolve only fictional demo ids
+  ---
+  duration_ms: 43.608068
+  type: 'test'
+  ...
+# Subtest: LumaGrid demo has a linked, chronological five-part educational case
+ok 110 - LumaGrid demo has a linked, chronological five-part educational case
+  ---
+  duration_ms: 4.639252
+  type: 'test'
+  ...
+# Subtest: demo portfolio relationships reconcile with demo companies and carry no live quotes
+ok 111 - demo portfolio relationships reconcile with demo companies and carry no live quotes
+  ---
+  duration_ms: 0.70746
+  type: 'test'
+  ...
+# Subtest: demo basket data follows requested dimension, period, and selection
+ok 112 - demo basket data follows requested dimension, period, and selection
+  ---
+  duration_ms: 0.996126
+  type: 'test'
+  ...
+# Subtest: public demo fixtures contain no personal Notion URLs
+ok 113 - public demo fixtures contain no personal Notion URLs
+  ---
+  duration_ms: 3.942172
+  type: 'test'
+  ...
+# Subtest: domain version and common dates, numbers, and safe-link policy are strict
+ok 114 - domain version and common dates, numbers, and safe-link policy are strict
+  ---
+  duration_ms: 30.404352
+  type: 'test'
+  ...
+# Subtest: AnalysisHeader and portable content preserve stable IDs and unsupported blocks
+ok 115 - AnalysisHeader and portable content preserve stable IDs and unsupported blocks
+  ---
+  duration_ms: 140.638971
+  type: 'test'
+  ...
+# Subtest: discriminated analysis families validate current fields and keep CIO free of scores
+ok 116 - discriminated analysis families validate current fields and keep CIO free of scores
+  ---
+  duration_ms: 2.057188
+  type: 'test'
+  ...
+# Subtest: portable facts and scenarios retain provenance and only reference canonical block IDs
+ok 117 - portable facts and scenarios retain provenance and only reference canonical block IDs
+  ---
+  duration_ms: 3.689624
+  type: 'test'
+  ...
+# Subtest: projection status is a discriminated union and delegates projection schema validation
+ok 118 - projection status is a discriminated union and delegates projection schema validation
+  ---
+  duration_ms: 2.79329
+  type: 'test'
+  ...
+# Subtest: preview and service results are versioned, strict, and cannot carry report bodies
+ok 119 - preview and service results are versioned, strict, and cannot carry report bodies
+  ---
+  duration_ms: 5.719516
+  type: 'test'
+  ...
+# Subtest: Core selector has no app, transport, React, Notion or LLM imports
+ok 120 - Core selector has no app, transport, React, Notion or LLM imports
+  ---
+  duration_ms: 28.884402
+  type: 'test'
+  ...
+# Subtest: an explicit current ID wins over a newer legacy candidate and does not mutate input
+ok 121 - an explicit current ID wins over a newer legacy candidate and does not mutate input
+  ---
+  duration_ms: 11.996854
+  type: 'test'
+  ...
+# Subtest: multiple explicit IDs are invalid and never trigger fallback
+ok 122 - multiple explicit IDs are invalid and never trigger fallback
+  ---
+  duration_ms: 2.031262
+  type: 'test'
+  ...
+# Subtest: duplicate copies of the same explicit ID count as one relation
+ok 123 - duplicate copies of the same explicit ID count as one relation
+  ---
+  duration_ms: 0.352878
+  type: 'test'
+  ...
+# Subtest: missing, archived, wrong-owner and wrong-family explicit targets fail closed
+ok 124 - missing, archived, wrong-owner and wrong-family explicit targets fail closed
+  ---
+  duration_ms: 0.39869
+  type: 'test'
+  ...
+# Subtest: a duplicate candidate identity for an explicit pointer is an invalid input
+ok 125 - a duplicate candidate identity for an explicit pointer is an invalid input
+  ---
+  duration_ms: 0.1803
+  type: 'test'
+  ...
+# Subtest: a CIO memo is distinct from a Notion decision and requires its exact validated agent
+ok 126 - a CIO memo is distinct from a Notion decision and requires its exact validated agent
+  ---
+  duration_ms: 0.431813
+  type: 'test'
+  ...
+# Subtest: ordinary explicit Draft, Rejected and unmapped statuses remain selected with diagnostics
+ok 127 - ordinary explicit Draft, Rejected and unmapped statuses remain selected with diagnostics
+  ---
+  duration_ms: 0.466344
+  type: 'test'
+  ...
+# Subtest: fallback ranks Current plus Validated, then Validated, then other non-archived candidates
+ok 128 - fallback ranks Current plus Validated, then Validated, then other non-archived candidates
+  ---
+  duration_ms: 1.518557
+  type: 'test'
+  ...
+# Subtest: fallback tie order is stable across candidate permutations and uses ascending ID
+ok 129 - fallback tie order is stable across candidate permutations and uses ascending ID
+  ---
+  duration_ms: 1.39213
+  type: 'test'
+  ...
+# Subtest: duplicate eligible fallback IDs are invalid independent of input order
+ok 130 - duplicate eligible fallback IDs are invalid independent of input order
+  ---
+  duration_ms: 0.299991
+  type: 'test'
+  ...
+# Subtest: fallback uses the latest normalized source date and edit date, and ignores malformed dates
+ok 131 - fallback uses the latest normalized source date and edit date, and ignores malformed dates
+  ---
+  duration_ms: 0.451236
+  type: 'test'
+  ...
+# Subtest: company context supports multi-owner analyses without leaking into another company
+ok 132 - company context supports multi-owner analyses without leaking into another company
+  ---
+  duration_ms: 0.170199
+  type: 'test'
+  ...
+# Subtest: no explicit pointer and no eligible candidate returns absent
+ok 133 - no explicit pointer and no eligible candidate returns absent
+  ---
+  duration_ms: 0.145925
+  type: 'test'
+  ...
+# Subtest: company and preview contracts are versioned, typed, and body-free
+ok 134 - company and preview contracts are versioned, typed, and body-free
+  ---
+  duration_ms: 39.115262
+  type: 'test'
+  ...
+# Subtest: portfolio preserves positions, PRU, targets, accounts, coverage and reconciliation without coercion
+ok 135 - portfolio preserves positions, PRU, targets, accounts, coverage and reconciliation without coercion
+  ---
+  duration_ms: 6.432524
+  type: 'test'
+  ...
+# Subtest: closed positions remain addressable while closed rows cannot enter holdings
+ok 136 - closed positions remain addressable while closed rows cannot enter holdings
+  ---
+  duration_ms: 0.927067
+  type: 'test'
+  ...
+# Subtest: quotes distinguish valid zero values from unknown null values and require valid provenance
+ok 137 - quotes distinguish valid zero values from unknown null values and require valid provenance
+  ---
+  duration_ms: 0.794879
+  type: 'test'
+  ...
+# Subtest: service results reject bad versions, extra envelope keys and non-finite domain values
+ok 138 - service results reject bad versions, extra envelope keys and non-finite domain values
+  ---
+  duration_ms: 1.14434
+  type: 'test'
+  ...
+# Subtest: portfolio aggregation preserves cash exclusion, unrealized PnL, weights and sector exposures
+ok 139 - portfolio aggregation preserves cash exclusion, unrealized PnL, weights and sector exposures
+  ---
+  duration_ms: 93.938995
+  type: 'test'
+  ...
+# Subtest: empty portfolio aggregation returns a complete zero total slice
+ok 140 - empty portfolio aggregation returns a complete zero total slice
+  ---
+  duration_ms: 0.335298
+  type: 'test'
+  ...
+# Subtest: service Core imports only domain modules and no source, UI or transport runtime
+ok 141 - service Core imports only domain modules and no source, UI or transport runtime
+  ---
+  duration_ms: 33.870735
+  type: 'test'
+  ...
+# Subtest: core validates canonical reader results, preserves options, and classifies missing ports
+ok 142 - core validates canonical reader results, preserves options, and classifies missing ports
+  ---
+  duration_ms: 193.369996
+  type: 'test'
+  ...
+# Subtest: company resolution respects exact ticker, name, aliases, market ambiguity and absence
+ok 143 - company resolution respects exact ticker, name, aliases, market ambiguity and absence
+  ---
+  duration_ms: 47.588076
+  type: 'test'
+  ...
+# Subtest: analysis by ID enforces identity and canonical validation
+ok 144 - analysis by ID enforces identity and canonical validation
+  ---
+  duration_ms: 1.4182
+  type: 'test'
+  ...
+# Subtest: Current selection rejects broken explicit pointers and validates hydrated document context
+ok 145 - Current selection rejects broken explicit pointers and validates hydrated document context
+  ---
+  duration_ms: 1.914884
+  type: 'test'
+  ...
+# Subtest: list results and read failures are validated and sanitized
+ok 146 - list results and read failures are validated and sanitized
+  ---
+  duration_ms: 0.858608
+  type: 'test'
+  ...
+# Subtest: save validates run identity, revision and company references and only reports adapter receipts
+ok 147 - save validates run identity, revision and company references and only reports adapter receipts
+  ---
+  duration_ms: 95.147629
+  type: 'test'
+  ...
+# Subtest: closed positions can be addressed separately and do not enter portfolio holdings
+ok 148 - closed positions can be addressed separately and do not enter portfolio holdings
+  ---
+  duration_ms: 17.394781
+  type: 'test'
+  ...
+# (node:31351) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: read adapter preserves legacy company/document/portfolio payloads while validating canonical projections
+ok 149 - read adapter preserves legacy company/document/portfolio payloads while validating canonical projections
+  ---
+  duration_ms: 1090.960967
+  type: 'test'
+  ...
+# Subtest: identity adapter resolves from company rows without reading analysis bodies
+ok 150 - identity adapter resolves from company rows without reading analysis bodies
+  ---
+  duration_ms: 12.341223
+  type: 'test'
+  ...
+# Subtest: history lookup by UUID preserves the archived legacy document and source date
+ok 151 - history lookup by UUID preserves the archived legacy document and source date
+  ---
+  duration_ms: 131.866041
+  type: 'test'
+  ...
+# Subtest: Current adapter separates Business, CIO Memo, Decision and Earnings pointers and loads only the selected body
+ok 152 - Current adapter separates Business, CIO Memo, Decision and Earnings pointers and loads only the selected body
+  ---
+  duration_ms: 201.447152
+  type: 'test'
+  ...
+# Subtest: Current selector reports wrong owner, wrong family, archived target and missing memo pointer distinctly
+ok 153 - Current selector reports wrong owner, wrong family, archived target and missing memo pointer distinctly
+  ---
+  duration_ms: 16.386116
+  type: 'test'
+  ...
+# Subtest: integrity listing retains historical body metadata and date/projection state
+ok 154 - integrity listing retains historical body metadata and date/projection state
+  ---
+  duration_ms: 149.581065
+  type: 'test'
+  ...
+# Subtest: explicit Company relations own primary links; title fallback and secondary links remain intact
+ok 155 - explicit Company relations own primary links; title fallback and secondary links remain intact
+  ---
+  duration_ms: 38.091931
+  type: 'test'
+  ...
+# Subtest: checked-in schemas are deterministic and derived from current Core types
+ok 156 - checked-in schemas are deterministic and derived from current Core types
+  ---
+  duration_ms: 1941.630211
+  type: 'test'
+  ...
+# Subtest: contract has no executable domain, server or runtime imports
+ok 157 - contract has no executable domain, server or runtime imports
+  ---
+  duration_ms: 1.858341
+  type: 'test'
+  ...
+# Subtest: all inputs accept explicit personal/demo scopes and reject spoofed caller, secrets and versions
+ok 158 - all inputs accept explicit personal/demo scopes and reject spoofed caller, secrets and versions
+  ---
+  duration_ms: 6.747985
+  type: 'test'
+  ...
+# Subtest: input schemas reject malformed options, ids, families and incomplete write intent
+ok 159 - input schemas reject malformed options, ids, families and incomplete write intent
+  ---
+  duration_ms: 12.511136
+  type: 'test'
+  ...
+# Subtest: each exact manifest mapping reaches the existing Core method with untouched arguments
+ok 160 - each exact manifest mapping reaches the existing Core method with untouched arguments
+  ---
+  duration_ms: 39.300446
+  type: 'test'
+  ...
+# Subtest: writer receipts remain observable and Core alone rejects contradictory receipts
+ok 161 - writer receipts remain observable and Core alone rejects contradictory receipts
+  ---
+  duration_ms: 2.874076
+  type: 'test'
+  ...
+# Subtest: null absence, archived document, closed position and stale/unavailable data retain Core semantics
+ok 162 - null absence, archived document, closed position and stale/unavailable data retain Core semantics
+  ---
+  duration_ms: 3.036888
+  type: 'test'
+  ...
+# Subtest: every Core error code and safe diagnostics is accepted without raw error fields
+ok 163 - every Core error code and safe diagnostics is accepted without raw error fields
+  ---
+  duration_ms: 9.206197
+  type: 'test'
+  ...
+# Subtest: transport errors distinguish not-started rejection and unknown write outcome
+ok 164 - transport errors distinguish not-started rejection and unknown write outcome
+  ---
+  duration_ms: 1.159907
+  type: 'test'
+  ...
+# (node:31397) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:31397) ExperimentalWarning: The MockTimers API is an experimental feature and might change at any time
+# Subtest: transport import boundary and canonical discovery schemas
+ok 165 - transport import boundary and canonical discovery schemas
+  ---
+  duration_ms: 186.472869
+  type: 'test'
+  ...
+# Subtest: unknown tools, invalid versions, invalid schemas, output schemas and scope
+ok 166 - unknown tools, invalid versions, invalid schemas, output schemas and scope
+  ---
+  duration_ms: 63.471385
+  type: 'test'
+  ...
+# Subtest: auth excludes payload identity, cookies, bypass credentials and browser writes
+ok 167 - auth excludes payload identity, cookies, bypass credentials and browser writes
+  ---
+  duration_ms: 2.779007
+  type: 'test'
+  ...
+# Subtest: Sites WRITE is release-closed; transport fence admits only configured run IDs when explicitly authorized
+ok 168 - Sites WRITE is release-closed; transport fence admits only configured run IDs when explicitly authorized
+  ---
+  duration_ms: 70.395465
+  type: 'test'
+  ...
+# Subtest: permissions, scope isolation, mutation confirmation and unauthorized never reach Core
+ok 169 - permissions, scope isolation, mutation confirmation and unauthorized never reach Core
+  ---
+  duration_ms: 18.369466
+  type: 'test'
+  ...
+# Subtest: all eight mappings execute existing Core with exact arguments and preserve diagnostics
+ok 170 - all eight mappings execute existing Core with exact arguments and preserve diagnostics
+  ---
+  duration_ms: 124.256836
+  type: 'test'
+  ...
+# Subtest: Core errors are typed and raw dependency exceptions never escape
+ok 171 - Core errors are typed and raw dependency exceptions never escape
+  ---
+  duration_ms: 7.565525
+  type: 'test'
+  ...
+# Subtest: text-only hosted consumers receive typed Core errors without dependency secrets
+ok 172 - text-only hosted consumers receive typed Core errors without dependency secrets
+  ---
+  duration_ms: 1.485736
+  type: 'test'
+  ...
+# Subtest: fiscal labels in canonical asOf fail Core validation before the writer
+ok 173 - fiscal labels in canonical asOf fail Core validation before the writer
+  ---
+  duration_ms: 34.105003
+  type: 'test'
+  ...
+# Subtest: 2 MiB streamed/declarative requests and 4 MiB output limits fail without truncation
+ok 174 - 2 MiB streamed/declarative requests and 4 MiB output limits fail without truncation
+  ---
+  duration_ms: 113.171218
+  type: 'test'
+  ...
+# Subtest: READ and WRITE 30s deadlines preserve unknown outcome and fence pending WRITE
+ok 175 - READ and WRITE 30s deadlines preserve unknown outcome and fence pending WRITE
+  ---
+  duration_ms: 28.586377
+  type: 'test'
+  ...
+# Subtest: demo six reads use snapshot Core and never invoke personal service
+ok 176 - demo six reads use snapshot Core and never invoke personal service
+  ---
+  duration_ms: 323.078381
+  type: 'test'
+  ...
+# Subtest: local runtime: SDK client initialize/discover, real adapter WRITE receipts/replay/conflict
+ok 177 - local runtime: SDK client initialize/discover, real adapter WRITE receipts/replay/conflict
+  ---
+  duration_ms: 2567.998958
+  type: 'test'
+  ...
+# Subtest: completed transient READ retries at most twice; WRITE never retries a Core error
+ok 178 - completed transient READ retries at most twice; WRITE never retries a Core error
+  ---
+  duration_ms: 255.944293
+  type: 'test'
+  ...
+# Subtest: READ backoff cannot start a second Core call after its deadline
+ok 179 - READ backoff cannot start a second Core call after its deadline
+  ---
+  duration_ms: 5.750473
+  type: 'test'
+  ...
+# Subtest: 2 MiB tool arguments are accepted independently of JSON-RPC framing
+ok 180 - 2 MiB tool arguments are accepted independently of JSON-RPC framing
+  ---
+  duration_ms: 65.564359
+  type: 'test'
+  ...
+# (node:31401) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: nominal save re-reads Notion and verifies the server-assigned identity through Core
+ok 181 - nominal save re-reads Notion and verifies the server-assigned identity through Core
+  ---
+  duration_ms: 651.711259
+  type: 'test'
+  ...
+# Subtest: creation accepts a canonical intent identity without requiring a physical Notion UUID
+ok 182 - creation accepts a canonical intent identity without requiring a physical Notion UUID
+  ---
+  duration_ms: 14.565816
+  type: 'test'
+  ...
+# Subtest: same run re-reads actual state without duplicate or repeat promotion
+ok 183 - same run re-reads actual state without duplicate or repeat promotion
+  ---
+  duration_ms: 122.221289
+  type: 'test'
+  ...
+# Subtest: validated save indexes the promoted Current relation without rebuilding unrelated links
+ok 184 - validated save indexes the promoted Current relation without rebuilding unrelated links
+  ---
+  duration_ms: 79.403952
+  type: 'test'
+  ...
+# Subtest: incompatible same run conflicts before another create
+ok 185 - incompatible same run conflicts before another create
+  ---
+  duration_ms: 19.548646
+  type: 'test'
+  ...
+# Subtest: stale expectedRevision cannot mutate an existing analysis
+ok 186 - stale expectedRevision cannot mutate an existing analysis
+  ---
+  duration_ms: 11.650192
+  type: 'test'
+  ...
+# Subtest: Company absent fails before persistence
+ok 187 - Company absent fails before persistence
+  ---
+  duration_ms: 5.741418
+  type: 'test'
+  ...
+# Subtest: inconsistent input Company relation is rejected before mutation
+ok 188 - inconsistent input Company relation is rejected before mutation
+  ---
+  duration_ms: 4.050404
+  type: 'test'
+  ...
+# Subtest: persistence OK / promotion KO returns resumable pending and safely resumes
+ok 189 - persistence OK / promotion KO returns resumable pending and safely resumes
+  ---
+  duration_ms: 16.180861
+  type: 'test'
+  ...
+# Subtest: promotion OK / final verification KO never returns verified
+ok 190 - promotion OK / final verification KO never returns verified
+  ---
+  duration_ms: 24.720155
+  type: 'test'
+  ...
+# Subtest: ambiguous create timeout reconciles Run ID before any mutation retry
+ok 191 - ambiguous create timeout reconciles Run ID before any mutation retry
+  ---
+  duration_ms: 114.401197
+  type: 'test'
+  ...
+# Subtest: ambiguous promotion reconciles Company rather than blindly repeating PATCH
+ok 192 - ambiguous promotion reconciles Company rather than blindly repeating PATCH
+  ---
+  duration_ms: 32.891421
+  type: 'test'
+  ...
+# Subtest: rate limit mutation retries are bounded and do not certify persistence
+ok 193 - rate limit mutation retries are bounded and do not certify persistence
+  ---
+  duration_ms: 17.575448
+  type: 'test'
+  ...
+# Subtest: wrong final Current returns partial, never verified
+ok 194 - wrong final Current returns partial, never verified
+  ---
+  duration_ms: 16.449363
+  type: 'test'
+  ...
+# Subtest: concurrent same-run writers share the D1 lease and create at most one page
+ok 195 - concurrent same-run writers share the D1 lease and create at most one page
+  ---
+  duration_ms: 20.00865
+  type: 'test'
+  ...
+# Subtest: metadata update checks source revision and preserves the existing report body
+ok 196 - metadata update checks source revision and preserves the existing report body
+  ---
+  duration_ms: 13.848341
+  type: 'test'
+  ...
+# Subtest: position reads source lifecycle: open, closed, absent, inconsistent and invalid
+ok 197 - position reads source lifecycle: open, closed, absent, inconsistent and invalid
+  ---
+  duration_ms: 14.021593
+  type: 'test'
+  ...
+# Subtest: unresolved ambiguous create is fenced across replays, not blindly retried
+ok 198 - unresolved ambiguous create is fenced across replays, not blindly retried
+  ---
+  duration_ms: 6.462443
+  type: 'test'
+  ...
+# Subtest: Draft persistence is readable through MCP Core without promoting Current
+ok 199 - Draft persistence is readable through MCP Core without promoting Current
+  ---
+  duration_ms: 12.327242
+  type: 'test'
+  ...
+# Subtest: Draft save and replay update only their page indexes and avoid a second create
+ok 200 - Draft save and replay update only their page indexes and avoid a second create
+  ---
+  duration_ms: 8.610892
+  type: 'test'
+  ...
+# Subtest: adapter canonicalizes dashed update identity before receipt validation
+ok 201 - adapter canonicalizes dashed update identity before receipt validation
+  ---
+  duration_ms: 173.304503
+  type: 'test'
+  ...
+# Subtest: long report is written in bounded chunks and completely re-read before verified
+ok 202 - long report is written in bounded chunks and completely re-read before verified
+  ---
+  duration_ms: 39.916621
+  type: 'test'
+  ...
+# Subtest: ambiguous append reconciles the exact block prefix without duplicating content
+ok 203 - ambiguous append reconciles the exact block prefix without duplicating content
+  ---
+  duration_ms: 191.233988
+  type: 'test'
+  ...
+# Subtest: lost D1 lease is detected before a Current mutation
+ok 204 - lost D1 lease is detected before a Current mutation
+  ---
+  duration_ms: 21.379248
+  type: 'test'
+  ...
+# Subtest: production shared Run ID remains idempotent independently for Business and Valuation modules
+ok 205 - production shared Run ID remains idempotent independently for Business and Valuation modules
+  ---
+  duration_ms: 20.225819
+  type: 'test'
+  ...
+# Subtest: physical Company must be a relation; schema mismatch cannot yield verified
+ok 206 - physical Company must be a relation; schema mismatch cannot yield verified
+  ---
+  duration_ms: 3.874436
+  type: 'test'
+  ...
+# Subtest: Company archived during final verification cannot yield verified
+ok 207 - Company archived during final verification cannot yield verified
+  ---
+  duration_ms: 7.843945
+  type: 'test'
+  ...
+# Subtest: revisioned update cannot retype a Business Current page as Valuation
+ok 208 - revisioned update cannot retype a Business Current page as Valuation
+  ---
+  duration_ms: 9.307151
+  type: 'test'
+  ...
+# Subtest: plugin domain challenge is public and does not touch private adapters
+ok 209 - plugin domain challenge is public and does not touch private adapters
+  ---
+  duration_ms: 1090.419756
+  type: 'test'
+  ...
+# Subtest: all Notion mutation routes reject anonymous browser requests
+ok 210 - all Notion mutation routes reject anonymous browser requests
+  ---
+  duration_ms: 7.844759
+  type: 'test'
+  ...
+# Subtest: anonymous callers always use the demo scope, even with a forged personal cookie
+ok 211 - anonymous callers always use the demo scope, even with a forged personal cookie
+  ---
+  duration_ms: 11.678842
+  type: 'test'
+  ...
+# Subtest: owner identity comes only from the Sites authenticated email header plus server configuration
+ok 212 - owner identity comes only from the Sites authenticated email header plus server configuration
+  ---
+  duration_ms: 50.685854
+  type: 'test'
+  ...
+# Subtest: image optimizer cannot proxy API routes or arbitrary static paths
+ok 213 - image optimizer cannot proxy API routes or arbitrary static paths
+  ---
+  duration_ms: 29.094233
+  type: 'test'
+  ...
+# Subtest: owner must explicitly select personal scope and the preference is an HttpOnly cookie
+ok 214 - owner must explicitly select personal scope and the preference is an HttpOnly cookie
+  ---
+  duration_ms: 1.092128
+  type: 'test'
+  ...
+# Subtest: all Notion mutation routes reject an incorrect bearer token
+ok 215 - all Notion mutation routes reject an incorrect bearer token
+  ---
+  duration_ms: 1.899845
+  type: 'test'
+  ...
+# Subtest: mutation routes fail closed when the server authorization secret is not configured
+ok 216 - mutation routes fail closed when the server authorization secret is not configured
+  ---
+  duration_ms: 3.629612
+  type: 'test'
+  ...
+# Subtest: a server bearer token passes the auth gate before route validation
+ok 217 - a server bearer token passes the auth gate before route validation
+  ---
+  duration_ms: 0.990151
+  type: 'test'
+  ...
+# Subtest: webhook verification never exposes its stored token
+ok 218 - webhook verification never exposes its stored token
+  ---
+  duration_ms: 1.037616
+  type: 'test'
+  ...
+# Subtest: signed Notion webhook payloads remain verifiable
+ok 219 - signed Notion webhook payloads remain verifiable
+  ---
+  duration_ms: 14.113868
+  type: 'test'
+  ...
+# Subtest: browser Notion surfaces never expose server mutation secrets or internal sync routes
+ok 220 - browser Notion surfaces never expose server mutation secrets or internal sync routes
+  ---
+  duration_ms: 3.781861
+  type: 'test'
+  ...
+# Subtest: manual document refresh requires owner scope and remains same-origin only
+ok 221 - manual document refresh requires owner scope and remains same-origin only
+  ---
+  duration_ms: 1.074403
+  type: 'test'
+  ...
+# Subtest: refresh controls keep distinct responsibilities
+ok 222 - refresh controls keep distinct responsibilities
+  ---
+  duration_ms: 2.310051
+  type: 'test'
+  ...
+# Subtest: private analysis storage failures return a safe correlated diagnostic
+ok 223 - private analysis storage failures return a safe correlated diagnostic
+  ---
+  duration_ms: 2.547325
+  type: 'test'
+  ...
+# Subtest: normalizer exceptions are tagged safely at the document mapping boundary
+ok 224 - normalizer exceptions are tagged safely at the document mapping boundary
+  ---
+  duration_ms: 752.557083
+  type: 'test'
+  ...
+# (node:31542) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: simultaneous consumers and quick return reuse one request
+ok 225 - simultaneous consumers and quick return reuse one request
+  ---
+  duration_ms: 45.247227
+  type: 'test'
+  ...
+# Subtest: failed refresh retains the previous data and retry clears the error
+ok 226 - failed refresh retains the previous data and retry clears the error
+  ---
+  duration_ms: 1.350041
+  type: 'test'
+  ...
+# Subtest: background basket refresh keeps the cached snapshot until refresh=1 fails or completes
+ok 227 - background basket refresh keeps the cached snapshot until refresh=1 fails or completes
+  ---
+  duration_ms: 1.816908
+  type: 'test'
+  ...
+# Subtest: basket manual refresh forces Yahoo without changing portfolio refresh URLs
+ok 228 - basket manual refresh forces Yahoo without changing portfolio refresh URLs
+  ---
+  duration_ms: 0.9848
+  type: 'test'
+  ...
+# Subtest: Notion invalidation during a pending request discards the obsolete response
+ok 229 - Notion invalidation during a pending request discards the obsolete response
+  ---
+  duration_ms: 1.217405
+  type: 'test'
+  ...
+# Subtest: manual quote refresh queued during a normal read keeps refresh=1
+ok 230 - manual quote refresh queued during a normal read keeps refresh=1
+  ---
+  duration_ms: 3.527391
+  type: 'test'
+  ...
+# Subtest: session expiration clears all resources and ignores late old-session responses
+ok 231 - session expiration clears all resources and ignores late old-session responses
+  ---
+  duration_ms: 1.272105
+  type: 'test'
+  ...
+# Subtest: inactive views invalidate without eagerly refetching
+ok 232 - inactive views invalidate without eagerly refetching
+  ---
+  duration_ms: 0.720565
+  type: 'test'
+  ...
+# Subtest: browser Notion client only reads public status
+ok 233 - browser Notion client only reads public status
+  ---
+  duration_ms: 192.139693
+  type: 'test'
+  ...
+# Subtest: missing Notion summary is safe
+ok 234 - missing Notion summary is safe
+  ---
+  duration_ms: 106.904406
+  type: 'test'
+  ...
+# Subtest: company preview retains the exact late TLDR while removing full report bodies
+ok 235 - company preview retains the exact late TLDR while removing full report bodies
+  ---
+  duration_ms: 117.427859
+  type: 'test'
+  ...
+# Subtest: company previews remain lightweight while their analysis ids resolve to complete demo documents
+ok 236 - company previews remain lightweight while their analysis ids resolve to complete demo documents
+  ---
+  duration_ms: 132.389354
+  type: 'test'
+  ...
+# Subtest: service worker caches static assets only and never substitutes HTML for failed assets
+ok 237 - service worker caches static assets only and never substitutes HTML for failed assets
+  ---
+  duration_ms: 28.859018
+  type: 'test'
+  ...
+# Subtest: D1 company and document reads load only scoped report bodies and preserve legacy selection
+ok 238 - D1 company and document reads load only scoped report bodies and preserve legacy selection
+  ---
+  duration_ms: 295.221388
+  type: 'test'
+  ...
+# Subtest: integrity presentation reads retain complete block and projection diagnostics
+ok 239 - integrity presentation reads retain complete block and projection diagnostics
+  ---
+  duration_ms: 235.908147
+  type: 'test'
+  ...
+# Subtest: accepts only a captured projection with resolved freshness checks and exact numeric support
+ok 240 - accepts only a captured projection with resolved freshness checks and exact numeric support
+  ---
+  duration_ms: 36.949274
+  type: 'test'
+  ...
+# Subtest: rejects stale or malformed metadata and future timestamps deterministically
+ok 241 - rejects stale or malformed metadata and future timestamps deterministically
+  ---
+  duration_ms: 2.269702
+  type: 'test'
+  ...
+# Subtest: projection is absent without the exact marker and invalid on duplicates or bad JSON
+ok 242 - projection is absent without the exact marker and invalid on duplicates or bad JSON
+  ---
+  duration_ms: 2.826075
+  type: 'test'
+  ...
+# Subtest: machine payload is excluded from the human-facing Notion body
+ok 243 - machine payload is excluded from the human-facing Notion body
+  ---
+  duration_ms: 0.51129
+  type: 'test'
+  ...
+# Subtest: a recent IPO with complete daily data is accepted without demanding a year of quotes
+ok 244 - a recent IPO with complete daily data is accepted without demanding a year of quotes
+  ---
+  duration_ms: 3.187882
+  type: 'test'
+  ...
+# Subtest: expired cache renders converted values without external requests
+ok 245 - expired cache renders converted values without external requests
+  ---
+  duration_ms: 2.024566
+  type: 'test'
+  ...
+# Subtest: missing cached FX never treats a dollar price as euros
+ok 246 - missing cached FX never treats a dollar price as euros
+  ---
+  duration_ms: 0.404964
+  type: 'test'
+  ...
+# Subtest: empty cache returns unavailable without waiting on providers
+ok 247 - empty cache returns unavailable without waiting on providers
+  ---
+  duration_ms: 0.381515
+  type: 'test'
+  ...
+# Subtest: currency request starts before the stock response resolves
+ok 248 - currency request starts before the stock response resolves
+  ---
+  duration_ms: 154.674526
+  type: 'test'
+  ...
+# Subtest: failed live refresh preserves cached prices and marks them stale
+ok 249 - failed live refresh preserves cached prices and marks them stale
+  ---
+  duration_ms: 0.907265
+  type: 'test'
+  ...
+# Subtest: renders development preview metadata
+ok 250 - renders development preview metadata
+  ---
+  duration_ms: 1105.505276
+  type: 'test'
+  ...
+# Subtest: clearing the client cache aborts in-flight requests and removes scoped snapshots
+ok 251 - clearing the client cache aborts in-flight requests and removes scoped snapshots
+  ---
+  duration_ms: 154.990612
+  type: 'test'
+  ...
+# Subtest: analysis HTTP and response failures retain stale data with typed diagnostics
+ok 252 - analysis HTTP and response failures retain stale data with typed diagnostics
+  ---
+  duration_ms: 12.659582
+  type: 'test'
+  ...
+# Subtest: network failures are classified and authorization failures purge every cached response
+ok 253 - network failures are classified and authorization failures purge every cached response
+  ---
+  duration_ms: 5.260257
+  type: 'test'
+  ...
+# Subtest: all primitive manifest exports have executable Storybook coverage
+ok 254 - all primitive manifest exports have executable Storybook coverage
+  ---
+  duration_ms: 48.529223
+  type: 'test'
+  ...
+# Subtest: reference screen stories render production components at mobile and desktop viewports
+ok 255 - reference screen stories render production components at mobile and desktop viewports
+  ---
+  duration_ms: 8.699847
+  type: 'test'
+  ...
+# Subtest: company Storybook demonstrates persistent analysis navigation with complete valuation data
+ok 256 - company Storybook demonstrates persistent analysis navigation with complete valuation data
+  ---
+  duration_ms: 1.459989
+  type: 'test'
+  ...
+# Subtest: company and reader stories cover every embedded analysis family and valuation reference
+ok 257 - company and reader stories cover every embedded analysis family and valuation reference
+  ---
+  duration_ms: 2.096604
+  type: 'test'
+  ...
+# Subtest: mobile navigation presents four equal destinations with a selected blue indicator
+ok 258 - mobile navigation presents four equal destinations with a selected blue indicator
+  ---
+  duration_ms: 2.146287
+  type: 'test'
+  ...
+# Subtest: AI launcher stays a dedicated screen and composes the shared UI primitives
+ok 259 - AI launcher stays a dedicated screen and composes the shared UI primitives
+  ---
+  duration_ms: 2.061115
+  type: 'test'
+  ...
+# Subtest: the design-system page keeps the visible reference order
+ok 260 - the design-system page keeps the visible reference order
+  ---
+  duration_ms: 1.077369
+  type: 'test'
+  ...
+# Subtest: production visual review mounts the unified company screen at 390px
+ok 261 - production visual review mounts the unified company screen at 390px
+  ---
+  duration_ms: 3.386075
+  type: 'test'
+  ...
+# Subtest: mobile company states cover long names and all three overlapping views
+ok 262 - mobile company states cover long names and all three overlapping views
+  ---
+  duration_ms: 2.34474
+  type: 'test'
+  ...
+# Subtest: basket warm-up is single-flight, waits for portfolio refresh and walks quote batches
+ok 263 - basket warm-up is single-flight, waits for portfolio refresh and walks quote batches
+  ---
+  duration_ms: 187.240831
+  type: 'test'
+  ...
+# Subtest: provider mapping preserves standard tickers and maps non-US listings explicitly
+ok 264 - provider mapping preserves standard tickers and maps non-US listings explicitly
+  ---
+  duration_ms: 2.665455
+  type: 'test'
+  ...
+# Subtest: Yahoo history reads adjusted closes, uses exchange-local dates and validates currencies
+ok 265 - Yahoo history reads adjusted closes, uses exchange-local dates and validates currencies
+  ---
+  duration_ms: 119.761699
+  type: 'test'
+  ...
+# Subtest: AMS OSRAM Swiss listing and CHF history are supported for EUR basket returns
+ok 266 - AMS OSRAM Swiss listing and CHF history are supported for EUR basket returns
+  ---
+  duration_ms: 2.890643
+  type: 'test'
+  ...
+# Subtest: Yahoo pence-denominated UK prices normalize to pounds before FX conversion
+ok 267 - Yahoo pence-denominated UK prices normalize to pounds before FX conversion
+  ---
+  duration_ms: 2.746183
+  type: 'test'
+  ...
+# Subtest: history cache persists an initial series and subsequent reads do not fetch
+ok 268 - history cache persists an initial series and subsequent reads do not fetch
+  ---
+  duration_ms: 2.449411
+  type: 'test'
+  ...
+# Subtest: monthly max cache is repaired with daily five-year history on refresh
+ok 269 - monthly max cache is repaired with daily five-year history on refresh
+  ---
+  duration_ms: 4.951209
+  type: 'test'
+  ...
+# Subtest: basket is equal-weighted in EUR and reports ownership and coverage
+ok 270 - basket is equal-weighted in EUR and reports ownership and coverage
+  ---
+  duration_ms: 6.042783
+  type: 'test'
+  ...
+# Subtest: basket conversion uses historical EUR exchange rates
+ok 271 - basket conversion uses historical EUR exchange rates
+  ---
+  duration_ms: 0.404595
+  type: 'test'
+  ...
+# Subtest: all requested windows calculate from available daily points
+ok 272 - all requested windows calculate from available daily points
+  ---
+  duration_ms: 4.735263
+  type: 'test'
+  ...
+# Subtest: companies without usable history remain visible and lower basket coverage
+ok 273 - companies without usable history remain visible and lower basket coverage
+  ---
+  duration_ms: 0.647392
+  type: 'test'
+  ...
+# Subtest: an IPO after the requested one-year start is not assigned a pre-listing return
+ok 274 - an IPO after the requested one-year start is not assigned a pre-listing return
+  ---
+  duration_ms: 0.803622
+  type: 'test'
+  ...
+# Subtest: SpaceX is covered only in windows after its June 2026 listing and MAX keeps the shared earlier start
+ok 275 - SpaceX is covered only in windows after its June 2026 listing and MAX keeps the shared earlier start
+  ---
+  duration_ms: 7.612457
+  type: 'test'
+  ...
+# Subtest: MAX chart projection bounds D1 storage while preserving exact endpoints and extrema
+ok 276 - MAX chart projection bounds D1 storage while preserving exact endpoints and extrema
+  ---
+  duration_ms: 119.953948
+  type: 'test'
+  ...
+# Subtest: opening baskets reads cached history only and ignores untickered members
+ok 277 - opening baskets reads cached history only and ignores untickered members
+  ---
+  duration_ms: 115.038159
+  type: 'test'
+  ...
+# Subtest: a saved snapshot serves every basket selection without quote-history reads
+ok 278 - a saved snapshot serves every basket selection without quote-history reads
+  ---
+  duration_ms: 28.87101
+  type: 'test'
+  ...
+# Subtest: a Yahoo symbol failure keeps cached coverage and is recorded in the published complete attempt
+ok 279 - a Yahoo symbol failure keeps cached coverage and is recorded in the published complete attempt
+  ---
+  duration_ms: 38.823544
+  type: 'test'
+  ...
+# Subtest: stale FX is not silently applied to a current equity history
+ok 280 - stale FX is not silently applied to a current equity history
+  ---
+  duration_ms: 0.412624
+  type: 'test'
+  ...
+# Subtest: periods and API parameters are restricted to the supported selectors
+ok 281 - periods and API parameters are restricted to the supported selectors
+  ---
+  duration_ms: 0.370965
+  type: 'test'
+  ...
+# Subtest: theme basket chart supports touch and keyboard date scrubbing accessibly
+ok 282 - theme basket chart supports touch and keyboard date scrubbing accessibly
+  ---
+  duration_ms: 11.319852
+  type: 'test'
+  ...
+1..282
+# tests 282
+# suites 0
+# pass 282
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 7711.781245

@@ -1,0 +1,18 @@
+{
+  "contractVersion": "1.0.0",
+  "scope": "personal",
+  "status": "rejected",
+  "error": {
+    "code": "timeout",
+    "message": "Délai transport dépassé.",
+    "retryable": false,
+    "outcome": "unknown"
+  },
+  "diagnostics": [
+    {
+      "code": "transport_timeout",
+      "message": "Délai transport dépassé.",
+      "severity": "error"
+    }
+  ]
+}

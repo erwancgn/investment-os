@@ -1,0 +1,175 @@
+[
+  {
+    "file": "/Users/ec/Downloads/BUSINESS-MSFT-20261005-save_analysis-draft-intent.json",
+    "bytes": 33593,
+    "sha256": "3c1dd690f12c48f06d5c24d252d323bb059a9b86c38b32aeb6da448c80d970fc",
+    "validations": [
+      {
+        "kind": "business",
+        "runId": "BUSINESS-MSFT-20261005",
+        "intentId": "derived:business:msft:BUSINESS-MSFT-20261005",
+        "companyIds": [
+          "3b337ea7af3581038c01ec1b0f33d8c4"
+        ],
+        "expectedRevision": null,
+        "header": true,
+        "content": true,
+        "canonicalAnalysis": true,
+        "coreInputAccepted": true,
+        "coreResult": "dependency",
+        "blocks": 1,
+        "headingCount": 0,
+        "status": "Draft",
+        "localFixtureOnly": true,
+        "notionMutation": false
+      }
+    ]
+  },
+  {
+    "file": "/Users/ec/Downloads/lot12_lite_reviewable_inline_ed_complete.json",
+    "bytes": 466658,
+    "sha256": "110e844f86cdeab0706f6efcf1fcf9f3d760ce5ca1db8cf55eed562c11b96484",
+    "validations": [
+      {
+        "kind": "business",
+        "runId": "FV-LITE-20261005-1013",
+        "intentId": "derived:FV-LITE-20261005-1013:business:draft:final",
+        "companyIds": [
+          "3b537ea7af358169b697e2d437379f51"
+        ],
+        "expectedRevision": null,
+        "header": true,
+        "content": false,
+        "canonicalAnalysis": false,
+        "coreInputAccepted": false,
+        "coreResult": "invalid_input",
+        "blocks": 62,
+        "headingCount": 24,
+        "status": "Draft",
+        "localFixtureOnly": true,
+        "notionMutation": false
+      },
+      {
+        "kind": "valuation",
+        "runId": "FV-LITE-20261005-1013",
+        "intentId": "derived:FV-LITE-20261005-1013:valuation:draft:final",
+        "companyIds": [
+          "3b537ea7af358169b697e2d437379f51"
+        ],
+        "expectedRevision": null,
+        "header": true,
+        "content": false,
+        "canonicalAnalysis": false,
+        "coreInputAccepted": false,
+        "coreResult": "invalid_input",
+        "blocks": 95,
+        "headingCount": 33,
+        "status": "Draft",
+        "localFixtureOnly": true,
+        "notionMutation": false
+      }
+    ]
+  },
+  {
+    "file": "/Users/ec/Downloads/nvda_full_analysis_bundle.json",
+    "bytes": 373358,
+    "sha256": "a06492617908f57190322113ff5702f0148fe91f73dfd588a31a5ff8dde23065",
+    "validations": [
+      {
+        "kind": "business",
+        "runId": "NVDA-FA-20261005-1021",
+        "intentId": "derived:NVDA-FA-20261005-1021:business",
+        "companyIds": [
+          "3b337ea7af35811eb7e5e934f832c389"
+        ],
+        "expectedRevision": null,
+        "header": true,
+        "content": false,
+        "canonicalAnalysis": false,
+        "coreInputAccepted": false,
+        "coreResult": "invalid_input",
+        "blocks": 50,
+        "headingCount": 22,
+        "status": "Draft",
+        "localFixtureOnly": true,
+        "notionMutation": false
+      },
+      {
+        "kind": "valuation",
+        "runId": "NVDA-FA-20261005-1021",
+        "intentId": "derived:NVDA-FA-20261005-1021:valuation",
+        "companyIds": [
+          "3b337ea7af35811eb7e5e934f832c389"
+        ],
+        "expectedRevision": null,
+        "header": true,
+        "content": false,
+        "canonicalAnalysis": false,
+        "coreInputAccepted": false,
+        "coreResult": "invalid_input",
+        "blocks": 53,
+        "headingCount": 23,
+        "status": "Draft",
+        "localFixtureOnly": true,
+        "notionMutation": false
+      },
+      {
+        "kind": "short",
+        "runId": "NVDA-FA-20261005-1021",
+        "intentId": "derived:NVDA-FA-20261005-1021:short",
+        "companyIds": [
+          "3b337ea7af35811eb7e5e934f832c389"
+        ],
+        "expectedRevision": null,
+        "header": true,
+        "content": false,
+        "canonicalAnalysis": false,
+        "coreInputAccepted": false,
+        "coreResult": "invalid_input",
+        "blocks": 55,
+        "headingCount": 24,
+        "status": "Draft",
+        "localFixtureOnly": true,
+        "notionMutation": false
+      },
+      {
+        "kind": "portfolio",
+        "runId": "NVDA-FA-20261005-1021",
+        "intentId": "derived:NVDA-FA-20261005-1021:portfolio",
+        "companyIds": [
+          "3b337ea7af35811eb7e5e934f832c389"
+        ],
+        "expectedRevision": null,
+        "header": true,
+        "content": false,
+        "canonicalAnalysis": false,
+        "coreInputAccepted": false,
+        "coreResult": "invalid_input",
+        "blocks": 51,
+        "headingCount": 22,
+        "status": "Draft",
+        "localFixtureOnly": true,
+        "notionMutation": false
+      },
+      {
+        "kind": "cio_memo",
+        "runId": "NVDA-FA-20261005-1021",
+        "intentId": "derived:NVDA-FA-20261005-1021:cio_memo",
+        "companyIds": [
+          "3b337ea7af35811eb7e5e934f832c389"
+        ],
+        "expectedRevision": null,
+        "header": true,
+        "content": false,
+        "canonicalAnalysis": false,
+        "coreInputAccepted": false,
+        "coreResult": "invalid_input",
+        "blocks": 54,
+        "headingCount": 25,
+        "status": "Draft",
+        "localFixtureOnly": true,
+        "notionMutation": false
+      }
+    ]
+  }
+]
