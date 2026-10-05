@@ -1,3 +1,40 @@
+# Verdict final Lot 12 — GO infrastructure
+
+LOT 12: GO. LOT12_COMPLETE pour le gate de migration Skill → MCP → Core → ports/adapters → Notion et checkpoint durable D1. Aucun Lot13.
+
+Phrase évaluée : « Chaque Skill canonique peut exécuter son workflow complet à partir d’un nom ou ticker utilisateur via les tools MCP canoniques, sans dépendance infrastructurelle directe résiduelle non justifiée, avec persistance vérifiable via save_analysis. »
+
+Le GO repose sur l'audit des neuf Skills et leurs plans MCP, les contrats/tests existants, la génération native des workflows composites et la preuve E2E de leur chemin commun de persistance. Il ne prétend pas que neuf tests live autonomes ou cinq mutations Full Analyse ont été exécutés. Earnings/Setup disposent de l'audit documentaire et des outils/contrats communs ; leurs exécutions autonomes ne sont pas revendiquées comme preuves runtime.
+
+| Gate | Preuve et résultat |
+|---|---|
+| Neuf Skills / tool plans / resolve_company / séparation infra | PASS audit existant, source personnelle1.3.10 et tests documentaires ; providers legacy Setup uniquement sur choix explicite, sans fallback |
+| Business E2E | PASS génération NATIVE ; AN-599 save → receipt persisted → journal persisted → batch D1 → readback canonique |
+| Full Value | PASS génération native Business+Valuation, contrat/handoff et validation MCP/Core/DTO ; Business LITE AN-596 persisté. Valuation LITE PARTIAL analytique, AN-597 observable, terminaison writer historique UNKNOWN sans receipt : aucun replay |
+| Full Analyse | PASS cinq payloads NATIVE et handoffs same-run, Evidence Gates et diagnostics, validation MCP/Core/DTO ; chemin partagé de persistance prouvé Business AN-599. Pas de revendication d'un run live de cinq écritures |
+| save_analysis réel | PASS unique run NVDA-FA-20261005-WRITE-PROOF-2, personal, Business Draft, expectedRevision:null, zéro retry/promotion |
+| Receipt | PASS status persisted / persisted:true / promoted:false / verified:false attendu Draft. Revision2026-10-05T16:14:00.000Z ; diagnostic promotion_not_required |
+| Journal / D1 / readback | PASS journal persisted, batch D1 terminé ; lecture MCP immédiate présente et finale complète après correctif reader |
+| Document / Evidence Ledger / Evidence Gate | PASS AN-599 : 9/9 tables avec cellules/en-têtes conformes ; 275/275 groupes documentaires, sans dépendre des unsupported synthétiques |
+| Tests | PASS299/299 ; ciblés76/76 ; typecheck/build/artifact PASS ; lint0 erreurs,4 warnings préexistants |
+| WRITE fermé | PASS source release flagfalse ; flags runtime retirés, environnement21 ; v240 déployée avec verrou fermé. Rejection hébergée forbidden/not_started prouvée en v236 ; aucun nouveau save_analysis de probe effectué après PROOF-2 |
+
+## Gap analytique conservé
+
+FV-LITE-20261005-NATIVE Valuation reste PARTIAL : consensus FY2027E revenue~6,3Md$ et EPS~21,67USD sans source originale datée/population/locator dans ce run. Aucune source inventée, aucun recalcul, aucun COMPLETE forcé. Ce gap de données financières ne bloque pas le gate infrastructure : l'architecture transporte et conserve honnêtement les analyses PARTIAL. AN-597/AN-598 receipts/outcomes historiques ne sont pas requalifiés par des READs tardifs.
+
+## Version et alignement
+
+Site référence : v240, commit2987b557052fe9afd56f895636de57b14062d530, deploymentappgdep_6ac3d10b02c881918210af403545a8d5 succeeded, environnement21, https://investment-os.erwancognee94.chatgpt.site.
+
+App GitHub : brancheerwancgn/lot11-lot12-closeout, commit de réconciliation296c7a9. Code applicatif identique à v240 ; seuls evidence/documents propres au miroir sont conservés en supplément. Les commits de clôture suivants sont documentaires uniquement ; aucune republication Site nécessaire.
+
+Plugin personnel : branchepersonal/lot12-1.3.10, HEADda40190987cdb420a0672675c70c2e6d44330f79, source108 fichiers identique à l'archive1.3.10 SHA2564e3a780b8156b70704cfe40d7468dad529eca9dc7e7869700a360648e1e8a9ab. Cache installé identique, sauf chemin overlay ./skills équivalent à ./skills/. Pas de nouvelle release ; branche publique main3dc50022bddbf5eb8cadbf906d5bfa260199a7d8 inchangée.
+
+Preuves principales : AN-599-tables-final-checkpoint.json, AN-599-tables-v240-mcp-readback.json, NVDA-FA-20261005-WRITE-PROOF-2-receipt.json, journal-after.json, final-checkpoint.json, lot12-tables-deployment.json, plugin-1.3.10-git-parity.json, archives source v240 et release1.3.10. Aucun secret stocké.
+
+## Historique conservé — ne remplace pas le verdict courant
+
 # Verdict Lot 12 — blocker fermé, validation de clôture attendue
 
 ## Mise à jour v240 — checkpoint avant validation/alignement
