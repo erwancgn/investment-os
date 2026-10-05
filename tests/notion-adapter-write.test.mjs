@@ -44,6 +44,19 @@ test('production shared Run ID remains idempotent independently for Business and
 
 test('physical Company must be a relation; schema mismatch cannot yield verified',()=>withFixture({badCompanyType:true},async f=>{await assert.rejects(f.writer(input()),{code:'mapping'});assert.equal(f.creates,0);}));
 
+test('production source without a Summary property preserves the canonical summary in the report body',()=>withFixture({},async f=>{
+ const draft=input();draft.analysis.header.status='Draft';draft.analysis.summary='Business quality remains strong, with an explicit evidence gap.';
+ const saved=await f.adapter.saveAnalysis(draft);
+ assert.equal(saved.status,'ok');assert.equal(saved.data.status,'persisted');assert.equal(f.creates,1);assert.equal(f.promotions,0);
+ const stored=f.blocks.get(saved.data.analysisId);
+ assert.equal(stored[0].heading_2.rich_text[0].text.content,'TL;DR');
+ assert.equal(stored[1].paragraph.rich_text[0].text.content,draft.analysis.summary);
+ assert.equal(stored[2].heading_2.rich_text[0].text.content,'Rapport complet');
+ assert.equal(stored[3].paragraph.rich_text[0].text.content,'Fixture report.');
+ const read=await f.api.createInvestmentService(f.db).getAnalysisById(saved.data.analysisId);
+ assert.equal(read.status,'ok');assert.equal(read.data.header.status,'Draft');assert.equal(read.data.summary,draft.analysis.summary);
+}));
+
 test('Company archived during final verification cannot yield verified',()=>withFixture({archiveFinalCompany:true},async f=>{const r=await f.writer(input());assert.equal(r.status,'partial');assert.equal(r.verified,false);}));
 
 test('revisioned update cannot retype a Business Current page as Valuation',()=>withFixture({},async f=>{const saved=await f.writer(input()),existing=f.pages.get(saved.analysisId);const changed=input({runId:'different-module-update',expectedRevision:existing.last_edited_time});changed.analysis.kind='valuation';changed.analysis.header.family='valuation';changed.analysis.header.agent='Valuation Analyst';changed.analysis.header.id=saved.analysisId;await assert.rejects(f.writer(changed),{code:'stale_request'});assert.equal(existing.properties.Agent.select.name,'Business Analyst');assert.equal(f.creates,1);assert.equal(f.promotions,1);}));

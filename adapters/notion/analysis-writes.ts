@@ -120,7 +120,8 @@ export function createNotionAnalysisWriter(db:D1Database,options:NotionWriteOpti
     const a=input.analysis;put([titleName],a.header.title,true);put(["Run ID"],input.runId,true);put(["Company","Companies"],input.companyIds,true);
     put(["Agent"],agents[a.kind]??a.header.agent,true);put(["Status"],a.header.status,true);put(["Analysis Date","Date","Decision Date","Earnings Date"],a.header.date,true);
     put(["Source Freshness"],a.header.sourceFreshness==="fresh"?"Current":a.header.sourceFreshness==="stale"?"Stale":"Unknown");
-    put(["TL;DR","TLDR","Summary","Executive Summary"],a.summary,a.summary!==null);
+    // Some production sources keep the summary in the report body rather than a property.
+    put(["TL;DR","TLDR","Summary","Executive Summary"],a.summary);
     put(["Verdict","Business Verdict"],a.verdict,a.verdict!==null);put(["Confidence"],a.confidence,a.confidence!==null);
     if(a.kind==="business"||a.kind==="valuation")put(["Score","Business Score"],a.score,a.score!==null);
     if(a.kind==="cio_memo")put(["Handoff Summary"],a.handoffSummary,a.handoffSummary!==null);
@@ -148,8 +149,6 @@ export function createNotionAnalysisWriter(db:D1Database,options:NotionWriteOpti
   return async function writeAnalysis(input:SaveAnalysisInput):Promise<SaveAnalysisReceipt>{
     if(!isAnalysis(input.analysis)||!input.runId.trim()||(input.expectedRevision!==null&&!uuid(input.analysis.header.id))||!input.companyIds.length||input.companyIds.some(v=>!uuid(v))||new Set(input.companyIds.map(id)).size!==input.companyIds.length||!equal(input.companyIds.map(id).sort(),input.analysis.header.companyIds.map(id).sort())||input.analysis.header.archived)throw fault("invalid_input");
     if(input.analysis.header.sourceKind!==(input.analysis.kind==="decision"?"decision":"analysis")||/superseded|archiv|obsolet|historique|historical|remplac/i.test(input.analysis.header.status))throw fault("invalid_input");
-    const desiredBlocks=blocksFor(input.analysis.content.blocks);
-    if(JSON.stringify(desiredBlocks).length>450000)throw fault("invalid_input");
     const family=input.analysis.kind;
     const moduleAgent=agents[family]??input.analysis.header.agent;
     if(!moduleAgent)throw fault("mapping");
@@ -157,6 +156,14 @@ export function createNotionAnalysisWriter(db:D1Database,options:NotionWriteOpti
     const writeKey=JSON.stringify([input.runId,family]);
     const source=family==="decision"?sources.decisions:family==="earnings"?sources.earnings:sources.analyses;
     const schema=await read(`/data_sources/${source}`),expected=mappedProperties(input,schema);
+    const summaryInBody=input.analysis.summary!==null&&!propertyName(object(schema.properties),["TL;DR","TLDR","Summary","Executive Summary"]);
+    const desiredBlocks=summaryInBody?[
+      {object:"block",type:"heading_2",heading_2:{rich_text:text("TL;DR")}},
+      {object:"block",type:"paragraph",paragraph:{rich_text:text(input.analysis.summary!)}},
+      {object:"block",type:"heading_2",heading_2:{rich_text:text("Rapport complet")}},
+      ...blocksFor(input.analysis.content.blocks),
+    ]:blocksFor(input.analysis.content.blocks);
+    if(JSON.stringify(desiredBlocks).length>450000)throw fault("invalid_input");
     const runProperty=propertyName(object(schema.properties),["Run ID"])!;
     const statusName=propertyName(expected,["Status"])!;
     const statusType=Object.keys(object(expected[statusName]))[0];
