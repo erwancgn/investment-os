@@ -242,6 +242,7 @@ export function createNotionAnalysisWriter(db:D1Database,options:NotionWriteOpti
       // A new page receives its first 100 blocks in the create request. The final
       // Notion read below verifies them; a partial create is reconciled on replay.
       let observedBlocks=matchedBlocks??(desiredBlocks.length<=100?desiredBlocks:await children(analysisId));
+      let appendedPage:Page|null=null;
       const desiredSemantics=desiredBlocks.map(semanticBlock);
       if(journal.phase.startsWith("appending:")&&observedBlocks.length<Number(journal.phase.split(":")[1]))return receipt("partial","append_unconfirmed");
       await saveJournal("persisting");
@@ -256,7 +257,7 @@ export function createNotionAnalysisWriter(db:D1Database,options:NotionWriteOpti
           observedBlocks=await children(analysisId);
           if(observedBlocks.length!==expectedLength||!equal(observedBlocks.map(semanticBlock),desiredSemantics.slice(0,expectedLength)))return receipt("partial","append_unconfirmed");
         }
-        observedBlocks=await children(analysisId);
+        [appendedPage,observedBlocks]=await Promise.all([page(analysisId),children(analysisId)]);
         if(observedBlocks.length!==expectedLength)return receipt("partial","append_unconfirmed");
         await saveJournal("persisting");
       }
@@ -264,6 +265,9 @@ export function createNotionAnalysisWriter(db:D1Database,options:NotionWriteOpti
       let stored:Page;
       let verifiedBlocks:RecordValue[]|null=null;
       if(publishing)stored=await page(analysisId);
+      // The last append already obtained a fresh page and complete body read.
+      // Reuse that certification for Draft instead of fetching every table again.
+      else if(appendedPage){stored=appendedPage;verifiedBlocks=observedBlocks;}
       else [stored,verifiedBlocks]=await Promise.all([page(analysisId),children(analysisId)]);
       if(publishing&&propertiesMatch(stored,draftExpected)&&equal((await children(analysisId)).map(semanticBlock),desiredBlocks.map(semanticBlock))){
         persisted=true;mutated=true;await saveJournal("validating");
