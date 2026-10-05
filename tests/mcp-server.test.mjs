@@ -120,6 +120,33 @@ test("Core errors are typed and raw dependency exceptions never escape", async (
   const crashed = await call(handler({ getCompany: async () => { throw new Error("raw DB token"); } }), "get_company", { ...base, id: "c" }); assert.equal(crashed.error.code, "network"); assert.equal(JSON.stringify(crashed).includes("raw DB"), false);
 });
 
+test("text-only hosted consumers receive typed Core errors without dependency secrets", async () => {
+  const h = handler(api.createInvestmentCore({ readQuote: async () => { throw Object.assign(new Error("private SQL/token fixture"), { code: "stale_request" }); } }));
+  const response = await (await h(request("get_quote", { ...base, assetId: "asset-1" }))).json();
+  assert.equal(response.result.isError, true);
+  assert.deepEqual(JSON.parse(response.result.content[0].text), response.result.structuredContent);
+  assert.equal(JSON.parse(response.result.content[0].text).result.error.code, "stale_request");
+  assert.equal(response.result.content[0].text.includes("SQL/token"), false);
+});
+
+test("fiscal labels in canonical asOf fail Core validation before the writer", async () => {
+  let writes = 0;
+  const core = api.createInvestmentCore({ writeAnalysis: async input => { writes++; return { schemaVersion: "1.0.0", status: "persisted", analysisId: input.analysis.header.id, runId: input.runId, revision: "fixture-new", persisted: true, promoted: false, verified: false, diagnostics: [] }; } });
+  const input = writeInput();
+  const blockId = input.analysis.content.blocks[0].id;
+  input.analysis.presentation.facts = [{ id: "revenue", label: "FY2026 revenue", value: 3.014, unit: "USD bn", status: "known", asOf: "FY2026", sourceBlockIds: [blockId], provenance: structuredClone(f.provenance) }];
+  const response = await (await handler(core)(request("save_analysis", { ...base, input }))).json();
+  const text = JSON.parse(response.result.content[0].text);
+  assert.equal(text.result.error.code, "invalid_input");
+  assert.equal(response.result.isError, true);
+  assert.equal(writes, 0);
+  input.analysis.presentation.facts[0].asOf = null;
+  const corrected = await call(handler(core), "save_analysis", { ...base, input });
+  assert.equal(corrected.result.status, "ok");
+  assert.equal(corrected.result.data.status, "persisted");
+  assert.equal(writes, 1);
+});
+
 test("2 MiB streamed/declarative requests and 4 MiB output limits fail without truncation", async () => {
   const h = handler();
   const big = request("get_company", { ...base, id: "x", extra: "x".repeat(2097152 + 4096) }); assert.equal((await h(big)).status, 413);

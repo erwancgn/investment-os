@@ -36,3 +36,48 @@ Blocage constaté dans l'hôte : save_analysis(input:any) malgré le schéma can
 Sites v223 confirmé succeeded, environnement 9. Un nouveau contexte ChatGPT expose désormais save_analysis avec Analysis et ses champs complets; les anciens threads peuvent conserver input:any et doivent repartir dans un contexte officiel actualisé. La première intention Business préparée utilise légitimement un ID derived de run. L'adapter exigeait pourtant un UUID Notion même pour expectedRevision:null : cette contrainte physique a été retirée pour les créations où l'identité réelle est attribuée par Notion. Les mises à jour conservent validation UUID et contrôle de révision. Test de création canonique / refus d'une mise à jour sur ID d'intention ajouté. Suite globale : 280/280 PASS.
 
 Plugin privé 1.3.7 publié, plans get_company(id=companyId) explicites et contrats/locks cohérents. Les runs composites depuis LITE et NVDA ont résolu l'identité et exécuté leurs READ; leurs premières synthèses ne satisfaisaient pas les formats Full. Statuts ramenés à PARTIAL et rapports Full en cours de complément avant tout WRITE. Aucun nouveau receipt, aucune nouvelle mutation à ce checkpoint.
+
+## Clôture — verdict PARTIAL / NO-GO
+
+La phrase de gate globale n'est pas démontrée. Aucun Lot 13 commencé.
+
+### Source, plugin et tests
+
+Source opérationnelle Sites v224 : `ab2a85a88ebfe7eb1036ddb5abb3c8f7824c1fd2`. Le plugin privé a été publié successivement en 1.3.5–1.3.9 : immutable releases, correction des plans `get_company(id=companyId)`, rappel des exigences Full déjà présentes, dates canoniques explicites. Public Analysis 1.3.0 inchangé ; privé Perso conserve Read et le même app MCP. Release 1.3.9 : `pluginrel_6ac36ad7c8f481918325f97e5060e16c`. Les 20 frameworks/playbooks/check-frameworks financiers protégés sont byte-identiques à la baseline 1.3.4 via la comparaison intermédiaire 1.3.5. Aucun score/seuil/critère financier changé.
+
+Tests : MCP 25/25, suite globale 282/282, typecheck/build PASS. Runtime workerd v224 : huit tools, resolve_company, six READ, auth, WRITE fermé PASS. Tests nouveaux : clients texte seuls reçoivent une erreur Core typée sans exception privée ; asOf fiscal invalide est refusé avant writer, null autorisé passe le Core en fixture. Ce test ne crée aucune donnée réelle.
+
+### Workflows réellement exécutés
+
+| Workflow | Entrée utilisateur | Run | Preuve et limites |
+|---|---|---|---|
+| Business | Microsoft | BUSINESS-MSFT-20261005 | resolve_company → get_company(id) → Current Business. Rapport Full consolidé avec E/D, Gate et handoff rendu après corrections. Intention Draft préparée ; aucun nouveau save/receipt/relecture d'un output créé. |
+| Full Value | LITE | FV-LITE-20261005-1013 | resolve_company → Company → Quote → baselines Business/Valuation → archive Valuation → Business/Valuation Full et handoffs. Premier get_company mal nommé rejeté, corrigé en READ puis dans les plans. Contexte partagé réutilisé. Gate strict des outputs sérialisés PARTIAL : dates asOf fiscales et E/D inline manquants identifiés, correction reviewable en cours. |
+| Full Analyse | NVDA | NVDA-FA-20261005-1021 | resolve_company → quote/portfolio/Current des cinq familles → archives Valuation/Short → Business, Valuation, Short, Portfolio Fit, CIO Full. Plusieurs READ ont été répétés pour réponses volumineuses ; aucun get_position requis. Company récent avec id prouvé après gap du journal initial. Pas de WRITE ; les cinq intentions initiales étaient des métadonnées sans content.blocks matérialisé. Audit strict et matérialisation encore requis pour les déclarer canoniques. |
+
+Conversations de preuve : [Business](https://chatgpt.com/c/6ac35884-ce50-83eb-b97c-05a7525ab183), [Full Value](https://chatgpt.com/c/6ac35c33-d4f0-83ed-9d54-e806802f13fd), [Full Analyse](https://chatgpt.com/c/6ac35e0c-43ac-83eb-b442-ac0744aeec44). Les affirmations COMPLETE initiales sur des résumés ont été retirées ; un titre Full, un Ledger seul ou un handoff ne prouvent pas la conformité.
+
+### Unique nouvelle tentative WRITE et fermeture
+
+Ouverture v225, source `a36638b8fb1877d4a67201f4eb18b761fbae6389`, env10, allowlist exacte `FV-LITE-20261005-1013`. Une seule intention Business Draft (61 blocs canoniques), expectedRevision:null, Company `3b537ea7af358169b697e2d437379f51`. Aucun Current demandé, aucun retry, Valuation non soumise.
+
+Le connecteur a retourné INVALID_ARGUMENT avec uniquement `{contractVersion:"1.0.0",status:"completed"}` en texte, sans receipt ni ID. Le payload exact de la confirmation contient `presentation.facts.asOf:"FY2026"` et `"Q4 FY2026"` : `isAnalysisFact` les rejette, et `Core.saveAnalysis` valide avant `ports.writeAnalysis`. Refus avant writer reproduit par test. Aucun nouvel ID Notion ou receipt disponible, aucune persistance déclarée. READ Company LITE ne retrouve aucun Draft de ce run ; cela seul n'aurait pas suffi pour prouver l'absence d'une mutation. Le contrôle Core déterministe fournit la preuve supplémentaire du refus de ce payload avant adapter.
+
+Défaut transport corrigé : les erreurs Core completed/error sont désormais intégralement présentes en texte, comme les refus transport. Les exceptions privées restent filtrées. Le schéma de découverte explique désormais asOf ISO/date-time/null et interdit les périodes fiscales comme dates. Pas d'assouplissement du Core, pas de retry ni nouvelle mutation.
+
+Fermeture v226, source `8acbb05c44ed78aac6c2392877fdcd7f50ec558a`, env11 : trois flags supprimés, verrou source false, Sites succeeded. Refus hébergé prouvé `forbidden/not_started`, retryable:false. Les cinq Current NVIDIA et deux Current LITE ont été relus : mêmes IDs et revisions qu'avant la tentative. Aucune nouvelle page de test à nettoyer identifiée ; les Drafts du checkpoint précédent étaient déjà nettoyés.
+
+### Dette et stabilité
+
+Les plans actifs délèguent identité, Current, relations, Portfolio/Position, Quote, stockage et receipts au MCP/Core ; aucun accès Notion/D1 ou mapping portefeuille ajouté. Setup conserve des docs providers physiques historiques uniquement sur choix explicite, sans fallback MCP. Les calculs d'exposition/fraîcheur restent de la méthode financière. Dette : neuf copies identiques de la référence MCP, synchronisées par test ; formulations legacy de cold start bornées par le contrat MCP ; volume de READ provoquant duplication et perte de trace dans l'hôte. Le risque d'interprétation libre demeure démontré par les premières fausses clôtures COMPLETE.
+
+Comparaison 1.3.0 → état actuel : qualitative seulement à partir du checkpoint acquis et de l'audit présent. Source publique exacte 1.3.0 non récupérée ; aucune mesure de lignes ni preuve byte-à-byte 1.3.0 revendiquée. La comparaison vérifiée 1.3.4 → privé actuel montre moins de plomberie active, plans plus explicites et méthodes protégées intactes. Une migration de backend conserve les tools/domaines, sauf les instructions historiques Setup explicites.
+
+### Actions restant avant GO
+
+1. Finir la matérialisation/audit strict de tous les outputs canoniques et conserver les gaps vrais.
+2. Nouvelle décision explicite pour une tentative WRITE corrigée : aucune répétition automatique du save ayant échoué, conformément à la consigne utilisateur.
+3. Receipts réels et relectures de chaque output attendu. Draft persisted n'est pas receipt verified et ne prouve pas une promotion Current.
+4. Earnings/Setup : audit documentaire acquis, exécution individuelle complète non prouvée dans cette passe.
+
+WRITE antérieur receipt/replay/revision reste acquis ; il ne remplace pas les receipts absents de ces workflows. Verdict final : PARTIAL / NO-GO, production WRITE fermée.

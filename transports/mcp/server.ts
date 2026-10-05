@@ -144,7 +144,7 @@ export function createMcpHandler(runtime: McpRuntime) {
       const output = await call(params.name as ToolName, params.arguments, caller!, keepAlive);
       // Some hosted clients expose only text when isError is true. Transport rejections
       // contain fixed safe diagnostics, never the input or private Core data.
-      const text = output.status === "rejected" ? output : { contractVersion: MCP_CONTRACT_VERSION, status: output.status };
+      const text = output.status === "rejected" || output.result.status === "error" ? output : { contractVersion: MCP_CONTRACT_VERSION, status: output.status };
       return { structuredContent: output as unknown as Record<string, unknown>, content: [{ type: "text", text: JSON.stringify(text) }],
         isError: output.status === "rejected" || output.result.status === "error" };
     });

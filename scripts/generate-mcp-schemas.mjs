@@ -34,6 +34,7 @@ export function generateMcpSchemas() {
       // Remove undefined only; null remains part of the wire contract.
       const parts = propType.isUnion() ? propType.types.filter(t => !(t.flags & ts.TypeFlags.Undefined)) : null;
       properties[prop.name] = parts ? (parts.length === 1 ? schema(parts[0]) : { anyOf: parts.map(schema) }) : schema(propType);
+      if (prop.name === "asOf") properties[prop.name].description = "ISO calendar date (YYYY-MM-DD), timezone-qualified ISO date-time, or null. Fiscal labels such as FY2026/Q4 FY2026 are not dates; preserve them in labels/report content. Do not invent an exact date.";
       if (!optional) required.push(prop.name);
     }
     return { $ref: `#/definitions/${name}` };

@@ -1210,7 +1210,8 @@
             {
               "type": "string"
             }
-          ]
+          ],
+          "description": "ISO calendar date (YYYY-MM-DD), timezone-qualified ISO date-time, or null. Fiscal labels such as FY2026/Q4 FY2026 are not dates; preserve them in labels/report content. Do not invent an exact date."
         },
         "sourceBlockIds": {
           "type": "array",
@@ -1281,7 +1282,8 @@
             {
               "type": "string"
             }
-          ]
+          ],
+          "description": "ISO calendar date (YYYY-MM-DD), timezone-qualified ISO date-time, or null. Fiscal labels such as FY2026/Q4 FY2026 are not dates; preserve them in labels/report content. Do not invent an exact date."
         },
         "sourceBlockIds": {
           "type": "array",
@@ -1378,7 +1380,8 @@
             {
               "type": "string"
             }
-          ]
+          ],
+          "description": "ISO calendar date (YYYY-MM-DD), timezone-qualified ISO date-time, or null. Fiscal labels such as FY2026/Q4 FY2026 are not dates; preserve them in labels/report content. Do not invent an exact date."
         },
         "sourceBlockIds": {
           "type": "array",
@@ -1664,7 +1667,8 @@
             {
               "type": "string"
             }
-          ]
+          ],
+          "description": "ISO calendar date (YYYY-MM-DD), timezone-qualified ISO date-time, or null. Fiscal labels such as FY2026/Q4 FY2026 are not dates; preserve them in labels/report content. Do not invent an exact date."
         },
         "evidenceIds": {
           "type": "array",
@@ -1717,7 +1721,8 @@
             {
               "type": "string"
             }
-          ]
+          ],
+          "description": "ISO calendar date (YYYY-MM-DD), timezone-qualified ISO date-time, or null. Fiscal labels such as FY2026/Q4 FY2026 are not dates; preserve them in labels/report content. Do not invent an exact date."
         },
         "evidenceIds": {
           "type": "array",
@@ -1789,7 +1794,8 @@
             {
               "type": "string"
             }
-          ]
+          ],
+          "description": "ISO calendar date (YYYY-MM-DD), timezone-qualified ISO date-time, or null. Fiscal labels such as FY2026/Q4 FY2026 are not dates; preserve them in labels/report content. Do not invent an exact date."
         },
         "evidenceIds": {
           "type": "array",
@@ -1842,7 +1848,8 @@
             {
               "type": "string"
             }
-          ]
+          ],
+          "description": "ISO calendar date (YYYY-MM-DD), timezone-qualified ISO date-time, or null. Fiscal labels such as FY2026/Q4 FY2026 are not dates; preserve them in labels/report content. Do not invent an exact date."
         },
         "dataCategory": {
           "anyOf": [
@@ -1941,7 +1948,8 @@
             {
               "type": "string"
             }
-          ]
+          ],
+          "description": "ISO calendar date (YYYY-MM-DD), timezone-qualified ISO date-time, or null. Fiscal labels such as FY2026/Q4 FY2026 are not dates; preserve them in labels/report content. Do not invent an exact date."
         },
         "freshness": {
           "anyOf": [
