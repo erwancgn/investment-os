@@ -146,7 +146,7 @@ export function createNotionAnalysisWriter(db:D1Database,options:NotionWriteOpti
     });
   }
   return async function writeAnalysis(input:SaveAnalysisInput):Promise<SaveAnalysisReceipt>{
-    if(!isAnalysis(input.analysis)||!input.runId.trim()||!uuid(input.analysis.header.id)||!input.companyIds.length||input.companyIds.some(v=>!uuid(v))||new Set(input.companyIds.map(id)).size!==input.companyIds.length||!equal(input.companyIds.map(id).sort(),input.analysis.header.companyIds.map(id).sort())||input.analysis.header.archived)throw fault("invalid_input");
+    if(!isAnalysis(input.analysis)||!input.runId.trim()||(input.expectedRevision!==null&&!uuid(input.analysis.header.id))||!input.companyIds.length||input.companyIds.some(v=>!uuid(v))||new Set(input.companyIds.map(id)).size!==input.companyIds.length||!equal(input.companyIds.map(id).sort(),input.analysis.header.companyIds.map(id).sort())||input.analysis.header.archived)throw fault("invalid_input");
     if(input.analysis.header.sourceKind!==(input.analysis.kind==="decision"?"decision":"analysis")||/superseded|archiv|obsolet|historique|historical|remplac/i.test(input.analysis.header.status))throw fault("invalid_input");
     const desiredBlocks=blocksFor(input.analysis.content.blocks);
     if(JSON.stringify(desiredBlocks).length>450000)throw fault("invalid_input");
