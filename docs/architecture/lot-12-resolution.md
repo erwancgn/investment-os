@@ -52,7 +52,7 @@ Tests : MCP 25/25, suite globale 282/282, typecheck/build PASS. Runtime workerd 
 | Workflow | Entrée utilisateur | Run | Preuve et limites |
 |---|---|---|---|
 | Business | Microsoft | BUSINESS-MSFT-20261005 | resolve_company → get_company(id) → Current Business. Rapport Full consolidé avec E/D, Gate et handoff rendu après corrections. Intention Draft préparée ; aucun nouveau save/receipt/relecture d'un output créé. |
-| Full Value | LITE | FV-LITE-20261005-1013 | resolve_company → Company → Quote → baselines Business/Valuation → archive Valuation → Business/Valuation Full et handoffs. Premier get_company mal nommé rejeté, corrigé en READ puis dans les plans. Contexte partagé réutilisé. Gate strict des outputs sérialisés PARTIAL : dates asOf fiscales et E/D inline manquants identifiés, correction reviewable en cours. |
+| Full Value | LITE | FV-LITE-20261005-1013 | resolve_company → Company → Quote → baselines Business/Valuation → archive Valuation → Business/Valuation Full et handoffs. Premier get_company mal nommé rejeté, corrigé en READ puis dans les plans. Contexte partagé réutilisé. Deux Analysis reviewable matérialisés après correction de 11 asOf et des tags inline ; Gate PARTIAL car plusieurs faits gardent des gaps de source/locator. |
 | Full Analyse | NVDA | NVDA-FA-20261005-1021 | resolve_company → quote/portfolio/Current des cinq familles → archives Valuation/Short → Business, Valuation, Short, Portfolio Fit, CIO Full. Plusieurs READ ont été répétés pour réponses volumineuses ; aucun get_position requis. Company récent avec id prouvé après gap du journal initial. Pas de WRITE ; les cinq intentions initiales étaient des métadonnées sans content.blocks matérialisé. Audit strict et matérialisation encore requis pour les déclarer canoniques. |
 
 Conversations de preuve : [Business](https://chatgpt.com/c/6ac35884-ce50-83eb-b97c-05a7525ab183), [Full Value](https://chatgpt.com/c/6ac35c33-d4f0-83ed-9d54-e806802f13fd), [Full Analyse](https://chatgpt.com/c/6ac35e0c-43ac-83eb-b442-ac0744aeec44). Les affirmations COMPLETE initiales sur des résumés ont été retirées ; un titre Full, un Ledger seul ou un handoff ne prouvent pas la conformité.
@@ -81,3 +81,9 @@ Comparaison 1.3.0 → état actuel : qualitative seulement à partir du checkpoi
 4. Earnings/Setup : audit documentaire acquis, exécution individuelle complète non prouvée dans cette passe.
 
 WRITE antérieur receipt/replay/revision reste acquis ; il ne remplace pas les receipts absents de ces workflows. Verdict final : PARTIAL / NO-GO, production WRITE fermée.
+
+### Dernier audit reviewable et blocage de lecture
+
+LITE : l'hôte a produit `lot12_lite_reviewable_inline_ed_complete.json` (taille déclarée 466658 octets, SHA déclaré `110e844f86cdeab0706f6efcf1fcf9f3d760ce5ca1db8cf55eed562c11b96484`). Aucun fichier n'a été soumis. Références inline et intégrité de leurs Ledgers PASS selon l'audit hôte ; Gate financier PARTIAL : segmentation Q4, certaines marges historiques, VCSEL 1060 nm, EPS Q4/guidance Q1, actions diluées FY2026 et consensus revenue FY2027E manquent de source/locator suffisant. Ils sont explicitement marqués GAP. Toutes les valeurs sont conservées ; aucune preuve fabriquée.
+
+Le dernier contrôle navigateur ne permet plus de lire la matérialisation/audit strict NVIDIA malgré plusieurs resets complets. Les conversations ont été conservées en handoff. La réactivation de la connexion Chrome a été demandée à l'utilisateur pendant la finalisation indépendante des correctifs/tests/documents. Ce blocage n'affecte pas l'état fermé de WRITE ni les relectures MCP Current. Il interdit de créditer un audit final NVIDIA non observé.
