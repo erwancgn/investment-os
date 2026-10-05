@@ -2,8 +2,8 @@ import { SCHEMA_VERSION, isRecord, type Diagnostic, type ServiceErrorCode, type 
 import { isAnalysis, isAnalysisPreview, type Analysis, type AnalysisPreview } from "../contracts/analysis.ts";
 import { isCompanyPreview, isPosition, isQuote, validatePortfolio, type CompanyPreview, type Portfolio, type Position, type Quote } from "../contracts/investment.ts";
 import { selectCurrentAnalysis, type CurrentAnalysisFamily, type CurrentSelectionInput } from "../analysis/current-selection.ts";
-import type { InvestmentPorts, ListAnalysesParams, ReadOptions, SaveAnalysisInput, SaveAnalysisReceipt } from "./ports.ts";
-export type { InvestmentPorts, ListAnalysesParams, ReadOptions, SaveAnalysisInput, SaveAnalysisReceipt } from "./ports.ts";
+import type { CompanyIdentity, CompanyResolution, InvestmentPorts, ListAnalysesParams, ReadOptions, SaveAnalysisInput, SaveAnalysisReceipt } from "./ports.ts";
+export type { CompanyIdentity, CompanyResolution, InvestmentPorts, ListAnalysesParams, ReadOptions, SaveAnalysisInput, SaveAnalysisReceipt } from "./ports.ts";
 
 const emptyMetadata = (): ServiceMetadata => ({ revision: null, freshness: "unknown", provenance: null, diagnostics: [] });
 const messages: Record<ServiceErrorCode, string> = {
@@ -59,6 +59,20 @@ async function invoke<T>(port: (() => Promise<T>) | undefined, validate: (value:
   } catch (error) { return serviceError(errorCode(error)) as ServiceResult<T>; }
 }
 function validId(id: string): boolean { return typeof id === "string" && id.length > 0 && id.trim() === id; }
+const identityKey = (value: string) => value.normalize("NFKD").replace(/[\u0300-\u036f]/g, "").toLocaleLowerCase("en").replace(/[^\p{L}\p{N}]+/gu, " ").trim().replace(/\s+/g, " ");
+const tickerKey = (value: string) => value.normalize("NFKC").toLocaleUpperCase("en");
+const legalSuffix = /\s+(?:incorporated|inc|corporation|corp|company|co|limited|ltd|plc|holdings|holding|group|sa|se|ag|nv)$/;
+function companyBase(value: string) {
+  let base = identityKey(value);
+  while (legalSuffix.test(base)) base = base.replace(legalSuffix, "");
+  return base;
+}
+function validIdentity(value: unknown): value is CompanyIdentity {
+  return isRecord(value) && Object.keys(value).every(key => ["companyId", "canonicalName", "ticker", "exchange", "assetId", "aliases"].includes(key)) &&
+    validId(value.companyId as string) && validId(value.canonicalName as string) && typeof value.ticker === "string" &&
+    (value.exchange === null || typeof value.exchange === "string") && (value.assetId === null || typeof value.assetId === "string") &&
+    Array.isArray(value.aliases) && value.aliases.every(alias => typeof alias === "string");
+}
 function validReadOptions(options?: ReadOptions): boolean {
   return options === undefined || (isRecord(options) && Object.keys(options).every(key => key === "force" || key === "cacheOnly") &&
     (options.force === undefined || typeof options.force === "boolean") && (options.cacheOnly === undefined || typeof options.cacheOnly === "boolean"));
@@ -102,6 +116,24 @@ function validReceipt(receipt: unknown, input: SaveAnalysisInput): receipt is Sa
 
 export function createInvestmentCore(ports: InvestmentPorts) {
   return {
+    async resolveCompany(query: string, market?: string): Promise<ServiceResult<CompanyResolution>> {
+      if (!validId(query) || query.length > 512 || (market !== undefined && (!validId(market) || market.length > 128))) return serviceError("invalid_input") as ServiceResult<CompanyResolution>;
+      if (!ports.readCompanyIdentities) return serviceError("dependency") as ServiceResult<CompanyResolution>;
+      try {
+        const identities = await ports.readCompanyIdentities();
+        if (!Array.isArray(identities) || !identities.every(validIdentity) || new Set(identities.map(item => item.companyId)).size !== identities.length) return serviceError("mapping") as ServiceResult<CompanyResolution>;
+        const key = identityKey(query);
+        const marketKey = market && identityKey(market);
+        const eligible = identities.filter(item => !marketKey || identityKey(item.exchange ?? "") === marketKey);
+        const ticker = eligible.filter(item => item.ticker && tickerKey(item.ticker) === tickerKey(query));
+        const name = eligible.filter(item => identityKey(item.canonicalName) === key);
+        const alias = eligible.filter(item => item.aliases.some(value => identityKey(value) === key) || companyBase(item.canonicalName) === key);
+        const exact = eligible.filter(item => ticker.includes(item) || name.includes(item));
+        const matches = exact.length ? exact : alias;
+        const candidates = matches.map(({ aliases: _aliases, ...candidate }) => candidate).sort((a, b) => a.canonicalName.localeCompare(b.canonicalName) || a.companyId.localeCompare(b.companyId));
+        return ok({ status: candidates.length === 0 ? "not_found" : candidates.length === 1 ? "resolved" : "ambiguous", candidates });
+      } catch (error) { return serviceError(errorCode(error)) as ServiceResult<CompanyResolution>; }
+    },
     getCompany(id: string): Promise<ServiceResult<CompanyPreview | null>> {
       if (!validId(id)) return Promise.resolve(serviceError("invalid_input") as ServiceResult<CompanyPreview | null>);
       if (!ports.readCompany) return Promise.resolve(serviceError("dependency") as ServiceResult<CompanyPreview | null>);

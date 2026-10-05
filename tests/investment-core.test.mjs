@@ -56,6 +56,25 @@ test("core validates canonical reader results, preserves options, and classifies
   assert.equal((await core.saveAnalysis({})).error.code, "invalid_input");
 });
 
+test("company resolution respects exact ticker, name, aliases, market ambiguity and absence", async () => {
+  const { createInvestmentCore } = await api();
+  const identities = [
+    { companyId: "us-1", canonicalName: "Microsoft Corporation", ticker: "MSFT", exchange: "NASDAQ", assetId: "msft", aliases: ["Microsoft"] },
+    { companyId: "jp-1", canonicalName: "Example Japan", ticker: "LITE", exchange: "TSE", assetId: null, aliases: [] },
+    { companyId: "us-2", canonicalName: "Lumentum Holdings", ticker: "LITE", exchange: "NASDAQ", assetId: "lite", aliases: ["Lumentum"] },
+  ];
+  const core = createInvestmentCore({ readCompanyIdentities: async () => identities });
+  assert.equal((await core.resolveCompany("MSFT")).data.candidates[0].companyId, "us-1");
+  assert.equal((await core.resolveCompany("Microsoft Corporation")).data.status, "resolved");
+  assert.equal((await core.resolveCompany("Microsoft")).data.status, "resolved");
+  assert.deepEqual((await core.resolveCompany("LITE")).data.candidates.map(item => item.companyId), ["jp-1", "us-2"]);
+  assert.equal((await core.resolveCompany("LITE")).data.status, "ambiguous");
+  assert.equal((await core.resolveCompany("LITE", "NASDAQ")).data.candidates[0].companyId, "us-2");
+  assert.deepEqual((await core.resolveCompany("absent")).data, { status: "not_found", candidates: [] });
+  assert.equal((await core.resolveCompany(" ")).error.code, "invalid_input");
+  assert.equal((await createInvestmentCore({}).resolveCompany("MSFT")).error.code, "dependency");
+});
+
 test("analysis by ID enforces identity and canonical validation", async () => {
   const { createInvestmentCore } = await api();
   const valid = analysis();

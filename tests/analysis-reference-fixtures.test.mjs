@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { access, mkdir, readFile, rm } from "node:fs/promises";
 import test from "node:test";
 import { build } from "esbuild";
+import { fileURLToPath } from "node:url";
 import { uxCssFiles } from "../scripts/css-file-manifest.mjs";
 
 const fixtureUrl = new URL("../app/data/analysis-reference-fixtures.json", import.meta.url);
@@ -9,9 +10,9 @@ const rendererUrl = new URL("../app/lib/notion-renderer.ts", import.meta.url);
 const templateUrl = new URL("../app/data/analysis-template-registry.json", import.meta.url);
 const pageUrl = new URL("../app/page.tsx", import.meta.url);
 const workerSourceUrl = new URL("../worker/index.ts", import.meta.url);
-const dataUrl = new URL("../app/lib/investment-data.ts", import.meta.url);
+const dataUrl = new URL("../adapters/notion/investment-data.ts", import.meta.url);
 const navigationUrl = new URL("../app/lib/app-navigation.tsx", import.meta.url);
-const syncUrl = new URL("../app/lib/notion-sync.ts", import.meta.url);
+const syncUrl = new URL("../adapters/notion/sync.ts", import.meta.url);
 const companyDetailUrl = new URL("../app/components/company-detail.tsx", import.meta.url);
 const liveHoldingSummaryUrl = new URL("../app/components/live-holding-summary.tsx", import.meta.url);
 const analysisReaderUrl = new URL("../app/components/analysis-reader.tsx", import.meta.url);
@@ -191,7 +192,7 @@ test("valuation scenario extraction keeps terminal prices, CAGR and thresholds d
 });
 
 test("metadata discovery queues only missing or edited Notion pages", async () => {
-  const syncSource = await readFile(new URL("../app/lib/notion-sync.ts", import.meta.url), "utf8");
+  const syncSource = await readFile(syncUrl, "utf8");
   assert.match(syncSource, /queryDataSource\(token,dataSourceId,cursor,100\)/);
   assert.match(syncSource, /!existing\|\|forceRefresh\|\|existing\.last_edited_time/);
   assert.match(syncSource, /existing\.last_edited_time!==String\(page\.last_edited_time/);
@@ -1043,7 +1044,7 @@ test("analysis sections render H1-only roots and retain Advantest H2/H3 content"
   const outputFile = new URL("./analysis-section-groups-runtime.mjs", outputDir);
   await mkdir(outputDir, { recursive: true });
   try {
-    await build({ entryPoints: [new URL("../app/components/analysis-section-groups.tsx", import.meta.url).pathname], bundle: true, platform: "node", format: "esm", packages: "external", outfile: outputFile.pathname });
+    await build({ entryPoints: [fileURLToPath(new URL("../app/components/analysis-section-groups.tsx", import.meta.url))], bundle: true, platform: "node", format: "esm", packages: "external", outfile: fileURLToPath(outputFile) });
     const [{ createElement }, { renderToStaticMarkup }, { AnalysisSectionGroups }] = await Promise.all([
       import("react"), import("react-dom/server"), import(outputFile.href),
     ]);

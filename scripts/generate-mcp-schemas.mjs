@@ -50,6 +50,7 @@ export function generateMcpSchemas() {
   for (const tool of Object.values(tools)) {
     const input = definitions[tool.inputSchema.$ref.split("/").at(-1)];
     for (const key of ["id", "companyId", "assetId"]) if (input.properties[key]) input.properties[key] = { type: "string", minLength: 1, maxLength: 512, pattern: "^\\S(?:[\\s\\S]*\\S)?$" };
+    for (const key of ["query", "market"]) if (input.properties[key]) input.properties[key] = { type: "string", minLength: 1, maxLength: key === "query" ? 512 : 128, pattern: "^\\S(?:[\\s\\S]*\\S)?$" };
   }
   return { $schema: "http://json-schema.org/draft-07/schema#", title: "Investment OS MCP 1.0.0", contractVersion: "1.0.0", tools, definitions };
 }

@@ -106,6 +106,20 @@ test("read adapter preserves legacy company/document/portfolio payloads while va
   data.sqlite.close();
 });
 
+test("identity adapter resolves from company rows without reading analysis bodies", async () => {
+  const { createInvestmentService } = (await apis()).adapter;
+  const data = await fixture();
+  data.clearReads();
+  const service = createInvestmentService(data.db);
+  const ticker = await service.resolveCompany("EXM");
+  assert.equal(ticker.status, "ok");
+  assert.equal(ticker.data.status, "resolved");
+  assert.equal(ticker.data.candidates[0].companyId, data.ids.company.replaceAll("-", ""));
+  assert.deepEqual([...data.reads.bodyIds], []);
+  assert.equal((await service.resolveCompany("Unknown")).data.status, "not_found");
+  data.sqlite.close();
+});
+
 test("history lookup by UUID preserves the archived legacy document and source date", async () => {
   const [{ createInvestmentReadAdapter }, legacy] = await Promise.all([
     apis().then(result => result.adapter), apis().then(result => result.legacy),

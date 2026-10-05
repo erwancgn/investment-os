@@ -1,15 +1,15 @@
 import { createNotionAnalysisWriter, type NotionWriteOptions } from "./analysis-writes";
-import type { InvestmentPorts, SaveAnalysisInput } from "../../core/services/ports";
+import type { CompanyIdentity, InvestmentPorts, SaveAnalysisInput } from "../../core/services/ports";
 import { createInvestmentCore, type ReadOptions } from "../../core/services/investment-os";
 import { SCHEMA_VERSION, isIsoDateOrDateTime, type Provenance, type ServiceResult } from "../../core/contracts/common";
 import type { AnalysisPreview } from "../../core/contracts/analysis";
 import type { CurrentAnalysisFamily, CurrentSelectionInput } from "../../core/analysis/current-selection";
 import type { CompanyPreview, Portfolio, Quote } from "../../core/contracts/investment";
-import { getCompanyDetail, getLivePortfolio, getResearchDocument, listResearchDocuments, readCurrentAnalysisContext, type CompanyDetail, type CompanyDocument, type LivePortfolio, type ResearchDocument, readPosition } from "./investment-data";
+import { getCompanyDetail, getLivePortfolio, getResearchDocument, listResearchDocuments, readCurrentAnalysisContext, propertyValue, type CompanyDetail, type CompanyDocument, type LivePortfolio, type ResearchDocument, readPosition } from "./investment-data";
 import { companyPreview } from "../../app/lib/company-preview";
 import { normalizeAnalysisDocument } from "../../app/lib/document-presentation";
 import { normalizeNotionPageId } from "./sync";
-import { getQuotes, type QuoteView } from "../../app/lib/quotes";
+import { getQuotes, instruments, type QuoteView } from "../../app/lib/quotes";
 
 export const analysisOf = (document: CompanyDocument, normalized = document.normalizedAnalysis ?? normalizeAnalysisDocument(document)) => {
   const analysis = normalized.analysis;
@@ -77,6 +77,28 @@ function requireResult<T>(result: ServiceResult<T>): T {
 function notionPorts(db: D1Database, writes?: NotionWriteOptions): InvestmentPorts {
   const currentCandidates = new Map<string, CurrentSelectionInput["candidates"][number]>();
   return {
+    readCompanyIdentities: async (): Promise<CompanyIdentity[]> => {
+      const rows = (await db.prepare("SELECT page_id,title,properties_json FROM notion_documents WHERE source_key='companies'").all<{ page_id: string; title: string; properties_json: string }>()).results ?? [];
+      return rows.map(row => {
+        const properties = JSON.parse(row.properties_json) as Record<string, unknown>;
+        const aliasValue = propertyValue(properties, "Aliases") ?? propertyValue(properties, "Alias");
+        const ticker = String(propertyValue(properties, "Ticker") ?? "");
+        const exchange = String(propertyValue(properties, "Exchange") ?? "") || null;
+        // Reuse the runtime quote catalogue; never infer a Company ID from it.
+        const assets = Object.values(instruments).filter(instrument => {
+          const [symbol, market] = instrument.googleSymbol?.split(":") ?? [];
+          return (instrument.yahooSymbol.toUpperCase() === ticker.toUpperCase() || symbol?.toUpperCase() === ticker.toUpperCase()) &&
+            (!exchange || market?.toUpperCase() === exchange.toUpperCase());
+        });
+        return {
+          companyId: normalizeNotionPageId(row.page_id),
+          canonicalName: String(propertyValue(properties, "Company") || row.title),
+          ticker, exchange,
+          assetId: assets.length === 1 ? assets[0].id : null,
+          aliases: Array.isArray(aliasValue) ? aliasValue.map(String) : typeof aliasValue === "string" ? aliasValue.split(/[,;\n]/).map(value => value.trim()).filter(Boolean) : [],
+        };
+      });
+    },
     readPosition: (id, options) => readPosition(db, id, options),
     ...(writes ? { writeAnalysis: createNotionAnalysisWriter(db, writes) } : {}),
     readCurrentContext: async (companyId, family) => {

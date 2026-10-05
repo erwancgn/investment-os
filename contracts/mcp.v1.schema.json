@@ -3,29 +3,29 @@
   "title": "Investment OS MCP 1.0.0",
   "contractVersion": "1.0.0",
   "tools": {
-    "get_company": {
+    "resolve_company": {
       "inputSchema": {
         "$ref": "#/definitions/T1"
       },
       "outputSchema": {
         "anyOf": [
           {
-            "$ref": "#/definitions/T57"
+            "$ref": "#/definitions/T58"
           },
           {
-            "$ref": "#/definitions/T59"
+            "$ref": "#/definitions/T60"
           }
         ]
       }
     },
-    "get_portfolio": {
+    "get_company": {
       "inputSchema": {
         "$ref": "#/definitions/T2"
       },
       "outputSchema": {
         "anyOf": [
           {
-            "$ref": "#/definitions/T57"
+            "$ref": "#/definitions/T58"
           },
           {
             "$ref": "#/definitions/T67"
@@ -33,77 +33,92 @@
         ]
       }
     },
-    "get_position": {
+    "get_portfolio": {
       "inputSchema": {
-        "$ref": "#/definitions/T4"
+        "$ref": "#/definitions/T3"
       },
       "outputSchema": {
         "anyOf": [
           {
-            "$ref": "#/definitions/T57"
+            "$ref": "#/definitions/T58"
           },
           {
-            "$ref": "#/definitions/T84"
+            "$ref": "#/definitions/T72"
           }
         ]
       }
     },
-    "get_current_analysis": {
+    "get_position": {
       "inputSchema": {
         "$ref": "#/definitions/T5"
       },
       "outputSchema": {
         "anyOf": [
           {
-            "$ref": "#/definitions/T57"
+            "$ref": "#/definitions/T58"
           },
           {
-            "$ref": "#/definitions/T86"
+            "$ref": "#/definitions/T89"
           }
         ]
       }
     },
-    "get_analysis_by_id": {
+    "get_current_analysis": {
       "inputSchema": {
         "$ref": "#/definitions/T6"
       },
       "outputSchema": {
         "anyOf": [
           {
-            "$ref": "#/definitions/T57"
+            "$ref": "#/definitions/T58"
           },
           {
-            "$ref": "#/definitions/T86"
+            "$ref": "#/definitions/T91"
           }
         ]
       }
     },
-    "save_analysis": {
+    "get_analysis_by_id": {
       "inputSchema": {
         "$ref": "#/definitions/T7"
       },
       "outputSchema": {
         "anyOf": [
           {
-            "$ref": "#/definitions/T57"
+            "$ref": "#/definitions/T58"
           },
           {
-            "$ref": "#/definitions/T88"
+            "$ref": "#/definitions/T91"
+          }
+        ]
+      }
+    },
+    "save_analysis": {
+      "inputSchema": {
+        "$ref": "#/definitions/T8"
+      },
+      "outputSchema": {
+        "anyOf": [
+          {
+            "$ref": "#/definitions/T58"
+          },
+          {
+            "$ref": "#/definitions/T93"
           }
         ]
       }
     },
     "get_quote": {
       "inputSchema": {
-        "$ref": "#/definitions/T56"
+        "$ref": "#/definitions/T57"
       },
       "outputSchema": {
         "anyOf": [
           {
-            "$ref": "#/definitions/T57"
+            "$ref": "#/definitions/T58"
           },
           {
-            "$ref": "#/definitions/T92"
+            "$ref": "#/definitions/T97"
           }
         ]
       }
@@ -111,6 +126,42 @@
   },
   "definitions": {
     "T1": {
+      "type": "object",
+      "properties": {
+        "contractVersion": {
+          "const": "1.0.0"
+        },
+        "scope": {
+          "anyOf": [
+            {
+              "const": "personal"
+            },
+            {
+              "const": "demo"
+            }
+          ]
+        },
+        "query": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 512,
+          "pattern": "^\\S(?:[\\s\\S]*\\S)?$"
+        },
+        "market": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^\\S(?:[\\s\\S]*\\S)?$"
+        }
+      },
+      "required": [
+        "contractVersion",
+        "scope",
+        "query"
+      ],
+      "additionalProperties": false
+    },
+    "T2": {
       "type": "object",
       "properties": {
         "contractVersion": {
@@ -140,7 +191,7 @@
       ],
       "additionalProperties": false
     },
-    "T2": {
+    "T3": {
       "type": "object",
       "properties": {
         "contractVersion": {
@@ -157,7 +208,7 @@
           ]
         },
         "options": {
-          "$ref": "#/definitions/T3"
+          "$ref": "#/definitions/T4"
         }
       },
       "required": [
@@ -166,7 +217,7 @@
       ],
       "additionalProperties": false
     },
-    "T3": {
+    "T4": {
       "type": "object",
       "properties": {
         "force": {
@@ -193,7 +244,7 @@
       "required": [],
       "additionalProperties": false
     },
-    "T4": {
+    "T5": {
       "type": "object",
       "properties": {
         "contractVersion": {
@@ -216,7 +267,7 @@
           "pattern": "^\\S(?:[\\s\\S]*\\S)?$"
         },
         "options": {
-          "$ref": "#/definitions/T3"
+          "$ref": "#/definitions/T4"
         }
       },
       "required": [
@@ -226,7 +277,7 @@
       ],
       "additionalProperties": false
     },
-    "T5": {
+    "T6": {
       "type": "object",
       "properties": {
         "contractVersion": {
@@ -282,7 +333,7 @@
       ],
       "additionalProperties": false
     },
-    "T6": {
+    "T7": {
       "type": "object",
       "properties": {
         "contractVersion": {
@@ -312,7 +363,7 @@
       ],
       "additionalProperties": false
     },
-    "T7": {
+    "T8": {
       "type": "object",
       "properties": {
         "contractVersion": {
@@ -329,7 +380,7 @@
           ]
         },
         "input": {
-          "$ref": "#/definitions/T8"
+          "$ref": "#/definitions/T9"
         }
       },
       "required": [
@@ -339,34 +390,34 @@
       ],
       "additionalProperties": false
     },
-    "T8": {
+    "T9": {
       "type": "object",
       "properties": {
         "analysis": {
           "anyOf": [
             {
-              "$ref": "#/definitions/T9"
+              "$ref": "#/definitions/T10"
             },
             {
-              "$ref": "#/definitions/T39"
+              "$ref": "#/definitions/T40"
             },
             {
-              "$ref": "#/definitions/T41"
+              "$ref": "#/definitions/T42"
             },
             {
-              "$ref": "#/definitions/T43"
+              "$ref": "#/definitions/T44"
             },
             {
-              "$ref": "#/definitions/T45"
+              "$ref": "#/definitions/T46"
             },
             {
-              "$ref": "#/definitions/T47"
+              "$ref": "#/definitions/T48"
             },
             {
-              "$ref": "#/definitions/T50"
+              "$ref": "#/definitions/T51"
             },
             {
-              "$ref": "#/definitions/T54"
+              "$ref": "#/definitions/T55"
             }
           ]
         },
@@ -398,7 +449,7 @@
       ],
       "additionalProperties": false
     },
-    "T9": {
+    "T10": {
       "type": "object",
       "properties": {
         "schemaVersion": {
@@ -408,10 +459,10 @@
           "const": "business"
         },
         "header": {
-          "$ref": "#/definitions/T10"
+          "$ref": "#/definitions/T11"
         },
         "content": {
-          "$ref": "#/definitions/T12"
+          "$ref": "#/definitions/T13"
         },
         "summary": {
           "anyOf": [
@@ -444,25 +495,25 @@
           ]
         },
         "presentation": {
-          "$ref": "#/definitions/T22"
+          "$ref": "#/definitions/T23"
         },
         "projection": {
           "anyOf": [
-            {
-              "$ref": "#/definitions/T26"
-            },
             {
               "$ref": "#/definitions/T27"
             },
             {
               "$ref": "#/definitions/T28"
+            },
+            {
+              "$ref": "#/definitions/T29"
             }
           ]
         },
         "diagnostics": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/T21"
+            "$ref": "#/definitions/T22"
           }
         },
         "score": {
@@ -491,7 +542,7 @@
       ],
       "additionalProperties": false
     },
-    "T10": {
+    "T11": {
       "type": "object",
       "properties": {
         "schemaVersion": {
@@ -595,7 +646,7 @@
           ]
         },
         "provenance": {
-          "$ref": "#/definitions/T11"
+          "$ref": "#/definitions/T12"
         }
       },
       "required": [
@@ -618,7 +669,7 @@
       ],
       "additionalProperties": false
     },
-    "T11": {
+    "T12": {
       "type": "object",
       "properties": {
         "kind": {
@@ -676,7 +727,7 @@
       ],
       "additionalProperties": false
     },
-    "T12": {
+    "T13": {
       "type": "object",
       "properties": {
         "schemaVersion": {
@@ -687,10 +738,7 @@
           "items": {
             "anyOf": [
               {
-                "$ref": "#/definitions/T13"
-              },
-              {
-                "$ref": "#/definitions/T15"
+                "$ref": "#/definitions/T14"
               },
               {
                 "$ref": "#/definitions/T16"
@@ -706,6 +754,9 @@
               },
               {
                 "$ref": "#/definitions/T20"
+              },
+              {
+                "$ref": "#/definitions/T21"
               }
             ]
           }
@@ -717,7 +768,7 @@
       ],
       "additionalProperties": false
     },
-    "T13": {
+    "T14": {
       "type": "object",
       "properties": {
         "id": {
@@ -757,7 +808,7 @@
         "text": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/T14"
+            "$ref": "#/definitions/T15"
           }
         }
       },
@@ -770,7 +821,7 @@
       ],
       "additionalProperties": false
     },
-    "T14": {
+    "T15": {
       "type": "object",
       "properties": {
         "text": {
@@ -813,7 +864,7 @@
       ],
       "additionalProperties": false
     },
-    "T15": {
+    "T16": {
       "type": "object",
       "properties": {
         "id": {
@@ -838,7 +889,7 @@
         "text": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/T14"
+            "$ref": "#/definitions/T15"
           }
         }
       },
@@ -850,7 +901,7 @@
       ],
       "additionalProperties": false
     },
-    "T16": {
+    "T17": {
       "type": "object",
       "properties": {
         "id": {
@@ -868,7 +919,7 @@
         "text": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/T14"
+            "$ref": "#/definitions/T15"
           }
         },
         "icon": {
@@ -891,7 +942,7 @@
       ],
       "additionalProperties": false
     },
-    "T17": {
+    "T18": {
       "type": "object",
       "properties": {
         "id": {
@@ -921,7 +972,7 @@
           "items": {
             "type": "array",
             "items": {
-              "$ref": "#/definitions/T14"
+              "$ref": "#/definitions/T15"
             }
           }
         }
@@ -935,7 +986,7 @@
       ],
       "additionalProperties": false
     },
-    "T18": {
+    "T19": {
       "type": "object",
       "properties": {
         "id": {
@@ -957,7 +1008,7 @@
             "items": {
               "type": "array",
               "items": {
-                "$ref": "#/definitions/T14"
+                "$ref": "#/definitions/T15"
               }
             }
           }
@@ -982,7 +1033,7 @@
       ],
       "additionalProperties": false
     },
-    "T19": {
+    "T20": {
       "type": "object",
       "properties": {
         "id": {
@@ -1005,7 +1056,7 @@
       ],
       "additionalProperties": false
     },
-    "T20": {
+    "T21": {
       "type": "object",
       "properties": {
         "id": {
@@ -1034,7 +1085,7 @@
           ]
         },
         "diagnostic": {
-          "$ref": "#/definitions/T21"
+          "$ref": "#/definitions/T22"
         }
       },
       "required": [
@@ -1047,7 +1098,7 @@
       ],
       "additionalProperties": false
     },
-    "T21": {
+    "T22": {
       "type": "object",
       "properties": {
         "code": {
@@ -1080,25 +1131,25 @@
       ],
       "additionalProperties": false
     },
-    "T22": {
+    "T23": {
       "type": "object",
       "properties": {
         "facts": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/T23"
+            "$ref": "#/definitions/T24"
           }
         },
         "scenarios": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/T24"
+            "$ref": "#/definitions/T25"
           }
         },
         "thresholds": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/T25"
+            "$ref": "#/definitions/T26"
           }
         }
       },
@@ -1109,7 +1160,7 @@
       ],
       "additionalProperties": false
     },
-    "T23": {
+    "T24": {
       "type": "object",
       "properties": {
         "id": {
@@ -1168,7 +1219,7 @@
           }
         },
         "provenance": {
-          "$ref": "#/definitions/T11"
+          "$ref": "#/definitions/T12"
         }
       },
       "required": [
@@ -1183,7 +1234,7 @@
       ],
       "additionalProperties": false
     },
-    "T24": {
+    "T25": {
       "type": "object",
       "properties": {
         "id": {
@@ -1239,7 +1290,7 @@
           }
         },
         "provenance": {
-          "$ref": "#/definitions/T11"
+          "$ref": "#/definitions/T12"
         },
         "terminalValue": {
           "anyOf": [
@@ -1247,7 +1298,7 @@
               "type": "null"
             },
             {
-              "$ref": "#/definitions/T25"
+              "$ref": "#/definitions/T26"
             }
           ]
         },
@@ -1257,7 +1308,7 @@
               "type": "null"
             },
             {
-              "$ref": "#/definitions/T25"
+              "$ref": "#/definitions/T26"
             }
           ]
         },
@@ -1267,7 +1318,7 @@
               "type": "null"
             },
             {
-              "$ref": "#/definitions/T25"
+              "$ref": "#/definitions/T26"
             }
           ]
         }
@@ -1287,11 +1338,11 @@
       ],
       "additionalProperties": false
     },
-    "T25": {
+    "T26": {
       "type": "object",
       "properties": {
         "provenance": {
-          "$ref": "#/definitions/T11"
+          "$ref": "#/definitions/T12"
         },
         "status": {
           "anyOf": [
@@ -1358,7 +1409,7 @@
       ],
       "additionalProperties": false
     },
-    "T26": {
+    "T27": {
       "type": "object",
       "properties": {
         "status": {
@@ -1370,14 +1421,14 @@
       ],
       "additionalProperties": false
     },
-    "T27": {
+    "T28": {
       "type": "object",
       "properties": {
         "status": {
           "const": "invalid"
         },
         "diagnostic": {
-          "$ref": "#/definitions/T21"
+          "$ref": "#/definitions/T22"
         }
       },
       "required": [
@@ -1386,14 +1437,14 @@
       ],
       "additionalProperties": false
     },
-    "T28": {
+    "T29": {
       "type": "object",
       "properties": {
         "status": {
           "const": "valid"
         },
         "projection": {
-          "$ref": "#/definitions/T29"
+          "$ref": "#/definitions/T30"
         }
       },
       "required": [
@@ -1402,7 +1453,7 @@
       ],
       "additionalProperties": false
     },
-    "T29": {
+    "T30": {
       "type": "object",
       "properties": {
         "presentationContractVersion": {
@@ -1431,7 +1482,7 @@
           ]
         },
         "identity": {
-          "$ref": "#/definitions/T30"
+          "$ref": "#/definitions/T31"
         },
         "generatedAt": {
           "type": "string"
@@ -1440,46 +1491,46 @@
           "type": "string"
         },
         "summary": {
-          "$ref": "#/definitions/T31"
+          "$ref": "#/definitions/T32"
         },
         "facts": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/T32"
-          }
-        },
-        "scenarios": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/T33"
           }
         },
-        "thresholds": {
+        "scenarios": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/T34"
           }
         },
-        "sources": {
+        "thresholds": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/T35"
           }
         },
-        "evidence": {
+        "sources": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/T36"
           }
         },
-        "freshnessChecks": {
+        "evidence": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/T37"
           }
         },
+        "freshnessChecks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/T38"
+          }
+        },
         "provenance": {
-          "$ref": "#/definitions/T38"
+          "$ref": "#/definitions/T39"
         }
       },
       "required": [
@@ -1499,7 +1550,7 @@
       ],
       "additionalProperties": false
     },
-    "T30": {
+    "T31": {
       "type": "object",
       "properties": {
         "company": {
@@ -1544,7 +1595,7 @@
       ],
       "additionalProperties": false
     },
-    "T31": {
+    "T32": {
       "type": "object",
       "properties": {
         "text": {
@@ -1563,7 +1614,7 @@
       ],
       "additionalProperties": false
     },
-    "T32": {
+    "T33": {
       "type": "object",
       "properties": {
         "id": {
@@ -1633,7 +1684,7 @@
       ],
       "additionalProperties": false
     },
-    "T33": {
+    "T34": {
       "type": "object",
       "properties": {
         "id": {
@@ -1675,13 +1726,13 @@
           }
         },
         "terminalValue": {
-          "$ref": "#/definitions/T34"
+          "$ref": "#/definitions/T35"
         },
         "cagrPercent": {
-          "$ref": "#/definitions/T34"
+          "$ref": "#/definitions/T35"
         },
         "horizon": {
-          "$ref": "#/definitions/T34"
+          "$ref": "#/definitions/T35"
         },
         "currency": {
           "type": "string"
@@ -1698,7 +1749,7 @@
       ],
       "additionalProperties": false
     },
-    "T34": {
+    "T35": {
       "type": "object",
       "properties": {
         "id": {
@@ -1758,7 +1809,7 @@
       ],
       "additionalProperties": false
     },
-    "T35": {
+    "T36": {
       "type": "object",
       "properties": {
         "id": {
@@ -1855,7 +1906,7 @@
       ],
       "additionalProperties": false
     },
-    "T36": {
+    "T37": {
       "type": "object",
       "properties": {
         "id": {
@@ -1921,7 +1972,7 @@
       ],
       "additionalProperties": false
     },
-    "T37": {
+    "T38": {
       "type": "object",
       "properties": {
         "id": {
@@ -2015,7 +2066,7 @@
       ],
       "additionalProperties": false
     },
-    "T38": {
+    "T39": {
       "type": "object",
       "properties": {
         "runId": {
@@ -2035,7 +2086,7 @@
       ],
       "additionalProperties": false
     },
-    "T39": {
+    "T40": {
       "type": "object",
       "properties": {
         "schemaVersion": {
@@ -2045,10 +2096,10 @@
           "const": "valuation"
         },
         "header": {
-          "$ref": "#/definitions/T40"
+          "$ref": "#/definitions/T41"
         },
         "content": {
-          "$ref": "#/definitions/T12"
+          "$ref": "#/definitions/T13"
         },
         "summary": {
           "anyOf": [
@@ -2081,25 +2132,25 @@
           ]
         },
         "presentation": {
-          "$ref": "#/definitions/T22"
+          "$ref": "#/definitions/T23"
         },
         "projection": {
           "anyOf": [
-            {
-              "$ref": "#/definitions/T26"
-            },
             {
               "$ref": "#/definitions/T27"
             },
             {
               "$ref": "#/definitions/T28"
+            },
+            {
+              "$ref": "#/definitions/T29"
             }
           ]
         },
         "diagnostics": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/T21"
+            "$ref": "#/definitions/T22"
           }
         },
         "score": {
@@ -2128,7 +2179,7 @@
       ],
       "additionalProperties": false
     },
-    "T40": {
+    "T41": {
       "type": "object",
       "properties": {
         "schemaVersion": {
@@ -2232,7 +2283,7 @@
           ]
         },
         "provenance": {
-          "$ref": "#/definitions/T11"
+          "$ref": "#/definitions/T12"
         }
       },
       "required": [
@@ -2252,88 +2303,6 @@
         "sourceFreshness",
         "archived",
         "provenance"
-      ],
-      "additionalProperties": false
-    },
-    "T41": {
-      "type": "object",
-      "properties": {
-        "schemaVersion": {
-          "const": "1.0.0"
-        },
-        "kind": {
-          "const": "short"
-        },
-        "header": {
-          "$ref": "#/definitions/T42"
-        },
-        "content": {
-          "$ref": "#/definitions/T12"
-        },
-        "summary": {
-          "anyOf": [
-            {
-              "type": "null"
-            },
-            {
-              "type": "string"
-            }
-          ]
-        },
-        "verdict": {
-          "anyOf": [
-            {
-              "type": "null"
-            },
-            {
-              "type": "string"
-            }
-          ]
-        },
-        "confidence": {
-          "anyOf": [
-            {
-              "type": "null"
-            },
-            {
-              "type": "string"
-            }
-          ]
-        },
-        "presentation": {
-          "$ref": "#/definitions/T22"
-        },
-        "projection": {
-          "anyOf": [
-            {
-              "$ref": "#/definitions/T26"
-            },
-            {
-              "$ref": "#/definitions/T27"
-            },
-            {
-              "$ref": "#/definitions/T28"
-            }
-          ]
-        },
-        "diagnostics": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/T21"
-          }
-        }
-      },
-      "required": [
-        "schemaVersion",
-        "kind",
-        "header",
-        "content",
-        "summary",
-        "verdict",
-        "confidence",
-        "presentation",
-        "projection",
-        "diagnostics"
       ],
       "additionalProperties": false
     },
@@ -2343,6 +2312,88 @@
         "schemaVersion": {
           "const": "1.0.0"
         },
+        "kind": {
+          "const": "short"
+        },
+        "header": {
+          "$ref": "#/definitions/T43"
+        },
+        "content": {
+          "$ref": "#/definitions/T13"
+        },
+        "summary": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "verdict": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "confidence": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "presentation": {
+          "$ref": "#/definitions/T23"
+        },
+        "projection": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/T27"
+            },
+            {
+              "$ref": "#/definitions/T28"
+            },
+            {
+              "$ref": "#/definitions/T29"
+            }
+          ]
+        },
+        "diagnostics": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/T22"
+          }
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "kind",
+        "header",
+        "content",
+        "summary",
+        "verdict",
+        "confidence",
+        "presentation",
+        "projection",
+        "diagnostics"
+      ],
+      "additionalProperties": false
+    },
+    "T43": {
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "const": "1.0.0"
+        },
         "id": {
           "type": "string"
         },
@@ -2441,7 +2492,7 @@
           ]
         },
         "provenance": {
-          "$ref": "#/definitions/T11"
+          "$ref": "#/definitions/T12"
         }
       },
       "required": [
@@ -2464,7 +2515,7 @@
       ],
       "additionalProperties": false
     },
-    "T43": {
+    "T44": {
       "type": "object",
       "properties": {
         "schemaVersion": {
@@ -2474,10 +2525,10 @@
           "const": "portfolio"
         },
         "header": {
-          "$ref": "#/definitions/T44"
+          "$ref": "#/definitions/T45"
         },
         "content": {
-          "$ref": "#/definitions/T12"
+          "$ref": "#/definitions/T13"
         },
         "summary": {
           "anyOf": [
@@ -2510,25 +2561,25 @@
           ]
         },
         "presentation": {
-          "$ref": "#/definitions/T22"
+          "$ref": "#/definitions/T23"
         },
         "projection": {
           "anyOf": [
-            {
-              "$ref": "#/definitions/T26"
-            },
             {
               "$ref": "#/definitions/T27"
             },
             {
               "$ref": "#/definitions/T28"
+            },
+            {
+              "$ref": "#/definitions/T29"
             }
           ]
         },
         "diagnostics": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/T21"
+            "$ref": "#/definitions/T22"
           }
         }
       },
@@ -2546,7 +2597,7 @@
       ],
       "additionalProperties": false
     },
-    "T44": {
+    "T45": {
       "type": "object",
       "properties": {
         "schemaVersion": {
@@ -2650,7 +2701,7 @@
           ]
         },
         "provenance": {
-          "$ref": "#/definitions/T11"
+          "$ref": "#/definitions/T12"
         }
       },
       "required": [
@@ -2673,7 +2724,7 @@
       ],
       "additionalProperties": false
     },
-    "T45": {
+    "T46": {
       "type": "object",
       "properties": {
         "schemaVersion": {
@@ -2683,10 +2734,10 @@
           "const": "cio_memo"
         },
         "header": {
-          "$ref": "#/definitions/T46"
+          "$ref": "#/definitions/T47"
         },
         "content": {
-          "$ref": "#/definitions/T12"
+          "$ref": "#/definitions/T13"
         },
         "summary": {
           "anyOf": [
@@ -2719,25 +2770,25 @@
           ]
         },
         "presentation": {
-          "$ref": "#/definitions/T22"
+          "$ref": "#/definitions/T23"
         },
         "projection": {
           "anyOf": [
-            {
-              "$ref": "#/definitions/T26"
-            },
             {
               "$ref": "#/definitions/T27"
             },
             {
               "$ref": "#/definitions/T28"
+            },
+            {
+              "$ref": "#/definitions/T29"
             }
           ]
         },
         "diagnostics": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/T21"
+            "$ref": "#/definitions/T22"
           }
         },
         "handoffSummary": {
@@ -2766,7 +2817,7 @@
       ],
       "additionalProperties": false
     },
-    "T46": {
+    "T47": {
       "type": "object",
       "properties": {
         "schemaVersion": {
@@ -2870,7 +2921,7 @@
           ]
         },
         "provenance": {
-          "$ref": "#/definitions/T11"
+          "$ref": "#/definitions/T12"
         }
       },
       "required": [
@@ -2893,7 +2944,7 @@
       ],
       "additionalProperties": false
     },
-    "T47": {
+    "T48": {
       "type": "object",
       "properties": {
         "schemaVersion": {
@@ -2903,10 +2954,10 @@
           "const": "decision"
         },
         "header": {
-          "$ref": "#/definitions/T48"
+          "$ref": "#/definitions/T49"
         },
         "content": {
-          "$ref": "#/definitions/T12"
+          "$ref": "#/definitions/T13"
         },
         "summary": {
           "anyOf": [
@@ -2939,29 +2990,29 @@
           ]
         },
         "presentation": {
-          "$ref": "#/definitions/T22"
+          "$ref": "#/definitions/T23"
         },
         "projection": {
           "anyOf": [
-            {
-              "$ref": "#/definitions/T26"
-            },
             {
               "$ref": "#/definitions/T27"
             },
             {
               "$ref": "#/definitions/T28"
+            },
+            {
+              "$ref": "#/definitions/T29"
             }
           ]
         },
         "diagnostics": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/T21"
+            "$ref": "#/definitions/T22"
           }
         },
         "decision": {
-          "$ref": "#/definitions/T49"
+          "$ref": "#/definitions/T50"
         }
       },
       "required": [
@@ -2979,7 +3030,7 @@
       ],
       "additionalProperties": false
     },
-    "T48": {
+    "T49": {
       "type": "object",
       "properties": {
         "schemaVersion": {
@@ -3083,7 +3134,7 @@
           ]
         },
         "provenance": {
-          "$ref": "#/definitions/T11"
+          "$ref": "#/definitions/T12"
         }
       },
       "required": [
@@ -3106,7 +3157,7 @@
       ],
       "additionalProperties": false
     },
-    "T49": {
+    "T50": {
       "type": "object",
       "properties": {
         "schemaVersion": {
@@ -3305,7 +3356,7 @@
       ],
       "additionalProperties": false
     },
-    "T50": {
+    "T51": {
       "type": "object",
       "properties": {
         "schemaVersion": {
@@ -3315,10 +3366,10 @@
           "const": "earnings"
         },
         "header": {
-          "$ref": "#/definitions/T51"
+          "$ref": "#/definitions/T52"
         },
         "content": {
-          "$ref": "#/definitions/T12"
+          "$ref": "#/definitions/T13"
         },
         "summary": {
           "anyOf": [
@@ -3351,29 +3402,29 @@
           ]
         },
         "presentation": {
-          "$ref": "#/definitions/T22"
+          "$ref": "#/definitions/T23"
         },
         "projection": {
           "anyOf": [
-            {
-              "$ref": "#/definitions/T26"
-            },
             {
               "$ref": "#/definitions/T27"
             },
             {
               "$ref": "#/definitions/T28"
+            },
+            {
+              "$ref": "#/definitions/T29"
             }
           ]
         },
         "diagnostics": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/T21"
+            "$ref": "#/definitions/T22"
           }
         },
         "earningsReview": {
-          "$ref": "#/definitions/T52"
+          "$ref": "#/definitions/T53"
         }
       },
       "required": [
@@ -3391,7 +3442,7 @@
       ],
       "additionalProperties": false
     },
-    "T51": {
+    "T52": {
       "type": "object",
       "properties": {
         "schemaVersion": {
@@ -3495,7 +3546,7 @@
           ]
         },
         "provenance": {
-          "$ref": "#/definitions/T11"
+          "$ref": "#/definitions/T12"
         }
       },
       "required": [
@@ -3518,7 +3569,7 @@
       ],
       "additionalProperties": false
     },
-    "T52": {
+    "T53": {
       "type": "object",
       "properties": {
         "fiscalPeriod": {
@@ -3564,7 +3615,7 @@
         "refreshes": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/T53"
+            "$ref": "#/definitions/T54"
           }
         }
       },
@@ -3577,7 +3628,7 @@
       ],
       "additionalProperties": false
     },
-    "T53": {
+    "T54": {
       "type": "object",
       "properties": {
         "key": {
@@ -3640,7 +3691,7 @@
       ],
       "additionalProperties": false
     },
-    "T54": {
+    "T55": {
       "type": "object",
       "properties": {
         "schemaVersion": {
@@ -3657,10 +3708,10 @@
           ]
         },
         "header": {
-          "$ref": "#/definitions/T55"
+          "$ref": "#/definitions/T56"
         },
         "content": {
-          "$ref": "#/definitions/T12"
+          "$ref": "#/definitions/T13"
         },
         "summary": {
           "anyOf": [
@@ -3693,25 +3744,25 @@
           ]
         },
         "presentation": {
-          "$ref": "#/definitions/T22"
+          "$ref": "#/definitions/T23"
         },
         "projection": {
           "anyOf": [
-            {
-              "$ref": "#/definitions/T26"
-            },
             {
               "$ref": "#/definitions/T27"
             },
             {
               "$ref": "#/definitions/T28"
+            },
+            {
+              "$ref": "#/definitions/T29"
             }
           ]
         },
         "diagnostics": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/T21"
+            "$ref": "#/definitions/T22"
           }
         }
       },
@@ -3729,7 +3780,7 @@
       ],
       "additionalProperties": false
     },
-    "T55": {
+    "T56": {
       "type": "object",
       "properties": {
         "schemaVersion": {
@@ -3840,7 +3891,7 @@
           ]
         },
         "provenance": {
-          "$ref": "#/definitions/T11"
+          "$ref": "#/definitions/T12"
         }
       },
       "required": [
@@ -3863,7 +3914,7 @@
       ],
       "additionalProperties": false
     },
-    "T56": {
+    "T57": {
       "type": "object",
       "properties": {
         "contractVersion": {
@@ -3886,7 +3937,7 @@
           "pattern": "^\\S(?:[\\s\\S]*\\S)?$"
         },
         "options": {
-          "$ref": "#/definitions/T3"
+          "$ref": "#/definitions/T4"
         }
       },
       "required": [
@@ -3896,7 +3947,7 @@
       ],
       "additionalProperties": false
     },
-    "T57": {
+    "T58": {
       "type": "object",
       "properties": {
         "contractVersion": {
@@ -3919,12 +3970,12 @@
           "const": "rejected"
         },
         "error": {
-          "$ref": "#/definitions/T58"
+          "$ref": "#/definitions/T59"
         },
         "diagnostics": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/T21"
+            "$ref": "#/definitions/T22"
           }
         }
       },
@@ -3937,7 +3988,7 @@
       ],
       "additionalProperties": false
     },
-    "T58": {
+    "T59": {
       "type": "object",
       "properties": {
         "code": {
@@ -4003,7 +4054,7 @@
       ],
       "additionalProperties": false
     },
-    "T59": {
+    "T60": {
       "type": "object",
       "properties": {
         "contractVersion": {
@@ -4025,10 +4076,10 @@
         "result": {
           "anyOf": [
             {
-              "$ref": "#/definitions/T60"
+              "$ref": "#/definitions/T61"
             },
             {
-              "$ref": "#/definitions/T63"
+              "$ref": "#/definitions/T64"
             }
           ]
         }
@@ -4041,7 +4092,7 @@
       ],
       "additionalProperties": false
     },
-    "T60": {
+    "T61": {
       "type": "object",
       "properties": {
         "schemaVersion": {
@@ -4051,10 +4102,10 @@
           "const": "error"
         },
         "error": {
-          "$ref": "#/definitions/T61"
+          "$ref": "#/definitions/T62"
         },
         "metadata": {
-          "$ref": "#/definitions/T62"
+          "$ref": "#/definitions/T63"
         }
       },
       "required": [
@@ -4065,7 +4116,7 @@
       ],
       "additionalProperties": false
     },
-    "T61": {
+    "T62": {
       "type": "object",
       "properties": {
         "code": {
@@ -4135,7 +4186,7 @@
       ],
       "additionalProperties": false
     },
-    "T62": {
+    "T63": {
       "type": "object",
       "properties": {
         "revision": {
@@ -4167,14 +4218,14 @@
               "type": "null"
             },
             {
-              "$ref": "#/definitions/T11"
+              "$ref": "#/definitions/T12"
             }
           ]
         },
         "diagnostics": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/T21"
+            "$ref": "#/definitions/T22"
           }
         }
       },
@@ -4186,7 +4237,140 @@
       ],
       "additionalProperties": false
     },
-    "T63": {
+    "T64": {
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "const": "1.0.0"
+        },
+        "status": {
+          "const": "ok"
+        },
+        "data": {
+          "$ref": "#/definitions/T65"
+        },
+        "metadata": {
+          "$ref": "#/definitions/T63"
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "status",
+        "data",
+        "metadata"
+      ],
+      "additionalProperties": false
+    },
+    "T65": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "anyOf": [
+            {
+              "const": "not_found"
+            },
+            {
+              "const": "resolved"
+            },
+            {
+              "const": "ambiguous"
+            }
+          ]
+        },
+        "candidates": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/T66"
+          }
+        }
+      },
+      "required": [
+        "status",
+        "candidates"
+      ],
+      "additionalProperties": false
+    },
+    "T66": {
+      "type": "object",
+      "properties": {
+        "ticker": {
+          "type": "string"
+        },
+        "exchange": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "assetId": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "companyId": {
+          "type": "string"
+        },
+        "canonicalName": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "ticker",
+        "exchange",
+        "assetId",
+        "companyId",
+        "canonicalName"
+      ],
+      "additionalProperties": false
+    },
+    "T67": {
+      "type": "object",
+      "properties": {
+        "contractVersion": {
+          "const": "1.0.0"
+        },
+        "scope": {
+          "anyOf": [
+            {
+              "const": "personal"
+            },
+            {
+              "const": "demo"
+            }
+          ]
+        },
+        "status": {
+          "const": "completed"
+        },
+        "result": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/T61"
+            },
+            {
+              "$ref": "#/definitions/T68"
+            }
+          ]
+        }
+      },
+      "required": [
+        "contractVersion",
+        "scope",
+        "status",
+        "result"
+      ],
+      "additionalProperties": false
+    },
+    "T68": {
       "type": "object",
       "properties": {
         "schemaVersion": {
@@ -4201,12 +4385,12 @@
               "type": "null"
             },
             {
-              "$ref": "#/definitions/T64"
+              "$ref": "#/definitions/T69"
             }
           ]
         },
         "metadata": {
-          "$ref": "#/definitions/T62"
+          "$ref": "#/definitions/T63"
         }
       },
       "required": [
@@ -4217,7 +4401,7 @@
       ],
       "additionalProperties": false
     },
-    "T64": {
+    "T69": {
       "type": "object",
       "properties": {
         "schemaVersion": {
@@ -4314,40 +4498,40 @@
         "researchReferences": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/T65"
+            "$ref": "#/definitions/T70"
           }
         },
         "provenance": {
-          "$ref": "#/definitions/T11"
+          "$ref": "#/definitions/T12"
         },
         "analyses": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/T66"
+            "$ref": "#/definitions/T71"
           }
         },
         "earnings": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/T66"
+            "$ref": "#/definitions/T71"
           }
         },
         "decisions": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/T66"
+            "$ref": "#/definitions/T71"
           }
         },
         "portfolioDocuments": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/T66"
+            "$ref": "#/definitions/T71"
           }
         },
         "archives": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/T66"
+            "$ref": "#/definitions/T71"
           }
         }
       },
@@ -4382,7 +4566,7 @@
       ],
       "additionalProperties": false
     },
-    "T65": {
+    "T70": {
       "type": "object",
       "properties": {
         "schemaVersion": {
@@ -4452,7 +4636,7 @@
           "type": "string"
         },
         "provenance": {
-          "$ref": "#/definitions/T11"
+          "$ref": "#/definitions/T12"
         }
       },
       "required": [
@@ -4472,7 +4656,7 @@
       ],
       "additionalProperties": false
     },
-    "T66": {
+    "T71": {
       "type": "object",
       "properties": {
         "schemaVersion": {
@@ -4604,7 +4788,7 @@
           ]
         },
         "provenance": {
-          "$ref": "#/definitions/T11"
+          "$ref": "#/definitions/T12"
         },
         "summary": {
           "anyOf": [
@@ -4678,7 +4862,7 @@
         "diagnostics": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/T21"
+            "$ref": "#/definitions/T22"
           }
         }
       },
@@ -4710,7 +4894,7 @@
       ],
       "additionalProperties": false
     },
-    "T67": {
+    "T72": {
       "type": "object",
       "properties": {
         "contractVersion": {
@@ -4732,10 +4916,10 @@
         "result": {
           "anyOf": [
             {
-              "$ref": "#/definitions/T60"
+              "$ref": "#/definitions/T61"
             },
             {
-              "$ref": "#/definitions/T68"
+              "$ref": "#/definitions/T73"
             }
           ]
         }
@@ -4748,7 +4932,7 @@
       ],
       "additionalProperties": false
     },
-    "T68": {
+    "T73": {
       "type": "object",
       "properties": {
         "schemaVersion": {
@@ -4758,10 +4942,10 @@
           "const": "ok"
         },
         "data": {
-          "$ref": "#/definitions/T69"
+          "$ref": "#/definitions/T74"
         },
         "metadata": {
-          "$ref": "#/definitions/T62"
+          "$ref": "#/definitions/T63"
         }
       },
       "required": [
@@ -4772,7 +4956,7 @@
       ],
       "additionalProperties": false
     },
-    "T69": {
+    "T74": {
       "type": "object",
       "properties": {
         "schemaVersion": {
@@ -4807,28 +4991,28 @@
         "targetLines": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/T70"
+            "$ref": "#/definitions/T75"
           }
         },
         "targetTotals": {
-          "$ref": "#/definitions/T71"
+          "$ref": "#/definitions/T76"
         },
         "totals": {
-          "$ref": "#/definitions/T72"
+          "$ref": "#/definitions/T77"
         },
         "slices": {
-          "$ref": "#/definitions/T73"
+          "$ref": "#/definitions/T78"
         },
         "positions": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/T74"
+            "$ref": "#/definitions/T79"
           }
         },
         "closedPositions": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/T76"
+            "$ref": "#/definitions/T81"
           }
         },
         "refreshPending": {
@@ -4844,20 +5028,20 @@
         "sectors": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/T77"
+            "$ref": "#/definitions/T82"
           }
         },
         "coverage": {
-          "$ref": "#/definitions/T78"
-        },
-        "reconciliation": {
-          "$ref": "#/definitions/T79"
-        },
-        "calculation": {
           "$ref": "#/definitions/T83"
         },
+        "reconciliation": {
+          "$ref": "#/definitions/T84"
+        },
+        "calculation": {
+          "$ref": "#/definitions/T88"
+        },
         "provenance": {
-          "$ref": "#/definitions/T11"
+          "$ref": "#/definitions/T12"
         }
       },
       "required": [
@@ -4879,7 +5063,7 @@
       ],
       "additionalProperties": false
     },
-    "T70": {
+    "T75": {
       "type": "object",
       "properties": {
         "id": {
@@ -4911,7 +5095,7 @@
       ],
       "additionalProperties": false
     },
-    "T71": {
+    "T76": {
       "type": "object",
       "properties": {
         "target10kWeight": {
@@ -4927,7 +5111,7 @@
       ],
       "additionalProperties": false
     },
-    "T72": {
+    "T77": {
       "type": "object",
       "properties": {
         "marketValueEur": {
@@ -4989,15 +5173,15 @@
       ],
       "additionalProperties": false
     },
-    "T73": {
+    "T78": {
       "type": "object",
       "properties": {},
       "required": [],
       "additionalProperties": {
-        "$ref": "#/definitions/T72"
+        "$ref": "#/definitions/T77"
       }
     },
-    "T74": {
+    "T79": {
       "type": "object",
       "properties": {
         "schemaVersion": {
@@ -5046,19 +5230,19 @@
         "countryExposures": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/T75"
+            "$ref": "#/definitions/T80"
           }
         },
         "sectorExposures": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/T75"
+            "$ref": "#/definitions/T80"
           }
         },
         "themeExposures": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/T75"
+            "$ref": "#/definitions/T80"
           }
         },
         "quantity": {
@@ -5290,7 +5474,7 @@
           ]
         },
         "provenance": {
-          "$ref": "#/definitions/T11"
+          "$ref": "#/definitions/T12"
         },
         "lifecycle": {
           "const": "open"
@@ -5347,7 +5531,7 @@
       ],
       "additionalProperties": false
     },
-    "T75": {
+    "T80": {
       "type": "object",
       "properties": {
         "name": {
@@ -5363,7 +5547,7 @@
       ],
       "additionalProperties": false
     },
-    "T76": {
+    "T81": {
       "type": "object",
       "properties": {
         "schemaVersion": {
@@ -5412,19 +5596,19 @@
         "countryExposures": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/T75"
+            "$ref": "#/definitions/T80"
           }
         },
         "sectorExposures": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/T75"
+            "$ref": "#/definitions/T80"
           }
         },
         "themeExposures": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/T75"
+            "$ref": "#/definitions/T80"
           }
         },
         "quantity": {
@@ -5656,7 +5840,7 @@
           ]
         },
         "provenance": {
-          "$ref": "#/definitions/T11"
+          "$ref": "#/definitions/T12"
         },
         "lifecycle": {
           "const": "closed"
@@ -5723,7 +5907,7 @@
       ],
       "additionalProperties": false
     },
-    "T77": {
+    "T82": {
       "type": "object",
       "properties": {
         "name": {
@@ -5743,7 +5927,7 @@
       ],
       "additionalProperties": false
     },
-    "T78": {
+    "T83": {
       "type": "object",
       "properties": {
         "live": {
@@ -5775,7 +5959,7 @@
       ],
       "additionalProperties": false
     },
-    "T79": {
+    "T84": {
       "type": "object",
       "properties": {
         "status": {
@@ -5803,11 +5987,11 @@
         "issues": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/T80"
+            "$ref": "#/definitions/T85"
           }
         },
         "accountChecks": {
-          "$ref": "#/definitions/T81"
+          "$ref": "#/definitions/T86"
         }
       },
       "required": [
@@ -5820,7 +6004,7 @@
       ],
       "additionalProperties": false
     },
-    "T80": {
+    "T85": {
       "type": "object",
       "properties": {
         "positionId": {
@@ -5869,7 +6053,7 @@
       ],
       "additionalProperties": false
     },
-    "T82": {
+    "T87": {
       "type": "object",
       "properties": {
         "linesValueEur": {
@@ -5889,15 +6073,15 @@
       ],
       "additionalProperties": false
     },
-    "T81": {
+    "T86": {
       "type": "object",
       "properties": {},
       "required": [],
       "additionalProperties": {
-        "$ref": "#/definitions/T82"
+        "$ref": "#/definitions/T87"
       }
     },
-    "T83": {
+    "T88": {
       "type": "object",
       "properties": {
         "pnlScope": {
@@ -5925,231 +6109,231 @@
       ],
       "additionalProperties": false
     },
-    "T84": {
-      "type": "object",
-      "properties": {
-        "contractVersion": {
-          "const": "1.0.0"
-        },
-        "scope": {
-          "anyOf": [
-            {
-              "const": "personal"
-            },
-            {
-              "const": "demo"
-            }
-          ]
-        },
-        "status": {
-          "const": "completed"
-        },
-        "result": {
-          "anyOf": [
-            {
-              "$ref": "#/definitions/T60"
-            },
-            {
-              "$ref": "#/definitions/T85"
-            }
-          ]
-        }
-      },
-      "required": [
-        "contractVersion",
-        "scope",
-        "status",
-        "result"
-      ],
-      "additionalProperties": false
-    },
-    "T85": {
-      "type": "object",
-      "properties": {
-        "schemaVersion": {
-          "const": "1.0.0"
-        },
-        "status": {
-          "const": "ok"
-        },
-        "data": {
-          "anyOf": [
-            {
-              "type": "null"
-            },
-            {
-              "$ref": "#/definitions/T74"
-            },
-            {
-              "$ref": "#/definitions/T76"
-            }
-          ]
-        },
-        "metadata": {
-          "$ref": "#/definitions/T62"
-        }
-      },
-      "required": [
-        "schemaVersion",
-        "status",
-        "data",
-        "metadata"
-      ],
-      "additionalProperties": false
-    },
-    "T86": {
-      "type": "object",
-      "properties": {
-        "contractVersion": {
-          "const": "1.0.0"
-        },
-        "scope": {
-          "anyOf": [
-            {
-              "const": "personal"
-            },
-            {
-              "const": "demo"
-            }
-          ]
-        },
-        "status": {
-          "const": "completed"
-        },
-        "result": {
-          "anyOf": [
-            {
-              "$ref": "#/definitions/T60"
-            },
-            {
-              "$ref": "#/definitions/T87"
-            }
-          ]
-        }
-      },
-      "required": [
-        "contractVersion",
-        "scope",
-        "status",
-        "result"
-      ],
-      "additionalProperties": false
-    },
-    "T87": {
-      "type": "object",
-      "properties": {
-        "schemaVersion": {
-          "const": "1.0.0"
-        },
-        "status": {
-          "const": "ok"
-        },
-        "data": {
-          "anyOf": [
-            {
-              "type": "null"
-            },
-            {
-              "$ref": "#/definitions/T9"
-            },
-            {
-              "$ref": "#/definitions/T39"
-            },
-            {
-              "$ref": "#/definitions/T41"
-            },
-            {
-              "$ref": "#/definitions/T43"
-            },
-            {
-              "$ref": "#/definitions/T45"
-            },
-            {
-              "$ref": "#/definitions/T47"
-            },
-            {
-              "$ref": "#/definitions/T50"
-            },
-            {
-              "$ref": "#/definitions/T54"
-            }
-          ]
-        },
-        "metadata": {
-          "$ref": "#/definitions/T62"
-        }
-      },
-      "required": [
-        "schemaVersion",
-        "status",
-        "data",
-        "metadata"
-      ],
-      "additionalProperties": false
-    },
-    "T88": {
-      "type": "object",
-      "properties": {
-        "contractVersion": {
-          "const": "1.0.0"
-        },
-        "scope": {
-          "anyOf": [
-            {
-              "const": "personal"
-            },
-            {
-              "const": "demo"
-            }
-          ]
-        },
-        "status": {
-          "const": "completed"
-        },
-        "result": {
-          "anyOf": [
-            {
-              "$ref": "#/definitions/T60"
-            },
-            {
-              "$ref": "#/definitions/T89"
-            }
-          ]
-        }
-      },
-      "required": [
-        "contractVersion",
-        "scope",
-        "status",
-        "result"
-      ],
-      "additionalProperties": false
-    },
     "T89": {
       "type": "object",
       "properties": {
-        "schemaVersion": {
+        "contractVersion": {
           "const": "1.0.0"
         },
+        "scope": {
+          "anyOf": [
+            {
+              "const": "personal"
+            },
+            {
+              "const": "demo"
+            }
+          ]
+        },
         "status": {
-          "const": "ok"
+          "const": "completed"
         },
-        "data": {
-          "$ref": "#/definitions/T90"
-        },
-        "metadata": {
-          "$ref": "#/definitions/T62"
+        "result": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/T61"
+            },
+            {
+              "$ref": "#/definitions/T90"
+            }
+          ]
         }
       },
       "required": [
-        "schemaVersion",
+        "contractVersion",
+        "scope",
         "status",
-        "data",
-        "metadata"
+        "result"
       ],
       "additionalProperties": false
     },
     "T90": {
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "const": "1.0.0"
+        },
+        "status": {
+          "const": "ok"
+        },
+        "data": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/definitions/T79"
+            },
+            {
+              "$ref": "#/definitions/T81"
+            }
+          ]
+        },
+        "metadata": {
+          "$ref": "#/definitions/T63"
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "status",
+        "data",
+        "metadata"
+      ],
+      "additionalProperties": false
+    },
+    "T91": {
+      "type": "object",
+      "properties": {
+        "contractVersion": {
+          "const": "1.0.0"
+        },
+        "scope": {
+          "anyOf": [
+            {
+              "const": "personal"
+            },
+            {
+              "const": "demo"
+            }
+          ]
+        },
+        "status": {
+          "const": "completed"
+        },
+        "result": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/T61"
+            },
+            {
+              "$ref": "#/definitions/T92"
+            }
+          ]
+        }
+      },
+      "required": [
+        "contractVersion",
+        "scope",
+        "status",
+        "result"
+      ],
+      "additionalProperties": false
+    },
+    "T92": {
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "const": "1.0.0"
+        },
+        "status": {
+          "const": "ok"
+        },
+        "data": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/definitions/T10"
+            },
+            {
+              "$ref": "#/definitions/T40"
+            },
+            {
+              "$ref": "#/definitions/T42"
+            },
+            {
+              "$ref": "#/definitions/T44"
+            },
+            {
+              "$ref": "#/definitions/T46"
+            },
+            {
+              "$ref": "#/definitions/T48"
+            },
+            {
+              "$ref": "#/definitions/T51"
+            },
+            {
+              "$ref": "#/definitions/T55"
+            }
+          ]
+        },
+        "metadata": {
+          "$ref": "#/definitions/T63"
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "status",
+        "data",
+        "metadata"
+      ],
+      "additionalProperties": false
+    },
+    "T93": {
+      "type": "object",
+      "properties": {
+        "contractVersion": {
+          "const": "1.0.0"
+        },
+        "scope": {
+          "anyOf": [
+            {
+              "const": "personal"
+            },
+            {
+              "const": "demo"
+            }
+          ]
+        },
+        "status": {
+          "const": "completed"
+        },
+        "result": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/T61"
+            },
+            {
+              "$ref": "#/definitions/T94"
+            }
+          ]
+        }
+      },
+      "required": [
+        "contractVersion",
+        "scope",
+        "status",
+        "result"
+      ],
+      "additionalProperties": false
+    },
+    "T94": {
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "const": "1.0.0"
+        },
+        "status": {
+          "const": "ok"
+        },
+        "data": {
+          "$ref": "#/definitions/T95"
+        },
+        "metadata": {
+          "$ref": "#/definitions/T63"
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "status",
+        "data",
+        "metadata"
+      ],
+      "additionalProperties": false
+    },
+    "T95": {
       "type": "object",
       "properties": {
         "schemaVersion": {
@@ -6220,7 +6404,7 @@
         "diagnostics": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/T91"
+            "$ref": "#/definitions/T96"
           }
         }
       },
@@ -6237,7 +6421,7 @@
       ],
       "additionalProperties": false
     },
-    "T91": {
+    "T96": {
       "type": "object",
       "properties": {
         "code": {
@@ -6267,7 +6451,7 @@
       ],
       "additionalProperties": false
     },
-    "T92": {
+    "T97": {
       "type": "object",
       "properties": {
         "contractVersion": {
@@ -6289,10 +6473,10 @@
         "result": {
           "anyOf": [
             {
-              "$ref": "#/definitions/T60"
+              "$ref": "#/definitions/T61"
             },
             {
-              "$ref": "#/definitions/T93"
+              "$ref": "#/definitions/T98"
             }
           ]
         }
@@ -6305,7 +6489,7 @@
       ],
       "additionalProperties": false
     },
-    "T93": {
+    "T98": {
       "type": "object",
       "properties": {
         "schemaVersion": {
@@ -6315,10 +6499,10 @@
           "const": "ok"
         },
         "data": {
-          "$ref": "#/definitions/T94"
+          "$ref": "#/definitions/T99"
         },
         "metadata": {
-          "$ref": "#/definitions/T62"
+          "$ref": "#/definitions/T63"
         }
       },
       "required": [
@@ -6329,7 +6513,7 @@
       ],
       "additionalProperties": false
     },
-    "T94": {
+    "T99": {
       "type": "object",
       "properties": {
         "schemaVersion": {
@@ -6474,7 +6658,7 @@
           }
         },
         "provenance": {
-          "$ref": "#/definitions/T11"
+          "$ref": "#/definitions/T12"
         }
       },
       "required": [

@@ -33,9 +33,10 @@ try {
   const url = new URL("/mcp", await mf.ready);
   assert.equal((await fetch(url, { method: "POST", body: "{}", headers: { "content-type": "application/json" } })).status, 401);
   await client.connect(new StreamableHTTPClientTransport(url, { requestInit: { headers } }));
-  const list = await client.listTools(); assert.equal(list.tools.length, 7);
+  const list = await client.listTools(); assert.equal(list.tools.length, 8);
   const read = async (name, args) => { const start = performance.now(); const r = await client.callTool({ name, arguments: { ...base, ...args } }); assert.equal(r.structuredContent.status, "completed", name); assert.equal(r.structuredContent.result.status, "ok", name); console.log(`${name}: PASS ${Math.round(performance.now() - start)}ms`); return r.structuredContent.result.data; };
-  const company = await read("get_company", { id: "demo-lumagrid" }); assert.ok(company);
+  const resolved = await read("resolve_company", { query: "LUMA" }); assert.equal(resolved.status, "resolved");
+  const company = await read("get_company", { id: resolved.candidates[0].companyId }); assert.ok(company);
   const portfolio = await read("get_portfolio", {}); const position = portfolio.positions[0];
   assert.ok(await read("get_position", { id: position.id }));
   assert.ok(await read("get_current_analysis", { companyId: "demo-lumagrid", family: "business" }));
@@ -44,17 +45,10 @@ try {
   const bad = await client.callTool({ name: "get_company", arguments: { ...base, id: "demo-lumagrid", contractVersion: "2.0.0" } }); assert.equal(bad.structuredContent.error.code, "unsupported_version");
   const forbiddenWrite = await client.callTool({ name: "save_analysis", arguments: { ...base, input: {} } }); assert.equal(forbiddenWrite.structuredContent.error.code, "forbidden");
   const browser = await fetch(url, { method: "POST", headers: { ...headers, origin: url.origin }, body: "{}" }); assert.equal(browser.status, 403);
-  const intent = writeInput();
-  const save = await client.callTool({ name: "save_analysis", arguments: { ...base, scope: "personal", input: intent } });
-  assert.equal(save.structuredContent.result.data.status, "verified");
-  const replay = await client.callTool({ name: "save_analysis", arguments: { ...base, scope: "personal", input: intent } });
-  assert.equal(replay.structuredContent.result.data.status, "verified"); assert.equal(data.creates, 1);
-  assert.equal(data.promotions, 1);
-  const analysisId = save.structuredContent.result.data.analysisId;
-  const analysis = await client.callTool({ name: "get_analysis_by_id", arguments: { ...base, scope: "personal", id: analysisId } }); assert.equal(analysis.structuredContent.result.status, "ok"); assert.ok(analysis.structuredContent.result.data);
-  const conflictInput = structuredClone(intent); conflictInput.analysis.header.title = "Conflicting fixture";
-  const conflict = await client.callTool({ name: "save_analysis", arguments: { ...base, scope: "personal", input: conflictInput } }); assert.equal(conflict.structuredContent.result.error.code, "stale_request"); assert.equal(data.creates, 1);
-  console.log("workerd: actual writer + isolated D1 + intercepted Notion fixture: verified/replay/conflict/personal READ PASS");
-  console.log("workerd: initialization/discovery, 6 demo READ, auth, WRITE refusal, version, browser boundary PASS");
+  const save = await client.callTool({ name: "save_analysis", arguments: { ...base, scope: "personal", input: writeInput() } });
+  assert.equal(save.structuredContent.error.code, "forbidden");
+  assert.equal(save.structuredContent.error.outcome, "not_started");
+  assert.equal(data.creates, 0);
+  console.log("workerd: initialization/discovery, identity resolution, 6 demo READ, auth, release-closed WRITE, version, browser boundary PASS");
   console.log(`catalog JSON bytes: ${Buffer.byteLength(JSON.stringify(list))}`);
 } finally { await client.close(); await mf.dispose(); data.sql.close(); }

@@ -26,7 +26,7 @@ test("transport import boundary and canonical discovery schemas", async () => {
   const b = await build({ entryPoints: ["transports/mcp/server.ts"], bundle: true, write: false, platform: "node", format: "esm", packages: "external", metafile: true });
   assert.ok(Object.keys(b.metafile.inputs).every(p => !/^(app|adapters|worker)\//.test(p)));
   const result = await handler()(request("", base, { body: { method: "tools/list", params: {} } }));
-  const json = await result.json(); assert.equal(json.result.tools.length, 7);
+  const json = await result.json(); assert.equal(json.result.tools.length, 8);
   assert.equal(json.result.tools.some(t => t.name === "list_analyses"), false);
   for (const tool of json.result.tools) { assert.equal(tool.inputSchema.type, "object"); assert.ok(tool.inputSchema.definitions); assert.equal(tool.annotations.readOnlyHint, tool.name !== "save_analysis"); }
 });
@@ -90,10 +90,11 @@ test("permissions, scope isolation, mutation confirmation and unauthorized never
   assert.equal(calls, 0);
 });
 
-test("all seven mappings execute existing Core with exact arguments and preserve diagnostics", async () => {
+test("all eight mappings execute existing Core with exact arguments and preserve diagnostics", async () => {
   const seen = [];
   const doc = writeInput().analysis; doc.header.id = "analysis-1"; doc.header.companyIds = ["company-1"];
   const ports = {
+    readCompanyIdentities: async () => { seen.push(["resolveCompany"]); return [{ companyId: "company-1", canonicalName: "Microsoft", ticker: "MSFT", exchange: "NASDAQ", assetId: null, aliases: [] }]; },
     readCompany: async id => { seen.push(["getCompany", id]); return f.companyPreview(); },
     readPortfolio: async opts => { seen.push(["getPortfolio", opts]); return f.portfolio(); },
     readPosition: async (id, opts) => { seen.push(["getPosition", id, opts]); return f.position(); },
@@ -103,7 +104,7 @@ test("all seven mappings execute existing Core with exact arguments and preserve
     writeAnalysis: async input => { seen.push(["saveAnalysis", input]); return { schemaVersion: "1.0.0", status: "persisted", analysisId: doc.header.id, runId: input.runId, revision: "new", persisted: true, promoted: false, verified: false, diagnostics: [{ code: "fixture_safe", message: "Safe diagnostic", severity: "warning" }] }; },
   };
   const h = handler(api.createInvestmentCore(ports)); const opts = { cacheOnly: true };
-  for (const [name, args, expected] of [["get_company", { id: "company-1" }, ["getCompany", "company-1"]], ["get_portfolio", { options: opts }, ["getPortfolio", opts]], ["get_position", { id: "position-1", options: opts }, ["getPosition", "position-1", opts]], ["get_current_analysis", { companyId: "company-1", family: "business" }, ["getCurrentAnalysis", "company-1", "business"]], ["get_analysis_by_id", { id: "analysis-1" }, ["getAnalysisById", "analysis-1"]], ["get_quote", { assetId: "asset-1", options: opts }, ["getQuote", "asset-1", opts]], ["save_analysis", { input: { ...writeInput(), analysis: doc, companyIds: ["company-1"], runId: "unchanged-run", expectedRevision: "unchanged-revision" } }, null]]) {
+  for (const [name, args, expected] of [["resolve_company", { query: "Microsoft" }, ["resolveCompany"]], ["get_company", { id: "company-1" }, ["getCompany", "company-1"]], ["get_portfolio", { options: opts }, ["getPortfolio", opts]], ["get_position", { id: "position-1", options: opts }, ["getPosition", "position-1", opts]], ["get_current_analysis", { companyId: "company-1", family: "business" }, ["getCurrentAnalysis", "company-1", "business"]], ["get_analysis_by_id", { id: "analysis-1" }, ["getAnalysisById", "analysis-1"]], ["get_quote", { assetId: "asset-1", options: opts }, ["getQuote", "asset-1", opts]], ["save_analysis", { input: { ...writeInput(), analysis: doc, companyIds: ["company-1"], runId: "unchanged-run", expectedRevision: "unchanged-revision" } }, null]]) {
     const out = await call(h, name, { ...base, ...args }); assert.equal(out.result.status, "ok", name);
     if (expected) assert.deepEqual(seen.at(-1), expected);
     else { assert.equal(seen.at(-1)[0], "saveAnalysis"); assert.equal(seen.at(-1)[1].runId, "unchanged-run"); assert.equal(seen.at(-1)[1].expectedRevision, "unchanged-revision"); assert.equal(out.result.data.diagnostics[0].message, "Safe diagnostic"); }
@@ -174,7 +175,7 @@ test("local runtime: SDK client initialize/discover, real adapter WRITE receipts
     try {
       const unauthenticated = await fetch(url, { method: "POST", headers: { "content-type": "application/json" }, body: "{}" }); assert.equal(unauthenticated.status, 401);
       await client.connect(new StreamableHTTPClientTransport(url, { requestInit: { headers: { authorization: `Bearer ${token}` } } }));
-      assert.equal((await client.listTools()).tools.length, 7);
+      assert.equal((await client.listTools()).tools.length, 8);
       const intent = writeInput(); if (status === "persisted") intent.analysis.header.status = "Draft";
       const one = await client.callTool({ name: "save_analysis", arguments: { ...base, input: intent } });
       assert.equal(one.structuredContent.result.data.status, status); assert.equal(data.creates, 1);

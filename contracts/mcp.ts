@@ -3,12 +3,13 @@ import type { Analysis } from "../core/contracts/analysis.ts";
 import type { CompanyPreview, Portfolio, Position, Quote } from "../core/contracts/investment.ts";
 import type { Diagnostic, ServiceResult } from "../core/contracts/common.ts";
 import type { CurrentAnalysisFamily } from "../core/analysis/current-selection.ts";
-import type { ReadOptions, SaveAnalysisInput, SaveAnalysisReceipt } from "../core/services/ports.ts";
+import type { CompanyResolution, ReadOptions, SaveAnalysisInput, SaveAnalysisReceipt } from "../core/services/ports.ts";
 
 export const MCP_CONTRACT_VERSION = "1.0.0" as const;
 export type McpScope = "personal" | "demo";
 type Request = { contractVersion: typeof MCP_CONTRACT_VERSION; scope: McpScope };
 export type McpInputs = {
+  resolve_company: Request & { query: string; market?: string };
   get_company: Request & { id: string };
   get_portfolio: Request & { options?: ReadOptions };
   get_position: Request & { id: string; options?: ReadOptions };
@@ -25,6 +26,7 @@ export type McpOutput<T> =
       error: { code: McpTransportErrorCode; message: string; retryable: boolean; outcome: "not_started" | "unknown" };
       diagnostics: Diagnostic[] };
 export type McpOutputs = {
+  resolve_company: McpOutput<CompanyResolution>;
   get_company: McpOutput<CompanyPreview | null>;
   get_portfolio: McpOutput<Portfolio>;
   get_position: McpOutput<Position | null>;
@@ -36,6 +38,7 @@ export type McpOutputs = {
 
 /** The positional arguments below are an exact specification, not an executable dispatcher. */
 export const MCP_TOOLS = {
+  resolve_company: { description: "Résoudre un nom, ticker ou alias connu vers des identifiants Company canoniques sans choisir en cas d'ambiguïté.", operation: "resolveCompany", arguments: ["query", "market"], access: "READ" },
   get_company: { description: "Lire l'identité, les aperçus et les archives d'une entreprise.", operation: "getCompany", arguments: ["id"], access: "READ" },
   get_portfolio: { description: "Lire le portefeuille et ses agrégats calculés par le Core.", operation: "getPortfolio", arguments: ["options"], access: "READ" },
   get_position: { description: "Lire une position ouverte ou fermée par son identifiant.", operation: "getPosition", arguments: ["id", "options"], access: "READ" },

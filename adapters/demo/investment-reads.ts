@@ -2,7 +2,7 @@ import { createInvestmentCore } from "../../core/services/investment-os";
 import type { InvestmentPorts } from "../../core/services/ports";
 import type { Analysis } from "../../core/contracts/analysis";
 import type { CurrentAnalysisFamily, CurrentSelectionInput } from "../../core/analysis/current-selection";
-import { getDemoCompanyDetail, getDemoLivePortfolio, getDemoResearchDocument, demoDataIds } from "../../app/lib/demo-data";
+import { getDemoCompanies, getDemoCompanyDetail, getDemoLivePortfolio, getDemoResearchDocument, demoDataIds } from "../../app/lib/demo-data";
 import { analysisOf, canonicalCompany, canonicalPortfolio, canonicalQuote } from "../notion/investment-reads";
 import type { CompanyDocument, LivePortfolio } from "../notion/investment-data";
 
@@ -73,6 +73,11 @@ function demoQuote(assetId: string, portfolio: LivePortfolio) {
 function demoPorts(): InvestmentPorts {
   const portfolio = getDemoLivePortfolio();
   return {
+    readCompanyIdentities: async () => getDemoCompanies().companies.map(company => {
+      const assetIds = [...new Set(portfolio.positions.filter(position => position.companyIds.includes(company.id)).map(position => position.targetId))];
+      return { companyId: company.id, canonicalName: company.name, ticker: company.ticker,
+        exchange: company.exchange || null, assetId: assetIds.length === 1 ? assetIds[0] : null, aliases: [] };
+    }),
     readCompany: async id => {
       const detail = getDemoCompanyDetail(id)?.company;
       return detail ? canonicalCompany(detail, "legacy") : null;

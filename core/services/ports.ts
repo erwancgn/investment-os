@@ -29,8 +29,22 @@ export type SaveAnalysisReceipt = {
   diagnostics: Array<{ code: string; message: string; severity: "info" | "warning" | "error" }>;
 };
 
+export type CompanyIdentity = {
+  companyId: string;
+  canonicalName: string;
+  ticker: string;
+  exchange: string | null;
+  assetId: string | null;
+  aliases: string[];
+};
+export type CompanyResolution = {
+  status: "resolved" | "ambiguous" | "not_found";
+  candidates: Omit<CompanyIdentity, "aliases">[];
+};
+
 /** Domain-only ports. Source IDs, storage, and transport details belong in adapters. */
 export type InvestmentPorts = {
+  readCompanyIdentities?: () => Promise<CompanyIdentity[]>;
   readCompany?: (id: string) => Promise<CompanyPreview | null>;
   readPortfolio?: (options?: ReadOptions) => Promise<Portfolio>;
   readPosition?: (id: string, options?: ReadOptions) => Promise<Position | null>;

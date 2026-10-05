@@ -16,6 +16,7 @@ const base = { contractVersion: "1.0.0", scope: "personal" };
 const doc = { schemaVersion: "1.0.0", kind: "business", header: fixtures.analysisHeader(), content: { schemaVersion: "1.0.0", blocks: [] }, summary: null, verdict: null, confidence: null, presentation: { facts: [], scenarios: [], thresholds: [] }, projection: { status: "absent" }, diagnostics: [], score: null };
 const save = { analysis: doc, runId: "run-42", expectedRevision: null, companyIds: ["company-1"] };
 const inputs = {
+  resolve_company: { ...base, query: "Microsoft", market: "NASDAQ" },
   get_company: { ...base, id: "company-1" }, get_portfolio: { ...base, options: { force: true, cacheOnly: false } },
   get_position: { ...base, id: "position-1", options: { cacheOnly: true } },
   get_current_analysis: { ...base, companyId: "company-1", family: "business" },
@@ -61,6 +62,7 @@ test("all inputs accept explicit personal/demo scopes and reject spoofed caller,
 });
 
 test("input schemas reject malformed options, ids, families and incomplete write intent", () => {
+  for (const query of ["", " x", "x ", "x".repeat(513), 42]) assert.equal(validators.resolve_company.inputSchema({ ...inputs.resolve_company, query }), false);
   for (const id of ["", " x", "x ", "x".repeat(513), 42]) assert.equal(validators.get_company.inputSchema({ ...inputs.get_company, id }), false);
   matches("get_company", "inputSchema", { ...inputs.get_company, id: "x".repeat(512) });
   for (const options of [{ force: "true" }, { cursor: "x" }, null]) assert.equal(validators.get_portfolio.inputSchema({ ...base, options }), false);
@@ -75,6 +77,7 @@ test("input schemas reject malformed options, ids, families and incomplete write
 test("each exact manifest mapping reaches the existing Core method with untouched arguments", async () => {
   const calls = [];
   const ports = {
+    readCompanyIdentities: async () => { calls.push(["resolveCompany"]); return [{ companyId: "company-1", canonicalName: "Microsoft", ticker: "MSFT", exchange: "NASDAQ", assetId: null, aliases: [] }]; },
     readCompany: async id => { calls.push(["getCompany", id]); return fixtures.companyPreview(); },
     readPortfolio: async options => { calls.push(["getPortfolio", options]); return fixtures.portfolio(); },
     readPosition: async (id, options) => { calls.push(["getPosition", id, options]); return fixtures.position(); },
@@ -90,7 +93,7 @@ test("each exact manifest mapping reaches the existing Core method with untouche
     const result = await service[spec.operation](...args); // Test harness only; no transport dispatcher.
     assert.equal(result.status, "ok", tool);
     matches(tool, "outputSchema", completed(result));
-    assert.deepEqual(calls.at(-1), [spec.operation, ...args]);
+    assert.deepEqual(calls.at(-1), tool === "resolve_company" ? ["resolveCompany"] : [spec.operation, ...args]);
     if (tool === "save_analysis") assert.equal(calls.at(-1)[1], save);
   }
 });
