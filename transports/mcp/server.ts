@@ -27,9 +27,20 @@ const validators = Object.fromEntries(Object.keys(MCP_TOOLS).map(name => [name, 
   input: provider.getValidator(schemaFor(name as ToolName, "inputSchema")),
   output: provider.getValidator(schemaFor(name as ToolName, "outputSchema")),
 }])) as Record<ToolName, { input: ReturnType<typeof provider.getValidator>; output: ReturnType<typeof provider.getValidator> }>;
+/** Hosted tool clients can discard nested local refs when presenting arguments to a model. */
+function inlineInputSchema(value: unknown): unknown {
+  if (Array.isArray(value)) return value.map(inlineInputSchema);
+  if (!isRecord(value)) return value;
+  if (typeof value.$ref === "string") {
+    const definition = schemas.definitions[value.$ref.split("/").at(-1) as keyof typeof schemas.definitions];
+    if (!definition) throw new Error("Unknown MCP schema reference");
+    return inlineInputSchema(definition);
+  }
+  return Object.fromEntries(Object.entries(value).filter(([key]) => key !== "definitions").map(([key, item]) => [key, inlineInputSchema(item)]));
+}
 export const mcpToolCatalog: Tool[] = Object.entries(MCP_TOOLS).map(([name, spec]) => ({
   name, description: spec.description,
-  inputSchema: schemaFor(name as ToolName, "inputSchema") as Tool["inputSchema"],
+  inputSchema: inlineInputSchema(schemaFor(name as ToolName, "inputSchema")) as Tool["inputSchema"],
   outputSchema: schemaFor(name as ToolName, "outputSchema") as Tool["outputSchema"],
   annotations: { readOnlyHint: spec.access === "READ", destructiveHint: spec.access === "WRITE", idempotentHint: spec.access === "READ", openWorldHint: true },
 }));

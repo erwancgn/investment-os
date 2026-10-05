@@ -22,3 +22,11 @@ Le résultat expose `status: resolved | ambiguous | not_found` et `candidates[]`
 ## Gates runtime encore ouverts
 
 Publication Sites, découverte hébergée de resolve_company, release du plugin privé, trois workflows représentatifs et leurs receipts/relectures restent à consigner. Aucun Lot 13 commencé. WRITE reste fermé à ce checkpoint.
+
+## Checkpoint hébergé — Business et schéma d'entrée
+
+Sites v222 publié avec succès, environnement 9, source `7e40d3a5a838c2a7d25867783ba2e1ab852538be`. Catalogue actualisé par le mécanisme officiel du client. Plugin privé publié en 1.3.5 (source initiale 1.3.4), méthodes financières conservées.
+
+Run réel `/business Microsoft` depuis le plugin personnel : `BUSINESS-MSFT-20261005`, conversation https://chatgpt.com/c/6ac35884-ce50-83eb-b97c-05a7525ab183 . Le client restitue les appels resolve_company(query=Microsoft), get_company et get_current_analysis(family=business). Company `3b337ea7af3581038c01ec1b0f33d8c4`, MSFT/NASDAQ, assetId msft ; Current `3d237ea7af358192a5d5dde12123edcf`, revision `2026-09-05T07:37:00.000Z`. Les deux READ sont corroborés indépendamment via le connecteur officiel. Rapport et handoff produits, aucune mutation, persistance NOT_REQUIRED. Cette exécution ne prouve pas encore la persistance du nouvel output.
+
+Blocage constaté dans l'hôte : save_analysis(input:any) malgré le schéma canonique complet et ses définitions locales côté serveur. Le Skill a refusé de fabriquer le DTO. Correction de présentation : les schémas d'entrée du catalogue sont développés sans références locales ; validation serveur et contrats métier inchangés. Test de découverte exige les champs complets d'Analysis et l'absence de `$ref` dans les entrées.

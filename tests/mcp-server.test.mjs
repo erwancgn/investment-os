@@ -28,7 +28,10 @@ test("transport import boundary and canonical discovery schemas", async () => {
   const result = await handler()(request("", base, { body: { method: "tools/list", params: {} } }));
   const json = await result.json(); assert.equal(json.result.tools.length, 8);
   assert.equal(json.result.tools.some(t => t.name === "list_analyses"), false);
-  for (const tool of json.result.tools) { assert.equal(tool.inputSchema.type, "object"); assert.ok(tool.inputSchema.definitions); assert.equal(tool.annotations.readOnlyHint, tool.name !== "save_analysis"); }
+  for (const tool of json.result.tools) { assert.equal(tool.inputSchema.type, "object"); assert.equal(JSON.stringify(tool.inputSchema).includes('"$ref"'), false); assert.equal(tool.annotations.readOnlyHint, tool.name !== "save_analysis"); }
+  const input = json.result.tools.find(t => t.name === "save_analysis").inputSchema.properties.input;
+  assert.deepEqual(input.required, ["analysis", "runId", "expectedRevision", "companyIds"]);
+  assert.ok(input.properties.analysis.anyOf.every(schema => schema.properties.header.required.includes("companyIds")));
 });
 
 test("unknown tools, invalid versions, invalid schemas, output schemas and scope", async () => {
