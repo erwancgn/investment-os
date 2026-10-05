@@ -1,5 +1,7 @@
 # Investment OS — architecture cible
 
+> Document historique antérieur au chantier de stabilisation. La [cible du Lot 2](architecture/target-architecture.md) le remplace pour ce chantier ; la [baseline](architecture/baseline.md) décrit le runtime actuel. Les mentions ci-dessous de Portfolio en fichiers, d'index D1 futur et d'export Supabase/Vercel ne décrivent pas l'état actuel ni le périmètre autorisé.
+
 ## Décision actuelle
 
 Le produit reste hébergé sur Sites pendant la phase de validation mobile. Notion demeure la source documentaire, le Worker Sites sert l’interface et les routes serveur, et D1 conserve uniquement les données techniques qui gagnent à être mises en cache.

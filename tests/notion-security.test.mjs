@@ -4,31 +4,51 @@ import { build } from 'esbuild';
 import { readFile } from 'node:fs/promises';
 
 let workerModule;
+let normalizerFailureWorkerModule;
 
-async function loadWorker() {
-  if (workerModule) return workerModule;
+async function loadWorker({ stubNormalizer = false } = {}) {
+  if (stubNormalizer && normalizerFailureWorkerModule) return normalizerFailureWorkerModule;
+  if (!stubNormalizer && workerModule) return workerModule;
+  const plugins = [{
+    name: 'stub-vinext-rsc-entry',
+    setup(buildContext) {
+      buildContext.onResolve({ filter: /^virtual:vinext-rsc-entry$/ }, () => ({
+        path: 'vinext-rsc-entry',
+        namespace: 'test-stub',
+      }));
+      buildContext.onLoad({ filter: /.*/, namespace: 'test-stub' }, () => ({
+        contents: 'export default {};',
+        loader: 'js',
+      }));
+    },
+  }];
+  if (stubNormalizer) {
+    plugins.push({
+      name: 'stub-analysis-normalizer',
+      setup(buildContext) {
+        buildContext.onResolve({ filter: /(?:^\.\/|^\.\.\/\.\.\/app\/lib\/)document-presentation$/ }, () => ({
+          path: 'document-presentation-stub',
+          namespace: 'normalizer-stub',
+        }));
+        buildContext.onLoad({ filter: /.*/, namespace: 'normalizer-stub' }, () => ({
+          contents: 'export function normalizeAnalysisDocument() { throw new Error("private normalizer detail"); }',
+          loader: 'js',
+        }));
+      },
+    });
+  }
   const result = await build({
     entryPoints: ['worker/index.ts'],
     bundle: true,
     write: false,
     platform: 'node',
     format: 'esm',
-    plugins: [{
-      name: 'stub-vinext-rsc-entry',
-      setup(buildContext) {
-        buildContext.onResolve({ filter: /^virtual:vinext-rsc-entry$/ }, () => ({
-          path: 'vinext-rsc-entry',
-          namespace: 'test-stub',
-        }));
-        buildContext.onLoad({ filter: /.*/, namespace: 'test-stub' }, () => ({
-          contents: 'export default {};',
-          loader: 'js',
-        }));
-      },
-    }],
+    plugins,
   });
-  workerModule = await import(`data:text/javascript;base64,${Buffer.from(result.outputFiles[0].text).toString('base64')}`);
-  return workerModule;
+  const loaded = await import(`data:text/javascript;base64,${Buffer.from(result.outputFiles[0].text).toString('base64')}`);
+  if (stubNormalizer) normalizerFailureWorkerModule = loaded;
+  else workerModule = loaded;
+  return loaded;
 }
 
 const mutationPaths = [
@@ -38,6 +58,19 @@ const mutationPaths = [
   '/api/notion/sync-portfolio',
   '/api/notion/sync-all',
 ];
+
+test('plugin domain challenge is public and does not touch private adapters', async () => {
+  const { default: worker } = await loadWorker();
+  const db = new Proxy({}, { get() { throw new Error('private D1 access attempted'); } });
+  const response = await worker.fetch(
+    new Request('https://investment-os.test/.well-known/openai-apps-challenge'),
+    { DB: db },
+    { waitUntil() {}, passThroughOnException() {} },
+  );
+  assert.equal(response.status, 200);
+  assert.match(response.headers.get('content-type'), /^text\/plain/);
+  assert.match(await response.text(), /^[A-Za-z0-9_-]{20,}$/);
+});
 
 test('all Notion mutation routes reject anonymous browser requests', async () => {
   const { default: worker } = await loadWorker();
@@ -299,4 +332,101 @@ test('refresh controls keep distinct responsibilities', async () => {
   assert.match(pageSource, /PortfolioPageHeader/);
   assert.doesNotMatch(portfolioDashboard, /requestBrowserNotionRefresh|serviceWorker/);
   assert.doesNotMatch(pageSource, /requestBrowserNotionRefresh|serviceWorker/);
+});
+
+test('private analysis storage failures return a safe correlated diagnostic', async () => {
+  const { default: worker } = await loadWorker();
+  const db = new Proxy({}, { get(_target, key) { if (key === 'prepare') return () => { throw new Error('private SQL and credentials'); }; } });
+  const previousError = console.error;
+  const logs = [];
+  console.error = value => logs.push(String(value));
+  let response;
+  let timeoutResponse;
+  try {
+    response = await worker.fetch(new Request('https://investment-os.test/api/analyses/private-page-id', {
+      headers: { cookie: 'investment-os-scope=personal', 'oai-authenticated-user-email': 'owner@example.test' },
+    }), { OWNER_EMAIL: 'owner@example.test', DB: db }, { waitUntil() {}, passThroughOnException() {} });
+    const timeoutDb = new Proxy({}, { get(_target, key) { if (key === 'prepare') return () => { throw new DOMException('private timeout detail', 'TimeoutError'); }; } });
+    timeoutResponse = await worker.fetch(new Request('https://investment-os.test/api/analyses/timeout-page-id', {
+      headers: { cookie: 'investment-os-scope=personal', 'oai-authenticated-user-email': 'owner@example.test' },
+    }), { OWNER_EMAIL: 'owner@example.test', DB: timeoutDb }, { waitUntil() {}, passThroughOnException() {} });
+  } finally {
+    console.error = previousError;
+  }
+  assert.equal(response.status, 500);
+  const body = await response.json();
+  assert.equal(body.code, 'storage');
+  assert.equal(body.stage, 'read');
+  assert.equal(body.requestId, response.headers.get('x-request-id'));
+  assert.match(response.headers.get('server-timing'), /^app;dur=/);
+  assert.doesNotMatch(JSON.stringify(body), /private SQL|credentials|private-page-id/);
+  assert.equal(timeoutResponse.status, 500);
+  const timeoutBody = await timeoutResponse.json();
+  assert.equal(timeoutBody.code, 'timeout');
+  assert.equal(timeoutBody.stage, 'read');
+  assert.equal(timeoutBody.requestId, timeoutResponse.headers.get('x-request-id'));
+  assert.doesNotMatch(JSON.stringify(timeoutBody), /private timeout detail|timeout-page-id/);
+  assert.equal(logs.length, 2);
+  assert.doesNotMatch(logs.join('\n'), /private SQL|credentials|private timeout detail/);
+  const log = JSON.parse(logs[0]);
+  assert.deepEqual(Object.keys(log).sort(), ['code', 'durationMs', 'event', 'id', 'stage']);
+  assert.equal(log.event, 'analysis-read-failed');
+  assert.equal(log.id, body.requestId);
+  assert.equal(log.code, body.code);
+  assert.equal(log.stage, body.stage);
+  assert.equal(typeof log.durationMs, 'number');
+  const timeoutLog = JSON.parse(logs[1]);
+  assert.equal(timeoutLog.code, 'timeout');
+  assert.equal(timeoutLog.id, timeoutBody.requestId);
+});
+
+test('normalizer exceptions are tagged safely at the document mapping boundary', async () => {
+  const { default: worker } = await loadWorker({ stubNormalizer: true });
+  const analysisRow = {
+    page_id: 'normalizer-page-id', source_key: 'analyses', title: 'Business document',
+    notion_url: 'https://www.notion.so/normalizer-page-id', last_edited_time: '2026-09-30T10:00:00.000Z',
+    plain_text: 'Business source body', properties_json: '{}', blocks_json: '[]',
+  };
+  const db = {
+    prepare(sql) {
+      const statement = {
+        values: [],
+        bind(...values) { this.values = values; return this; },
+        async first() { return sql.includes('WHERE page_id=?') ? analysisRow : null; },
+        async all() {
+          if (sql.includes('FROM notion_document_companies')) return { results: [] };
+          if (sql.includes('FROM notion_relations')) return { results: [] };
+          if (sql.includes("source_key='companies'")) return { results: [] };
+          if (sql.includes("source_key='portfolio'")) return { results: [] };
+          if (sql.includes("source_key='watchlist'")) return { results: [] };
+          if (sql.includes("source_key IN ('analyses','earnings','decisions','portfolio')")) return { results: [analysisRow] };
+          return { results: [] };
+        },
+        async run() { return { success: true }; },
+      };
+      return statement;
+    },
+  };
+  const previousError = console.error;
+  const logs = [];
+  console.error = value => logs.push(String(value));
+  let response;
+  try {
+    response = await worker.fetch(new Request('https://investment-os.test/api/analyses/normalizer-page-id', {
+      headers: { cookie: 'investment-os-scope=personal', 'oai-authenticated-user-email': 'owner@example.test' },
+    }), { OWNER_EMAIL: 'owner@example.test', DB: db }, { waitUntil() {}, passThroughOnException() {} });
+  } finally {
+    console.error = previousError;
+  }
+  assert.equal(response.status, 500);
+  const body = await response.json();
+  assert.equal(body.code, 'normalization');
+  assert.equal(body.stage, 'normalization');
+  assert.equal(body.requestId, response.headers.get('x-request-id'));
+  assert.doesNotMatch(JSON.stringify(body), /private normalizer detail|normalizer-page-id/);
+  assert.equal(logs.length, 1);
+  const log = JSON.parse(logs[0]);
+  assert.equal(log.code, 'normalization');
+  assert.equal(log.stage, 'normalization');
+  assert.doesNotMatch(logs[0], /private normalizer detail/);
 });

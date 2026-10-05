@@ -3,8 +3,7 @@
 import { useMemo } from "react";
 import type { CompanyDocument } from "../lib/investment-data";
 import { analysisDisplayValue, analysisTypeLabel, decisionParts, formatAnalysisDate } from "../lib/decision-label";
-import { documentPresentation } from "../lib/document-presentation";
-import { parseNotionDocument } from "../lib/notion-renderer";
+import { normalizeAnalysisDocument } from "../lib/document-presentation";
 import { ActionButton, Badge, MetadataGrid, PrimaryBlock } from "./ui-primitives";
 
 function previewItems(items: string[]) {
@@ -17,7 +16,7 @@ function previewItems(items: string[]) {
 }
 
 export function LatestInfoCard({ document, eyebrow, onOpen }: { document: CompanyDocument; eyebrow: string; onOpen: () => void }) {
-  const summaryItems = useMemo(() => document.previewSummaryItems ?? documentPresentation(parseNotionDocument(document.plainText, document.title, document.notionBlocks), document.summary ?? "", { category: document.category, handoffSummary: document.handoffSummary }).summaryItems, [document]);
+  const summaryItems = useMemo(() => document.previewSummaryItems ?? (document.normalizedAnalysis ?? normalizeAnalysisDocument(document)).view.summaryItems, [document]);
   const summary = summaryItems.length ? summaryItems : ["Document Notion disponible dans l’application."];
   const preview = previewItems(summary);
   const decisionSource = document.verdict || document.status;
