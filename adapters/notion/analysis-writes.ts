@@ -35,12 +35,13 @@ function blocksFor(blocks:AnalysisBlock[]):RecordValue[]{return blocks.flatMap(b
   return [wrap(type,{rich_text:richText(block.text),...(block.type==="callout"&&block.icon?{icon:{type:"emoji",emoji:block.icon}}:{})})];
 });}
 // Ignore server-generated block IDs/timestamps and text annotations defaults in re-read comparisons.
-function semanticBlock(value:unknown):unknown {
+function semanticBlock(value:unknown,expected:unknown=value):unknown {
   const b=object(value),type=String(b.type),body=object(b[type]);
   const rich=(items:unknown)=>Array.isArray(items)?items.map(item=>{const r=object(item),t=object(r.text),a=object(r.annotations);return {text:String(t.content??r.plain_text??""),href:object(t.link).url??r.href??null,marks:["bold","italic","strikethrough","code","underline"].filter(mark=>a[mark]===true),color:a.color??"default"};}):[];
-  if(type==="table")return {type,width:body.table_width,header:body.has_column_header===true,rowHeader:body.has_row_header===true,children:(Array.isArray(body.children)?body.children:[]).map(semanticBlock)};
+  if(type==="table")return {type,width:body.table_width,header:body.has_column_header===true,rowHeader:body.has_row_header===true,children:(Array.isArray(body.children)?body.children:[]).map(child=>semanticBlock(child))};
   if(type==="table_row")return {type,cells:(Array.isArray(body.cells)?body.cells:[]).map(rich)};
-  return {type,text:rich(body.rich_text),icon:body.icon??null};
+  // Only an unspecified callout icon permits provider decoration; explicit icons stay strict.
+  return {type,text:rich(body.rich_text),icon:type==="callout"&&object(object(expected)[type]).icon==null?null:body.icon??null};
 }
 // Provider limits apply to each emitted request, including nested table rows and rich text.
 function validateProviderBody(body:unknown){
@@ -57,6 +58,9 @@ function validateProviderBody(body:unknown){
 }
 const canonicalJson=(value:unknown):string=>JSON.stringify(value,(_key,v)=>v&&typeof v==="object"&&!Array.isArray(v)?Object.fromEntries(Object.entries(v).sort(([a],[b])=>a.localeCompare(b))):v);
 const equal=(a:unknown,b:unknown)=>canonicalJson(a)===canonicalJson(b);
+function blocksMatch(observed:RecordValue[],expected:RecordValue[]):boolean {
+  return equal(observed.map((block,index)=>semanticBlock(block,expected[index])),expected.map(block=>semanticBlock(block)));
+}
 
 export function createNotionAnalysisWriter(db:D1Database,options:NotionWriteOptions){
   const requestFetch=options.fetch??fetch,sources={...notionSources,...options.sources};
@@ -225,9 +229,9 @@ export function createNotionAnalysisWriter(db:D1Database,options:NotionWriteOpti
       if(existing&&input.expectedRevision!==null&&id(existing.id)!==id(input.analysis.header.id))throw fault("stale_request");
       if(existing){
         matchedBlocks=await children(existing.id);
-        const actualBlocks=matchedBlocks.map(semanticBlock),desired=desiredBlocks.map(semanticBlock);
-        const resumableDraft=journal.phase!=="new"&&propertyValue(existing.properties,"Status")==="Draft"&&actualBlocks.length<desired.length&&equal(actualBlocks,desired.slice(0,actualBlocks.length));
-        if(!(propertiesMatch(existing,expected)||(publishing&&propertiesMatch(existing,draftExpected)))||(!equal(actualBlocks,desired)&&!resumableDraft))throw fault("stale_request");
+        const actualBlocks=matchedBlocks,desired=desiredBlocks;
+        const resumableDraft=journal.phase!=="new"&&propertyValue(existing.properties,"Status")==="Draft"&&actualBlocks.length<desired.length&&blocksMatch(actualBlocks,desired.slice(0,actualBlocks.length));
+        if(!(propertiesMatch(existing,expected)||(publishing&&propertiesMatch(existing,draftExpected)))||(!blocksMatch(actualBlocks,desired)&&!resumableDraft))throw fault("stale_request");
       }
       if(journal.page_id&&!existing)throw fault("stale_request");
       if(input.expectedRevision!==null){
@@ -251,7 +255,7 @@ export function createNotionAnalysisWriter(db:D1Database,options:NotionWriteOpti
           const target=await page(input.analysis.header.id);
           if(propertyValue(target.properties,"Agent")!==moduleAgent||target.archived||target.in_trash||target.last_edited_time!==input.expectedRevision||id(object(target.parent).data_source_id)!==id(source)||!equal((propertyValue(target.properties,"Company") as string[]??[]).map(id).sort(),input.companyIds.map(id).sort()))throw fault("stale_request");
           // Updating an existing report is allowed only with an unchanged body; content revisions create a new run/page.
-          if(!equal((await children(target.id)).map(semanticBlock),desiredBlocks.map(semanticBlock)))throw fault("invalid_input");
+          if(!blocksMatch(await children(target.id),desiredBlocks))throw fault("invalid_input");
           analysisId=target.id;actualIdentityKnown=true;await saveJournal("updating");mutated=true;
           try{existing=await mutate(`/pages/${target.id}`,"PATCH",{properties:expected}) as unknown as Page;}
           catch(error){if(!transient(error))throw error;const found=await lookup(source,input.runId,moduleAgent,runProperty);if(found.length!==1)return receipt("partial","update_unconfirmed");existing=found[0];}
@@ -273,11 +277,10 @@ export function createNotionAnalysisWriter(db:D1Database,options:NotionWriteOpti
       // Notion read below verifies them; a partial create is reconciled on replay.
       let observedBlocks=matchedBlocks??(desiredBlocks.length<=100?desiredBlocks:await children(analysisId));
       let appendedPage:Page|null=null;
-      const desiredSemantics=desiredBlocks.map(semanticBlock);
       if(journal.phase.startsWith("appending:")&&observedBlocks.length<Number(journal.phase.split(":")[1]))return receipt("partial","append_unconfirmed");
       await saveJournal("persisting");
       while(observedBlocks.length<desiredBlocks.length){
-        if(!equal(observedBlocks.map(semanticBlock),desiredSemantics.slice(0,observedBlocks.length)))return receipt("partial","content_changed_concurrently");
+        if(!blocksMatch(observedBlocks,desiredBlocks.slice(0,observedBlocks.length)))return receipt("partial","content_changed_concurrently");
         const chunk=desiredBlocks.slice(observedBlocks.length,observedBlocks.length+100);
         const expectedLength=observedBlocks.length+chunk.length;
         await saveJournal(`appending:${expectedLength}`);mutated=true;
@@ -285,7 +288,7 @@ export function createNotionAnalysisWriter(db:D1Database,options:NotionWriteOpti
         catch(error){
           if(!transient(error))return receipt("partial",String(object(error).code??"append_failed"));
           observedBlocks=await children(analysisId);
-          if(observedBlocks.length!==expectedLength||!equal(observedBlocks.map(semanticBlock),desiredSemantics.slice(0,expectedLength)))return receipt("partial","append_unconfirmed");
+          if(observedBlocks.length!==expectedLength||!blocksMatch(observedBlocks,desiredBlocks.slice(0,expectedLength)))return receipt("partial","append_unconfirmed");
         }
         [appendedPage,observedBlocks]=await Promise.all([page(analysisId),children(analysisId)]);
         if(observedBlocks.length!==expectedLength)return receipt("partial","append_unconfirmed");
@@ -299,14 +302,14 @@ export function createNotionAnalysisWriter(db:D1Database,options:NotionWriteOpti
       // Reuse that certification for Draft instead of fetching every table again.
       else if(appendedPage){stored=appendedPage;verifiedBlocks=observedBlocks;}
       else [stored,verifiedBlocks]=await Promise.all([page(analysisId),children(analysisId)]);
-      if(publishing&&propertiesMatch(stored,draftExpected)&&equal((await children(analysisId)).map(semanticBlock),desiredBlocks.map(semanticBlock))){
+      if(publishing&&propertiesMatch(stored,draftExpected)&&blocksMatch(await children(analysisId),desiredBlocks)){
         persisted=true;mutated=true;await saveJournal("validating");
         try{await mutate(`/pages/${analysisId}`,"PATCH",{properties:{[statusName]:expected[statusName]}});}
         catch(error){if(!transient(error))throw error;}
         stored=await page(analysisId);
       }
       verifiedBlocks??=await children(analysisId);
-      if(id(object(stored.parent).data_source_id)!==id(source)||!propertiesMatch(stored,expected)||!equal(verifiedBlocks.map(semanticBlock),desiredBlocks.map(semanticBlock)))return receipt("partial","persistence_verification_failed");
+      if(id(object(stored.parent).data_source_id)!==id(source)||!propertiesMatch(stored,expected)||!blocksMatch(verifiedBlocks,desiredBlocks))return receipt("partial","persistence_verification_failed");
       persisted=true;revision=stored.last_edited_time;await saveJournal("persisted");
       if(pointers.every(p=>p===null)){
         // The Notion GET above certifies persistence; this D1 projection makes the
@@ -337,7 +340,7 @@ export function createNotionAnalysisWriter(db:D1Database,options:NotionWriteOpti
         return !company.archived&&!company.in_trash&&id(object(company.parent).data_source_id)===id(sources.companies)&&(!pointer||equal((propertyValue(company.properties,pointer.name) as string[]??[]).map(id),[id(analysisId)]));
       });
       const finalBlocks=await children(analysisId);
-      if(!finalPointers||id(object(finalPage.parent).data_source_id)!==id(source)||!propertiesMatch(finalPage,expected)||!equal(finalBlocks.map(semanticBlock),desiredBlocks.map(semanticBlock)))return receipt("partial","final_verification_failed");
+      if(!finalPointers||id(object(finalPage.parent).data_source_id)!==id(source)||!propertiesMatch(finalPage,expected)||!blocksMatch(finalBlocks,desiredBlocks))return receipt("partial","final_verification_failed");
       revision=finalPage.last_edited_time;
       const companySnapshots=await Promise.all(finalCompanies.map(async company=>{
         const cached=await db.prepare("SELECT blocks_json FROM notion_documents WHERE source_key='companies' AND LOWER(REPLACE(page_id,'-',''))=?").bind(id(company.id)).first<{blocks_json:string}>();

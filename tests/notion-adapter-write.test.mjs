@@ -1,6 +1,41 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { readFile } from 'node:fs/promises';
 import { withFixture, input, compact, companyId, proposedId } from './fixtures/notion-write-harness.mjs';
+function providerIconOptions(f,emoji){return {...f.options,fetch:async(url,options)=>{
+ const response=await f.options.fetch(url,options);
+ if(options.method==='GET'&&new URL(url).pathname.includes('/children')){
+  const body=await response.json();for(const block of body.results??[])if(block.type==='callout')block.callout.icon={type:'emoji',emoji};
+  return Response.json(body);
+ }
+ return response;
+}};}
+for(const [expected,observed,status] of [[null,'💡','Draft'],['🔥','🔥','Validated'],['🔥','💡','Draft']])test(`callout semantic verification ${expected} -> ${observed}`,()=>withFixture({},async f=>{
+ const draft=input();draft.analysis.header.status=status;
+ const callout={id:'icon-callout',sourceIds:['fixture-source'],type:'callout',text:[{text:'Canonical callout.',marks:[],href:null}],icon:expected};
+ // Exercise prefix/append checks as well as persistence verification when no icon was requested.
+ draft.analysis.content.blocks=expected===null?[callout,...Array.from({length:100},(_,i)=>({id:`p-${i}`,sourceIds:['fixture-source'],type:'paragraph',text:[{text:`Paragraph ${i}.`,marks:[],href:null}]}))]:[callout];
+ const writer=f.api.createNotionAnalysisWriter(f.db,providerIconOptions(f,observed));
+ const saved=await writer(draft);
+ if(expected!==null&&expected!==observed){assert.equal(saved.status,'partial');assert.equal(saved.persisted,false);assert.equal(saved.diagnostics[0].code,'persistence_verification_failed');assert.equal(f.sql.prepare("SELECT COUNT(*) AS n FROM notion_documents WHERE source_key='analyses'").get().n,0);}
+ else {assert.equal(saved.status,status==='Draft'?'persisted':'verified');assert.equal(saved.persisted,true);assert.equal(f.sql.prepare("SELECT COUNT(*) AS n FROM notion_documents WHERE source_key='analyses'").get().n,1);
+  const replay=await writer(draft);assert.equal(replay.persisted,true);assert.equal(f.creates,1);
+ }
+}));
+test('exact AN-598 payload with provider callout icon reaches persisted journal, D1 and immediate readback',()=>withFixture({},async f=>{
+ const args=JSON.parse(await readFile(new URL('./fixtures/lot12-an598-business.json',import.meta.url),'utf8'));
+ f.pages.set(args.input.companyIds[0],{...structuredClone(f.company),id:args.input.companyIds[0]});
+ const props={Analysis:'title','Run ID':'rich_text',Company:'relation',Agent:'select',Status:'select','Analysis Date':'date','Source Freshness':'select',Score:'number',Verdict:'rich_text',Confidence:'select','Handoff Summary':'rich_text'};
+ const options=providerIconOptions(f,'💡'),fetch=options.fetch;
+ options.fetch=async(url,opt)=>opt.method==='GET'&&new URL(url).pathname.startsWith('/v1/data_sources/')?Response.json({properties:Object.fromEntries(Object.entries(props).map(([name,type])=>[name,{type}]))}):fetch(url,opt);
+ const service=f.api.createInvestmentService(f.db,options);const result=await service.saveAnalysis(args.input);
+ assert.equal(result.status,'ok');assert.equal(result.data.status,'persisted');assert.equal(result.data.persisted,true);assert.equal(result.data.promoted,false);assert.equal(result.data.verified,false);
+ assert.equal(result.data.diagnostics.some(d=>d.code==='persistence_verification_failed'),false);
+ assert.equal(f.sql.prepare('SELECT phase FROM notion_analysis_writes').get().phase,'persisted');
+ assert.equal(f.sql.prepare("SELECT COUNT(*) AS n FROM notion_documents WHERE source_key='analyses'").get().n,1);
+ const read=await service.getAnalysisById(result.data.analysisId);assert.equal(read.status,'ok');assert.equal(read.data.header.id,result.data.analysisId);assert.equal(read.data.score,'92');assert.equal(read.data.verdict,'Excellent');
+ assert.equal(f.creates,1);assert.equal(f.promotions,0);
+}));
 for(const icon of [null,'⭐'])test(`callout ${icon===null?'without icon omits icon entirely':'with emoji preserves the Notion icon DTO'}`,()=>withFixture({},async f=>{
  const draft=input();draft.analysis.header.status='Draft';draft.analysis.content.blocks=[{id:'callout-1',sourceIds:['fixture-source'],type:'callout',text:[{text:'Canonical callout.',marks:[],href:null}],icon}];
  const writer=f.api.createNotionAnalysisWriter(f.db,{...f.options,fetch:async(url,options)=>{
