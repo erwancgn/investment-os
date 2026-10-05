@@ -1,0 +1,25 @@
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "{\"contractVersion\":\"1.0.0\",\"status\":\"completed\"}"
+    }
+  ],
+  "structuredContent": {
+    "contractVersion": "1.0.0",
+    "scope": "personal",
+    "status": "completed",
+    "result": {
+      "schemaVersion": "1.0.0",
+      "status": "ok",
+      "data": null,
+      "metadata": {
+        "revision": null,
+        "freshness": "unknown",
+        "provenance": null,
+        "diagnostics": []
+      }
+    }
+  },
+  "isError": false
+}

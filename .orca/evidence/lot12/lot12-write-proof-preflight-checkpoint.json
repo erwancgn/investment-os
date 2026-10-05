@@ -1,0 +1,54 @@
+{
+  "phase": "before_WRITE",
+  "siteVersion": 234,
+  "publishedCommit": "aab840511f2d07aad5e6b8636dc4a16ca799f233",
+  "siteUrl": "https://investment-os.erwancognee94.chatgpt.site",
+  "deploymentStatus": "succeeded",
+  "envRevision": 17,
+  "correctionsVerified": {
+    "calloutIconOmitted": true,
+    "limits": true,
+    "no429MutationRetry": true,
+    "sanitizedProviderDiagnostics": true,
+    "mcpOutputSchema": true,
+    "releaseWriteClosed": true
+  },
+  "tests": {
+    "global": {
+      "pass": 294,
+      "total": 294
+    },
+    "mcp": {
+      "pass": 25,
+      "total": 25
+    },
+    "typecheck": "PASS (npm test)",
+    "build": "PASS (npm test)",
+    "artifact": "PASS",
+    "lint": "PASS: 0 errors, 4 existing warnings",
+    "workerd": "PASS"
+  },
+  "proof": {
+    "runId": "NVDA-FA-20261005-WRITE-PROOF-1",
+    "scope": "personal",
+    "kind": "business",
+    "status": "Draft",
+    "expectedRevision": null,
+    "digest": "1d14104597a395a956b7f9fd99da04aa2a88300babc14e52a573d935ed4f53ed",
+    "mcp": "PASS",
+    "core": "PASS",
+    "providerDto": "PASS: offline official types/limits",
+    "financialContentUnchanged": true,
+    "score": 92,
+    "verdict": "Excellent",
+    "journalAbsent": true,
+    "journalRowsExamined": 7,
+    "journalReadComplete": true,
+    "writePerformed": false
+  },
+  "sourceArchive": "site-v234-aab8405-source.tar.gz",
+  "writeClosed": true,
+  "hostedWriteProbePerformedThisCheckpoint": false,
+  "lot12Gate": "PARTIAL: receipt/readback proof still pending, LITE Valuation PARTIAL",
+  "lot13Started": false
+}

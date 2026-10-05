@@ -1,0 +1,169 @@
+
+> investment-os@0.1.0 test:mcp
+> node scripts/generate-mcp-schemas.mjs --check && node --test tests/mcp-contract.test.mjs tests/mcp-server.test.mjs
+
+TAP version 13
+# Subtest: checked-in schemas are deterministic and derived from current Core types
+ok 1 - checked-in schemas are deterministic and derived from current Core types
+  ---
+  duration_ms: 1458.258594
+  type: 'test'
+  ...
+# Subtest: contract has no executable domain, server or runtime imports
+ok 2 - contract has no executable domain, server or runtime imports
+  ---
+  duration_ms: 0.19967
+  type: 'test'
+  ...
+# Subtest: all inputs accept explicit personal/demo scopes and reject spoofed caller, secrets and versions
+ok 3 - all inputs accept explicit personal/demo scopes and reject spoofed caller, secrets and versions
+  ---
+  duration_ms: 6.056959
+  type: 'test'
+  ...
+# Subtest: input schemas reject malformed options, ids, families and incomplete write intent
+ok 4 - input schemas reject malformed options, ids, families and incomplete write intent
+  ---
+  duration_ms: 10.189348
+  type: 'test'
+  ...
+# Subtest: each exact manifest mapping reaches the existing Core method with untouched arguments
+ok 5 - each exact manifest mapping reaches the existing Core method with untouched arguments
+  ---
+  duration_ms: 33.408867
+  type: 'test'
+  ...
+# Subtest: writer receipts remain observable and Core alone rejects contradictory receipts
+ok 6 - writer receipts remain observable and Core alone rejects contradictory receipts
+  ---
+  duration_ms: 2.56821
+  type: 'test'
+  ...
+# Subtest: null absence, archived document, closed position and stale/unavailable data retain Core semantics
+ok 7 - null absence, archived document, closed position and stale/unavailable data retain Core semantics
+  ---
+  duration_ms: 3.538133
+  type: 'test'
+  ...
+# Subtest: every Core error code and safe diagnostics is accepted without raw error fields
+ok 8 - every Core error code and safe diagnostics is accepted without raw error fields
+  ---
+  duration_ms: 6.71017
+  type: 'test'
+  ...
+# Subtest: transport errors distinguish not-started rejection and unknown write outcome
+ok 9 - transport errors distinguish not-started rejection and unknown write outcome
+  ---
+  duration_ms: 0.976433
+  type: 'test'
+  ...
+# (node:84162) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: transport import boundary and canonical discovery schemas
+# (node:84162) ExperimentalWarning: The MockTimers API is an experimental feature and might change at any time
+ok 10 - transport import boundary and canonical discovery schemas
+  ---
+  duration_ms: 45.748647
+  type: 'test'
+  ...
+# Subtest: unknown tools, invalid versions, invalid schemas, output schemas and scope
+ok 11 - unknown tools, invalid versions, invalid schemas, output schemas and scope
+  ---
+  duration_ms: 16.000511
+  type: 'test'
+  ...
+# Subtest: auth excludes payload identity, cookies, bypass credentials and browser writes
+ok 12 - auth excludes payload identity, cookies, bypass credentials and browser writes
+  ---
+  duration_ms: 1.923801
+  type: 'test'
+  ...
+# Subtest: Sites WRITE is release-closed; transport fence admits only configured run IDs when explicitly authorized
+ok 13 - Sites WRITE is release-closed; transport fence admits only configured run IDs when explicitly authorized
+  ---
+  duration_ms: 4.817135
+  type: 'test'
+  ...
+# Subtest: permissions, scope isolation, mutation confirmation and unauthorized never reach Core
+ok 14 - permissions, scope isolation, mutation confirmation and unauthorized never reach Core
+  ---
+  duration_ms: 5.332828
+  type: 'test'
+  ...
+# Subtest: all eight mappings execute existing Core with exact arguments and preserve diagnostics
+ok 15 - all eight mappings execute existing Core with exact arguments and preserve diagnostics
+  ---
+  duration_ms: 24.778553
+  type: 'test'
+  ...
+# Subtest: Core errors are typed and raw dependency exceptions never escape
+ok 16 - Core errors are typed and raw dependency exceptions never escape
+  ---
+  duration_ms: 2.641949
+  type: 'test'
+  ...
+# Subtest: text-only hosted consumers receive typed Core errors without dependency secrets
+ok 17 - text-only hosted consumers receive typed Core errors without dependency secrets
+  ---
+  duration_ms: 1.287386
+  type: 'test'
+  ...
+# Subtest: fiscal labels in canonical asOf fail Core validation before the writer
+ok 18 - fiscal labels in canonical asOf fail Core validation before the writer
+  ---
+  duration_ms: 3.938722
+  type: 'test'
+  ...
+# Subtest: 2 MiB streamed/declarative requests and 4 MiB output limits fail without truncation
+ok 19 - 2 MiB streamed/declarative requests and 4 MiB output limits fail without truncation
+  ---
+  duration_ms: 33.024565
+  type: 'test'
+  ...
+# Subtest: READ and WRITE 30s deadlines preserve unknown outcome and fence pending WRITE
+ok 20 - READ and WRITE 30s deadlines preserve unknown outcome and fence pending WRITE
+  ---
+  duration_ms: 20.003473
+  type: 'test'
+  ...
+# Subtest: demo six reads use snapshot Core and never invoke personal service
+ok 21 - demo six reads use snapshot Core and never invoke personal service
+  ---
+  duration_ms: 76.592215
+  type: 'test'
+  ...
+# notion_request_rejected { status: 403, type: 'unknown', code: 'unknown', validation: [] }
+# notion_request_rejected { status: 403, type: 'unknown', code: 'unknown', validation: [] }
+# Subtest: local runtime: SDK client initialize/discover, real adapter WRITE receipts/replay/conflict
+ok 22 - local runtime: SDK client initialize/discover, real adapter WRITE receipts/replay/conflict
+  ---
+  duration_ms: 1774.942113
+  type: 'test'
+  ...
+# Subtest: completed transient READ retries at most twice; WRITE never retries a Core error
+ok 23 - completed transient READ retries at most twice; WRITE never retries a Core error
+  ---
+  duration_ms: 257.06051
+  type: 'test'
+  ...
+# Subtest: READ backoff cannot start a second Core call after its deadline
+ok 24 - READ backoff cannot start a second Core call after its deadline
+  ---
+  duration_ms: 2.95563
+  type: 'test'
+  ...
+# Subtest: 2 MiB tool arguments are accepted independently of JSON-RPC framing
+ok 25 - 2 MiB tool arguments are accepted independently of JSON-RPC framing
+  ---
+  duration_ms: 60.591525
+  type: 'test'
+  ...
+1..25
+# tests 25
+# suites 0
+# pass 25
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 2892.757265

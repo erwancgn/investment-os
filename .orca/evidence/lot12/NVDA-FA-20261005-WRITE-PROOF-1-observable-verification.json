@@ -1,0 +1,22 @@
+{
+  "notionPageId": "3f037ea7af3581a2acfbc17bc6c1e29d",
+  "notionAnalysisId": "AN-598",
+  "status": "Draft",
+  "runId": "NVDA-FA-20261005-WRITE-PROOF-1",
+  "company": [
+    "https://app.notion.com/p/3b337ea7af35811eb7e5e934f832c389"
+  ],
+  "score": 92,
+  "verdict": "Excellent",
+  "summaryPresent": true,
+  "textSegmentsChecked": 275,
+  "missingTextSegments": [],
+  "normalizedTextCoverage": true,
+  "calloutIconObserved": "💡",
+  "calloutIconExpectedAbsent": true,
+  "comparisonLimit": "Notion connector document, not raw REST blocks. Text inclusion does not prove block order/IDs/annotations or complete DTO equality. Missing matches may reflect connector formatting.",
+  "canonicalMcpReadback": null,
+  "receiptPersisted": false,
+  "receiptVerified": false,
+  "notionObservablePersistence": true
+}

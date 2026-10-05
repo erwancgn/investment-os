@@ -1,0 +1,21 @@
+{
+  "sourceCommit": "aab840511f2d07aad5e6b8636dc4a16ca799f233",
+  "sourceChecks": {
+    "calloutIconOmitted": true,
+    "limits": true,
+    "no429MutationRetry": true,
+    "sanitizedProviderDiagnostics": true,
+    "mcpOutputSchema": true,
+    "releaseWriteClosed": true
+  },
+  "builtArchiveChecks": {
+    "outputSchemaPresent": true,
+    "providerDiagnosticsPresent": true
+  },
+  "sha256": {
+    "site-v234-aab8405-source.tar.gz": "63b5ab0701f0351ea19c0eac4a53a850914fe83fd06cf2e9f9ea6510170ea6cf",
+    "lot12-external-boundaries-write-closed-deploy.tar.gz": "36d5f3a02a7def393a8febb556934f7a3cadf3ac7b01f25eeee465247f2b3aaf",
+    "NVDA-FA-20261005-WRITE-PROOF-1-business-save-arguments.json": "bf93bbef2b2b7fada3099d1acf6bbbdfef16c13c76471a0b33420041f9779d13",
+    "NVDA-FA-20261005-WRITE-PROOF-1-business-provider-dto.json": "2e965d1506ad8c9fbccdedcee45109bb8b5ad93bbbc0f5557cf5f8965db4c7cb"
+  }
+}

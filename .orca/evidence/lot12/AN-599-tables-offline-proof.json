@@ -1,0 +1,11 @@
+{
+  "snapshot": "Exact archived AN-599 provider DTO and properties",
+  "networkCalls": 0,
+  "liveWrites": 0,
+  "tables": 9,
+  "nineTablesExactCellsAndHeaders": true,
+  "evidenceLedger": true,
+  "evidenceGate": true,
+  "sourceSnapshotUnchanged": true,
+  "coreStatus": "ok"
+}

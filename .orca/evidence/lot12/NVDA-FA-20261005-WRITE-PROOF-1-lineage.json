@@ -1,0 +1,17 @@
+{
+  "sourceArtifact": "NVDA-FA-20261005-NATIVE-calls-final.json",
+  "sourceCallIndex": 0,
+  "originalRunId": "NVDA-FA-20261005-NATIVE",
+  "proofRunId": "NVDA-FA-20261005-WRITE-PROOF-1",
+  "changesOnlyRunIdToken": true,
+  "changedPaths": [
+    ".input.analysis.header.id",
+    ".input.analysis.header.title",
+    ".input.analysis.header.revision",
+    ".input.analysis.header.provenance.sourceId",
+    ".input.analysis.header.provenance.revision",
+    ".input.analysis.content.blocks[59].text[0].text",
+    ".input.runId"
+  ],
+  "writePerformed": false
+}

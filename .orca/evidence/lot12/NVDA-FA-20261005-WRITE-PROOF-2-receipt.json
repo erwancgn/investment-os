@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "1.0.0",
+  "status": "persisted",
+  "analysisId": "3f037ea7af35815b85bfd367eac6549a",
+  "runId": "NVDA-FA-20261005-WRITE-PROOF-2",
+  "revision": "2026-10-05T16:14:00.000Z",
+  "persisted": true,
+  "promoted": false,
+  "verified": false,
+  "diagnostics": [
+    {
+      "code": "promotion_not_required",
+      "message": "État relu ou reprise nécessaire; aucune transaction Notion atomique.",
+      "severity": "warning"
+    }
+  ]
+}

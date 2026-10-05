@@ -1,0 +1,532 @@
+TAP version 13
+# Subtest: service Core imports only domain modules and no source, UI or transport runtime
+ok 1 - service Core imports only domain modules and no source, UI or transport runtime
+  ---
+  duration_ms: 201.444801
+  type: 'test'
+  ...
+# Subtest: core validates canonical reader results, preserves options, and classifies missing ports
+ok 2 - core validates canonical reader results, preserves options, and classifies missing ports
+  ---
+  duration_ms: 35.683111
+  type: 'test'
+  ...
+# Subtest: company resolution respects exact ticker, name, aliases, market ambiguity and absence
+ok 3 - company resolution respects exact ticker, name, aliases, market ambiguity and absence
+  ---
+  duration_ms: 48.283656
+  type: 'test'
+  ...
+# Subtest: analysis by ID enforces identity and canonical validation
+ok 4 - analysis by ID enforces identity and canonical validation
+  ---
+  duration_ms: 3.693472
+  type: 'test'
+  ...
+# Subtest: Current selection rejects broken explicit pointers and validates hydrated document context
+ok 5 - Current selection rejects broken explicit pointers and validates hydrated document context
+  ---
+  duration_ms: 2.93635
+  type: 'test'
+  ...
+# Subtest: list results and read failures are validated and sanitized
+ok 6 - list results and read failures are validated and sanitized
+  ---
+  duration_ms: 4.286012
+  type: 'test'
+  ...
+# Subtest: save validates run identity, revision and company references and only reports adapter receipts
+ok 7 - save validates run identity, revision and company references and only reports adapter receipts
+  ---
+  duration_ms: 3.944382
+  type: 'test'
+  ...
+# Subtest: closed positions can be addressed separately and do not enter portfolio holdings
+ok 8 - closed positions can be addressed separately and do not enter portfolio holdings
+  ---
+  duration_ms: 0.683518
+  type: 'test'
+  ...
+# (node:34458) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: read adapter preserves legacy company/document/portfolio payloads while validating canonical projections
+ok 9 - read adapter preserves legacy company/document/portfolio payloads while validating canonical projections
+  ---
+  duration_ms: 483.89276
+  type: 'test'
+  ...
+# Subtest: identity adapter resolves from company rows without reading analysis bodies
+ok 10 - identity adapter resolves from company rows without reading analysis bodies
+  ---
+  duration_ms: 13.392051
+  type: 'test'
+  ...
+# Subtest: history lookup by UUID preserves the archived legacy document and source date
+ok 11 - history lookup by UUID preserves the archived legacy document and source date
+  ---
+  duration_ms: 25.963399
+  type: 'test'
+  ...
+# Subtest: Current adapter separates Business, CIO Memo, Decision and Earnings pointers and loads only the selected body
+ok 12 - Current adapter separates Business, CIO Memo, Decision and Earnings pointers and loads only the selected body
+  ---
+  duration_ms: 111.869735
+  type: 'test'
+  ...
+# Subtest: Current selector reports wrong owner, wrong family, archived target and missing memo pointer distinctly
+ok 13 - Current selector reports wrong owner, wrong family, archived target and missing memo pointer distinctly
+  ---
+  duration_ms: 56.751169
+  type: 'test'
+  ...
+# Subtest: integrity listing retains historical body metadata and date/projection state
+ok 14 - integrity listing retains historical body metadata and date/projection state
+  ---
+  duration_ms: 18.156101
+  type: 'test'
+  ...
+# Subtest: explicit Company relations own primary links; title fallback and secondary links remain intact
+ok 15 - explicit Company relations own primary links; title fallback and secondary links remain intact
+  ---
+  duration_ms: 44.899916
+  type: 'test'
+  ...
+# Subtest: checked-in schemas are deterministic and derived from current Core types
+ok 16 - checked-in schemas are deterministic and derived from current Core types
+  ---
+  duration_ms: 1724.120643
+  type: 'test'
+  ...
+# Subtest: contract has no executable domain, server or runtime imports
+ok 17 - contract has no executable domain, server or runtime imports
+  ---
+  duration_ms: 0.199675
+  type: 'test'
+  ...
+# Subtest: all inputs accept explicit personal/demo scopes and reject spoofed caller, secrets and versions
+ok 18 - all inputs accept explicit personal/demo scopes and reject spoofed caller, secrets and versions
+  ---
+  duration_ms: 6.861131
+  type: 'test'
+  ...
+# Subtest: input schemas reject malformed options, ids, families and incomplete write intent
+ok 19 - input schemas reject malformed options, ids, families and incomplete write intent
+  ---
+  duration_ms: 10.410155
+  type: 'test'
+  ...
+# Subtest: each exact manifest mapping reaches the existing Core method with untouched arguments
+ok 20 - each exact manifest mapping reaches the existing Core method with untouched arguments
+  ---
+  duration_ms: 35.493872
+  type: 'test'
+  ...
+# Subtest: writer receipts remain observable and Core alone rejects contradictory receipts
+ok 21 - writer receipts remain observable and Core alone rejects contradictory receipts
+  ---
+  duration_ms: 2.816684
+  type: 'test'
+  ...
+# Subtest: null absence, archived document, closed position and stale/unavailable data retain Core semantics
+ok 22 - null absence, archived document, closed position and stale/unavailable data retain Core semantics
+  ---
+  duration_ms: 3.027882
+  type: 'test'
+  ...
+# Subtest: every Core error code and safe diagnostics is accepted without raw error fields
+ok 23 - every Core error code and safe diagnostics is accepted without raw error fields
+  ---
+  duration_ms: 8.206041
+  type: 'test'
+  ...
+# Subtest: transport errors distinguish not-started rejection and unknown write outcome
+ok 24 - transport errors distinguish not-started rejection and unknown write outcome
+  ---
+  duration_ms: 1.302611
+  type: 'test'
+  ...
+# (node:34460) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:34460) ExperimentalWarning: The MockTimers API is an experimental feature and might change at any time
+# Subtest: transport import boundary and canonical discovery schemas
+ok 25 - transport import boundary and canonical discovery schemas
+  ---
+  duration_ms: 45.229399
+  type: 'test'
+  ...
+# Subtest: unknown tools, invalid versions, invalid schemas, output schemas and scope
+ok 26 - unknown tools, invalid versions, invalid schemas, output schemas and scope
+  ---
+  duration_ms: 19.634571
+  type: 'test'
+  ...
+# Subtest: auth excludes payload identity, cookies, bypass credentials and browser writes
+ok 27 - auth excludes payload identity, cookies, bypass credentials and browser writes
+  ---
+  duration_ms: 2.882319
+  type: 'test'
+  ...
+# Subtest: Sites WRITE is release-closed; transport fence admits only configured run IDs when explicitly authorized
+ok 28 - Sites WRITE is release-closed; transport fence admits only configured run IDs when explicitly authorized
+  ---
+  duration_ms: 5.924267
+  type: 'test'
+  ...
+# Subtest: permissions, scope isolation, mutation confirmation and unauthorized never reach Core
+ok 29 - permissions, scope isolation, mutation confirmation and unauthorized never reach Core
+  ---
+  duration_ms: 7.910316
+  type: 'test'
+  ...
+# Subtest: all eight mappings execute existing Core with exact arguments and preserve diagnostics
+ok 30 - all eight mappings execute existing Core with exact arguments and preserve diagnostics
+  ---
+  duration_ms: 27.971011
+  type: 'test'
+  ...
+# Subtest: Core errors are typed and raw dependency exceptions never escape
+ok 31 - Core errors are typed and raw dependency exceptions never escape
+  ---
+  duration_ms: 2.862289
+  type: 'test'
+  ...
+# Subtest: text-only hosted consumers receive typed Core errors without dependency secrets
+ok 32 - text-only hosted consumers receive typed Core errors without dependency secrets
+  ---
+  duration_ms: 1.555896
+  type: 'test'
+  ...
+# Subtest: fiscal labels in canonical asOf fail Core validation before the writer
+ok 33 - fiscal labels in canonical asOf fail Core validation before the writer
+  ---
+  duration_ms: 4.323841
+  type: 'test'
+  ...
+# Subtest: 2 MiB streamed/declarative requests and 4 MiB output limits fail without truncation
+ok 34 - 2 MiB streamed/declarative requests and 4 MiB output limits fail without truncation
+  ---
+  duration_ms: 35.060621
+  type: 'test'
+  ...
+# Subtest: READ and WRITE 30s deadlines preserve unknown outcome and fence pending WRITE
+ok 35 - READ and WRITE 30s deadlines preserve unknown outcome and fence pending WRITE
+  ---
+  duration_ms: 21.757327
+  type: 'test'
+  ...
+# Subtest: demo six reads use snapshot Core and never invoke personal service
+ok 36 - demo six reads use snapshot Core and never invoke personal service
+  ---
+  duration_ms: 102.837894
+  type: 'test'
+  ...
+# notion_request_rejected { status: 403, type: 'unknown', code: 'unknown', validation: [] }
+# notion_request_rejected { status: 403, type: 'unknown', code: 'unknown', validation: [] }
+# Subtest: local runtime: SDK client initialize/discover, real adapter WRITE receipts/replay/conflict
+ok 37 - local runtime: SDK client initialize/discover, real adapter WRITE receipts/replay/conflict
+  ---
+  duration_ms: 1935.685267
+  type: 'test'
+  ...
+# Subtest: completed transient READ retries at most twice; WRITE never retries a Core error
+ok 38 - completed transient READ retries at most twice; WRITE never retries a Core error
+  ---
+  duration_ms: 253.675654
+  type: 'test'
+  ...
+# Subtest: READ backoff cannot start a second Core call after its deadline
+ok 39 - READ backoff cannot start a second Core call after its deadline
+  ---
+  duration_ms: 3.367118
+  type: 'test'
+  ...
+# Subtest: 2 MiB tool arguments are accepted independently of JSON-RPC framing
+ok 40 - 2 MiB tool arguments are accepted independently of JSON-RPC framing
+  ---
+  duration_ms: 74.484807
+  type: 'test'
+  ...
+# (node:34461) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: callout semantic verification null -> 💡
+ok 41 - callout semantic verification null -> 💡
+  ---
+  duration_ms: 375.521657
+  type: 'test'
+  ...
+# Subtest: callout semantic verification 🔥 -> 🔥
+ok 42 - callout semantic verification 🔥 -> 🔥
+  ---
+  duration_ms: 22.352322
+  type: 'test'
+  ...
+# Subtest: callout semantic verification 🔥 -> 💡
+ok 43 - callout semantic verification 🔥 -> 💡
+  ---
+  duration_ms: 27.114793
+  type: 'test'
+  ...
+# Subtest: exact AN-598 payload with provider callout icon reaches persisted journal, D1 and immediate readback
+ok 44 - exact AN-598 payload with provider callout icon reaches persisted journal, D1 and immediate readback
+  ---
+  duration_ms: 69.287256
+  type: 'test'
+  ...
+# Subtest: callout without icon omits icon entirely
+ok 45 - callout without icon omits icon entirely
+  ---
+  duration_ms: 9.85129
+  type: 'test'
+  ...
+# Subtest: callout with emoji preserves the Notion icon DTO
+ok 46 - callout with emoji preserves the Notion icon DTO
+  ---
+  duration_ms: 8.662277
+  type: 'test'
+  ...
+# Subtest: Notion rejection diagnostics retain structural validation paths without echoed payload or secrets
+ok 47 - Notion rejection diagnostics retain structural validation paths without echoed payload or secrets
+  ---
+  duration_ms: 12.807287
+  type: 'test'
+  ...
+# Subtest: nominal save re-reads Notion and verifies the server-assigned identity through Core
+ok 48 - nominal save re-reads Notion and verifies the server-assigned identity through Core
+  ---
+  duration_ms: 86.34303
+  type: 'test'
+  ...
+# Subtest: creation accepts a canonical intent identity without requiring a physical Notion UUID
+ok 49 - creation accepts a canonical intent identity without requiring a physical Notion UUID
+  ---
+  duration_ms: 22.581916
+  type: 'test'
+  ...
+# Subtest: same run re-reads actual state without duplicate or repeat promotion
+ok 50 - same run re-reads actual state without duplicate or repeat promotion
+  ---
+  duration_ms: 13.405712
+  type: 'test'
+  ...
+# Subtest: validated save indexes the promoted Current relation without rebuilding unrelated links
+ok 51 - validated save indexes the promoted Current relation without rebuilding unrelated links
+  ---
+  duration_ms: 9.717311
+  type: 'test'
+  ...
+# Subtest: incompatible same run conflicts before another create
+ok 52 - incompatible same run conflicts before another create
+  ---
+  duration_ms: 21.121791
+  type: 'test'
+  ...
+# Subtest: stale expectedRevision cannot mutate an existing analysis
+ok 53 - stale expectedRevision cannot mutate an existing analysis
+  ---
+  duration_ms: 8.767185
+  type: 'test'
+  ...
+# notion_request_rejected { status: 404, type: 'unknown', code: 'unknown', validation: [] }
+# Subtest: Company absent fails before persistence
+ok 54 - Company absent fails before persistence
+  ---
+  duration_ms: 6.234469
+  type: 'test'
+  ...
+# Subtest: inconsistent input Company relation is rejected before mutation
+ok 55 - inconsistent input Company relation is rejected before mutation
+  ---
+  duration_ms: 3.777479
+  type: 'test'
+  ...
+# notion_request_rejected { status: 403, type: 'unknown', code: 'unknown', validation: [] }
+# Subtest: persistence OK / promotion KO returns resumable pending and safely resumes
+ok 56 - persistence OK / promotion KO returns resumable pending and safely resumes
+  ---
+  duration_ms: 10.259933
+  type: 'test'
+  ...
+# Subtest: promotion OK / final verification KO never returns verified
+ok 57 - promotion OK / final verification KO never returns verified
+  ---
+  duration_ms: 12.507476
+  type: 'test'
+  ...
+# Subtest: ambiguous create timeout reconciles Run ID before any mutation retry
+ok 58 - ambiguous create timeout reconciles Run ID before any mutation retry
+  ---
+  duration_ms: 16.220298
+  type: 'test'
+  ...
+# Subtest: ambiguous promotion reconciles Company rather than blindly repeating PATCH
+ok 59 - ambiguous promotion reconciles Company rather than blindly repeating PATCH
+  ---
+  duration_ms: 9.779723
+  type: 'test'
+  ...
+# notion_request_rejected { status: 429, type: 'unknown', code: 'unknown', validation: [] }
+# Subtest: rate limited mutation is attempted once and does not certify persistence
+ok 60 - rate limited mutation is attempted once and does not certify persistence
+  ---
+  duration_ms: 9.434198
+  type: 'test'
+  ...
+# Subtest: wrong final Current returns partial, never verified
+ok 61 - wrong final Current returns partial, never verified
+  ---
+  duration_ms: 8.429828
+  type: 'test'
+  ...
+# Subtest: concurrent same-run writers share the D1 lease and create at most one page
+ok 62 - concurrent same-run writers share the D1 lease and create at most one page
+  ---
+  duration_ms: 12.825913
+  type: 'test'
+  ...
+# Subtest: metadata update checks source revision and preserves the existing report body
+ok 63 - metadata update checks source revision and preserves the existing report body
+  ---
+  duration_ms: 9.698035
+  type: 'test'
+  ...
+# Subtest: position reads source lifecycle: open, closed, absent, inconsistent and invalid
+ok 64 - position reads source lifecycle: open, closed, absent, inconsistent and invalid
+  ---
+  duration_ms: 8.143549
+  type: 'test'
+  ...
+# Subtest: unresolved ambiguous create is fenced across replays, not blindly retried
+ok 65 - unresolved ambiguous create is fenced across replays, not blindly retried
+  ---
+  duration_ms: 7.801785
+  type: 'test'
+  ...
+# Subtest: Draft persistence is readable through MCP Core without promoting Current
+ok 66 - Draft persistence is readable through MCP Core without promoting Current
+  ---
+  duration_ms: 7.022068
+  type: 'test'
+  ...
+# Subtest: Draft save and replay update only their page indexes and avoid a second create
+ok 67 - Draft save and replay update only their page indexes and avoid a second create
+  ---
+  duration_ms: 7.64872
+  type: 'test'
+  ...
+# Subtest: adapter canonicalizes dashed update identity before receipt validation
+ok 68 - adapter canonicalizes dashed update identity before receipt validation
+  ---
+  duration_ms: 11.077648
+  type: 'test'
+  ...
+# Subtest: long report is written in bounded chunks and completely re-read before verified
+ok 69 - long report is written in bounded chunks and completely re-read before verified
+  ---
+  duration_ms: 29.980688
+  type: 'test'
+  ...
+# Subtest: long Draft certifies the final append with a complete read without a redundant full scan
+ok 70 - long Draft certifies the final append with a complete read without a redundant full scan
+  ---
+  duration_ms: 28.833703
+  type: 'test'
+  ...
+# Subtest: long Draft cannot certify content changed during the final append read
+ok 71 - long Draft cannot certify content changed during the final append read
+  ---
+  duration_ms: 22.345016
+  type: 'test'
+  ...
+# Subtest: ambiguous append reconciles the exact block prefix without duplicating content
+ok 72 - ambiguous append reconciles the exact block prefix without duplicating content
+  ---
+  duration_ms: 44.472532
+  type: 'test'
+  ...
+# Subtest: lost D1 lease is detected before a Current mutation
+ok 73 - lost D1 lease is detected before a Current mutation
+  ---
+  duration_ms: 24.303328
+  type: 'test'
+  ...
+# Subtest: production shared Run ID remains idempotent independently for Business and Valuation modules
+ok 74 - production shared Run ID remains idempotent independently for Business and Valuation modules
+  ---
+  duration_ms: 17.186571
+  type: 'test'
+  ...
+# Subtest: physical Company must be a relation; schema mismatch cannot yield verified
+ok 75 - physical Company must be a relation; schema mismatch cannot yield verified
+  ---
+  duration_ms: 3.47197
+  type: 'test'
+  ...
+# Subtest: production source without a Summary property preserves the canonical summary in the report body
+ok 76 - production source without a Summary property preserves the canonical summary in the report body
+  ---
+  duration_ms: 7.955114
+  type: 'test'
+  ...
+# Subtest: Company archived during final verification cannot yield verified
+ok 77 - Company archived during final verification cannot yield verified
+  ---
+  duration_ms: 7.089487
+  type: 'test'
+  ...
+# Subtest: revisioned update cannot retype a Business Current page as Valuation
+ok 78 - revisioned update cannot retype a Business Current page as Valuation
+  ---
+  duration_ms: 14.844835
+  type: 'test'
+  ...
+# notion_request_rejected {
+#   status: 400,
+#   type: 'error',
+#   code: 'validation_error',
+#   validation: [ { path: 'body.children[6].callout.icon', expected: 'object' } ]
+# }
+# Subtest: provider diagnostic survives the adapter Core bridge without sensitive content
+ok 79 - provider diagnostic survives the adapter Core bridge without sensitive content
+  ---
+  duration_ms: 22.64039
+  type: 'test'
+  ...
+# Subtest: provider rich-text-array limit rejects before a mutation
+ok 80 - provider rich-text-array limit rejects before a mutation
+  ---
+  duration_ms: 4.272741
+  type: 'test'
+  ...
+# Subtest: provider table-children limit rejects before a mutation
+ok 81 - provider table-children limit rejects before a mutation
+  ---
+  duration_ms: 4.266918
+  type: 'test'
+  ...
+# Subtest: provider link-url limit rejects before a mutation
+ok 82 - provider link-url limit rejects before a mutation
+  ---
+  duration_ms: 4.205344
+  type: 'test'
+  ...
+# Subtest: provider utf8-size limit rejects before a mutation
+ok 83 - provider utf8-size limit rejects before a mutation
+  ---
+  duration_ms: 7.018511
+  type: 'test'
+  ...
+# Subtest: supported block DTOs omit absent optional values while nullable properties remain valid
+ok 84 - supported block DTOs omit absent optional values while nullable properties remain valid
+  ---
+  duration_ms: 7.225169
+  type: 'test'
+  ...
+1..84
+# tests 84
+# suites 0
+# pass 84
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 3719.901231

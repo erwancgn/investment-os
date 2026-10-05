@@ -1,0 +1,11 @@
+(node:38805) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+resolve_company: PASS 14ms
+get_company: PASS 57ms
+get_portfolio: PASS 12ms
+get_position: PASS 10ms
+get_current_analysis: PASS 22ms
+get_analysis_by_id: PASS 16ms
+get_quote: PASS 8ms
+workerd: initialization/discovery, identity resolution, 6 demo READ, auth, release-closed WRITE, version, browser boundary PASS
+catalog JSON bytes: 645741

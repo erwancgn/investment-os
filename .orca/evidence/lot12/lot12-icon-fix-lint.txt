@@ -1,0 +1,15 @@
+
+> investment-os@0.1.0 lint
+> bash scripts/sites-env.sh -- eslint . --ignore-pattern dist --ignore-pattern .next --ignore-pattern storybook-static
+
+
+/private/tmp/lot12-site-source/.sites-runtime/mcp-test.mjs
+  7587:52  warning  '_aliases' is defined but never used                    @typescript-eslint/no-unused-vars
+  8207:5   warning  'notionSyncSources' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  9297:5   warning  'allInstruments' is assigned a value but never used     @typescript-eslint/no-unused-vars
+
+/private/tmp/lot12-site-source/core/services/investment-os.ts
+  133:52  warning  '_aliases' is defined but never used  @typescript-eslint/no-unused-vars
+
+✖ 4 problems (0 errors, 4 warnings)
+

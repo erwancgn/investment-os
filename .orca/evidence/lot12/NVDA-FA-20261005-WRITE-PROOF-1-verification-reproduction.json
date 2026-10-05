@@ -1,0 +1,67 @@
+{
+  "networkCalls": 0,
+  "productionChanges": 0,
+  "exactArchivedPayload": true,
+  "productionAttribution": "Not proven from raw REST: archived live Notion connector renders 💡, but historical writer GET response was not recorded.",
+  "reports": [
+    {
+      "label": "CONTROL mock echo DTO",
+      "receipt": {
+        "schemaVersion": "1.0.0",
+        "status": "persisted",
+        "analysisId": "22222222222242228222222222222221",
+        "runId": "NVDA-FA-20261005-WRITE-PROOF-1",
+        "revision": "2026-10-02T00:00:02.000Z",
+        "persisted": true,
+        "promoted": false,
+        "verified": false,
+        "diagnostics": [
+          {
+            "code": "promotion_not_required",
+            "message": "État relu ou reprise nécessaire; aucune transaction Notion atomique.",
+            "severity": "warning"
+          }
+        ]
+      },
+      "journal": {
+        "phase": "persisted",
+        "page_id": "22222222-2222-4222-8222-222222222221"
+      },
+      "analysisRows": 1,
+      "mcpReadbackPresent": true,
+      "observedIcon": null,
+      "providerCreates": 1
+    },
+    {
+      "label": "SIMULATED REST callout default icon",
+      "receipt": {
+        "schemaVersion": "1.0.0",
+        "status": "partial",
+        "analysisId": "22222222222242228222222222222221",
+        "runId": "NVDA-FA-20261005-WRITE-PROOF-1",
+        "revision": "2026-10-02T00:00:02.000Z",
+        "persisted": false,
+        "promoted": false,
+        "verified": false,
+        "diagnostics": [
+          {
+            "code": "persistence_verification_failed",
+            "message": "État relu ou reprise nécessaire; aucune transaction Notion atomique.",
+            "severity": "warning"
+          }
+        ]
+      },
+      "journal": {
+        "phase": "persisting",
+        "page_id": "22222222-2222-4222-8222-222222222221"
+      },
+      "analysisRows": 0,
+      "mcpReadbackPresent": false,
+      "observedIcon": {
+        "type": "emoji",
+        "emoji": "💡"
+      },
+      "providerCreates": 1
+    }
+  ]
+}

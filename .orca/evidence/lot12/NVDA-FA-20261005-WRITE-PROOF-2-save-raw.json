@@ -1,0 +1,62 @@
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "{\"contractVersion\":\"1.0.0\",\"status\":\"completed\"}"
+    }
+  ],
+  "structuredContent": {
+    "contractVersion": "1.0.0",
+    "scope": "personal",
+    "status": "completed",
+    "result": {
+      "schemaVersion": "1.0.0",
+      "status": "ok",
+      "data": {
+        "schemaVersion": "1.0.0",
+        "status": "persisted",
+        "analysisId": "3f037ea7af35815b85bfd367eac6549a",
+        "runId": "NVDA-FA-20261005-WRITE-PROOF-2",
+        "revision": "2026-10-05T16:14:00.000Z",
+        "persisted": true,
+        "promoted": false,
+        "verified": false,
+        "diagnostics": [
+          {
+            "code": "promotion_not_required",
+            "message": "État relu ou reprise nécessaire; aucune transaction Notion atomique.",
+            "severity": "warning"
+          }
+        ]
+      },
+      "metadata": {
+        "revision": "2026-10-05T16:14:00.000Z",
+        "freshness": "unknown",
+        "provenance": {
+          "kind": "derived",
+          "sourceId": "derived:NVDA-FA-20261005-WRITE-PROOF-2:business",
+          "revision": "draft:NVDA-FA-20261005-WRITE-PROOF-2:business",
+          "capturedAt": "2026-10-05T09:22:00.000Z"
+        },
+        "diagnostics": [
+          {
+            "code": "external_tam_gap",
+            "message": "Exact homogeneous TAM/SAM/SOM not retained; external non-blocking gap.",
+            "severity": "info"
+          },
+          {
+            "code": "external_utilization_gap",
+            "message": "Homogeneous utilization/rental-yield series unavailable; external non-blocking gap.",
+            "severity": "info"
+          },
+          {
+            "code": "promotion_not_required",
+            "message": "État relu ou reprise nécessaire; aucune transaction Notion atomique.",
+            "severity": "warning"
+          }
+        ]
+      }
+    }
+  },
+  "isError": false
+}

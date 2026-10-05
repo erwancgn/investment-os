@@ -1,0 +1,663 @@
+{
+  "analysisId": "3f037ea7af35815b85bfd367eac6549a",
+  "notionAnalysisId": "AN-599",
+  "status": "Draft",
+  "companyIds": [
+    "3b337ea7af35811eb7e5e934f832c389"
+  ],
+  "score": "92",
+  "verdict": "Excellent",
+  "documentTextGroups": 275,
+  "missingTextGroups": [
+    {
+      "id": "b4",
+      "text": "Élément"
+    },
+    {
+      "id": "b4",
+      "text": "Fort"
+    },
+    {
+      "id": "b4",
+      "text": "Très fort"
+    },
+    {
+      "id": "b4",
+      "text": "Croissance structurelle"
+    },
+    {
+      "id": "b4",
+      "text": "Forte"
+    },
+    {
+      "id": "b4",
+      "text": "Forte"
+    },
+    {
+      "id": "b4",
+      "text": "Résilience"
+    },
+    {
+      "id": "b4",
+      "text": "Moyenne"
+    },
+    {
+      "id": "b18",
+      "text": "Période"
+    },
+    {
+      "id": "b18",
+      "text": "CA"
+    },
+    {
+      "id": "b18",
+      "text": "Marge brute"
+    },
+    {
+      "id": "b18",
+      "text": "Operating income"
+    },
+    {
+      "id": "b18",
+      "text": "FCF approx."
+    },
+    {
+      "id": "b18",
+      "text": "FY2024"
+    },
+    {
+      "id": "b18",
+      "text": "60,9 Md$ [E:B4]"
+    },
+    {
+      "id": "b18",
+      "text": "72,7% [E:B4]"
+    },
+    {
+      "id": "b18",
+      "text": "33,0 Md$ [E:B4]"
+    },
+    {
+      "id": "b18",
+      "text": "28,1 Md$ [E:B4]"
+    },
+    {
+      "id": "b18",
+      "text": "~27,0 Md$ [D:B2]"
+    },
+    {
+      "id": "b18",
+      "text": "FY2025"
+    },
+    {
+      "id": "b18",
+      "text": "130,5 Md$ [E:B4]"
+    },
+    {
+      "id": "b18",
+      "text": "75,0% [E:B4]"
+    },
+    {
+      "id": "b18",
+      "text": "81,5 Md$ [E:B4]"
+    },
+    {
+      "id": "b18",
+      "text": "64,1 Md$ [E:B4]"
+    },
+    {
+      "id": "b18",
+      "text": "~60,9 Md$ [D:B3]"
+    },
+    {
+      "id": "b18",
+      "text": "215,9 Md$ [E:B4]"
+    },
+    {
+      "id": "b18",
+      "text": "71,1% [E:B4]"
+    },
+    {
+      "id": "b18",
+      "text": "130,4 Md$ [E:B4]"
+    },
+    {
+      "id": "b18",
+      "text": "102,7 Md$ [E:B4]"
+    },
+    {
+      "id": "b18",
+      "text": "~96,7 Md$ [D:B4]"
+    },
+    {
+      "id": "b18",
+      "text": "96,2 Md$ [E:B2]"
+    },
+    {
+      "id": "b18",
+      "text": "75,0% [E:B2]"
+    },
+    {
+      "id": "b18",
+      "text": "63,7 Md$ [E:B2]"
+    },
+    {
+      "id": "b25",
+      "text": "Mécanisme"
+    },
+    {
+      "id": "b25",
+      "text": "Indicateur"
+    },
+    {
+      "id": "b25",
+      "text": "Capex IA ralentit"
+    },
+    {
+      "id": "b25",
+      "text": "moins de demande accélérateurs"
+    },
+    {
+      "id": "b25",
+      "text": "Custom silicon"
+    },
+    {
+      "id": "b25",
+      "text": "part de valeur captée baisse"
+    },
+    {
+      "id": "b25",
+      "text": "mix hyperscaler"
+    },
+    {
+      "id": "b25",
+      "text": "Surcapacité"
+    },
+    {
+      "id": "b25",
+      "text": "pricing/utilisation baissent"
+    },
+    {
+      "id": "b25",
+      "text": "utilisation/rental economics"
+    },
+    {
+      "id": "b25",
+      "text": "BFR/financement"
+    },
+    {
+      "id": "b25",
+      "text": "cash conversion se dégrade"
+    },
+    {
+      "id": "b25",
+      "text": "Restrictions Chine"
+    },
+    {
+      "id": "b25",
+      "text": "marché adressable réduit"
+    },
+    {
+      "id": "b25",
+      "text": "licences/export controls"
+    },
+    {
+      "id": "b29",
+      "text": "Critère"
+    },
+    {
+      "id": "b29",
+      "text": "15/15"
+    },
+    {
+      "id": "b29",
+      "text": "Market"
+    },
+    {
+      "id": "b29",
+      "text": "15/15"
+    },
+    {
+      "id": "b29",
+      "text": "20/20"
+    },
+    {
+      "id": "b29",
+      "text": "Financial quality"
+    },
+    {
+      "id": "b29",
+      "text": "14/15"
+    },
+    {
+      "id": "b29",
+      "text": "9/10"
+    },
+    {
+      "id": "b29",
+      "text": "Competition"
+    },
+    {
+      "id": "b29",
+      "text": "10/10"
+    },
+    {
+      "id": "b29",
+      "text": "Resilience"
+    },
+    {
+      "id": "b29",
+      "text": "5/10"
+    },
+    {
+      "id": "b29",
+      "text": "Visibility"
+    },
+    {
+      "id": "b29",
+      "text": "4/5"
+    },
+    {
+      "id": "b29",
+      "text": "Total"
+    },
+    {
+      "id": "b43",
+      "text": "Claim"
+    },
+    {
+      "id": "b43",
+      "text": "Période/asOf"
+    },
+    {
+      "id": "b43",
+      "text": "Locator"
+    },
+    {
+      "id": "b43",
+      "text": "same-run Business Full scoring"
+    },
+    {
+      "id": "b43",
+      "text": "Q2 revenue 96,221 Md$, GM ~75%, op income 63,734 Md$"
+    },
+    {
+      "id": "b43",
+      "text": "Q2 results / 10-Q income statement"
+    },
+    {
+      "id": "b43",
+      "text": "Data Center 89 Md$, +117% y/y"
+    },
+    {
+      "id": "b43",
+      "text": "Q2 results Data Center"
+    },
+    {
+      "id": "b43",
+      "text": "E:B4"
+    },
+    {
+      "id": "b43",
+      "text": "FY24–FY26 historical revenue/margins/op income/CFO"
+    },
+    {
+      "id": "b43",
+      "text": "FY2024–FY2026"
+    },
+    {
+      "id": "b43",
+      "text": "FY2026 10-K financial statements"
+    },
+    {
+      "id": "b43",
+      "text": "H1 FY2027 CFO 74,421 Md$"
+    },
+    {
+      "id": "b43",
+      "text": "10-Q cash flows"
+    },
+    {
+      "id": "b43",
+      "text": "AR 63,059 Md$"
+    },
+    {
+      "id": "b43",
+      "text": "10-Q balance sheet"
+    },
+    {
+      "id": "b43",
+      "text": "Inventory 31,575 Md$"
+    },
+    {
+      "id": "b43",
+      "text": "10-Q balance sheet"
+    },
+    {
+      "id": "b43",
+      "text": "Top AR customers 22/14/13/11/10%"
+    },
+    {
+      "id": "b43",
+      "text": "10-Q customer concentration note"
+    },
+    {
+      "id": "b43",
+      "text": "Q3 guide 108 Md$ ±2%; GM ~74%"
+    },
+    {
+      "id": "b43",
+      "text": "Q3 FY2027 guidance"
+    },
+    {
+      "id": "b43",
+      "text": "Q2 results outlook"
+    },
+    {
+      "id": "b45",
+      "text": "Formula"
+    },
+    {
+      "id": "b45",
+      "text": "Résultat"
+    },
+    {
+      "id": "b45",
+      "text": "89 / 96.221"
+    },
+    {
+      "id": "b45",
+      "text": "~92,5% Data Center mix"
+    },
+    {
+      "id": "b45",
+      "text": "D:B2"
+    },
+    {
+      "id": "b45",
+      "text": "FY24 CFO - capex/intangibles"
+    },
+    {
+      "id": "b45",
+      "text": "~27,0 Md$ FCF"
+    },
+    {
+      "id": "b45",
+      "text": "D:B3"
+    },
+    {
+      "id": "b45",
+      "text": "FY25 CFO - capex/intangibles"
+    },
+    {
+      "id": "b45",
+      "text": "~60,9 Md$ FCF"
+    },
+    {
+      "id": "b45",
+      "text": "D:B4"
+    },
+    {
+      "id": "b45",
+      "text": "FY26 CFO - capex/intangibles"
+    },
+    {
+      "id": "b45",
+      "text": "~96,7 Md$ FCF"
+    },
+    {
+      "id": "b47",
+      "text": "Statut"
+    },
+    {
+      "id": "b47",
+      "text": "Gap / qualification"
+    },
+    {
+      "id": "b47",
+      "text": "Identity"
+    },
+    {
+      "id": "b47",
+      "text": "PASS"
+    },
+    {
+      "id": "b47",
+      "text": "Company READ réel + resolve_company déjà prouvés."
+    },
+    {
+      "id": "b47",
+      "text": "Material factual claims"
+    },
+    {
+      "id": "b47",
+      "text": "PASS"
+    },
+    {
+      "id": "b47",
+      "text": "Q2/Q1/FY26, balance, customers, commitments and cash-flow have atomic E locators in the NATIVE proof appendix."
+    },
+    {
+      "id": "b47",
+      "text": "Hypotheses / inferences / methodology"
+    },
+    {
+      "id": "b47",
+      "text": "PASS"
+    },
+    {
+      "id": "b47",
+      "text": "Moat, roadmap economics and reflexivity are classified H/I/M rather than false primary evidence."
+    },
+    {
+      "id": "b47",
+      "text": "TAM/SAM/SOM exact"
+    },
+    {
+      "id": "b47",
+      "text": "GAP externe non bloquant"
+    },
+    {
+      "id": "b47",
+      "text": "No homogeneous external figure retained."
+    },
+    {
+      "id": "b47",
+      "text": "Utilization / rental yields"
+    },
+    {
+      "id": "b47",
+      "text": "GAP externe non bloquant"
+    },
+    {
+      "id": "b47",
+      "text": "No homogeneous published series retained."
+    },
+    {
+      "id": "b47",
+      "text": "Projection"
+    },
+    {
+      "id": "b47",
+      "text": "ABSENT autorisée"
+    },
+    {
+      "id": "b47",
+      "text": "Not a serialization blocker."
+    },
+    {
+      "id": "bn-proof-2",
+      "text": "Tag"
+    },
+    {
+      "id": "bn-proof-2",
+      "text": "Nature"
+    },
+    {
+      "id": "bn-proof-2",
+      "text": "Claim / locator atomique"
+    },
+    {
+      "id": "bn-proof-2",
+      "text": "[E:BN-Q2]"
+    },
+    {
+      "id": "bn-proof-2",
+      "text": "NVIDIA IR Q2 FY27 — Q2 Fiscal 2027 Summary: revenue 96,221 Md$, GAAP GM 75,0%, op income 63,734 Md$, NI 59,688 Md$; Data Center highlights: 89,0 Md$; Q3 Outlook: 108,0 Md$ ±2%, GM 74,0% ±50 pb."
+    },
+    {
+      "id": "bn-proof-2",
+      "text": "[E:BN-Q1]"
+    },
+    {
+      "id": "bn-proof-2",
+      "text": "NVIDIA IR Q1 FY27 — Q1 Fiscal 2027 Summary: revenue 81,615 Md$, GAAP GM 74,9%, op income 53,536 Md$, NI 58,321 Md$; Data Center 75,2 Md$."
+    },
+    {
+      "id": "bn-proof-2",
+      "text": "[E:BN-FY26]"
+    },
+    {
+      "id": "bn-proof-2",
+      "text": "NVIDIA IR FY26 — Fiscal 2026 Summary: revenue 215,938 Md$, GM 71,1%, op income 130,387 Md$, NI 120,067 Md$."
+    },
+    {
+      "id": "bn-proof-2",
+      "text": "[E:BN-BAL]"
+    },
+    {
+      "id": "bn-proof-2",
+      "text": "SEC Q2 FY27 10-Q — Balance Sheet/Cash Flows: AR 63,059 Md$, inventory 31,575 Md$, H1 CFO 74,421 Md$."
+    },
+    {
+      "id": "bn-proof-2",
+      "text": "[E:BN-CUST]"
+    },
+    {
+      "id": "bn-proof-2",
+      "text": "SEC Q2 FY27 10-Q — customer concentration/payment terms: AR 22/14/13/11/10%; certains termes 90 jours à un an."
+    },
+    {
+      "id": "bn-proof-2",
+      "text": "[E:BN-COMMIT]"
+    },
+    {
+      "id": "bn-proof-2",
+      "text": "SEC Q2 FY27 10-Q — commitments/MD&A: supply/capacity commitments 279 Md$ vs 119 Md$ prior quarter."
+    },
+    {
+      "id": "bn-proof-2",
+      "text": "[E:BN-RUBIN]"
+    },
+    {
+      "id": "bn-proof-2",
+      "text": "SEC Q2 FY27 10-Q — recent developments: Blackwell majority of system shipments; Rubin began production shipments in Q3 FY27."
+    },
+    {
+      "id": "bn-proof-2",
+      "text": "[D:BN-DCMIX]"
+    },
+    {
+      "id": "bn-proof-2",
+      "text": "89,0 / 96,221 = ~92,5% Data Center mix."
+    },
+    {
+      "id": "bn-proof-2",
+      "text": "[D:BN-FCF26]"
+    },
+    {
+      "id": "bn-proof-2",
+      "text": "FY26 CFO 102,718 - capex/intangibles 6,042 = 96,676 Md$ simplified FCF."
+    },
+    {
+      "id": "bn-proof-2",
+      "text": "[H:BN-RUBIN]"
+    },
+    {
+      "id": "bn-proof-2",
+      "text": "Future Rubin economics are an underwriting hypothesis, not a primary fact."
+    },
+    {
+      "id": "bn-proof-2",
+      "text": "[I:BN-MOAT]"
+    },
+    {
+      "id": "bn-proof-2",
+      "text": "Full-stack moat / switching-cost conclusion is analyst inference."
+    },
+    {
+      "id": "bn-proof-2",
+      "text": "[M:BN-SCORE]"
+    },
+    {
+      "id": "bn-proof-2",
+      "text": "92/100 uses the Business Framework scoring rubric."
+    },
+    {
+      "id": "bn-gate-table",
+      "text": "Statut"
+    },
+    {
+      "id": "bn-gate-table",
+      "text": "Material facts E / calculations D"
+    },
+    {
+      "id": "bn-gate-table",
+      "text": "PASS"
+    },
+    {
+      "id": "bn-gate-table",
+      "text": "Q2/Q1/FY26/balance/commitments have atomic locators."
+    },
+    {
+      "id": "bn-gate-table",
+      "text": "Hypotheses / inferences / method"
+    },
+    {
+      "id": "bn-gate-table",
+      "text": "PASS"
+    },
+    {
+      "id": "bn-gate-table",
+      "text": "H/I/M are not claimed as primary evidence."
+    },
+    {
+      "id": "bn-gate-table",
+      "text": "TAM/SAM/SOM exact"
+    },
+    {
+      "id": "bn-gate-table",
+      "text": "GAP externe non bloquant"
+    },
+    {
+      "id": "bn-gate-table",
+      "text": "No homogeneous figure retained."
+    },
+    {
+      "id": "bn-gate-table",
+      "text": "Utilization/rental yields"
+    },
+    {
+      "id": "bn-gate-table",
+      "text": "GAP externe non bloquant"
+    },
+    {
+      "id": "bn-gate-table",
+      "text": "Not published as a homogeneous series."
+    },
+    {
+      "id": "bn-gate-table",
+      "text": "Projection"
+    },
+    {
+      "id": "bn-gate-table",
+      "text": "ABSENT autorisée"
+    },
+    {
+      "id": "bn-gate-table",
+      "text": "Not a serialization blocker."
+    }
+  ],
+  "exactSearchMatches": 1,
+  "duplicateUnexpectedObserved": false
+}

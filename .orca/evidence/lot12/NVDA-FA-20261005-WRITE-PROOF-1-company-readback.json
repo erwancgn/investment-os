@@ -1,0 +1,2807 @@
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "{\"contractVersion\":\"1.0.0\",\"status\":\"completed\"}"
+    }
+  ],
+  "structuredContent": {
+    "contractVersion": "1.0.0",
+    "scope": "personal",
+    "status": "completed",
+    "result": {
+      "schemaVersion": "1.0.0",
+      "status": "ok",
+      "data": {
+        "id": "3b337ea7af35811eb7e5e934f832c389",
+        "name": "NVIDIA",
+        "ticker": "NVDA",
+        "sector": "Technology",
+        "industry": "Semiconductors",
+        "ownershipStatus": "Owned",
+        "watchlistMembership": false,
+        "monitoringStatus": "",
+        "businessScore": 92,
+        "businessVerdict": "Excellent",
+        "researchStage": "Monitoring",
+        "researchPriority": "Medium",
+        "lastAnalysis": "2026-09-13",
+        "themes": [
+          "AI",
+          "Datacenter",
+          "Semiconductors"
+        ],
+        "country": "United States",
+        "currency": "USD",
+        "exchange": "NASDAQ",
+        "dataCompleteness": "Complete",
+        "notionUrl": "https://app.notion.com/p/NVIDIA-3b337ea7af35811eb7e5e934f832c389",
+        "schemaVersion": "1.0.0",
+        "provenance": {
+          "kind": "notion",
+          "sourceId": "3b337ea7af35811eb7e5e934f832c389",
+          "revision": null,
+          "capturedAt": null
+        },
+        "researchReferences": [
+          {
+            "id": "3da37ea7af358106a783e7c193752fa8",
+            "kind": "business",
+            "title": "NVIDIA — Business Check v8 — Full Analyse Backstops — 2026-09-13",
+            "agent": "Business Analyst",
+            "score": "92",
+            "verdict": "",
+            "confidence": "High",
+            "status": "Validated",
+            "date": "2026-09-13",
+            "lastEditedTime": "2026-09-13T07:09:00.000Z",
+            "notionUrl": "https://app.notion.com/p/NVIDIA-Business-Check-v8-Full-Analyse-Backstops-2026-09-13-3da37ea7af358106a783e7c193752fa8",
+            "schemaVersion": "1.0.0",
+            "provenance": {
+              "kind": "notion",
+              "sourceId": "3da37ea7af358106a783e7c193752fa8",
+              "revision": "2026-09-13T07:09:00.000Z",
+              "capturedAt": "2026-09-13T07:09:00.000Z"
+            }
+          },
+          {
+            "id": "3da37ea7af3581fd815fd263cb679f90",
+            "kind": "valuation",
+            "title": "NVIDIA — Valuation Check v17 — Backstop Underwriting — 2026-09-13",
+            "agent": "Valuation Analyst",
+            "score": "82",
+            "verdict": "Attractive",
+            "confidence": "Medium",
+            "status": "Validated",
+            "date": "2026-09-13",
+            "lastEditedTime": "2026-09-13T07:10:00.000Z",
+            "notionUrl": "https://app.notion.com/p/NVIDIA-Valuation-Check-v17-Backstop-Underwriting-2026-09-13-3da37ea7af3581fd815fd263cb679f90",
+            "schemaVersion": "1.0.0",
+            "provenance": {
+              "kind": "notion",
+              "sourceId": "3da37ea7af3581fd815fd263cb679f90",
+              "revision": "2026-09-13T07:10:00.000Z",
+              "capturedAt": "2026-09-13T07:10:00.000Z"
+            }
+          },
+          {
+            "id": "3da37ea7af3581aa98f1c55f3bc5ecbf",
+            "kind": "short",
+            "title": "NVIDIA — Short Check v7 — Backstop / Reflexivity — 2026-09-13",
+            "agent": "Short Seller",
+            "score": "",
+            "verdict": "",
+            "confidence": "High",
+            "status": "Validated",
+            "date": "2026-09-13",
+            "lastEditedTime": "2026-09-13T07:11:00.000Z",
+            "notionUrl": "https://app.notion.com/p/NVIDIA-Short-Check-v7-Backstop-Reflexivity-2026-09-13-3da37ea7af3581aa98f1c55f3bc5ecbf",
+            "schemaVersion": "1.0.0",
+            "provenance": {
+              "kind": "notion",
+              "sourceId": "3da37ea7af3581aa98f1c55f3bc5ecbf",
+              "revision": "2026-09-13T07:11:00.000Z",
+              "capturedAt": "2026-09-13T07:11:00.000Z"
+            }
+          },
+          {
+            "id": "3de37ea7af3581a7a380cbebcd991f80",
+            "kind": "portfolio",
+            "title": "NVIDIA — Portfolio Fit v10 — 2026-09-17",
+            "agent": "Portfolio Manager",
+            "score": "",
+            "verdict": "",
+            "confidence": "Medium",
+            "status": "Validated",
+            "date": "2026-09-17",
+            "lastEditedTime": "2026-09-17T07:50:00.000Z",
+            "notionUrl": "https://app.notion.com/p/NVIDIA-Portfolio-Fit-v10-2026-09-17-3de37ea7af3581a7a380cbebcd991f80",
+            "schemaVersion": "1.0.0",
+            "provenance": {
+              "kind": "notion",
+              "sourceId": "3de37ea7af3581a7a380cbebcd991f80",
+              "revision": "2026-09-17T07:50:00.000Z",
+              "capturedAt": "2026-09-17T07:50:00.000Z"
+            }
+          },
+          {
+            "id": "3da37ea7af3581349eb7d1384f6a4337",
+            "kind": "memo",
+            "title": "NVIDIA — Investment Memo v6 — Backstop Universe — 2026-09-13",
+            "agent": "Investment Memo",
+            "score": "",
+            "verdict": "",
+            "confidence": "Medium",
+            "status": "Validated",
+            "date": "2026-09-13",
+            "lastEditedTime": "2026-09-13T07:14:00.000Z",
+            "notionUrl": "https://app.notion.com/p/NVIDIA-Investment-Memo-v6-Backstop-Universe-2026-09-13-3da37ea7af3581349eb7d1384f6a4337",
+            "schemaVersion": "1.0.0",
+            "provenance": {
+              "kind": "notion",
+              "sourceId": "3da37ea7af3581349eb7d1384f6a4337",
+              "revision": "2026-09-13T07:14:00.000Z",
+              "capturedAt": "2026-09-13T07:14:00.000Z"
+            }
+          }
+        ],
+        "analyses": [
+          {
+            "schemaVersion": "1.0.0",
+            "id": "3de37ea7af3581a7a380cbebcd991f80",
+            "title": "NVIDIA — Portfolio Fit v10 — 2026-09-17",
+            "sourceUrl": "https://app.notion.com/p/NVIDIA-Portfolio-Fit-v10-2026-09-17-3de37ea7af3581a7a380cbebcd991f80",
+            "family": "portfolio",
+            "originalFamily": null,
+            "sourceKind": "analysis",
+            "agent": "Portfolio Manager",
+            "status": "Validated",
+            "date": "2026-09-17",
+            "lastEditedTime": "2026-09-17T07:50:00.000Z",
+            "companyIds": [
+              "3b337ea7af35811eb7e5e934f832c389"
+            ],
+            "revision": "2026-09-17T07:50:00.000Z",
+            "sourceFreshness": "unknown",
+            "archived": false,
+            "provenance": {
+              "kind": "notion",
+              "sourceId": "3de37ea7-af35-81a7-a380-cbebcd991f80",
+              "revision": "2026-09-17T07:50:00.000Z",
+              "capturedAt": "2026-09-17T07:50:00.000Z"
+            },
+            "summary": "**Portfolio Fit : CONSERVER / attendre avant renfort.\n** NVIDIA reste une conviction majeure, mais l’exposition économique est déjà d’environ **10,79 %** après look-through ETF.\nLe prochain euro n’a pas besoin d’aller sur NVDA aujourd’hui.",
+            "handoffSummary": "Run NVDA-PF-20260917-01. CONSERVER / attendre avant renfort. Snapshot Notion ~9 425,78 EUR; 4,5 NVDA = 824,40 EUR = 8,75% direct; look-through estimé ~192,88 EUR; exposition économique ~10,79%. Cible directe 10%, max 15%, bande de travail 8-10%. Risque dominant: concentration AI capex/datacenter + reflexivity/backstop. Prochain euro mieux orienté vers S&P500/TSMC/Alphabet tant que NVDA reste >~10% économique.",
+            "previewSummaryItems": [
+              "**Portfolio Fit : CONSERVER / attendre avant renfort.",
+              "** NVIDIA reste une conviction majeure, mais l’exposition économique est déjà d’environ **10,79 %** après look-through ETF.",
+              "Le prochain euro n’a pas besoin d’aller sur NVDA aujourd’hui."
+            ],
+            "score": null,
+            "verdict": null,
+            "confidence": "Medium",
+            "projectionStatus": "absent",
+            "diagnostics": [
+              {
+                "code": "unsupported_block",
+                "message": "Bloc unrepresented_snapshot non pris en charge par le lecteur.",
+                "severity": "warning"
+              }
+            ]
+          },
+          {
+            "schemaVersion": "1.0.0",
+            "id": "3da37ea7af3581349eb7d1384f6a4337",
+            "title": "NVIDIA — Investment Memo v6 — Backstop Universe — 2026-09-13",
+            "sourceUrl": "https://app.notion.com/p/NVIDIA-Investment-Memo-v6-Backstop-Universe-2026-09-13-3da37ea7af3581349eb7d1384f6a4337",
+            "family": "cio_memo",
+            "originalFamily": null,
+            "sourceKind": "analysis",
+            "agent": "Investment Memo",
+            "status": "Validated",
+            "date": "2026-09-13",
+            "lastEditedTime": "2026-09-13T07:14:00.000Z",
+            "companyIds": [
+              "3b337ea7af35811eb7e5e934f832c389"
+            ],
+            "revision": "2026-09-13T07:14:00.000Z",
+            "sourceFreshness": "unknown",
+            "archived": false,
+            "provenance": {
+              "kind": "notion",
+              "sourceId": "3da37ea7-af35-8134-9eb7-d1384f6a4337",
+              "revision": "2026-09-13T07:14:00.000Z",
+              "capturedAt": "2026-09-13T07:14:00.000Z"
+            },
+            "summary": "**CIO DECISION : CONSERVER.\n** Les nouveaux backstops constituent aujourd’hui principalement un mécanisme efficace d’accélération du buildout IA, mais ils créent un tail risk financier réellement corrélé au cycle.\nCela change le Risk Framework et la discipline de sizing, **pas le Base Case ni la fair value** à ce stade.",
+            "handoffSummary": "Run NVDA-FA-20260913-BACKSTOP. CIO: CONSERVER. Backstops = principalement accélérateur efficace du buildout aujourd’hui, mais ajout d’un tail risk corrélé suffisamment matériel pour renforcer Short/Risk et resserrer le sizing, pas pour modifier Base/FV. Business 92/100, Valuation 82/100 Attractive, Base 506 USD/18.3%, Portfolio 8.14% direct/~10.27% économique. Bande de travail 8–10% direct; 5e action non prioritaire tant que utilization/backstop disclosure ne s’améliore pas.",
+            "previewSummaryItems": [
+              "**CIO DECISION : CONSERVER.",
+              "** Les nouveaux backstops constituent aujourd’hui principalement un mécanisme efficace d’accélération du buildout IA, mais ils créent un tail risk financier réellement corrélé au cycle.",
+              "Cela change le Risk Framework et la discipline de sizing, **pas le Base Case ni la fair value** à ce stade."
+            ],
+            "score": null,
+            "verdict": null,
+            "confidence": "Medium",
+            "projectionStatus": "absent",
+            "diagnostics": [
+              {
+                "code": "unsupported_block",
+                "message": "Bloc unrepresented_snapshot non pris en charge par le lecteur.",
+                "severity": "warning"
+              },
+              {
+                "code": "unsupported_block",
+                "message": "Bloc unrepresented_snapshot non pris en charge par le lecteur.",
+                "severity": "warning"
+              }
+            ]
+          },
+          {
+            "schemaVersion": "1.0.0",
+            "id": "3da37ea7af3581aa98f1c55f3bc5ecbf",
+            "title": "NVIDIA — Short Check v7 — Backstop / Reflexivity — 2026-09-13",
+            "sourceUrl": "https://app.notion.com/p/NVIDIA-Short-Check-v7-Backstop-Reflexivity-2026-09-13-3da37ea7af3581aa98f1c55f3bc5ecbf",
+            "family": "short",
+            "originalFamily": null,
+            "sourceKind": "analysis",
+            "agent": "Short Seller",
+            "status": "Validated",
+            "date": "2026-09-13",
+            "lastEditedTime": "2026-09-13T07:11:00.000Z",
+            "companyIds": [
+              "3b337ea7af35811eb7e5e934f832c389"
+            ],
+            "revision": "2026-09-13T07:11:00.000Z",
+            "sourceFreshness": "unknown",
+            "archived": false,
+            "provenance": {
+              "kind": "notion",
+              "sourceId": "3da37ea7-af35-81aa-98f1-c55f3bc5ecbf",
+              "revision": "2026-09-13T07:11:00.000Z",
+              "capturedAt": "2026-09-13T07:11:00.000Z"
+            },
+            "summary": "**Short verdict : pas de short fondamental aujourd’hui.\n** Entreprise fragile : **Non**.\nAction vulnérable : **Oui**.\nShort exploitable : **Sous conditions**.\nLes backstops rendent toutefois le Bear plus cohérent car ils ajoutent une seconde jambe au même cycle IA.",
+            "handoffSummary": "Run NVDA-FA-20260913-BACKSTOP. Entreprise fragile: Non. Action vulnérable: Oui. Short exploitable: Sous conditions. Le risque reflexif est désormais top-tier: demande compute↓ peut simultanément réduire GPU sales/GM/FCF et activer AICP/leases/guarantees. Pas de short aujourd’hui; trigger = utilization/rental↓ + neocloud stress + backstop/FCF↑ avec capex/GM qui se retournent.",
+            "previewSummaryItems": [
+              "**Short verdict : pas de short fondamental aujourd’hui.",
+              "** Entreprise fragile : **Non**.",
+              "Action vulnérable : **Oui**.",
+              "Short exploitable : **Sous conditions**.",
+              "Les backstops rendent toutefois le Bear plus cohérent car ils ajoutent une seconde jambe au même cycle IA."
+            ],
+            "score": null,
+            "verdict": null,
+            "confidence": "High",
+            "projectionStatus": "absent",
+            "diagnostics": [
+              {
+                "code": "unsupported_block",
+                "message": "Bloc unrepresented_snapshot non pris en charge par le lecteur.",
+                "severity": "warning"
+              }
+            ]
+          },
+          {
+            "schemaVersion": "1.0.0",
+            "id": "3da37ea7af3581fd815fd263cb679f90",
+            "title": "NVIDIA — Valuation Check v17 — Backstop Underwriting — 2026-09-13",
+            "sourceUrl": "https://app.notion.com/p/NVIDIA-Valuation-Check-v17-Backstop-Underwriting-2026-09-13-3da37ea7af3581fd815fd263cb679f90",
+            "family": "valuation",
+            "originalFamily": null,
+            "sourceKind": "analysis",
+            "agent": "Valuation Analyst",
+            "status": "Validated",
+            "date": "2026-09-13",
+            "lastEditedTime": "2026-09-13T07:10:00.000Z",
+            "companyIds": [
+              "3b337ea7af35811eb7e5e934f832c389"
+            ],
+            "revision": "2026-09-13T07:10:00.000Z",
+            "sourceFreshness": "unknown",
+            "archived": false,
+            "provenance": {
+              "kind": "notion",
+              "sourceId": "3da37ea7-af35-81fd-815f-d263cb679f90",
+              "revision": "2026-09-13T07:10:00.000Z",
+              "capturedAt": "2026-09-13T07:10:00.000Z"
+            },
+            "summary": "**Valuation : Attractive — 82/100.\nFair value inchangée.\n** Les nouvelles disclosures augmentent le tail risk, mais ne fournissent pas de preuve suffisante pour réduire mécaniquement revenus, marges, FCF, multiple terminal ou augmenter le coût du capital dans le Base Case.",
+            "handoffSummary": "Run NVDA-FA-20260913-BACKSTOP. Attractive 82/100. Fair value inchangée: Bear/Base/Bull 224/506/840 USD; CAGR 0.5/18.3/30.9%. Base Neutrality PASS: aucun expected loss central suffisamment quantifiable; S&P AA stable et adjustment debt-like modeste vs FOCF. Risque backstop reste Bear/non-scored. Prix max 12%=287.1 USD.",
+            "previewSummaryItems": [
+              "**Valuation : Attractive — 82/100.",
+              "Fair value inchangée.",
+              "** Les nouvelles disclosures augmentent le tail risk, mais ne fournissent pas de preuve suffisante pour réduire mécaniquement revenus, marges, FCF, multiple terminal ou augmenter le coût du capital dans le Base Case."
+            ],
+            "score": "82",
+            "verdict": "Attractive",
+            "confidence": "Medium",
+            "projectionStatus": "absent",
+            "diagnostics": [
+              {
+                "code": "unsupported_block",
+                "message": "Bloc unrepresented_snapshot non pris en charge par le lecteur.",
+                "severity": "warning"
+              }
+            ]
+          },
+          {
+            "schemaVersion": "1.0.0",
+            "id": "3da37ea7af358106a783e7c193752fa8",
+            "title": "NVIDIA — Business Check v8 — Full Analyse Backstops — 2026-09-13",
+            "sourceUrl": "https://app.notion.com/p/NVIDIA-Business-Check-v8-Full-Analyse-Backstops-2026-09-13-3da37ea7af358106a783e7c193752fa8",
+            "family": "business",
+            "originalFamily": null,
+            "sourceKind": "analysis",
+            "agent": "Business Analyst",
+            "status": "Validated",
+            "date": "2026-09-13",
+            "lastEditedTime": "2026-09-13T07:09:00.000Z",
+            "companyIds": [
+              "3b337ea7af35811eb7e5e934f832c389"
+            ],
+            "revision": "2026-09-13T07:09:00.000Z",
+            "sourceFreshness": "unknown",
+            "archived": false,
+            "provenance": {
+              "kind": "notion",
+              "sourceId": "3da37ea7-af35-8106-a783-e7c193752fa8",
+              "revision": "2026-09-13T07:09:00.000Z",
+              "capturedAt": "2026-09-13T07:09:00.000Z"
+            },
+            "summary": "**Business : Excellent — 92/100 — confiance élevée.\n** Le nouveau rôle de NVIDIA comme facilitateur financier accélère le buildout IA et élargit la distribution du compute, mais crée un tail risk de contrepartie plus corrélé au cycle.\nIl ne remet pas en cause le moat aujourd’hui.",
+            "handoffSummary": "Run NVDA-FA-20260913-BACKSTOP. Excellent 92/100. Le rôle de credit anchor renforce distribution/moat mais ajoute un tail risk corrélé. Base business intact; résilience 6→5/10. Leading indicators: utilisation/rental yields des capacités soutenues; exposition debt-like/FCF et GW; mix neocloud vs investment-grade.",
+            "previewSummaryItems": [
+              "**Business : Excellent — 92/100 — confiance élevée.",
+              "** Le nouveau rôle de NVIDIA comme facilitateur financier accélère le buildout IA et élargit la distribution du compute, mais crée un tail risk de contrepartie plus corrélé au cycle.",
+              "Il ne remet pas en cause le moat aujourd’hui."
+            ],
+            "score": "92",
+            "verdict": null,
+            "confidence": "High",
+            "projectionStatus": "absent",
+            "diagnostics": [
+              {
+                "code": "unsupported_block",
+                "message": "Bloc unrepresented_snapshot non pris en charge par le lecteur.",
+                "severity": "warning"
+              }
+            ]
+          }
+        ],
+        "earnings": [
+          {
+            "schemaVersion": "1.0.0",
+            "id": "3d937ea7af3581c5a498f1705a79a441",
+            "title": "NVIDIA — Q2 FY2027 — Post-refresh review 2026-09-12",
+            "sourceUrl": "https://app.notion.com/p/NVIDIA-Q2-FY2027-Post-refresh-review-2026-09-12-3d937ea7af3581c5a498f1705a79a441",
+            "family": "earnings",
+            "originalFamily": null,
+            "sourceKind": "analysis",
+            "agent": "Earnings",
+            "status": "Snapshot Notion",
+            "date": "2026-08-26",
+            "lastEditedTime": "2026-09-12T18:59:00.000Z",
+            "companyIds": [
+              "3b337ea7af35811eb7e5e934f832c389"
+            ],
+            "revision": "2026-09-12T18:59:00.000Z",
+            "sourceFreshness": "unknown",
+            "archived": false,
+            "provenance": {
+              "kind": "notion",
+              "sourceId": "3d937ea7-af35-81c5-a498-f1705a79a441",
+              "revision": "2026-09-12T18:59:00.000Z",
+              "capturedAt": "2026-09-12T18:59:00.000Z"
+            },
+            "summary": "Le trimestre dépasse clairement les attentes publiques : environ +4,4% sur le CA, +5,7% sur l'EPS non-GAAP et guide Q3 supérieur au consensus.\nLe signal structurel principal est la visibilité FY2028, mais elle reste une **Management Statement**, pas un fait réalisé.\nLe principal contrepoint se trouve dans le bilan et la conversion cash : créances à 63,059 Md$ et stocks à 31,575 Md$, tandis que les engagements de supply/capacity atteignent 279 Md$.\nLe 10-Q attribue une partie de la hausse des créances à des délais étendus sur de grands contrats avec des clients investment-grade.\nCela n'invalide pas la demande, mais augmente l'exigence de suivi sur qualité de revenus, concentration et circularité.",
+            "handoffSummary": null,
+            "previewSummaryItems": [
+              "Le trimestre dépasse clairement les attentes publiques : environ +4,4% sur le CA, +5,7% sur l'EPS non-GAAP et guide Q3 supérieur au consensus.",
+              "Le signal structurel principal est la visibilité FY2028, mais elle reste une **Management Statement**, pas un fait réalisé.",
+              "Le principal contrepoint se trouve dans le bilan et la conversion cash : créances à 63,059 Md$ et stocks à 31,575 Md$, tandis que les engagements de supply/capacity atteignent 279 Md$.",
+              "Le 10-Q attribue une partie de la hausse des créances à des délais étendus sur de grands contrats avec des clients investment-grade.",
+              "Cela n'invalide pas la demande, mais augmente l'exigence de suivi sur qualité de revenus, concentration et circularité."
+            ],
+            "score": null,
+            "verdict": null,
+            "confidence": "High",
+            "projectionStatus": "absent",
+            "diagnostics": [
+              {
+                "code": "unsupported_block",
+                "message": "Bloc unrepresented_snapshot non pris en charge par le lecteur.",
+                "severity": "warning"
+              }
+            ]
+          }
+        ],
+        "decisions": [
+          {
+            "schemaVersion": "1.0.0",
+            "id": "3b537ea7af3581f295fadcb23ee7532c",
+            "title": "NVIDIA — Conserver — 2026-08-07",
+            "sourceUrl": "https://app.notion.com/p/NVIDIA-Conserver-2026-08-07-3b537ea7af3581f295fadcb23ee7532c",
+            "family": "decision",
+            "originalFamily": null,
+            "sourceKind": "decision",
+            "agent": "Investment Memo",
+            "status": "Snapshot Notion",
+            "date": "2026-08-07",
+            "lastEditedTime": "2026-08-14T10:12:00.000Z",
+            "companyIds": [
+              "3b337ea7af35811eb7e5e934f832c389"
+            ],
+            "revision": "2026-08-14T10:12:00.000Z",
+            "sourceFreshness": "unknown",
+            "archived": true,
+            "provenance": {
+              "kind": "notion",
+              "sourceId": "3b537ea7-af35-81f2-95fa-dcb23ee7532c",
+              "revision": "2026-08-14T10:12:00.000Z",
+              "capturedAt": "2026-08-14T10:12:00.000Z"
+            },
+            "summary": "**Décision : CONSERVER.\n** NVIDIA reste une conviction cœur avec un moat exceptionnel et un rendement Base >12%, mais l’exposition économique est déjà proche de la cible.\nAucun renforcement maintenant.",
+            "handoffSummary": null,
+            "previewSummaryItems": [
+              "**Décision : CONSERVER.",
+              "** NVIDIA reste une conviction cœur avec un moat exceptionnel et un rendement Base >12%, mais l’exposition économique est déjà proche de la cible.",
+              "Aucun renforcement maintenant."
+            ],
+            "score": null,
+            "verdict": "Hold",
+            "confidence": "High",
+            "projectionStatus": "absent",
+            "diagnostics": [
+              {
+                "code": "unsupported_block",
+                "message": "Bloc unrepresented_snapshot non pris en charge par le lecteur.",
+                "severity": "warning"
+              }
+            ]
+          }
+        ],
+        "portfolioDocuments": [],
+        "archives": [
+          {
+            "schemaVersion": "1.0.0",
+            "id": "3b337ea7af35810299efe14a015685a3",
+            "title": "NVIDIA — CTO",
+            "sourceUrl": "https://app.notion.com/p/NVIDIA-CTO-3b337ea7af35810299efe14a015685a3",
+            "family": "portfolio",
+            "originalFamily": null,
+            "sourceKind": "analysis",
+            "agent": "Portfolio Manager",
+            "status": "Active",
+            "date": null,
+            "lastEditedTime": "2026-09-17T08:58:00.000Z",
+            "companyIds": [
+              "3b337ea7af35811eb7e5e934f832c389"
+            ],
+            "revision": "2026-09-17T08:58:00.000Z",
+            "sourceFreshness": "unknown",
+            "archived": true,
+            "provenance": {
+              "kind": "notion",
+              "sourceId": "3b337ea7-af35-8102-99ef-e14a015685a3",
+              "revision": "2026-09-17T08:58:00.000Z",
+              "capturedAt": "2026-09-17T08:58:00.000Z"
+            },
+            "summary": "Data Status: Current Unrealized P&L %: 10.43 DCA: false Status: Active Current Price: 183.2 Market Value EUR: 916 Target Weight: 0.1 Primary Theme: Compute IA FX Source: Yahoo Finance Sector: Technology Price Currency Confirmed: true DCA Frequency: None Maximum Weight: 0.15 Price Currency: EUR Notes: Achat(s) NVIDIA consolidé(s) au 17/09/2026.\nPosition confirmée via capture Trade Republic : 5 actions, PRU 165,89 €.\nTarget Weight 10k: 0.09 Account: CTO Unrealized P&L EUR: 86.55 Price Source: Yahoo Finance PRU: 165.89 Quantity: 5 Total Portfolio Value EUR: 9383.067589285714 Target Weight Gap (pts): -0.24 Instrument Type: Stock Current Weight: 0.09762265818546986 Last Price Update: 2026-08-11T17:25:00.000+02:00 Position: NVIDIA — CTO",
+            "handoffSummary": null,
+            "previewSummaryItems": [
+              "Data Status: Current Unrealized P&L %: 10.43 DCA: false Status: Active Current Price: 183.2 Market Value EUR: 916 Target Weight: 0.1 Primary Theme: Compute IA FX Source: Yahoo Finance Sector: Technology Price Currency Confirmed: true DCA Frequency: None Maximum Weight: 0.15 Price Currency: EUR Notes: Achat(s) NVIDIA consolidé(s) au 17/09/2026.",
+              "Position confirmée via capture Trade Republic : 5 actions, PRU 165,89 €.",
+              "Target Weight 10k: 0.09 Account: CTO Unrealized P&L EUR: 86.55 Price Source: Yahoo Finance PRU: 165.89 Quantity: 5 Total Portfolio Value EUR: 9383.067589285714 Target Weight Gap (pts): -0.24 Instrument Type: Stock Current Weight: 0.09762265818546986 Last Price Update: 2026-08-11T17:25:00.000+02:00 Position: NVIDIA — CTO"
+            ],
+            "score": null,
+            "verdict": null,
+            "confidence": null,
+            "projectionStatus": "absent",
+            "diagnostics": []
+          },
+          {
+            "schemaVersion": "1.0.0",
+            "id": "3da37ea7af3581eb9794de01e48767aa",
+            "title": "NVIDIA — Portfolio Fit v9 — Backstop Risk — 2026-09-13",
+            "sourceUrl": "https://app.notion.com/p/NVIDIA-Portfolio-Fit-v9-Backstop-Risk-2026-09-13-3da37ea7af3581eb9794de01e48767aa",
+            "family": "portfolio",
+            "originalFamily": null,
+            "sourceKind": "analysis",
+            "agent": "Portfolio Manager",
+            "status": "Superseded",
+            "date": "2026-09-13",
+            "lastEditedTime": "2026-09-17T07:50:00.000Z",
+            "companyIds": [
+              "3b337ea7af35811eb7e5e934f832c389"
+            ],
+            "revision": "2026-09-17T07:50:00.000Z",
+            "sourceFreshness": "unknown",
+            "archived": true,
+            "provenance": {
+              "kind": "notion",
+              "sourceId": "3da37ea7-af35-81eb-9794-de01e48767aa",
+              "revision": "2026-09-17T07:50:00.000Z",
+              "capturedAt": "2026-09-17T07:50:00.000Z"
+            },
+            "summary": "**Portfolio Fit : CONSERVER.\n** Le nouveau risque ne justifie pas d’alléger NVIDIA, mais il réduit l’urgence de compléter la ligne jusqu’à 10 %.\nÀ 8,14 % direct et environ 10,27 % économique avec ETF, l’exposition est déjà suffisante pour une conviction majeure.",
+            "handoffSummary": "Run NVDA-FA-20260913-BACKSTOP. CONSERVER. Snapshot Notion ~9.35k EUR; 4 NVDA=761 EUR=8.14% direct; ~10.27% économique avec look-through. Target 10%, max15%. Une 5e action reste mécaniquement compatible (~9.97% direct/~12.06% économique) mais n’est plus prioritaire: nouveau tail risk corrélé + cluster AI/semi élevé. Taille de travail 8–10% direct jusqu’à meilleure disclosure des backstops.",
+            "previewSummaryItems": [
+              "**Portfolio Fit : CONSERVER.",
+              "** Le nouveau risque ne justifie pas d’alléger NVIDIA, mais il réduit l’urgence de compléter la ligne jusqu’à 10 %.",
+              "À 8,14 % direct et environ 10,27 % économique avec ETF, l’exposition est déjà suffisante pour une conviction majeure."
+            ],
+            "score": null,
+            "verdict": null,
+            "confidence": "High",
+            "projectionStatus": "absent",
+            "diagnostics": []
+          },
+          {
+            "schemaVersion": "1.0.0",
+            "id": "3d837ea7af358150a15ce582ce65a1ba",
+            "title": "NVIDIA — Investment Memo v5 — Full Analyse — 2026-09-11",
+            "sourceUrl": "https://app.notion.com/p/NVIDIA-Investment-Memo-v5-Full-Analyse-2026-09-11-3d837ea7af358150a15ce582ce65a1ba",
+            "family": "cio_memo",
+            "originalFamily": null,
+            "sourceKind": "analysis",
+            "agent": "Investment Memo",
+            "status": "Superseded",
+            "date": "2026-09-11",
+            "lastEditedTime": "2026-09-13T07:14:00.000Z",
+            "companyIds": [
+              "3b337ea7af35811eb7e5e934f832c389"
+            ],
+            "revision": "2026-09-13T07:14:00.000Z",
+            "sourceFreshness": "unknown",
+            "archived": true,
+            "provenance": {
+              "kind": "notion",
+              "sourceId": "3d837ea7-af35-8150-a15c-e582ce65a1ba",
+              "revision": "2026-09-13T07:14:00.000Z",
+              "capturedAt": "2026-09-13T07:14:00.000Z"
+            },
+            "summary": "**CIO DECISION : CONSERVER.\n** NVIDIA reste une conviction majeure et la valorisation est encore attractive, mais la ligne est déjà correctement dimensionnée.\nLe frein au renforcement est le **portefeuille**, pas le business ni la fair value.",
+            "handoffSummary": "Run NVDA-FA-20260911-1335. CIO: CONSERVER. Business 93/100, Valuation 80/100 Attractive, Short non exploitable aujourd’hui, Portfolio ~8.1% direct/~10.2% économique. Renforcer plutôt sur dilution/apports ou vers ~195$ sans thesis break; re-underwrite >287$ ou si capex/GM/attach se détériorent.",
+            "previewSummaryItems": [
+              "**CIO DECISION : CONSERVER.",
+              "** NVIDIA reste une conviction majeure et la valorisation est encore attractive, mais la ligne est déjà correctement dimensionnée.",
+              "Le frein au renforcement est le **portefeuille**, pas le business ni la fair value."
+            ],
+            "score": null,
+            "verdict": null,
+            "confidence": "Medium",
+            "projectionStatus": "absent",
+            "diagnostics": [
+              {
+                "code": "unsupported_block",
+                "message": "Bloc unrepresented_snapshot non pris en charge par le lecteur.",
+                "severity": "warning"
+              },
+              {
+                "code": "unsupported_block",
+                "message": "Bloc unrepresented_snapshot non pris en charge par le lecteur.",
+                "severity": "warning"
+              }
+            ]
+          },
+          {
+            "schemaVersion": "1.0.0",
+            "id": "3d837ea7af35810ab072d00f569f3ee0",
+            "title": "NVIDIA — Portfolio Fit v8 — 2026-09-11",
+            "sourceUrl": "https://app.notion.com/p/NVIDIA-Portfolio-Fit-v8-2026-09-11-3d837ea7af35810ab072d00f569f3ee0",
+            "family": "portfolio",
+            "originalFamily": null,
+            "sourceKind": "analysis",
+            "agent": "Portfolio Manager",
+            "status": "Superseded",
+            "date": "2026-09-11",
+            "lastEditedTime": "2026-09-13T07:13:00.000Z",
+            "companyIds": [
+              "3b337ea7af35811eb7e5e934f832c389"
+            ],
+            "revision": "2026-09-13T07:13:00.000Z",
+            "sourceFreshness": "unknown",
+            "archived": true,
+            "provenance": {
+              "kind": "notion",
+              "sourceId": "3d837ea7-af35-810a-b072-d00f569f3ee0",
+              "revision": "2026-09-13T07:13:00.000Z",
+              "capturedAt": "2026-09-13T07:13:00.000Z"
+            },
+            "summary": "**Standalone** : attractive ; Valuation actuelle 80/100, prix max hurdle 12% ~287 $.\n**Portefeuille** : renforcement de **1 action** acceptable, pas davantage maintenant.\n**Poids direct actuel** : ~8,1%.\n**Poids économique avec look-through** : ~10,2%.\n**Après 1 action** : ~10,1% direct et ~12,2% économique.\n**Cible / maximum Notion** : 10% / 15%.\n**Funding** : cash CTO ou apport futur ; le cash tomberait d’environ 7% à ~5% si achat financé intégralement par le cash actuel.\n**Priorité** : moyenne, car Alphabet et TSMC restent plus nettement sous-pondérées et apportent un meilleur équilibre marginal.",
+            "handoffSummary": "PF Fit standalone rerun. RENFORCER de 1 action maximum est désormais compatible: 4 NVDA ≈8,1% direct / ≈10,2% économique; 5 actions ≈10,1% direct / ≈12,2% économique. Target Notion 10%, Maximum 15%. Priorité moyenne car Alphabet/TSMC restent plus sous-pondérés et le cluster AI/semi est déjà élevé.",
+            "previewSummaryItems": [
+              "**Standalone** : attractive ; Valuation actuelle 80/100, prix max hurdle 12% ~287 $.",
+              "**Portefeuille** : renforcement de **1 action** acceptable, pas davantage maintenant.",
+              "**Poids direct actuel** : ~8,1%.",
+              "**Poids économique avec look-through** : ~10,2%.",
+              "**Après 1 action** : ~10,1% direct et ~12,2% économique.",
+              "**Cible / maximum Notion** : 10% / 15%.",
+              "**Funding** : cash CTO ou apport futur ; le cash tomberait d’environ 7% à ~5% si achat financé intégralement par le cash actuel.",
+              "**Priorité** : moyenne, car Alphabet et TSMC restent plus nettement sous-pondérées et apportent un meilleur équilibre marginal."
+            ],
+            "score": null,
+            "verdict": null,
+            "confidence": "High",
+            "projectionStatus": "absent",
+            "diagnostics": []
+          },
+          {
+            "schemaVersion": "1.0.0",
+            "id": "3d837ea7af3581a29109f668d37ef6ef",
+            "title": "NVIDIA — Short Check v6 — Full Analyse — 2026-09-11",
+            "sourceUrl": "https://app.notion.com/p/NVIDIA-Short-Check-v6-Full-Analyse-2026-09-11-3d837ea7af3581a29109f668d37ef6ef",
+            "family": "short",
+            "originalFamily": null,
+            "sourceKind": "analysis",
+            "agent": "Short Seller",
+            "status": "Superseded",
+            "date": "2026-09-11",
+            "lastEditedTime": "2026-09-13T07:12:00.000Z",
+            "companyIds": [
+              "3b337ea7af35811eb7e5e934f832c389"
+            ],
+            "revision": "2026-09-13T07:12:00.000Z",
+            "sourceFreshness": "unknown",
+            "archived": true,
+            "provenance": {
+              "kind": "notion",
+              "sourceId": "3d837ea7-af35-81a2-9109-f668d37ef6ef",
+              "revision": "2026-09-13T07:12:00.000Z",
+              "capturedAt": "2026-09-13T07:12:00.000Z"
+            },
+            "summary": "**Short verdict : pas de short fondamental aujourd’hui.\n** Entreprise fragile : **Non**.\nAction vulnérable : **Oui**.\nShort exploitable : **Sous conditions**.\nRun `NVDA-FA-20260911-1335`.",
+            "handoffSummary": "Run NVDA-FA-20260911-1335. Entreprise fragile: Non. Action vulnérable: Oui. Short exploitable: Sous conditions seulement. Pas de short fondamental aujourd’hui; trigger = détente supply + capex qui décélère + ASIC/AMD + GM <67%.",
+            "previewSummaryItems": [
+              "**Short verdict : pas de short fondamental aujourd’hui.",
+              "** Entreprise fragile : **Non**.",
+              "Action vulnérable : **Oui**.",
+              "Short exploitable : **Sous conditions**.",
+              "Run `NVDA-FA-20260911-1335`."
+            ],
+            "score": null,
+            "verdict": null,
+            "confidence": "High",
+            "projectionStatus": "absent",
+            "diagnostics": [
+              {
+                "code": "unsupported_block",
+                "message": "Bloc unrepresented_snapshot non pris en charge par le lecteur.",
+                "severity": "warning"
+              }
+            ]
+          },
+          {
+            "schemaVersion": "1.0.0",
+            "id": "3d937ea7af358141b21ed0464d91ff85",
+            "title": "NVIDIA — Valuation Check v16 — Price Refresh — 2026-09-12",
+            "sourceUrl": "https://app.notion.com/p/NVIDIA-Valuation-Check-v16-Price-Refresh-2026-09-12-3d937ea7af358141b21ed0464d91ff85",
+            "family": "valuation",
+            "originalFamily": null,
+            "sourceKind": "analysis",
+            "agent": "Valuation Analyst",
+            "status": "Superseded",
+            "date": "2026-09-12",
+            "lastEditedTime": "2026-09-13T07:10:00.000Z",
+            "companyIds": [
+              "3b337ea7af35811eb7e5e934f832c389"
+            ],
+            "revision": "2026-09-13T07:10:00.000Z",
+            "sourceFreshness": "unknown",
+            "archived": true,
+            "provenance": {
+              "kind": "notion",
+              "sourceId": "3d937ea7-af35-8141-b21e-d0464d91ff85",
+              "revision": "2026-09-13T07:10:00.000Z",
+              "capturedAt": "2026-09-13T07:10:00.000Z"
+            },
+            "summary": "**Base inchangé : 506 $ à 5 ans**, faute de nouvelle preuve fondamentale depuis la v15.\n**Prix max 15 % : 251,6 $**.\n**Prix max 12 % canonique : 287,1 $**.\n**Cours actuel : 218,29 $** ; marge/headroom au hurdle 15 % : **+15,2 %**.\nBear / Base / Bull : **224 / 506 / 840 $**, CAGR **0,5 % / 18,3 % / 30,9 %**.\n**Croissance déjà pricée : Partiellement.\n** Le point de bascule reste : FY2028 ne doit pas devenir un peak earnings durable.\n**Expectations Gap : modéré à élevé**, car le marché exige encore une croissance EPS significative post-FY2028 mais pas une exécution parfaite dans le Base.",
+            "handoffSummary": "Run NVDA-VC-20260912-1137. Attractive 80/100. Prix 218.29 USD (clôture 11/09/2026). Bear/Base/Bull 224/506/840 USD, CAGR 0.5/18.3/30.9%. Prix max user hurdle 15%=251.6 USD; headroom vs cours +15.2%. Prix max canonical 12%=287.1 USD. Growth priced-in partiellement. Continuité v15: PASS.",
+            "previewSummaryItems": [
+              "**Base inchangé : 506 $ à 5 ans**, faute de nouvelle preuve fondamentale depuis la v15.",
+              "**Prix max 15 % : 251,6 $**.",
+              "**Prix max 12 % canonique : 287,1 $**.",
+              "**Cours actuel : 218,29 $** ; marge/headroom au hurdle 15 % : **+15,2 %**.",
+              "Bear / Base / Bull : **224 / 506 / 840 $**, CAGR **0,5 % / 18,3 % / 30,9 %**.",
+              "**Croissance déjà pricée : Partiellement.",
+              "** Le point de bascule reste : FY2028 ne doit pas devenir un peak earnings durable.",
+              "**Expectations Gap : modéré à élevé**, car le marché exige encore une croissance EPS significative post-FY2028 mais pas une exécution parfaite dans le Base."
+            ],
+            "score": "80",
+            "verdict": "Attractive",
+            "confidence": "Medium",
+            "projectionStatus": "absent",
+            "diagnostics": [
+              {
+                "code": "unsupported_block",
+                "message": "Bloc unrepresented_snapshot non pris en charge par le lecteur.",
+                "severity": "warning"
+              },
+              {
+                "code": "unsupported_block",
+                "message": "Bloc unrepresented_snapshot non pris en charge par le lecteur.",
+                "severity": "warning"
+              },
+              {
+                "code": "unsupported_block",
+                "message": "Bloc unrepresented_snapshot non pris en charge par le lecteur.",
+                "severity": "warning"
+              }
+            ]
+          },
+          {
+            "schemaVersion": "1.0.0",
+            "id": "3d837ea7af35812c8cf2e702b32adf14",
+            "title": "NVIDIA — Business Check v7 — Full Analyse — 2026-09-11",
+            "sourceUrl": "https://app.notion.com/p/NVIDIA-Business-Check-v7-Full-Analyse-2026-09-11-3d837ea7af35812c8cf2e702b32adf14",
+            "family": "business",
+            "originalFamily": null,
+            "sourceKind": "analysis",
+            "agent": "Business Analyst",
+            "status": "Superseded",
+            "date": "2026-09-11",
+            "lastEditedTime": "2026-09-13T07:09:00.000Z",
+            "companyIds": [
+              "3b337ea7af35811eb7e5e934f832c389"
+            ],
+            "revision": "2026-09-13T07:09:00.000Z",
+            "sourceFreshness": "unknown",
+            "archived": true,
+            "provenance": {
+              "kind": "notion",
+              "sourceId": "3d837ea7-af35-812c-8cf2-e702b32adf14",
+              "revision": "2026-09-13T07:09:00.000Z",
+              "capturedAt": "2026-09-13T07:09:00.000Z"
+            },
+            "summary": "Q2 FY2027 : **96,2 Md$ de CA**, +106% sur un an, dont **89,0 Md$ Data Center**, +117%; marge brute 75%.\nVera Rubin est déjà en production chez plusieurs grands clouds.\nLa qualité économique reste exceptionnelle, mais la concentration client, les engagements supply massifs et la montée du custom silicon rendent le post-FY2028 beaucoup moins certain que 2027-28.",
+            "handoffSummary": "Run NVDA-FA-20260911-1335. Excellent 93/100. Moat full-stack exceptionnel; Rubin et demande AI infra soutiennent 2027-28. Risques dominants: normalisation post-FY28, custom silicon/AMD, compression de marge et concentration clients.",
+            "previewSummaryItems": [
+              "Q2 FY2027 : **96,2 Md$ de CA**, +106% sur un an, dont **89,0 Md$ Data Center**, +117%; marge brute 75%.",
+              "Vera Rubin est déjà en production chez plusieurs grands clouds.",
+              "La qualité économique reste exceptionnelle, mais la concentration client, les engagements supply massifs et la montée du custom silicon rendent le post-FY2028 beaucoup moins certain que 2027-28."
+            ],
+            "score": "93",
+            "verdict": null,
+            "confidence": "High",
+            "projectionStatus": "absent",
+            "diagnostics": [
+              {
+                "code": "unsupported_block",
+                "message": "Bloc unrepresented_snapshot non pris en charge par le lecteur.",
+                "severity": "warning"
+              }
+            ]
+          },
+          {
+            "schemaVersion": "1.0.0",
+            "id": "3d837ea7af3581bab340c62a2500eb80",
+            "title": "NVIDIA — Valuation Check v15 — Full Analyse — 2026-09-11",
+            "sourceUrl": "https://app.notion.com/p/NVIDIA-Valuation-Check-v15-Full-Analyse-2026-09-11-3d837ea7af3581bab340c62a2500eb80",
+            "family": "valuation",
+            "originalFamily": null,
+            "sourceKind": "analysis",
+            "agent": "Valuation Analyst",
+            "status": "Superseded",
+            "date": "2026-09-11",
+            "lastEditedTime": "2026-09-12T09:39:00.000Z",
+            "companyIds": [
+              "3b337ea7af35811eb7e5e934f832c389"
+            ],
+            "revision": "2026-09-12T09:39:00.000Z",
+            "sourceFreshness": "unknown",
+            "archived": true,
+            "provenance": {
+              "kind": "notion",
+              "sourceId": "3d837ea7-af35-81ba-b340-c62a2500eb80",
+              "revision": "2026-09-12T09:39:00.000Z",
+              "capturedAt": "2026-09-12T09:39:00.000Z"
+            },
+            "summary": "**Valuation : Attractive — 80/100 — achat progressif standalone.\n** Cours de référence **218,36 $** (clôture 10/09/2026).\nRun `NVDA-FA-20260911-1335`.\nLe marché paie déjà l’explosion FY2027-28, mais semble encore intégrer une décélération forte ensuite.",
+            "handoffSummary": "Run NVDA-FA-20260911-1335. Attractive 80/100. Prix 218.36$. Bear/Base/Bull 224/506/840$ à 5 ans, CAGR 0.5/18.3/30.9%. Prix max hurdle 12%=287$. Growth priced-in partiellement. Continuité v14: aucune Major Scenario Discontinuity.",
+            "previewSummaryItems": [
+              "**Valuation : Attractive — 80/100 — achat progressif standalone.",
+              "** Cours de référence **218,36 $** (clôture 10/09/2026).",
+              "Run `NVDA-FA-20260911-1335`.",
+              "Le marché paie déjà l’explosion FY2027-28, mais semble encore intégrer une décélération forte ensuite."
+            ],
+            "score": "80",
+            "verdict": null,
+            "confidence": "Medium",
+            "projectionStatus": "absent",
+            "diagnostics": [
+              {
+                "code": "unsupported_block",
+                "message": "Bloc unrepresented_snapshot non pris en charge par le lecteur.",
+                "severity": "warning"
+              }
+            ]
+          },
+          {
+            "schemaVersion": "1.0.0",
+            "id": "3d837ea7af35811f941efa8352294735",
+            "title": "NVIDIA — Portfolio Fit v7 — Full Analyse — 2026-09-11",
+            "sourceUrl": "https://app.notion.com/p/NVIDIA-Portfolio-Fit-v7-Full-Analyse-2026-09-11-3d837ea7af35811f941efa8352294735",
+            "family": "portfolio",
+            "originalFamily": null,
+            "sourceKind": "analysis",
+            "agent": "Portfolio Manager",
+            "status": "Superseded",
+            "date": "2026-09-11",
+            "lastEditedTime": "2026-09-11T13:42:00.000Z",
+            "companyIds": [
+              "3b337ea7af35811eb7e5e934f832c389"
+            ],
+            "revision": "2026-09-11T13:42:00.000Z",
+            "sourceFreshness": "unknown",
+            "archived": true,
+            "provenance": {
+              "kind": "notion",
+              "sourceId": "3d837ea7-af35-811f-941e-fa8352294735",
+              "revision": "2026-09-11T13:42:00.000Z",
+              "capturedAt": "2026-09-11T13:42:00.000Z"
+            },
+            "summary": "**Portfolio Fit : CONSERVER — pas de renforcement immédiat.\n** Run `NVDA-FA-20260911-1335`.\nNVIDIA est attractive standalone, mais la position est déjà dimensionnée comme une conviction majeure et l’exposition économique dépasse 10% après look-through ETF.",
+            "handoffSummary": "Run NVDA-FA-20260911-1335. CONSERVER. PF ~9.33k€. NVDA direct ~8.1%; look-through S&P500+SEC0 ~10.2%. Standalone valuation attractive mais concentration AI/semi élevée; 1 action au cours actuel porterait direct ~10.1% et économique >12%.",
+            "previewSummaryItems": [
+              "**Portfolio Fit : CONSERVER — pas de renforcement immédiat.",
+              "** Run `NVDA-FA-20260911-1335`.",
+              "NVIDIA est attractive standalone, mais la position est déjà dimensionnée comme une conviction majeure et l’exposition économique dépasse 10% après look-through ETF."
+            ],
+            "score": null,
+            "verdict": null,
+            "confidence": "High",
+            "projectionStatus": "absent",
+            "diagnostics": []
+          },
+          {
+            "schemaVersion": "1.0.0",
+            "id": "3d837ea7af3581de9bcce47e62d27714",
+            "title": "NVIDIA — Investment Memo v4 — Full Analyse — 2026-09-11",
+            "sourceUrl": "https://app.notion.com/p/NVIDIA-Investment-Memo-v4-Full-Analyse-2026-09-11-3d837ea7af3581de9bcce47e62d27714",
+            "family": "cio_memo",
+            "originalFamily": null,
+            "sourceKind": "analysis",
+            "agent": "Investment Memo",
+            "status": "Superseded",
+            "date": "2026-09-11",
+            "lastEditedTime": "2026-09-11T11:44:00.000Z",
+            "companyIds": [
+              "3b337ea7af35811eb7e5e934f832c389"
+            ],
+            "revision": "2026-09-11T11:44:00.000Z",
+            "sourceFreshness": "unknown",
+            "archived": true,
+            "provenance": {
+              "kind": "notion",
+              "sourceId": "3d837ea7-af35-81de-9bcc-e47e62d27714",
+              "revision": "2026-09-11T11:44:00.000Z",
+              "capturedAt": "2026-09-11T11:44:00.000Z"
+            },
+            "summary": "**CIO DECISION : CONSERVER — conviction majeure, mais position déjà suffisamment dimensionnée.\n** Le business reste exceptionnel et la valorisation offre encore un hurdle intéressant.\nLe frein au renforcement immédiat vient du portefeuille, pas de la qualité de NVIDIA.",
+            "handoffSummary": "CIO: CONSERVER. NVIDIA reste conviction majeure. >10%/an reste plausible sans hypothèses héroïques si FY28 n’est pas peak earnings; base 18.3% CAGR, hurdle 12% price max ~287$. Sizing cohérent 8-9% direct car look-through ~10.1%. Re-underwrite si capex ralentit structurellement, GM <67%, attach networking/software baisse, ou prix >287$ sans hausse de fair value.",
+            "previewSummaryItems": [
+              "**CIO DECISION : CONSERVER — conviction majeure, mais position déjà suffisamment dimensionnée.",
+              "** Le business reste exceptionnel et la valorisation offre encore un hurdle intéressant.",
+              "Le frein au renforcement immédiat vient du portefeuille, pas de la qualité de NVIDIA."
+            ],
+            "score": null,
+            "verdict": null,
+            "confidence": "Medium",
+            "projectionStatus": "absent",
+            "diagnostics": [
+              {
+                "code": "unsupported_block",
+                "message": "Bloc unrepresented_snapshot non pris en charge par le lecteur.",
+                "severity": "warning"
+              }
+            ]
+          },
+          {
+            "schemaVersion": "1.0.0",
+            "id": "3d837ea7af3581e898fce82648f2f6fc",
+            "title": "NVIDIA — Portfolio Fit v6 — Full Analyse — 2026-09-11",
+            "sourceUrl": "https://app.notion.com/p/NVIDIA-Portfolio-Fit-v6-Full-Analyse-2026-09-11-3d837ea7af3581e898fce82648f2f6fc",
+            "family": "portfolio",
+            "originalFamily": null,
+            "sourceKind": "analysis",
+            "agent": "Portfolio Manager",
+            "status": "Superseded",
+            "date": "2026-09-11",
+            "lastEditedTime": "2026-09-11T11:43:00.000Z",
+            "companyIds": [
+              "3b337ea7af35811eb7e5e934f832c389"
+            ],
+            "revision": "2026-09-11T11:43:00.000Z",
+            "sourceFreshness": "unknown",
+            "archived": true,
+            "provenance": {
+              "kind": "notion",
+              "sourceId": "3d837ea7-af35-81e8-98fc-e82648f2f6fc",
+              "revision": "2026-09-11T11:43:00.000Z",
+              "capturedAt": "2026-09-11T11:43:00.000Z"
+            },
+            "summary": "**Décision Portfolio Fit : Conserver — pas de renforcement immédiat.\n** NVIDIA pèse ~8,1% en direct, mais ~10,1% en exposition économique après look-through des ETF.\nLe portefeuille est déjà fortement corrélé au cycle IA/semi.",
+            "handoffSummary": "Conserver. NVDA direct ~8.1% du PF; look-through via S&P500 et SEC0 porte exposition économique ~10.1%. Target Notion 10% mais Maximum 9% incohérent. Pas de renforcement immédiat malgré valuation attractive; 8-9% direct est cohérent. Revoir si correction ramène exposition directe <7-7.5% ou si preuve fondamentale renforce le base case.",
+            "previewSummaryItems": [
+              "**Décision Portfolio Fit : Conserver — pas de renforcement immédiat.",
+              "** NVIDIA pèse ~8,1% en direct, mais ~10,1% en exposition économique après look-through des ETF.",
+              "Le portefeuille est déjà fortement corrélé au cycle IA/semi."
+            ],
+            "score": null,
+            "verdict": null,
+            "confidence": "Medium",
+            "projectionStatus": "absent",
+            "diagnostics": [
+              {
+                "code": "unsupported_block",
+                "message": "Bloc unrepresented_snapshot non pris en charge par le lecteur.",
+                "severity": "warning"
+              }
+            ]
+          },
+          {
+            "schemaVersion": "1.0.0",
+            "id": "3d837ea7af358109a492c765426ff9d6",
+            "title": "NVIDIA — Short Check v5 — Full Analyse — 2026-09-11",
+            "sourceUrl": "https://app.notion.com/p/NVIDIA-Short-Check-v5-Full-Analyse-2026-09-11-3d837ea7af358109a492c765426ff9d6",
+            "family": "short",
+            "originalFamily": null,
+            "sourceKind": "analysis",
+            "agent": "Short Seller",
+            "status": "Superseded",
+            "date": "2026-09-11",
+            "lastEditedTime": "2026-09-11T11:43:00.000Z",
+            "companyIds": [
+              "3b337ea7af35811eb7e5e934f832c389"
+            ],
+            "revision": "2026-09-11T11:43:00.000Z",
+            "sourceFreshness": "unknown",
+            "archived": true,
+            "provenance": {
+              "kind": "notion",
+              "sourceId": "3d837ea7-af35-8109-a492-c765426ff9d6",
+              "revision": "2026-09-11T11:43:00.000Z",
+              "capturedAt": "2026-09-11T11:43:00.000Z"
+            },
+            "summary": "**Verdict Short : Watchlist baissière — pas de short fondamental aujourd’hui.\n** Entreprise fragile : Non.\nAction vulnérable : Oui.\nShort exploitable : Sous conditions.",
+            "handoffSummary": "Entreprise fragile: Non. Action vulnérable: Oui. Short exploitable: Sous conditions. Verdict Watchlist baissière, pas de short aujourd’hui. Trigger baissier crédible = détente supply + ralentissement capex + custom silicon + GM <67%, avec preuve d’érosion utilisation/pricing.",
+            "previewSummaryItems": [
+              "**Verdict Short : Watchlist baissière — pas de short fondamental aujourd’hui.",
+              "** Entreprise fragile : Non.",
+              "Action vulnérable : Oui.",
+              "Short exploitable : Sous conditions."
+            ],
+            "score": null,
+            "verdict": null,
+            "confidence": "High",
+            "projectionStatus": "absent",
+            "diagnostics": [
+              {
+                "code": "unsupported_block",
+                "message": "Bloc unrepresented_snapshot non pris en charge par le lecteur.",
+                "severity": "warning"
+              },
+              {
+                "code": "unsupported_block",
+                "message": "Bloc unrepresented_snapshot non pris en charge par le lecteur.",
+                "severity": "warning"
+              }
+            ]
+          },
+          {
+            "schemaVersion": "1.0.0",
+            "id": "3d837ea7af3581ca88fdc853afe971e4",
+            "title": "NVIDIA — Valuation Check v14 — Full Analyse — 2026-09-11",
+            "sourceUrl": "https://app.notion.com/p/NVIDIA-Valuation-Check-v14-Full-Analyse-2026-09-11-3d837ea7af3581ca88fdc853afe971e4",
+            "family": "valuation",
+            "originalFamily": null,
+            "sourceKind": "analysis",
+            "agent": "Valuation Analyst",
+            "status": "Superseded",
+            "date": "2026-09-11",
+            "lastEditedTime": "2026-09-11T11:42:00.000Z",
+            "companyIds": [
+              "3b337ea7af35811eb7e5e934f832c389"
+            ],
+            "revision": "2026-09-11T11:42:00.000Z",
+            "sourceFreshness": "unknown",
+            "archived": true,
+            "provenance": {
+              "kind": "notion",
+              "sourceId": "3d837ea7-af35-81ca-88fd-c853afe971e4",
+              "revision": "2026-09-11T11:42:00.000Z",
+              "capturedAt": "2026-09-11T11:42:00.000Z"
+            },
+            "summary": "À 218,38 , la capitalisation est proche de 5,3 T.\nLe P/E basé sur le consensus public FY2027 (~9,22 $ d’EPS) est ~23,7x et ~14,8x sur FY2028 (~14,76 $).\nLe « ~19x forward » cité dans la contre-analyse dépend donc d’une convention NTM non explicitée : il n’est pas faux, mais il n’est pas assez précis pour le reverse valuation.\nLe cours actuel peut permettre >10%/an sans hypothèse héroïque **si FY2028 n’est pas le pic cyclique**.",
+            "handoffSummary": "Score 80/100, Progressive Buy / Attractive. Prix 218.38$. Base 506$ à 5 ans (18.3% CAGR) avec EPS terminal 22$ et 23x; Bear 224$ (0.5% CAGR); Bull 840$ (30.9%). Prix max 12% = 287$. Growth priced-in: Partiellement. Hurdle clé: FY28 ne doit pas être un pic de bénéfices.",
+            "previewSummaryItems": [
+              "À 218,38 , la capitalisation est proche de 5,3 T.",
+              "Le P/E basé sur le consensus public FY2027 (~9,22 $ d’EPS) est ~23,7x et ~14,8x sur FY2028 (~14,76 $).",
+              "Le « ~19x forward » cité dans la contre-analyse dépend donc d’une convention NTM non explicitée : il n’est pas faux, mais il n’est pas assez précis pour le reverse valuation.",
+              "Le cours actuel peut permettre >10%/an sans hypothèse héroïque **si FY2028 n’est pas le pic cyclique**."
+            ],
+            "score": "80",
+            "verdict": null,
+            "confidence": "Medium",
+            "projectionStatus": "absent",
+            "diagnostics": [
+              {
+                "code": "unsupported_block",
+                "message": "Bloc unrepresented_snapshot non pris en charge par le lecteur.",
+                "severity": "warning"
+              },
+              {
+                "code": "unsupported_block",
+                "message": "Bloc unrepresented_snapshot non pris en charge par le lecteur.",
+                "severity": "warning"
+              }
+            ]
+          },
+          {
+            "schemaVersion": "1.0.0",
+            "id": "3d837ea7af35811b8682f6ae2c2ec642",
+            "title": "NVIDIA — Business Check v6 — Full Analyse — 2026-09-11",
+            "sourceUrl": "https://app.notion.com/p/NVIDIA-Business-Check-v6-Full-Analyse-2026-09-11-3d837ea7af35811b8682f6ae2c2ec642",
+            "family": "business",
+            "originalFamily": null,
+            "sourceKind": "analysis",
+            "agent": "Business Analyst",
+            "status": "Superseded",
+            "date": "2026-09-11",
+            "lastEditedTime": "2026-09-11T11:41:00.000Z",
+            "companyIds": [
+              "3b337ea7af35811eb7e5e934f832c389"
+            ],
+            "revision": "2026-09-11T11:41:00.000Z",
+            "sourceFreshness": "unknown",
+            "archived": true,
+            "provenance": {
+              "kind": "notion",
+              "sourceId": "3d837ea7-af35-811b-8682-f6ae2c2ec642",
+              "revision": "2026-09-11T11:41:00.000Z",
+              "capturedAt": "2026-09-11T11:41:00.000Z"
+            },
+            "summary": "NVIDIA combine une demande encore contrainte par l’offre, une transition Rubin déjà engagée, un écosystème logiciel très profond et une expansion du contenu vendu par datacenter via CPU, NVLink, networking, DPU et systèmes.\nLe point faible structurel est la concentration des dépenses IA chez quelques hyperscalers et la montée rapide des accélérateurs propriétaires.\nLa qualité économique reste exceptionnelle; la visibilité est forte jusqu’à FY2028, nettement plus faible après normalisation de l’offre.",
+            "handoffSummary": "Excellent business (93/100). Moat full-stack très fort; ASIC/custom silicon déjà réel sur workloads homogènes mais pas encore preuve d’érosion structurelle de la plateforme. Visibilité 2027-28 forte, au-delà dépend du ROI économique du capex IA et de la persistance de l’attachement networking/software.",
+            "previewSummaryItems": [
+              "NVIDIA combine une demande encore contrainte par l’offre, une transition Rubin déjà engagée, un écosystème logiciel très profond et une expansion du contenu vendu par datacenter via CPU, NVLink, networking, DPU et systèmes.",
+              "Le point faible structurel est la concentration des dépenses IA chez quelques hyperscalers et la montée rapide des accélérateurs propriétaires.",
+              "La qualité économique reste exceptionnelle; la visibilité est forte jusqu’à FY2028, nettement plus faible après normalisation de l’offre."
+            ],
+            "score": "93",
+            "verdict": null,
+            "confidence": "High",
+            "projectionStatus": "absent",
+            "diagnostics": [
+              {
+                "code": "unsupported_block",
+                "message": "Bloc unrepresented_snapshot non pris en charge par le lecteur.",
+                "severity": "warning"
+              }
+            ]
+          },
+          {
+            "schemaVersion": "1.0.0",
+            "id": "3d437ea7af358185824aebd0d2d3c079",
+            "title": "NVIDIA — Investment Memo v3 — Full Analyse — 2026-09-07",
+            "sourceUrl": "https://app.notion.com/p/NVIDIA-Investment-Memo-v3-Full-Analyse-2026-09-07-3d437ea7af358185824aebd0d2d3c079",
+            "family": "cio_memo",
+            "originalFamily": null,
+            "sourceKind": "analysis",
+            "agent": "Investment Memo",
+            "status": "Superseded",
+            "date": "2026-09-07",
+            "lastEditedTime": "2026-09-11T06:02:00.000Z",
+            "companyIds": [
+              "3b337ea7af35811eb7e5e934f832c389"
+            ],
+            "revision": "2026-09-11T06:02:00.000Z",
+            "sourceFreshness": "unknown",
+            "archived": true,
+            "provenance": {
+              "kind": "notion",
+              "sourceId": "3d437ea7-af35-8185-824a-ebd0d2d3c079",
+              "revision": "2026-09-11T06:02:00.000Z",
+              "capturedAt": "2026-09-11T06:02:00.000Z"
+            },
+            "summary": "**Décision CIO : Renforcer — +0,5 action maximum dans la phase actuelle.\n** Business exceptionnel, valorisation encore attractive, mais exposition économique NVIDIA déjà proche de 10,3 % et concentration AI/semi élevée.",
+            "handoffSummary": "contract_version=1; run_id=NVDA-FULL-20260907-1552; module=CIO; business=Excellente 92/100; valuation=Attractive 75/100; short=No exploitable short; portfolio=Renforcer +0.5 max; final_decision=Renforcer; initial=0.5 share; target≈10% direct; ceiling≈12% economic; condition=current valuation remains <= hurdle, preserve >=5% cash; confidence=Medium; validation=Validated.",
+            "previewSummaryItems": [
+              "**Décision CIO : Renforcer — +0,5 action maximum dans la phase actuelle.",
+              "** Business exceptionnel, valorisation encore attractive, mais exposition économique NVIDIA déjà proche de 10,3 % et concentration AI/semi élevée."
+            ],
+            "score": null,
+            "verdict": "Renforcer",
+            "confidence": "Medium",
+            "projectionStatus": "absent",
+            "diagnostics": [
+              {
+                "code": "unsupported_block",
+                "message": "Bloc unrepresented_snapshot non pris en charge par le lecteur.",
+                "severity": "warning"
+              }
+            ]
+          },
+          {
+            "schemaVersion": "1.0.0",
+            "id": "3d437ea7af358175b515c319ec70087d",
+            "title": "NVIDIA — Portfolio Fit v5 — Full Analyse — 2026-09-07",
+            "sourceUrl": "https://app.notion.com/p/NVIDIA-Portfolio-Fit-v5-Full-Analyse-2026-09-07-3d437ea7af358175b515c319ec70087d",
+            "family": "portfolio",
+            "originalFamily": null,
+            "sourceKind": "analysis",
+            "agent": "Portfolio Manager",
+            "status": "Superseded",
+            "date": "2026-09-07",
+            "lastEditedTime": "2026-09-11T06:01:00.000Z",
+            "companyIds": [
+              "3b337ea7af35811eb7e5e934f832c389"
+            ],
+            "revision": "2026-09-11T06:01:00.000Z",
+            "sourceFreshness": "unknown",
+            "archived": true,
+            "provenance": {
+              "kind": "notion",
+              "sourceId": "3d437ea7-af35-8175-b515-c319ec70087d",
+              "revision": "2026-09-11T06:01:00.000Z",
+              "capturedAt": "2026-09-11T06:01:00.000Z"
+            },
+            "summary": "Valeur du portefeuille : **9 350,52 EUR** ; cash : **650 EUR**, soit environ **7,0 %**.\nNVIDIA direct : **761,12 EUR**, soit **8,14 %**.\nLook-through estimé : **≈149 EUR** via S&P 500 et **≈48 EUR** via ETF semi.\nExposition économique NVIDIA : **≈958 EUR**, soit **≈10,25 %**.\n+0,5 action à 190,28 EUR : direct **≈9,16 %**, économique **≈11,27 %**, cash **≈5,9 %**.\n+1 action : direct **≈10,17 %**, économique **≈12,28 %**, cash **≈4,9 %** : trop agressif aujourd'hui.",
+            "handoffSummary": "contract_version=1; run_id=NVDA-FULL-20260907-1552; module=PORTFOLIO; portfolio_value=9350.52 EUR; direct_nvda=761.12 EUR/8.14%; ETF_lookthrough≈197 EUR; economic_nvda≈958 EUR/10.25%; decision=Renforcer; size=+0.5 action max; financing≈95 EUR cash CTO then pause SEC0 DCA; confidence=Medium; downstream=CIO.",
+            "previewSummaryItems": [
+              "Valeur du portefeuille : **9 350,52 EUR** ; cash : **650 EUR**, soit environ **7,0 %**.",
+              "NVIDIA direct : **761,12 EUR**, soit **8,14 %**.",
+              "Look-through estimé : **≈149 EUR** via S&P 500 et **≈48 EUR** via ETF semi.",
+              "Exposition économique NVIDIA : **≈958 EUR**, soit **≈10,25 %**.",
+              "+0,5 action à 190,28 EUR : direct **≈9,16 %**, économique **≈11,27 %**, cash **≈5,9 %**.",
+              "+1 action : direct **≈10,17 %**, économique **≈12,28 %**, cash **≈4,9 %** : trop agressif aujourd'hui."
+            ],
+            "score": null,
+            "verdict": "Renforcer",
+            "confidence": "Medium",
+            "projectionStatus": "absent",
+            "diagnostics": []
+          },
+          {
+            "schemaVersion": "1.0.0",
+            "id": "3d437ea7af35818b9dbcf48f1a402bc0",
+            "title": "NVIDIA — Short Check v4 — Full Analyse — 2026-09-07",
+            "sourceUrl": "https://app.notion.com/p/NVIDIA-Short-Check-v4-Full-Analyse-2026-09-07-3d437ea7af35818b9dbcf48f1a402bc0",
+            "family": "short",
+            "originalFamily": null,
+            "sourceKind": "analysis",
+            "agent": "Short Seller",
+            "status": "Superseded",
+            "date": "2026-09-07",
+            "lastEditedTime": "2026-09-11T06:00:00.000Z",
+            "companyIds": [
+              "3b337ea7af35811eb7e5e934f832c389"
+            ],
+            "revision": "2026-09-11T06:00:00.000Z",
+            "sourceFreshness": "unknown",
+            "archived": true,
+            "provenance": {
+              "kind": "notion",
+              "sourceId": "3d437ea7-af35-818b-9dbc-f48f1a402bc0",
+              "revision": "2026-09-11T06:00:00.000Z",
+              "capturedAt": "2026-09-11T06:00:00.000Z"
+            },
+            "summary": "**Short Verdict : Watchlist baissière — aucun short sans catalyseur opérationnel.\n** Le risque fondamental a augmenté via les engagements de supply, cloud et garanties, mais le momentum opérationnel reste beaucoup trop fort pour transformer aujourd'hui la thèse baissière en short exploitable.",
+            "handoffSummary": "contract_version=1; run_id=NVDA-FULL-20260907-1552; module=SHORT; price=230.36 USD; verdict=Watchlist baissière — aucun short sans catalyseur opérationnel; confidence=High; fragile_business=No; vulnerable_stock=Conditional; exploitable_short=No; key_bear=capital commitments/guarantees + cash conversion + client concentration + custom ASIC; short_interest=1.23% float, 2.5 DTC as of 2026-08-14; validation=Validated; downstream=PORTFOLIO.",
+            "previewSummaryItems": [
+              "**Short Verdict : Watchlist baissière — aucun short sans catalyseur opérationnel.",
+              "** Le risque fondamental a augmenté via les engagements de supply, cloud et garanties, mais le momentum opérationnel reste beaucoup trop fort pour transformer aujourd'hui la thèse baissière en short exploitable."
+            ],
+            "score": null,
+            "verdict": "Watchlist baissière — aucun short sans catalyseur opérationnel",
+            "confidence": "High",
+            "projectionStatus": "absent",
+            "diagnostics": [
+              {
+                "code": "unsupported_block",
+                "message": "Bloc unrepresented_snapshot non pris en charge par le lecteur.",
+                "severity": "warning"
+              }
+            ]
+          },
+          {
+            "schemaVersion": "1.0.0",
+            "id": "3d437ea7af35816595d0dbf9aa47aaab",
+            "title": "NVIDIA — Valuation Check v13 — Full Analyse — 2026-09-07",
+            "sourceUrl": "https://app.notion.com/p/NVIDIA-Valuation-Check-v13-Full-Analyse-2026-09-07-3d437ea7af35816595d0dbf9aa47aaab",
+            "family": "valuation",
+            "originalFamily": null,
+            "sourceKind": "analysis",
+            "agent": "Valuation Analyst",
+            "status": "Superseded",
+            "date": "2026-09-07",
+            "lastEditedTime": "2026-09-11T05:59:00.000Z",
+            "companyIds": [
+              "3b337ea7af35811eb7e5e934f832c389"
+            ],
+            "revision": "2026-09-11T05:59:00.000Z",
+            "sourceFreshness": "unknown",
+            "archived": true,
+            "provenance": {
+              "kind": "notion",
+              "sourceId": "3d437ea7-af35-8165-95d0-dbf9aa47aaab",
+              "revision": "2026-09-11T05:59:00.000Z",
+              "capturedAt": "2026-09-11T05:59:00.000Z"
+            },
+            "summary": "Le Business Handoff est **Excellente — 92/100**.\nLe cours de référence est la clôture Nasdaq du **4 septembre 2026 à 230,36 USD**, soit une capitalisation d'environ **5,56 T USD**.\nLe consensus FY2027 tourne autour de **411,3 Md USD de revenus** et **9,31 USD d'EPS**.\nLe modèle central normalise l'EPS de départ à **9,60 USD** et suppose **18 % de CAGR EPS sur 5 ans** puis un multiple terminal de **20x**.\nCela donne un prix année 5 de **439,25 USD** et un rendement actionnaire d'environ **13,8 %/an**.\nL'hypothèse est volontairement bien plus basse que la croissance FY2027–FY2028 attendue afin de modéliser une normalisation du cycle IA.",
+            "handoffSummary": "contract_version=1; run_id=NVDA-FULL-20260907-1552; module=VALUATION; price=230.36 USD; horizon=5y; hurdle=12%; verdict=Attractive; score=75/100; signal=Achat progressif; base_cagr=13.8%; bear_cagr=1.4%; bull_cagr=24.0%; pmax12=249.24 USD; margin12=+8.2%; priced_in=Partiellement; expectations_gap=Modéré; confidence=Medium; validation=Validated; downstream=SHORT.",
+            "previewSummaryItems": [
+              "Le Business Handoff est **Excellente — 92/100**.",
+              "Le cours de référence est la clôture Nasdaq du **4 septembre 2026 à 230,36 USD**, soit une capitalisation d'environ **5,56 T USD**.",
+              "Le consensus FY2027 tourne autour de **411,3 Md USD de revenus** et **9,31 USD d'EPS**.",
+              "Le modèle central normalise l'EPS de départ à **9,60 USD** et suppose **18 % de CAGR EPS sur 5 ans** puis un multiple terminal de **20x**.",
+              "Cela donne un prix année 5 de **439,25 USD** et un rendement actionnaire d'environ **13,8 %/an**.",
+              "L'hypothèse est volontairement bien plus basse que la croissance FY2027–FY2028 attendue afin de modéliser une normalisation du cycle IA."
+            ],
+            "score": "75",
+            "verdict": "Attractive",
+            "confidence": "Medium",
+            "projectionStatus": "absent",
+            "diagnostics": [
+              {
+                "code": "unsupported_block",
+                "message": "Bloc unrepresented_snapshot non pris en charge par le lecteur.",
+                "severity": "warning"
+              },
+              {
+                "code": "unsupported_block",
+                "message": "Bloc unrepresented_snapshot non pris en charge par le lecteur.",
+                "severity": "warning"
+              }
+            ]
+          },
+          {
+            "schemaVersion": "1.0.0",
+            "id": "3d437ea7af358175b3f1fb0fcec04c05",
+            "title": "NVIDIA — Business Check v5 — Full Analyse — 2026-09-07",
+            "sourceUrl": "https://app.notion.com/p/NVIDIA-Business-Check-v5-Full-Analyse-2026-09-07-3d437ea7af358175b3f1fb0fcec04c05",
+            "family": "business",
+            "originalFamily": null,
+            "sourceKind": "analysis",
+            "agent": "Business Analyst",
+            "status": "Superseded",
+            "date": "2026-09-07",
+            "lastEditedTime": "2026-09-11T05:58:00.000Z",
+            "companyIds": [
+              "3b337ea7af35811eb7e5e934f832c389"
+            ],
+            "revision": "2026-09-11T05:58:00.000Z",
+            "sourceFreshness": "unknown",
+            "archived": true,
+            "provenance": {
+              "kind": "notion",
+              "sourceId": "3d437ea7-af35-8175-b3f1-fb0fcec04c05",
+              "revision": "2026-09-11T05:58:00.000Z",
+              "capturedAt": "2026-09-11T05:58:00.000Z"
+            },
+            "summary": "NVIDIA combine un moat logiciel et d'écosystème exceptionnel avec une avance d'intégration compute + networking + systèmes.\nLe Q2 FY2027 atteint **96,221 Md USD de revenus**, dont **89,0 Md USD de Data Center**, avec **75,0 % de marge brute**.\nLe T3 est guidé à **108 Md USD ±2 %**, sans revenu Data Center compute Chine dans l'hypothèse centrale.\nVera Rubin est en production et déjà déployée chez plusieurs partenaires majeurs.\nLa qualité du business reste exceptionnelle, mais la résilience n'est pas parfaite : une partie de la demande est concentrée, les hyperscalers développent des ASIC, AMD accélère, Broadcom profite du custom silicon, et NVIDIA engage désormais beaucoup de capital pour sécuriser supply, cloud et infrastructure.",
+            "handoffSummary": "contract_version=1; run_id=NVDA-FULL-20260907-1552; module=BUSINESS; company=NVIDIA; ticker=NVDA; data_cutoff=2026-09-07; period=Q2 FY2027; verdict=Excellente; score=92/100; confidence=High; moat=Fort; thesis=plateforme dominante de calcul accéléré IA, CUDA+compute+networking+systems; key_limits=concentration clients, custom ASIC, supply/HBM/TSMC, engagements de financement; validation=Validated; downstream=VALUATION.",
+            "previewSummaryItems": [
+              "NVIDIA combine un moat logiciel et d'écosystème exceptionnel avec une avance d'intégration compute + networking + systèmes.",
+              "Le Q2 FY2027 atteint **96,221 Md USD de revenus**, dont **89,0 Md USD de Data Center**, avec **75,0 % de marge brute**.",
+              "Le T3 est guidé à **108 Md USD ±2 %**, sans revenu Data Center compute Chine dans l'hypothèse centrale.",
+              "Vera Rubin est en production et déjà déployée chez plusieurs partenaires majeurs.",
+              "La qualité du business reste exceptionnelle, mais la résilience n'est pas parfaite : une partie de la demande est concentrée, les hyperscalers développent des ASIC, AMD accélère, Broadcom profite du custom silicon, et NVIDIA engage désormais beaucoup de capital pour sécuriser supply, cloud et infrastructure."
+            ],
+            "score": "92",
+            "verdict": "Excellente",
+            "confidence": "High",
+            "projectionStatus": "absent",
+            "diagnostics": [
+              {
+                "code": "unsupported_block",
+                "message": "Bloc unrepresented_snapshot non pris en charge par le lecteur.",
+                "severity": "warning"
+              }
+            ]
+          },
+          {
+            "schemaVersion": "1.0.0",
+            "id": "3d137ea7af358192808ac0f53b6c225a",
+            "title": "NVIDIA — Portfolio Fit v4 — 04 Sep 2026",
+            "sourceUrl": "https://app.notion.com/p/NVIDIA-Portfolio-Fit-v4-04-Sep-2026-3d137ea7af358192808ac0f53b6c225a",
+            "family": "portfolio",
+            "originalFamily": null,
+            "sourceKind": "analysis",
+            "agent": "Portfolio Manager",
+            "status": "Superseded",
+            "date": "2026-09-04",
+            "lastEditedTime": "2026-09-07T14:23:00.000Z",
+            "companyIds": [
+              "3b337ea7af35811eb7e5e934f832c389"
+            ],
+            "revision": "2026-09-07T14:23:00.000Z",
+            "sourceFreshness": "unknown",
+            "archived": true,
+            "provenance": {
+              "kind": "notion",
+              "sourceId": "3d137ea7-af35-8192-808a-c0f53b6c225a",
+              "revision": "2026-09-07T14:23:00.000Z",
+              "capturedAt": "2026-09-07T14:23:00.000Z"
+            },
+            "summary": "**Décision portefeuille : RENFORCER, mais seulement de +0,5 action maximum.\n** À ~233,53 USD (~200,94 EUR), NVIDIA reste attractive standalone, mais l'exposition économique est déjà ~10,7 % via la ligne directe + S&P 500 + SEC0. +1 action entière ferait dépasser la zone de confort économique et ramènerait le cash sous ~5 %.",
+            "handoffSummary": "Décision: Renforcer, mais seulement +0,5 action maximum dans la phase actuelle. Snapshot ~9,37 k€; NVIDIA direct ~8,6%, look-through S&P500+SEC0 ~2,1%, exposition économique ~10,7%. +0,5 porte le direct ~9,7% et l'économique ~11,8% tout en laissant ~5,9% de cash si financé par cash CTO. +1 porterait le direct ~10,7%, l'économique ~12,9% et le cash ~4,8%: trop agressif. Source préférée: ~100€ de cash CTO puis pause du DCA SEC0; alternative: trim ~100€ SEC0. Ne pas toucher au S&P500.",
+            "previewSummaryItems": [
+              "**Décision portefeuille : RENFORCER, mais seulement de +0,5 action maximum.",
+              "** À ~233,53 USD (~200,94 EUR), NVIDIA reste attractive standalone, mais l'exposition économique est déjà ~10,7 % via la ligne directe + S&P 500 + SEC0. +1 action entière ferait dépasser la zone de confort économique et ramènerait le cash sous ~5 %."
+            ],
+            "score": null,
+            "verdict": "Renforcer",
+            "confidence": "Medium",
+            "projectionStatus": "absent",
+            "diagnostics": [
+              {
+                "code": "unsupported_block",
+                "message": "Bloc unrepresented_snapshot non pris en charge par le lecteur.",
+                "severity": "warning"
+              }
+            ]
+          },
+          {
+            "schemaVersion": "1.0.0",
+            "id": "3b537ea7af3581e2b01cc12b930e6e74",
+            "title": "NVIDIA — Investment Memo v2 — CIO Framework Final",
+            "sourceUrl": "https://app.notion.com/p/NVIDIA-Investment-Memo-v2-CIO-Framework-Final-3b537ea7af3581e2b01cc12b930e6e74",
+            "family": "cio_memo",
+            "originalFamily": null,
+            "sourceKind": "analysis",
+            "agent": "Investment Memo",
+            "status": "Superseded",
+            "date": "2026-08-07",
+            "lastEditedTime": "2026-09-07T14:23:00.000Z",
+            "companyIds": [
+              "3b337ea7af35811eb7e5e934f832c389"
+            ],
+            "revision": "2026-09-07T14:23:00.000Z",
+            "sourceFreshness": "unknown",
+            "archived": true,
+            "provenance": {
+              "kind": "notion",
+              "sourceId": "3b537ea7-af35-81e2-b01c-c12b930e6e74",
+              "revision": "2026-09-07T14:23:00.000Z",
+              "capturedAt": "2026-09-07T14:23:00.000Z"
+            },
+            "summary": "NVIDIA reste l'un des meilleurs actifs du portefeuille : moat logiciel et système exceptionnel, croissance structurelle forte et valorisation encore compatible avec un rendement supérieur au hurdle dans le scénario Base.\nLe Short Check ne trouve pas de fragilité suffisante pour justifier une vue baissière sans détérioration opérationnelle.\n**Mais le Portfolio Check change la décision :** 7,33 % en direct deviennent environ 9,12 % après look-through S&P 500 et ETF semi, soit déjà la cible stratégique.\nLe prochain euro investi dans NVIDIA améliorerait peu l'espérance du portefeuille et augmenterait un facteur AI/semi déjà dominant.\n**Décision CIO : Conserver, ne pas renforcer maintenant.\n**",
+            "handoffSummary": "Décision CIO complète: Conserver. Business 91/100, Valuation Attractive (Base 14,7 %, fair value 235–260 USD), Short sans catalyseur exploitable, Portfolio ~9,12 % économique vs cible 9 %. Aucun renforcement avant cash ≥5 % et exposition économique <8 %; prochaine zone d'intérêt 195–210 USD.",
+            "previewSummaryItems": [
+              "NVIDIA reste l'un des meilleurs actifs du portefeuille : moat logiciel et système exceptionnel, croissance structurelle forte et valorisation encore compatible avec un rendement supérieur au hurdle dans le scénario Base.",
+              "Le Short Check ne trouve pas de fragilité suffisante pour justifier une vue baissière sans détérioration opérationnelle.",
+              "**Mais le Portfolio Check change la décision :** 7,33 % en direct deviennent environ 9,12 % après look-through S&P 500 et ETF semi, soit déjà la cible stratégique.",
+              "Le prochain euro investi dans NVIDIA améliorerait peu l'espérance du portefeuille et augmenterait un facteur AI/semi déjà dominant.",
+              "**Décision CIO : Conserver, ne pas renforcer maintenant.",
+              "**"
+            ],
+            "score": null,
+            "verdict": "Conserver — excellente asymétrie standalone, mais exposition économique déjà à la cible",
+            "confidence": "High",
+            "projectionStatus": "absent",
+            "diagnostics": [
+              {
+                "code": "unsupported_block",
+                "message": "Bloc unrepresented_snapshot non pris en charge par le lecteur.",
+                "severity": "warning"
+              },
+              {
+                "code": "unsupported_block",
+                "message": "Bloc unrepresented_snapshot non pris en charge par le lecteur.",
+                "severity": "warning"
+              },
+              {
+                "code": "unsupported_block",
+                "message": "Bloc unrepresented_snapshot non pris en charge par le lecteur.",
+                "severity": "warning"
+              },
+              {
+                "code": "unsupported_block",
+                "message": "Bloc unrepresented_snapshot non pris en charge par le lecteur.",
+                "severity": "warning"
+              }
+            ]
+          },
+          {
+            "schemaVersion": "1.0.0",
+            "id": "3c937ea7af3581668b92febf30ff3a8b",
+            "title": "NVIDIA — Short Check v3 — Post-Q2 FY2027",
+            "sourceUrl": "https://app.notion.com/p/NVIDIA-Short-Check-v3-Post-Q2-FY2027-3c937ea7af3581668b92febf30ff3a8b",
+            "family": "short",
+            "originalFamily": null,
+            "sourceKind": "analysis",
+            "agent": "Short Seller",
+            "status": "Superseded",
+            "date": "2026-08-27",
+            "lastEditedTime": "2026-09-07T14:17:00.000Z",
+            "companyIds": [
+              "3b337ea7af35811eb7e5e934f832c389"
+            ],
+            "revision": "2026-09-07T14:17:00.000Z",
+            "sourceFreshness": "unknown",
+            "archived": true,
+            "provenance": {
+              "kind": "notion",
+              "sourceId": "3c937ea7-af35-8166-8b92-febf30ff3a8b",
+              "revision": "2026-09-07T14:17:00.000Z",
+              "capturedAt": "2026-09-07T14:17:00.000Z"
+            },
+            "summary": "**Verdict short : WATCHLIST BAISSIÈRE — aucun short aujourd’hui.\n** Le Q2 renforce le business et rend un short de valorisation encore moins défendable.\nLe vrai bear case porte désormais sur la **qualité du financement de la croissance** : créances, engagements de supply, garanties de datacenters et circularité potentielle de l’écosystème.",
+            "handoffSummary": "NVIDIA n’est pas un short exploitable aujourd’hui. Le bear case crédible s’est déplacé vers la qualité du financement de la croissance: DSO 60 jours vs 45, CFO Q2 24,1 Md$ vs 59,7 Md$ de NI GAAP, engagements supply 279 Md$, engagements totaux 366 Md$ et garanties brutes 108,5 Md$. Mais Q2 +106% YoY, guide Q3 108 Md$, valuation Attractive à ~210$ et short interest seulement 1,23% du float rendent le timing défavorable. Fragile business: Non. Vulnerable stock: Oui conditionnellement. Exploitable short: Non aujourd’hui.",
+            "previewSummaryItems": [
+              "**Verdict short : WATCHLIST BAISSIÈRE — aucun short aujourd’hui.",
+              "** Le Q2 renforce le business et rend un short de valorisation encore moins défendable.",
+              "Le vrai bear case porte désormais sur la **qualité du financement de la croissance** : créances, engagements de supply, garanties de datacenters et circularité potentielle de l’écosystème."
+            ],
+            "score": null,
+            "verdict": "Watchlist baissière — aucun short sans catalyseur opérationnel",
+            "confidence": "High",
+            "projectionStatus": "absent",
+            "diagnostics": [
+              {
+                "code": "unsupported_block",
+                "message": "Bloc unrepresented_snapshot non pris en charge par le lecteur.",
+                "severity": "warning"
+              },
+              {
+                "code": "unsupported_block",
+                "message": "Bloc unrepresented_snapshot non pris en charge par le lecteur.",
+                "severity": "warning"
+              }
+            ]
+          },
+          {
+            "schemaVersion": "1.0.0",
+            "id": "3d137ea7af3581259683e566246b5323",
+            "title": "NVIDIA — Valuation Check v12 — 04 Sep 2026",
+            "sourceUrl": "https://app.notion.com/p/NVIDIA-Valuation-Check-v12-04-Sep-2026-3d137ea7af3581259683e566246b5323",
+            "family": "valuation",
+            "originalFamily": null,
+            "sourceKind": "analysis",
+            "agent": "Valuation Analyst",
+            "status": "Superseded",
+            "date": "2026-09-04",
+            "lastEditedTime": "2026-09-07T14:14:00.000Z",
+            "companyIds": [
+              "3b337ea7af35811eb7e5e934f832c389"
+            ],
+            "revision": "2026-09-07T14:14:00.000Z",
+            "sourceFreshness": "unknown",
+            "archived": true,
+            "provenance": {
+              "kind": "notion",
+              "sourceId": "3d137ea7-af35-8125-9683-e566246b5323",
+              "revision": "2026-09-07T14:14:00.000Z",
+              "capturedAt": "2026-09-07T14:14:00.000Z"
+            },
+            "summary": "**Verdict : Attractive — 75/100 — Achat progressif.\n** À environ **230,67 USD** le 4 septembre 2026 vers 16:10 CEST, NVIDIA reste compatible avec un rendement central supérieur au hurdle de 12 %/an.\nLe mouvement de marché récent réduit surtout la marge de sécurité : il ne modifie pas à lui seul les hypothèses fondamentales.",
+            "handoffSummary": "NVIDIA Attractive, 75/100, signal Achat progressif. Cours ref ~230,67 USD le 04/09/2026 vers 16:10 CEST. Bear ~247 USD / 1,4% CAGR; Base ~439 USD / 13,7%; Bull ~675 USD / 24,0%. Prix max Base pour 12% ~249 USD (+8,0%); statut Proche du prix cible. Reverse valuation: à 20x terminal, ~16,2% CAGR BPA requis pour 12%. Croissance pricée: Partiellement. Expectations Gap: modéré. Le momentum sectoriel réduit la marge de sécurité sans changer la valeur fondamentale.",
+            "previewSummaryItems": [
+              "**Verdict : Attractive — 75/100 — Achat progressif.",
+              "** À environ **230,67 USD** le 4 septembre 2026 vers 16:10 CEST, NVIDIA reste compatible avec un rendement central supérieur au hurdle de 12 %/an.",
+              "Le mouvement de marché récent réduit surtout la marge de sécurité : il ne modifie pas à lui seul les hypothèses fondamentales."
+            ],
+            "score": "75",
+            "verdict": "Attractive",
+            "confidence": "Medium",
+            "projectionStatus": "absent",
+            "diagnostics": [
+              {
+                "code": "unsupported_block",
+                "message": "Bloc unrepresented_snapshot non pris en charge par le lecteur.",
+                "severity": "warning"
+              },
+              {
+                "code": "unsupported_block",
+                "message": "Bloc unrepresented_snapshot non pris en charge par le lecteur.",
+                "severity": "warning"
+              },
+              {
+                "code": "unsupported_block",
+                "message": "Bloc unrepresented_snapshot non pris en charge par le lecteur.",
+                "severity": "warning"
+              },
+              {
+                "code": "unsupported_block",
+                "message": "Bloc unrepresented_snapshot non pris en charge par le lecteur.",
+                "severity": "warning"
+              }
+            ]
+          },
+          {
+            "schemaVersion": "1.0.0",
+            "id": "3c937ea7af35812b874ecf0ed63727cf",
+            "title": "NVIDIA — Business Check v4 — Post-Q2 FY2027",
+            "sourceUrl": "https://app.notion.com/p/NVIDIA-Business-Check-v4-Post-Q2-FY2027-3c937ea7af35812b874ecf0ed63727cf",
+            "family": "business",
+            "originalFamily": null,
+            "sourceKind": "analysis",
+            "agent": "Business Analyst",
+            "status": "Superseded",
+            "date": "2026-08-27",
+            "lastEditedTime": "2026-09-07T14:10:00.000Z",
+            "companyIds": [
+              "3b337ea7af35811eb7e5e934f832c389"
+            ],
+            "revision": "2026-09-07T14:10:00.000Z",
+            "sourceFreshness": "unknown",
+            "archived": true,
+            "provenance": {
+              "kind": "notion",
+              "sourceId": "3c937ea7-af35-812b-874e-cf0ed63727cf",
+              "revision": "2026-09-07T14:10:00.000Z",
+              "capturedAt": "2026-09-07T14:10:00.000Z"
+            },
+            "summary": "**Business Verdict : Excellente — 92/100.\n** Le Q2 FY2027 renforce la lecture de NVIDIA comme plateforme dominante du calcul accéléré et non comme simple vendeur de GPU.\nLe point nouveau majeur est la visibilité : le management anticipe environ **+70 % de chiffre d'affaires FY2028** tout en affirmant que la demande dépasse encore la capacité d'offre.\nLe moat s'étend du compute vers le rack, le réseau, le CPU et le logiciel.\nLes risques se déplacent vers la concentration, les ASIC propriétaires, la mémoire, la supply chain et le financement de l'écosystème.",
+            "handoffSummary": "NVIDIA reste une entreprise exceptionnelle, score 92/100. Le Q2 FY2027 renforce la thèse: Data Center $89B (+117% YoY), Rubin en production et guidance FY2028 ~+70% malgré une contrainte d’offre. Le moat se déplace du GPU vers une plateforme complète CPU+GPU+NVLink+networking+CUDA. Les principaux risques deviennent la concentration clients, les ASIC propriétaires, les coûts mémoire, les engagements de capacité/financement et la dépendance TSMC/HBM. Valuation Analysis pleinement justifiée.",
+            "previewSummaryItems": [
+              "**Business Verdict : Excellente — 92/100.",
+              "** Le Q2 FY2027 renforce la lecture de NVIDIA comme plateforme dominante du calcul accéléré et non comme simple vendeur de GPU.",
+              "Le point nouveau majeur est la visibilité : le management anticipe environ **+70 % de chiffre d'affaires FY2028** tout en affirmant que la demande dépasse encore la capacité d'offre.",
+              "Le moat s'étend du compute vers le rack, le réseau, le CPU et le logiciel.",
+              "Les risques se déplacent vers la concentration, les ASIC propriétaires, la mémoire, la supply chain et le financement de l'écosystème."
+            ],
+            "score": "92",
+            "verdict": "Excellente",
+            "confidence": "High",
+            "projectionStatus": "absent",
+            "diagnostics": [
+              {
+                "code": "unsupported_block",
+                "message": "Bloc unrepresented_snapshot non pris en charge par le lecteur.",
+                "severity": "warning"
+              },
+              {
+                "code": "unsupported_block",
+                "message": "Bloc unrepresented_snapshot non pris en charge par le lecteur.",
+                "severity": "warning"
+              },
+              {
+                "code": "unsupported_block",
+                "message": "Bloc unrepresented_snapshot non pris en charge par le lecteur.",
+                "severity": "warning"
+              },
+              {
+                "code": "unsupported_block",
+                "message": "Bloc unrepresented_snapshot non pris en charge par le lecteur.",
+                "severity": "warning"
+              },
+              {
+                "code": "unsupported_block",
+                "message": "Bloc unrepresented_snapshot non pris en charge par le lecteur.",
+                "severity": "warning"
+              },
+              {
+                "code": "unsupported_block",
+                "message": "Bloc unrepresented_snapshot non pris en charge par le lecteur.",
+                "severity": "warning"
+              },
+              {
+                "code": "unsupported_block",
+                "message": "Bloc unrepresented_snapshot non pris en charge par le lecteur.",
+                "severity": "warning"
+              }
+            ]
+          },
+          {
+            "schemaVersion": "1.0.0",
+            "id": "3c937ea7af35810c81f2fee2526b17ad",
+            "title": "NVIDIA — Portfolio Fit v3 — Post-Q2 FY2027",
+            "sourceUrl": "https://app.notion.com/p/NVIDIA-Portfolio-Fit-v3-Post-Q2-FY2027-3c937ea7af35810c81f2fee2526b17ad",
+            "family": "portfolio",
+            "originalFamily": null,
+            "sourceKind": "analysis",
+            "agent": "Portfolio Manager",
+            "status": "Superseded",
+            "date": "2026-08-27",
+            "lastEditedTime": "2026-09-04T14:33:00.000Z",
+            "companyIds": [
+              "3b337ea7af35811eb7e5e934f832c389"
+            ],
+            "revision": "2026-09-04T14:33:00.000Z",
+            "sourceFreshness": "unknown",
+            "archived": true,
+            "provenance": {
+              "kind": "notion",
+              "sourceId": "3c937ea7-af35-810c-81f2-fee2526b17ad",
+              "revision": "2026-09-04T14:33:00.000Z",
+              "capturedAt": "2026-09-04T14:33:00.000Z"
+            },
+            "summary": "**Décision portefeuille : RENFORCER — une seule tranche.\n** Le Q2 améliore le rendement attendu de NVIDIA suffisamment pour justifier de remonter le poids direct, mais le look-through ETF et la concentration IA empêchent un renforcement agressif.",
+            "handoffSummary": "Renforcer, mais d’une seule tranche. Snapshot ~9,4k€: NVIDIA direct ~7,7% (4 actions, ~719€) et look-through ~2,0% via S&P500 + SEC0, soit ~9,6% économique. À ~179,7€ par action, +1 action porterait le direct à ~9,4% et l’économique ~11,0%, cohérent avec la cible stratégique 10–12% sans excès. Ne pas acheter 2 actions: l’exposition économique dépasserait ~12,5%. Financement préféré: futurs apports / pause DCA SEC0; si arbitrage immédiat, réduire ~180€ de SEC0 plutôt que consommer le cash. Conserver une réserve cash et ne pas augmenter simultanément d’autres satellites AI/semi.",
+            "previewSummaryItems": [
+              "**Décision portefeuille : RENFORCER — une seule tranche.",
+              "** Le Q2 améliore le rendement attendu de NVIDIA suffisamment pour justifier de remonter le poids direct, mais le look-through ETF et la concentration IA empêchent un renforcement agressif."
+            ],
+            "score": null,
+            "verdict": "Renforcer",
+            "confidence": "High",
+            "projectionStatus": "absent",
+            "diagnostics": [
+              {
+                "code": "unsupported_block",
+                "message": "Bloc unrepresented_snapshot non pris en charge par le lecteur.",
+                "severity": "warning"
+              }
+            ]
+          },
+          {
+            "schemaVersion": "1.0.0",
+            "id": "3d037ea7af35814c9093d5e10a1355ff",
+            "title": "NVIDIA — Valuation Check v11 — 03 Sep 2026",
+            "sourceUrl": "https://app.notion.com/p/NVIDIA-Valuation-Check-v11-03-Sep-2026-3d037ea7af35814c9093d5e10a1355ff",
+            "family": "valuation",
+            "originalFamily": null,
+            "sourceKind": "analysis",
+            "agent": "Valuation Analyst",
+            "status": "Superseded",
+            "date": "2026-09-03",
+            "lastEditedTime": "2026-09-04T14:17:00.000Z",
+            "companyIds": [
+              "3b337ea7af35811eb7e5e934f832c389"
+            ],
+            "revision": "2026-09-04T14:17:00.000Z",
+            "sourceFreshness": "unknown",
+            "archived": true,
+            "provenance": {
+              "kind": "notion",
+              "sourceId": "3d037ea7-af35-814c-9093-d5e10a1355ff",
+              "revision": "2026-09-04T14:17:00.000Z",
+              "capturedAt": "2026-09-04T14:17:00.000Z"
+            },
+            "summary": "**Verdict : Attractive — 75/100 — Achat progressif.\n** À **230,13 USD** en séance le 3 septembre 2026, NVIDIA reste compatible avec un rendement central supérieur au hurdle de 12 %/an, mais la hausse rapide depuis 217,44 USD réduit la marge de sécurité.\nLe titre passe de **Décotée** à **Proche du prix cible** : la qualité du business reste exceptionnelle, la valorisation est simplement moins généreuse.",
+            "handoffSummary": "NVIDIA Attractive, 75/100, signal Achat progressif. Cours ref 230,13 USD intraday 03/09/2026 14:05 EDT. Bear ~247 USD / 1,5% CAGR; Base ~439 USD / 13,8%; Bull ~675 USD / 24,0%. Prix max Base pour 12% ~249 USD (+8,3%); statut Proche du prix cible. Reverse valuation: à 20x terminal, ~16,1% CAGR BPA requis pour 12%. Croissance pricée: Partiellement. Expectations Gap: modéré. Confiance: Medium.",
+            "previewSummaryItems": [
+              "**Verdict : Attractive — 75/100 — Achat progressif.",
+              "** À **230,13 USD** en séance le 3 septembre 2026, NVIDIA reste compatible avec un rendement central supérieur au hurdle de 12 %/an, mais la hausse rapide depuis 217,44 USD réduit la marge de sécurité.",
+              "Le titre passe de **Décotée** à **Proche du prix cible** : la qualité du business reste exceptionnelle, la valorisation est simplement moins généreuse."
+            ],
+            "score": "75",
+            "verdict": "Attractive",
+            "confidence": "Medium",
+            "projectionStatus": "absent",
+            "diagnostics": [
+              {
+                "code": "unsupported_block",
+                "message": "Bloc unrepresented_snapshot non pris en charge par le lecteur.",
+                "severity": "warning"
+              },
+              {
+                "code": "unsupported_block",
+                "message": "Bloc unrepresented_snapshot non pris en charge par le lecteur.",
+                "severity": "warning"
+              }
+            ]
+          },
+          {
+            "schemaVersion": "1.0.0",
+            "id": "3cf37ea7af358109b577dd5c0947bbf3",
+            "title": "NVIDIA — Valuation Check v10 — 02 Sep 2026",
+            "sourceUrl": "https://app.notion.com/p/NVIDIA-Valuation-Check-v10-02-Sep-2026-3cf37ea7af358109b577dd5c0947bbf3",
+            "family": "valuation",
+            "originalFamily": null,
+            "sourceKind": "analysis",
+            "agent": "Valuation Analyst",
+            "status": "Superseded",
+            "date": "2026-09-02",
+            "lastEditedTime": "2026-09-03T18:54:00.000Z",
+            "companyIds": [
+              "3b337ea7af35811eb7e5e934f832c389"
+            ],
+            "revision": "2026-09-03T18:54:00.000Z",
+            "sourceFreshness": "unknown",
+            "archived": true,
+            "provenance": {
+              "kind": "notion",
+              "sourceId": "3cf37ea7-af35-8109-b577-dd5c0947bbf3",
+              "revision": "2026-09-03T18:54:00.000Z",
+              "capturedAt": "2026-09-03T18:54:00.000Z"
+            },
+            "summary": "**Verdict : Attractive — 81/100.\n** À 217,44 USD, NVIDIA reste compatible avec un rendement central supérieur au hurdle de 12 %/an même en supposant une forte normalisation après FY2028.\nLe scénario central retient seulement 18 % de CAGR du BPA sur cinq ans et un PER terminal de 20x.\nLe titre n'est donc pas « bon marché » au sens absolu, mais le prix n'exige pas une exécution parfaite.",
+            "handoffSummary": "NVIDIA Attractive, 81/100, signal Achat progressif. Cours ref 217,44 USD (clôture 01/09/2026). Bear ~247 USD / 2,6% CAGR; Base ~439 USD / 15,1%; Bull ~675 USD / 25,4%. Prix max Base pour 12% ~249 USD (+14,6%). Reverse valuation: à 20x terminal, ~14,8% CAGR BPA requis pour 12%. Croissance pricée: Partiellement. Expectations Gap: modéré. Confiance: Medium.",
+            "previewSummaryItems": [
+              "**Verdict : Attractive — 81/100.",
+              "** À 217,44 USD, NVIDIA reste compatible avec un rendement central supérieur au hurdle de 12 %/an même en supposant une forte normalisation après FY2028.",
+              "Le scénario central retient seulement 18 % de CAGR du BPA sur cinq ans et un PER terminal de 20x.",
+              "Le titre n'est donc pas « bon marché » au sens absolu, mais le prix n'exige pas une exécution parfaite."
+            ],
+            "score": "81",
+            "verdict": "Attractive",
+            "confidence": "Medium",
+            "projectionStatus": "absent",
+            "diagnostics": [
+              {
+                "code": "unsupported_block",
+                "message": "Bloc unrepresented_snapshot non pris en charge par le lecteur.",
+                "severity": "warning"
+              },
+              {
+                "code": "unsupported_block",
+                "message": "Bloc unrepresented_snapshot non pris en charge par le lecteur.",
+                "severity": "warning"
+              },
+              {
+                "code": "unsupported_block",
+                "message": "Bloc unrepresented_snapshot non pris en charge par le lecteur.",
+                "severity": "warning"
+              },
+              {
+                "code": "unsupported_block",
+                "message": "Bloc unrepresented_snapshot non pris en charge par le lecteur.",
+                "severity": "warning"
+              },
+              {
+                "code": "unsupported_block",
+                "message": "Bloc unrepresented_snapshot non pris en charge par le lecteur.",
+                "severity": "warning"
+              }
+            ]
+          },
+          {
+            "schemaVersion": "1.0.0",
+            "id": "3ce37ea7af35813bb9dbef0b025ec0f9",
+            "title": "NVIDIA — Valuation Check v9 — 01 Sep 2026 Close",
+            "sourceUrl": "https://app.notion.com/p/NVIDIA-Valuation-Check-v9-01-Sep-2026-Close-3ce37ea7af35813bb9dbef0b025ec0f9",
+            "family": "valuation",
+            "originalFamily": null,
+            "sourceKind": "analysis",
+            "agent": "Valuation Analyst",
+            "status": "Superseded",
+            "date": "2026-09-01",
+            "lastEditedTime": "2026-09-02T07:49:00.000Z",
+            "companyIds": [
+              "3b337ea7af35811eb7e5e934f832c389"
+            ],
+            "revision": "2026-09-02T07:49:00.000Z",
+            "sourceFreshness": "unknown",
+            "archived": true,
+            "provenance": {
+              "kind": "notion",
+              "sourceId": "3ce37ea7-af35-813b-b9db-ef0b025ec0f9",
+              "revision": "2026-09-02T07:49:00.000Z",
+              "capturedAt": "2026-09-02T07:49:00.000Z"
+            },
+            "summary": "**Verdict : Attractive.\n** À ~218,54 USD, NVIDIA reste compatible avec un rendement Base d'environ **16,1 %/an** sur cinq ans.\nLe marché price une partie importante de la croissance, mais pas une exécution parfaite.\nLe risque principal est la vitesse de normalisation après FY2028, pas un multiple spot manifestement excessif.",
+            "handoffSummary": "Attractive à ~218,54 USD. Bear ~261 USD / 3,6% CAGR; Base ~461 USD / 16,1%; Bull ~707 USD / 26,5%. Prix max Base 12% ~262 USD; 15% ~229 USD. DCF prudent ~233–250 USD. Croissance pricée: Partiellement. Expectations Gap faible à modéré. Risques: normalisation post-FY28, pression marges/mémoire, ASIC, BFR/qualité FCF, circular financing, taux.",
+            "previewSummaryItems": [
+              "**Verdict : Attractive.",
+              "** À ~218,54 USD, NVIDIA reste compatible avec un rendement Base d'environ **16,1 %/an** sur cinq ans.",
+              "Le marché price une partie importante de la croissance, mais pas une exécution parfaite.",
+              "Le risque principal est la vitesse de normalisation après FY2028, pas un multiple spot manifestement excessif."
+            ],
+            "score": "81",
+            "verdict": "Attractive",
+            "confidence": "Medium",
+            "projectionStatus": "absent",
+            "diagnostics": [
+              {
+                "code": "unsupported_block",
+                "message": "Bloc unrepresented_snapshot non pris en charge par le lecteur.",
+                "severity": "warning"
+              }
+            ]
+          },
+          {
+            "schemaVersion": "1.0.0",
+            "id": "3ce37ea7af3581688834d2c58030cf1f",
+            "title": "NVIDIA — Valuation Check v8 — 01 Sep 2026 PM",
+            "sourceUrl": "https://app.notion.com/p/NVIDIA-Valuation-Check-v8-01-Sep-2026-PM-3ce37ea7af3581688834d2c58030cf1f",
+            "family": "valuation",
+            "originalFamily": null,
+            "sourceKind": "analysis",
+            "agent": "Valuation Analyst",
+            "status": "Superseded",
+            "date": "2026-09-01",
+            "lastEditedTime": "2026-09-01T19:23:00.000Z",
+            "companyIds": [
+              "3b337ea7af35811eb7e5e934f832c389"
+            ],
+            "revision": "2026-09-01T19:23:00.000Z",
+            "sourceFreshness": "unknown",
+            "archived": true,
+            "provenance": {
+              "kind": "notion",
+              "sourceId": "3ce37ea7-af35-8168-8834-d2c58030cf1f",
+              "revision": "2026-09-01T19:23:00.000Z",
+              "capturedAt": "2026-09-01T19:23:00.000Z"
+            },
+            "summary": "**Verdict : Attractive.\n** Le cours a remonté depuis la v6 mais reste compatible avec un rendement Base supérieur à 12 %/an.\nLa valorisation dépend désormais surtout de la durée de l'hypercroissance après FY2028 et de la capacité à maintenir une marge/FCF élevés sans financement circulaire excessif.",
+            "handoffSummary": "Attractive autour de 218,8 USD. Q2 96,2 Md$ (+106%), Data Center 89 Md$ (+117%), Q3 guidé 108 Md$ ±2% sans Chine DC compute, FY28 management ~+70% CA. Méthode principale BPA normalisé × PER terminal, contrôle DCF/FCF. Bear ~261$ / +3,6% CAGR; Base ~461$ / +16,1%; Bull ~707$ / +26,4%. Prix maximal Base: 10% ~286$, 12% ~262$, 15% ~229$. DCF prudent ~233–250$. Growth priced-in: Partiellement; Expectations Gap faible à modéré. Le risque clé est une normalisation post-FY28 plus rapide, pression marges/mémoire, qualité du financement de la demande et compression de multiple par les taux.",
+            "previewSummaryItems": [
+              "**Verdict : Attractive.",
+              "** Le cours a remonté depuis la v6 mais reste compatible avec un rendement Base supérieur à 12 %/an.",
+              "La valorisation dépend désormais surtout de la durée de l'hypercroissance après FY2028 et de la capacité à maintenir une marge/FCF élevés sans financement circulaire excessif."
+            ],
+            "score": null,
+            "verdict": "Attractive",
+            "confidence": "Medium",
+            "projectionStatus": "absent",
+            "diagnostics": [
+              {
+                "code": "unsupported_block",
+                "message": "Bloc unrepresented_snapshot non pris en charge par le lecteur.",
+                "severity": "warning"
+              }
+            ]
+          },
+          {
+            "schemaVersion": "1.0.0",
+            "id": "3ce37ea7af358105930ec6bb7c8faa81",
+            "title": "NVIDIA — Valuation Check v6 — 01 Sep 2026",
+            "sourceUrl": "https://app.notion.com/p/NVIDIA-Valuation-Check-v6-01-Sep-2026-3ce37ea7af358105930ec6bb7c8faa81",
+            "family": "valuation",
+            "originalFamily": null,
+            "sourceKind": "analysis",
+            "agent": "Valuation Analyst",
+            "status": "Superseded",
+            "date": "2026-09-01",
+            "lastEditedTime": "2026-09-01T19:10:00.000Z",
+            "companyIds": [
+              "3b337ea7af35811eb7e5e934f832c389"
+            ],
+            "revision": "2026-09-01T19:10:00.000Z",
+            "sourceFreshness": "unknown",
+            "archived": true,
+            "provenance": {
+              "kind": "notion",
+              "sourceId": "3ce37ea7-af35-8105-930e-c6bb7c8faa81",
+              "revision": "2026-09-01T19:10:00.000Z",
+              "capturedAt": "2026-09-01T19:10:00.000Z"
+            },
+            "summary": "**Verdict : Attractive.\n** Le cours a rebondi depuis la valuation post-Q2, mais la progression des estimations est encore plus rapide que celle du prix.\nAutour de 215,8 USD, le titre traite à environ **23,3x FY27E** et **~14x FY28E** si la trajectoire post-earnings se matérialise.\nLe scénario central conserve **~16,4 %/an** sur 5 ans.\nLe risque dominant n'est plus une valorisation manifestement excessive : c'est la **durée de l'hypercroissance après FY2028**, combinée à la pression des taux et à la qualité du financement de la demande IA.",
+            "handoffSummary": "Score 86/100 — Achat fort — Verdict Attractive. Base CAGR 16,4% (32/35), marge au prix maximal 12% de 21,4% (25/25), Bear CAGR 3,9% (10/15), attentes faibles à modérées (12/15), confiance Medium (7/10). Référence 215,8 USD; Base 461 USD; prix maximal 12% 262 USD.",
+            "previewSummaryItems": [
+              "**Verdict : Attractive.",
+              "** Le cours a rebondi depuis la valuation post-Q2, mais la progression des estimations est encore plus rapide que celle du prix.",
+              "Autour de 215,8 USD, le titre traite à environ **23,3x FY27E** et **~14x FY28E** si la trajectoire post-earnings se matérialise.",
+              "Le scénario central conserve **~16,4 %/an** sur 5 ans.",
+              "Le risque dominant n'est plus une valorisation manifestement excessive : c'est la **durée de l'hypercroissance après FY2028**, combinée à la pression des taux et à la qualité du financement de la demande IA."
+            ],
+            "score": "86",
+            "verdict": "Attractive",
+            "confidence": "Medium",
+            "projectionStatus": "absent",
+            "diagnostics": [
+              {
+                "code": "unsupported_block",
+                "message": "Bloc unrepresented_snapshot non pris en charge par le lecteur.",
+                "severity": "warning"
+              },
+              {
+                "code": "unsupported_block",
+                "message": "Bloc unrepresented_snapshot non pris en charge par le lecteur.",
+                "severity": "warning"
+              },
+              {
+                "code": "unsupported_block",
+                "message": "Bloc unrepresented_snapshot non pris en charge par le lecteur.",
+                "severity": "warning"
+              },
+              {
+                "code": "unsupported_block",
+                "message": "Bloc unrepresented_snapshot non pris en charge par le lecteur.",
+                "severity": "warning"
+              },
+              {
+                "code": "unsupported_block",
+                "message": "Bloc unrepresented_snapshot non pris en charge par le lecteur.",
+                "severity": "warning"
+              },
+              {
+                "code": "unsupported_block",
+                "message": "Bloc unrepresented_snapshot non pris en charge par le lecteur.",
+                "severity": "warning"
+              }
+            ]
+          },
+          {
+            "schemaVersion": "1.0.0",
+            "id": "3ce37ea7af35813aade5dc69c2bc5a63",
+            "title": "NVIDIA — Valuation Check v7 — fair-value scoring v2 — 2026-09-01",
+            "sourceUrl": "https://app.notion.com/p/NVIDIA-Valuation-Check-v7-fair-value-scoring-v2-2026-09-01-3ce37ea7af35813aade5dc69c2bc5a63",
+            "family": "valuation",
+            "originalFamily": null,
+            "sourceKind": "analysis",
+            "agent": "Valuation Analyst",
+            "status": "Superseded",
+            "date": "2026-09-01",
+            "lastEditedTime": "2026-09-01T19:10:00.000Z",
+            "companyIds": [
+              "3b337ea7af35811eb7e5e934f832c389"
+            ],
+            "revision": "2026-09-01T19:10:00.000Z",
+            "sourceFreshness": "unknown",
+            "archived": true,
+            "provenance": {
+              "kind": "notion",
+              "sourceId": "3ce37ea7-af35-813a-ade5-dc69c2bc5a63",
+              "revision": "2026-09-01T19:10:00.000Z",
+              "capturedAt": "2026-09-01T19:10:00.000Z"
+            },
+            "summary": "**Verdict : Attractive — Score 89/100 — Achat fort.\n** Le scénario Base conserve environ 16,4 %/an.\nLe cours est **Décoté** par rapport au prix maximal compatible avec 12 % dans le scénario Base, avec un risque important de normalisation après FY2028.",
+            "handoffSummary": "Score 89/100 — Achat fort — Verdict Attractive. Marge au prix cible +20,6 % sur 217,19 USD contre prix maximal Base de 262 USD; statut : Décotée. Base CAGR 16,4 %, Bear 3,9 %, attentes faibles à modérées, confiance moyenne.",
+            "previewSummaryItems": [
+              "**Verdict : Attractive — Score 89/100 — Achat fort.",
+              "** Le scénario Base conserve environ 16,4 %/an.",
+              "Le cours est **Décoté** par rapport au prix maximal compatible avec 12 % dans le scénario Base, avec un risque important de normalisation après FY2028."
+            ],
+            "score": "89",
+            "verdict": "Attractive",
+            "confidence": "Medium",
+            "projectionStatus": "absent",
+            "diagnostics": []
+          },
+          {
+            "schemaVersion": "1.0.0",
+            "id": "3c937ea7af3581e29e1befb69db8dcbb",
+            "title": "NVIDIA — Valuation Check v5 — Post-Q2 FY2027",
+            "sourceUrl": "https://app.notion.com/p/NVIDIA-Valuation-Check-v5-Post-Q2-FY2027-3c937ea7af3581e29e1befb69db8dcbb",
+            "family": "valuation",
+            "originalFamily": null,
+            "sourceKind": "analysis",
+            "agent": "Valuation Analyst",
+            "status": "Superseded",
+            "date": "2026-08-27",
+            "lastEditedTime": "2026-09-01T15:37:00.000Z",
+            "companyIds": [
+              "3b337ea7af35811eb7e5e934f832c389"
+            ],
+            "revision": "2026-09-01T15:37:00.000Z",
+            "sourceFreshness": "unknown",
+            "archived": true,
+            "provenance": {
+              "kind": "notion",
+              "sourceId": "3c937ea7-af35-81e2-9e1b-efb69db8dcbb",
+              "revision": "2026-09-01T15:37:00.000Z",
+              "capturedAt": "2026-09-01T15:37:00.000Z"
+            },
+            "summary": "**Cours de référence :** **209,89 USD**, clôture NASDAQ du 26 août 2026",
+            "handoffSummary": "Attractive au cours de référence 209,89 USD. Méthode principale BPA normalisé × PER terminal, contrôle DCF. Scénarios 5 ans: Bear ~259 USD / +4,3% CAGR; Base ~458 USD / +16,9% CAGR; Bull ~700 USD / +27,2% CAGR. Prix maximal pour 12% ~260 USD; 10% ~284; 15% ~228. DCF central prudent ~233 USD. Growth priced-in: Partiellement; Expectations Gap faible à modéré après guidance FY28 ~+70%, mais dépendance forte à la réalisation de cette guidance et à la normalisation post-FY28.",
+            "previewSummaryItems": [
+              "**Cours de référence :** **209,89 USD**, clôture NASDAQ du 26 août 2026"
+            ],
+            "score": "84",
+            "verdict": "Attractive",
+            "confidence": "Medium",
+            "projectionStatus": "absent",
+            "diagnostics": [
+              {
+                "code": "unsupported_block",
+                "message": "Bloc unrepresented_snapshot non pris en charge par le lecteur.",
+                "severity": "warning"
+              },
+              {
+                "code": "unsupported_block",
+                "message": "Bloc unrepresented_snapshot non pris en charge par le lecteur.",
+                "severity": "warning"
+              },
+              {
+                "code": "unsupported_block",
+                "message": "Bloc unrepresented_snapshot non pris en charge par le lecteur.",
+                "severity": "warning"
+              },
+              {
+                "code": "unsupported_block",
+                "message": "Bloc unrepresented_snapshot non pris en charge par le lecteur.",
+                "severity": "warning"
+              },
+              {
+                "code": "unsupported_block",
+                "message": "Bloc unrepresented_snapshot non pris en charge par le lecteur.",
+                "severity": "warning"
+              }
+            ]
+          },
+          {
+            "schemaVersion": "1.0.0",
+            "id": "3b537ea7af35815891e9c3345d531262",
+            "title": "NVIDIA — Portfolio Check v2 — Framework Final",
+            "sourceUrl": "https://app.notion.com/p/NVIDIA-Portfolio-Check-v2-Framework-Final-3b537ea7af35815891e9c3345d531262",
+            "family": "portfolio",
+            "originalFamily": null,
+            "sourceKind": "analysis",
+            "agent": "Portfolio Manager",
+            "status": "Superseded",
+            "date": "2026-08-07",
+            "lastEditedTime": "2026-08-27T05:59:00.000Z",
+            "companyIds": [
+              "3b337ea7af35811eb7e5e934f832c389"
+            ],
+            "revision": "2026-08-27T05:59:00.000Z",
+            "sourceFreshness": "unknown",
+            "archived": true,
+            "provenance": {
+              "kind": "notion",
+              "sourceId": "3b537ea7-af35-8158-91e9-c3345d531262",
+              "revision": "2026-08-27T05:59:00.000Z",
+              "capturedAt": "2026-08-27T05:59:00.000Z"
+            },
+            "summary": "**Valeur totale du portefeuille :** **≈ 9 217 €**",
+            "handoffSummary": "Conserver. NVIDIA direct 7,33 % mais ≈1,33 % via S&P 500 et ≈0,45 % via ETF semi, soit ≈9,12 % économiques. Cible/max direct Notion 9 %. Pas de renforcement tant que cash <5 % et exposition économique ~cible; priorité au cash/core ETF et à la réduction des dérivés.",
+            "previewSummaryItems": [
+              "**Valeur totale du portefeuille :** **≈ 9 217 €**"
+            ],
+            "score": null,
+            "verdict": "Conserver — exposition économique ≈9,0 %, cible déjà atteinte via look-through",
+            "confidence": "High",
+            "projectionStatus": "absent",
+            "diagnostics": [
+              {
+                "code": "unsupported_block",
+                "message": "Bloc unrepresented_snapshot non pris en charge par le lecteur.",
+                "severity": "warning"
+              },
+              {
+                "code": "unsupported_block",
+                "message": "Bloc unrepresented_snapshot non pris en charge par le lecteur.",
+                "severity": "warning"
+              },
+              {
+                "code": "unsupported_block",
+                "message": "Bloc unrepresented_snapshot non pris en charge par le lecteur.",
+                "severity": "warning"
+              }
+            ]
+          },
+          {
+            "schemaVersion": "1.0.0",
+            "id": "3b537ea7af3581009135f49b3fe475cb",
+            "title": "NVIDIA — Short Check v2 — Skill Full",
+            "sourceUrl": "https://app.notion.com/p/NVIDIA-Short-Check-v2-Skill-Full-3b537ea7af3581009135f49b3fe475cb",
+            "family": "short",
+            "originalFamily": null,
+            "sourceKind": "analysis",
+            "agent": "Short Seller",
+            "status": "Superseded",
+            "date": "2026-08-07",
+            "lastEditedTime": "2026-08-27T05:57:00.000Z",
+            "companyIds": [
+              "3b337ea7af35811eb7e5e934f832c389"
+            ],
+            "revision": "2026-08-27T05:57:00.000Z",
+            "sourceFreshness": "unknown",
+            "archived": true,
+            "provenance": {
+              "kind": "notion",
+              "sourceId": "3b537ea7-af35-8100-9135-f49b3fe475cb",
+              "revision": "2026-08-27T05:57:00.000Z",
+              "capturedAt": "2026-08-27T05:57:00.000Z"
+            },
+            "summary": "**Verdict short : WATCHLIST BAISSIÈRE — aucun short aujourd’hui.\n** NVIDIA n’est pas une entreprise fragile : croissance, marges, bilan et cash conversion restent extraordinaires.\nLe dossier devient néanmoins plus vulnérable à une rupture de perception parce que la croissance dépend désormais d’un nombre limité de très grands acheteurs, tandis que NVIDIA porte des engagements industriels et cloud massifs.\nLe prochain test majeur est le **26 août 2026**.",
+            "handoffSummary": "NVIDIA n’est pas une entreprise fragile et la conversion cash reste excellente. Le bear case crédible porte sur une concentration clients très élevée, 149 Md$ d’engagements supply+cloud, montée des stocks/BFR, cadence produit accélérée et risque réglementaire Chine. À 218,99 USD, le Valuation Check v3 juge le titre attractive: la valorisation seule ne justifie pas un short. Verdict: Watchlist baissière; short exploitable seulement si Q2/Q3 confirment ralentissement de demande, pression sur marge ou hausse anormale des stocks/engagements.",
+            "previewSummaryItems": [
+              "**Verdict short : WATCHLIST BAISSIÈRE — aucun short aujourd’hui.",
+              "** NVIDIA n’est pas une entreprise fragile : croissance, marges, bilan et cash conversion restent extraordinaires.",
+              "Le dossier devient néanmoins plus vulnérable à une rupture de perception parce que la croissance dépend désormais d’un nombre limité de très grands acheteurs, tandis que NVIDIA porte des engagements industriels et cloud massifs.",
+              "Le prochain test majeur est le **26 août 2026**."
+            ],
+            "score": null,
+            "verdict": "Watchlist baissière — aucun short sans catalyseur opérationnel",
+            "confidence": "High",
+            "projectionStatus": "absent",
+            "diagnostics": [
+              {
+                "code": "unsupported_block",
+                "message": "Bloc unrepresented_snapshot non pris en charge par le lecteur.",
+                "severity": "warning"
+              },
+              {
+                "code": "unsupported_block",
+                "message": "Bloc unrepresented_snapshot non pris en charge par le lecteur.",
+                "severity": "warning"
+              },
+              {
+                "code": "unsupported_block",
+                "message": "Bloc unrepresented_snapshot non pris en charge par le lecteur.",
+                "severity": "warning"
+              },
+              {
+                "code": "unsupported_block",
+                "message": "Bloc unrepresented_snapshot non pris en charge par le lecteur.",
+                "severity": "warning"
+              }
+            ]
+          },
+          {
+            "schemaVersion": "1.0.0",
+            "id": "3c937ea7af35812bb8bbec3471c39f03",
+            "title": "NVIDIA — Q2 FY2027",
+            "sourceUrl": "https://app.notion.com/p/NVIDIA-Q2-FY2027-3c937ea7af35812bb8bbec3471c39f03",
+            "family": "earnings",
+            "originalFamily": null,
+            "sourceKind": "analysis",
+            "agent": "Earnings",
+            "status": "Snapshot Notion",
+            "date": "2026-08-26",
+            "lastEditedTime": "2026-08-27T05:32:00.000Z",
+            "companyIds": [
+              "3b337ea7af35811eb7e5e934f832c389"
+            ],
+            "revision": "2026-08-27T05:32:00.000Z",
+            "sourceFreshness": "unknown",
+            "archived": true,
+            "provenance": {
+              "kind": "notion",
+              "sourceId": "3c937ea7-af35-812b-b8bb-ec3471c39f03",
+              "revision": "2026-08-27T05:32:00.000Z",
+              "capturedAt": "2026-08-27T05:32:00.000Z"
+            },
+            "summary": "Q3 revenue $108B ±2%, no China DC compute assumed; Q3 GM 74% ±50bp.\nPreliminary FY2028 revenue growth ~70%, explicitly supply-constrained; GM trough 71–72% in Q4 then 72–73% in FY28.",
+            "handoffSummary": null,
+            "previewSummaryItems": [
+              "Q3 revenue $108B ±2%, no China DC compute assumed; Q3 GM 74% ±50bp.",
+              "Preliminary FY2028 revenue growth ~70%, explicitly supply-constrained; GM trough 71–72% in Q4 then 72–73% in FY28."
+            ],
+            "score": null,
+            "verdict": null,
+            "confidence": "High",
+            "projectionStatus": "absent",
+            "diagnostics": [
+              {
+                "code": "unsupported_block",
+                "message": "Bloc to_do non pris en charge par le lecteur.",
+                "severity": "warning"
+              },
+              {
+                "code": "unsupported_block",
+                "message": "Bloc to_do non pris en charge par le lecteur.",
+                "severity": "warning"
+              },
+              {
+                "code": "unsupported_block",
+                "message": "Bloc to_do non pris en charge par le lecteur.",
+                "severity": "warning"
+              },
+              {
+                "code": "unsupported_block",
+                "message": "Bloc to_do non pris en charge par le lecteur.",
+                "severity": "warning"
+              },
+              {
+                "code": "unsupported_block",
+                "message": "Bloc to_do non pris en charge par le lecteur.",
+                "severity": "warning"
+              },
+              {
+                "code": "unsupported_block",
+                "message": "Bloc unrepresented_snapshot non pris en charge par le lecteur.",
+                "severity": "warning"
+              },
+              {
+                "code": "unsupported_block",
+                "message": "Bloc unrepresented_snapshot non pris en charge par le lecteur.",
+                "severity": "warning"
+              },
+              {
+                "code": "unsupported_block",
+                "message": "Bloc unrepresented_snapshot non pris en charge par le lecteur.",
+                "severity": "warning"
+              },
+              {
+                "code": "unsupported_block",
+                "message": "Bloc unrepresented_snapshot non pris en charge par le lecteur.",
+                "severity": "warning"
+              },
+              {
+                "code": "unsupported_block",
+                "message": "Bloc unrepresented_snapshot non pris en charge par le lecteur.",
+                "severity": "warning"
+              },
+              {
+                "code": "unsupported_block",
+                "message": "Bloc unrepresented_snapshot non pris en charge par le lecteur.",
+                "severity": "warning"
+              },
+              {
+                "code": "unsupported_block",
+                "message": "Bloc unrepresented_snapshot non pris en charge par le lecteur.",
+                "severity": "warning"
+              },
+              {
+                "code": "unsupported_block",
+                "message": "Bloc unrepresented_snapshot non pris en charge par le lecteur.",
+                "severity": "warning"
+              }
+            ]
+          },
+          {
+            "schemaVersion": "1.0.0",
+            "id": "3b537ea7af3581f883e4e87f58c0b684",
+            "title": "NVIDIA — Valuation Check v4 — Framework Final",
+            "sourceUrl": "https://app.notion.com/p/NVIDIA-Valuation-Check-v4-Framework-Final-3b537ea7af3581f883e4e87f58c0b684",
+            "family": "valuation",
+            "originalFamily": null,
+            "sourceKind": "analysis",
+            "agent": "Valuation Analyst",
+            "status": "Validated",
+            "date": "2026-08-07",
+            "lastEditedTime": "2026-08-10T08:01:00.000Z",
+            "companyIds": [
+              "3b337ea7af35811eb7e5e934f832c389"
+            ],
+            "revision": "2026-08-10T08:01:00.000Z",
+            "sourceFreshness": "unknown",
+            "archived": true,
+            "provenance": {
+              "kind": "notion",
+              "sourceId": "3b537ea7-af35-81f8-83e4-e87f58c0b684",
+              "revision": "2026-08-10T08:01:00.000Z",
+              "capturedAt": "2026-08-10T08:01:00.000Z"
+            },
+            "summary": "**Cours de référence :** **218,99 USD**, clôture du 6 août 2026",
+            "handoffSummary": "Attractive. Cours 218,99 USD. CAGR Bear/Base/Bull -5,9 % / 14,7 % / 24,9 %. Prix maximal 12 % ≈247 USD. Fair value 235–260 USD. Zone de renforcement 195–210 USD.",
+            "previewSummaryItems": [
+              "**Cours de référence :** **218,99 USD**, clôture du 6 août 2026"
+            ],
+            "score": "78",
+            "verdict": "Attractive",
+            "confidence": "Medium",
+            "projectionStatus": "absent",
+            "diagnostics": [
+              {
+                "code": "unsupported_block",
+                "message": "Bloc unrepresented_snapshot non pris en charge par le lecteur.",
+                "severity": "warning"
+              },
+              {
+                "code": "unsupported_block",
+                "message": "Bloc unrepresented_snapshot non pris en charge par le lecteur.",
+                "severity": "warning"
+              },
+              {
+                "code": "unsupported_block",
+                "message": "Bloc unrepresented_snapshot non pris en charge par le lecteur.",
+                "severity": "warning"
+              },
+              {
+                "code": "unsupported_block",
+                "message": "Bloc unrepresented_snapshot non pris en charge par le lecteur.",
+                "severity": "warning"
+              },
+              {
+                "code": "unsupported_block",
+                "message": "Bloc unrepresented_snapshot non pris en charge par le lecteur.",
+                "severity": "warning"
+              },
+              {
+                "code": "unsupported_block",
+                "message": "Bloc unrepresented_snapshot non pris en charge par le lecteur.",
+                "severity": "warning"
+              },
+              {
+                "code": "unsupported_block",
+                "message": "Bloc unrepresented_snapshot non pris en charge par le lecteur.",
+                "severity": "warning"
+              },
+              {
+                "code": "unsupported_block",
+                "message": "Bloc unrepresented_snapshot non pris en charge par le lecteur.",
+                "severity": "warning"
+              },
+              {
+                "code": "unsupported_block",
+                "message": "Bloc unrepresented_snapshot non pris en charge par le lecteur.",
+                "severity": "warning"
+              }
+            ]
+          },
+          {
+            "schemaVersion": "1.0.0",
+            "id": "3b437ea7af3581949b90c0d708abc530",
+            "title": "NVIDIA — Business Check v2 — Full",
+            "sourceUrl": "https://app.notion.com/p/NVIDIA-Business-Check-v2-Full-3b437ea7af3581949b90c0d708abc530",
+            "family": "business",
+            "originalFamily": null,
+            "sourceKind": "analysis",
+            "agent": "Business Analyst",
+            "status": "Validated",
+            "date": "2026-08-06",
+            "lastEditedTime": "2026-08-10T08:01:00.000Z",
+            "companyIds": [
+              "3b337ea7af35811eb7e5e934f832c389"
+            ],
+            "revision": "2026-08-10T08:01:00.000Z",
+            "sourceFreshness": "unknown",
+            "archived": true,
+            "provenance": {
+              "kind": "notion",
+              "sourceId": "3b437ea7-af35-8194-9b90-c0d708abc530",
+              "revision": "2026-08-10T08:01:00.000Z",
+              "capturedAt": "2026-08-10T08:01:00.000Z"
+            },
+            "summary": "**Business Verdict : Excellente — 91/100.\n** NVIDIA dispose d’un moat technologique et écosystémique exceptionnel.\nLa société ne vend plus seulement des GPU : elle fournit une architecture complète d’« usine d’IA » combinant calcul, réseau, systèmes, bibliothèques logicielles et outils de déploiement.\nCette position mérite une analyse de valorisation approfondie, mais le score est plafonné par la concentration clients, la dépendance industrielle et le risque de substitution partielle par les puces propriétaires.",
+            "handoffSummary": "NVIDIA est une entreprise exceptionnelle dont le moat repose sur CUDA, le co-design matériel-réseau-logiciel, la distribution mondiale et une capacité d’exécution hors norme. La principale faiblesse n’est pas la demande actuelle mais la concentration clients, la dépendance à TSMC/HBM/packaging, les engagements de capacité massifs et la montée des accélérateurs propriétaires. Le business mérite une analyse de valorisation approfondie.",
+            "previewSummaryItems": [
+              "**Business Verdict : Excellente — 91/100.",
+              "** NVIDIA dispose d’un moat technologique et écosystémique exceptionnel.",
+              "La société ne vend plus seulement des GPU : elle fournit une architecture complète d’« usine d’IA » combinant calcul, réseau, systèmes, bibliothèques logicielles et outils de déploiement.",
+              "Cette position mérite une analyse de valorisation approfondie, mais le score est plafonné par la concentration clients, la dépendance industrielle et le risque de substitution partielle par les puces propriétaires."
+            ],
+            "score": "91",
+            "verdict": "Excellente",
+            "confidence": "High",
+            "projectionStatus": "absent",
+            "diagnostics": [
+              {
+                "code": "unsupported_block",
+                "message": "Bloc heading_4 non pris en charge par le lecteur.",
+                "severity": "warning"
+              },
+              {
+                "code": "unsupported_block",
+                "message": "Bloc heading_4 non pris en charge par le lecteur.",
+                "severity": "warning"
+              },
+              {
+                "code": "unsupported_block",
+                "message": "Bloc heading_4 non pris en charge par le lecteur.",
+                "severity": "warning"
+              },
+              {
+                "code": "unsupported_block",
+                "message": "Bloc heading_4 non pris en charge par le lecteur.",
+                "severity": "warning"
+              },
+              {
+                "code": "unsupported_block",
+                "message": "Bloc unrepresented_snapshot non pris en charge par le lecteur.",
+                "severity": "warning"
+              }
+            ]
+          },
+          {
+            "schemaVersion": "1.0.0",
+            "id": "3b637ea7af358121a1fdfcc15a756ba8",
+            "title": "NVIDIA — Q1 FY2027",
+            "sourceUrl": "https://app.notion.com/p/NVIDIA-Q1-FY2027-3b637ea7af358121a1fdfcc15a756ba8",
+            "family": "earnings",
+            "originalFamily": null,
+            "sourceKind": "analysis",
+            "agent": "Earnings",
+            "status": "Snapshot Notion",
+            "date": "2026-08-06",
+            "lastEditedTime": "2026-08-08T07:15:00.000Z",
+            "companyIds": [
+              "3b337ea7af35811eb7e5e934f832c389"
+            ],
+            "revision": "2026-08-08T07:15:00.000Z",
+            "sourceFreshness": "unknown",
+            "archived": true,
+            "provenance": {
+              "kind": "notion",
+              "sourceId": "3b637ea7-af35-8121-a1fd-fcc15a756ba8",
+              "revision": "2026-08-08T07:15:00.000Z",
+              "capturedAt": "2026-08-08T07:15:00.000Z"
+            },
+            "summary": "Thesis Summary: La demande Data Center reste extrêmement forte et la guidance Q2 prolonge la trajectoire de croissance.\nGuidance: New Valuation Refresh: Recommended Revenue: 81600000000 Key KPI Summary: Data Center revenue $75.2B; Q2 revenue guidance $91B.\nBusiness Refresh: Not Needed Execution Score: 9 Confidence: Medium Thesis Impact: Positive Moat Impact: Strengthened Action: Hold Analysis Date: 2026-08-06 Gross Margin %: 74.9 Fiscal Period: Q1 FY2027 Valuation Impact: Needs Revaluation Earnings: NVIDIA — Q1 FY2027 Résumé exécutif Backfill d'une analyse NVIDIA déjà produite.\nLes chiffres disponibles confirment la puissance de la demande Data Center et une exécution très élevée.\nRésultats Revenue : 81,6 Md$.\nData Center : 75,2 Md$.\nMarge brute : 74,9 %.\nGuidance Q2 : 91 Md$ de chiffre d'affaires.\nImpact sur la thèse Business Positive.\nLes données disponibles renforcent la lecture d'un leadership durable sur le compute IA et l'écosystème.\nBusiness Refresh : Not Needed sur ces seuls éléments : ils renforcent davantage la thèse existante qu'ils ne la changent.\nImpact sur la valorisation Valuation Refresh : Recommended.\nLa guidance Q2 à 91 Md$ justifie de remettre à jour les hypothèses de croissance et de FCF du modèle.\nDécision Hold.\nL'analyse antérieure concluait à conserver, avec une cible portefeuille autour de 9 % et un plafond de 9–10 %.",
+            "handoffSummary": null,
+            "previewSummaryItems": [
+              "Thesis Summary: La demande Data Center reste extrêmement forte et la guidance Q2 prolonge la trajectoire de croissance.",
+              "Guidance: New Valuation Refresh: Recommended Revenue: 81600000000 Key KPI Summary: Data Center revenue $75.2B; Q2 revenue guidance $91B.",
+              "Business Refresh: Not Needed Execution Score: 9 Confidence: Medium Thesis Impact: Positive Moat Impact: Strengthened Action: Hold Analysis Date: 2026-08-06 Gross Margin %: 74.9 Fiscal Period: Q1 FY2027 Valuation Impact: Needs Revaluation Earnings: NVIDIA — Q1 FY2027 Résumé exécutif Backfill d'une analyse NVIDIA déjà produite.",
+              "Les chiffres disponibles confirment la puissance de la demande Data Center et une exécution très élevée.",
+              "Résultats Revenue : 81,6 Md$.",
+              "Data Center : 75,2 Md$.",
+              "Marge brute : 74,9 %.",
+              "Guidance Q2 : 91 Md$ de chiffre d'affaires.",
+              "Impact sur la thèse Business Positive.",
+              "Les données disponibles renforcent la lecture d'un leadership durable sur le compute IA et l'écosystème.",
+              "Business Refresh : Not Needed sur ces seuls éléments : ils renforcent davantage la thèse existante qu'ils ne la changent.",
+              "Impact sur la valorisation Valuation Refresh : Recommended.",
+              "La guidance Q2 à 91 Md$ justifie de remettre à jour les hypothèses de croissance et de FCF du modèle.",
+              "Décision Hold.",
+              "L'analyse antérieure concluait à conserver, avec une cible portefeuille autour de 9 % et un plafond de 9–10 %."
+            ],
+            "score": null,
+            "verdict": null,
+            "confidence": "Medium",
+            "projectionStatus": "absent",
+            "diagnostics": []
+          },
+          {
+            "schemaVersion": "1.0.0",
+            "id": "3b537ea7af3581fa9ab2f6cecccba4e5",
+            "title": "NVIDIA — Business Check v3 — Full",
+            "sourceUrl": "https://app.notion.com/p/NVIDIA-Business-Check-v3-Full-3b537ea7af3581fa9ab2f6cecccba4e5",
+            "family": "business",
+            "originalFamily": null,
+            "sourceKind": "analysis",
+            "agent": "Business Analyst",
+            "status": "Superseded",
+            "date": "2026-08-07",
+            "lastEditedTime": "2026-08-07T12:05:00.000Z",
+            "companyIds": [
+              "3b337ea7af35811eb7e5e934f832c389"
+            ],
+            "revision": "2026-08-07T12:05:00.000Z",
+            "sourceFreshness": "unknown",
+            "archived": true,
+            "provenance": {
+              "kind": "notion",
+              "sourceId": "3b537ea7-af35-81fa-9ab2-f6cecccba4e5",
+              "revision": "2026-08-07T12:05:00.000Z",
+              "capturedAt": "2026-08-07T12:05:00.000Z"
+            },
+            "summary": "**Business Verdict : Excellente — 91/100.\n** NVIDIA est une plateforme de calcul accéléré à moat exceptionnel, portée par CUDA, le co-design matériel/réseau/logiciel et une exécution industrielle hors norme.\nLe risque business central n’est pas aujourd’hui la demande mais la concentration des clients, des fournisseurs critiques et la substitution partielle par les ASIC propriétaires.",
+            "handoffSummary": "Business exceptionnel dominé par CUDA et le co-design compute-réseau-logiciel. Risques principaux: concentration clients, dépendance TSMC/HBM/packaging et accélérateurs propriétaires. Valuation Check recommandé: Oui.",
+            "previewSummaryItems": [
+              "**Business Verdict : Excellente — 91/100.",
+              "** NVIDIA est une plateforme de calcul accéléré à moat exceptionnel, portée par CUDA, le co-design matériel/réseau/logiciel et une exécution industrielle hors norme.",
+              "Le risque business central n’est pas aujourd’hui la demande mais la concentration des clients, des fournisseurs critiques et la substitution partielle par les ASIC propriétaires."
+            ],
+            "score": "91",
+            "verdict": "Excellente",
+            "confidence": "High",
+            "projectionStatus": "absent",
+            "diagnostics": [
+              {
+                "code": "unsupported_block",
+                "message": "Bloc unrepresented_snapshot non pris en charge par le lecteur.",
+                "severity": "warning"
+              },
+              {
+                "code": "unsupported_block",
+                "message": "Bloc unrepresented_snapshot non pris en charge par le lecteur.",
+                "severity": "warning"
+              }
+            ]
+          },
+          {
+            "schemaVersion": "1.0.0",
+            "id": "3b537ea7af3581248879f2473b25dafe",
+            "title": "NVIDIA — Short Check v1 — Full",
+            "sourceUrl": "https://app.notion.com/p/NVIDIA-Short-Check-v1-Full-3b537ea7af3581248879f2473b25dafe",
+            "family": "short",
+            "originalFamily": null,
+            "sourceKind": "analysis",
+            "agent": "Short Seller",
+            "status": "Superseded",
+            "date": "2026-08-07",
+            "lastEditedTime": "2026-08-07T12:01:00.000Z",
+            "companyIds": [
+              "3b337ea7af35811eb7e5e934f832c389"
+            ],
+            "revision": "2026-08-07T12:01:00.000Z",
+            "sourceFreshness": "unknown",
+            "archived": true,
+            "provenance": {
+              "kind": "notion",
+              "sourceId": "3b537ea7-af35-8124-8879-f2473b25dafe",
+              "revision": "2026-08-07T12:01:00.000Z",
+              "capturedAt": "2026-08-07T12:01:00.000Z"
+            },
+            "summary": "Rapport remplacé par une nouvelle version reconstruite strictement selon le skill short-seller le 7 août 2026.",
+            "handoffSummary": "Rapport superseded. Voir NVIDIA — Short Check v2 — Skill Full.",
+            "previewSummaryItems": [
+              "Rapport remplacé par une nouvelle version reconstruite strictement selon le skill short-seller le 7 août 2026."
+            ],
+            "score": null,
+            "verdict": "Superseded — remplacé par Short Check v2 strict skill",
+            "confidence": "High",
+            "projectionStatus": "absent",
+            "diagnostics": [
+              {
+                "code": "unsupported_block",
+                "message": "Bloc unrepresented_snapshot non pris en charge par le lecteur.",
+                "severity": "warning"
+              },
+              {
+                "code": "unsupported_block",
+                "message": "Bloc unrepresented_snapshot non pris en charge par le lecteur.",
+                "severity": "warning"
+              },
+              {
+                "code": "unsupported_block",
+                "message": "Bloc unrepresented_snapshot non pris en charge par le lecteur.",
+                "severity": "warning"
+              }
+            ]
+          },
+          {
+            "schemaVersion": "1.0.0",
+            "id": "3b437ea7af358148b5b4d24dda909bf6",
+            "title": "NVIDIA — Investment Memo v1",
+            "sourceUrl": "https://app.notion.com/p/NVIDIA-Investment-Memo-v1-3b437ea7af358148b5b4d24dda909bf6",
+            "family": "cio_memo",
+            "originalFamily": null,
+            "sourceKind": "analysis",
+            "agent": "Investment Memo",
+            "status": "Superseded",
+            "date": "2026-08-06",
+            "lastEditedTime": "2026-08-07T11:13:00.000Z",
+            "companyIds": [
+              "3b337ea7af35811eb7e5e934f832c389"
+            ],
+            "revision": "2026-08-07T11:13:00.000Z",
+            "sourceFreshness": "unknown",
+            "archived": true,
+            "provenance": {
+              "kind": "notion",
+              "sourceId": "3b437ea7-af35-8148-b5b4-d24dda909bf6",
+              "revision": "2026-08-07T11:13:00.000Z",
+              "capturedAt": "2026-08-07T11:13:00.000Z"
+            },
+            "summary": "Décision finale : CONSERVER NVIDIA reste un business exceptionnel, mais la position est déjà proche de la cible maximale du portefeuille.\nLe meilleur compromis est de conserver les 4 actions et d’attendre que les bénéfices rattrapent le cours.\nDecision Card Élément | Résultat Business | Excellent Valuation | Juste à modérément attractive Short | Pas de short ; risques réels Portfolio | Position déjà à la cible Décision | Conserver Poids cible | 9 % Poids maximal | 9–10 % Condition de réexamen | 190–200 $ TL;DR NVIDIA conserve une avance rare grâce à CUDA, sa plateforme complète et sa cadence produit.\nLes résultats récents confirment une croissance et une rentabilité exceptionnelles.\nToutefois, le marché valorise déjà une grande partie de cette qualité et les principaux risques — capex hyperscalers, ASIC internes, Chine, marges — restent significatifs.\nDans le portefeuille, les 4 actions représentent déjà presque la cible de 9 %, avec une exposition indirecte élevée via toute la chaîne semi et IA.\nThèse CUDA et l’écosystème créent des switching costs puissants.\nBlackwell puis Rubin soutiennent un cycle produit rapide.\nL’inférence et les agents peuvent prolonger la demande au-delà de l’entraînement.\nNetworking et systèmes complets augmentent la captation de valeur.\nAntithèse Le cycle IA peut être surinvesti.\nSi les clients ne monétisent pas suffisamment leurs dépenses, ils peuvent réduire les commandes ou favoriser leurs propres ASIC.\nUne normalisation simultanée de la croissance, des marges et du multiple créerait un downside important.\nDébat central L’inférence et l’agentic AI peuvent-elles compenser durablement la normalisation des dépenses d’entraînement et la montée des puces propriétaires ?\nScénarios Bear : 140–175 $ — ralentissement des capex et compression des marges.\nBase : 225–275 $ — croissance normalisée, marges encore supérieures à 70 %.\nBull : 300–360 $ — inference et Rubin prolongent l’hypercroissance.\nCritères d’invalidation Croissance Data Center sous 20 % pendant deux trimestres.\nMarge brute sous 68–70 % sans cause temporaire.\nPerte significative de parts de marché.\nRévisions collectives à la baisse des capex hyperscalers.\nRetard majeur de Rubin.\nPlan d’exécution Conserver les 4 actions.\nNe pas renforcer avant la prochaine publication.\nRéexaminer sous 190–200 $ si le poids est inférieur à 9 %.\nRenforcement plus intéressant sous 180–190 $ si la thèse reste intacte.\nGeler les achats si la ligne dépasse 10 %.\nHANDOFF FINAL Entreprise : NVIDIA Ticker : NVDA Date : 6 août 2026 Décision : Conserver Priorité : Forte comme position, faible comme nouvel achat Confiance : Élevée sur le business, moyenne sur la valorisation Poids cible : 9 % Poids maximal : 9–10 % Prix / condition d’entrée : Réexamen sous 190–200 $ Source de financement : Aucun financement immédiat Thèse en trois points Moat CUDA et plateforme complète.\nDemande IA encore très puissante.\nInference et Rubin peuvent prolonger le cycle.\nRisques en trois points Normalisation des capex hyperscalers.\nASIC propriétaires et pression concurrentielle.\nConcentration excessive du portefeuille sur l’IA et les semi-conducteurs.",
+            "handoffSummary": "Décision finale : conserver les 4 actions. Business exceptionnel, valorisation acceptable mais non décotée, risques baissiers réels et position déjà proche de la cible de 9 %. Réexamen sous 190–200 $.",
+            "previewSummaryItems": [
+              "Décision finale : CONSERVER NVIDIA reste un business exceptionnel, mais la position est déjà proche de la cible maximale du portefeuille.",
+              "Le meilleur compromis est de conserver les 4 actions et d’attendre que les bénéfices rattrapent le cours.",
+              "Decision Card Élément | Résultat Business | Excellent Valuation | Juste à modérément attractive Short | Pas de short ; risques réels Portfolio | Position déjà à la cible Décision | Conserver Poids cible | 9 % Poids maximal | 9–10 % Condition de réexamen | 190–200 $ TL;DR NVIDIA conserve une avance rare grâce à CUDA, sa plateforme complète et sa cadence produit.",
+              "Les résultats récents confirment une croissance et une rentabilité exceptionnelles.",
+              "Toutefois, le marché valorise déjà une grande partie de cette qualité et les principaux risques — capex hyperscalers, ASIC internes, Chine, marges — restent significatifs.",
+              "Dans le portefeuille, les 4 actions représentent déjà presque la cible de 9 %, avec une exposition indirecte élevée via toute la chaîne semi et IA.",
+              "Thèse CUDA et l’écosystème créent des switching costs puissants.",
+              "Blackwell puis Rubin soutiennent un cycle produit rapide.",
+              "L’inférence et les agents peuvent prolonger la demande au-delà de l’entraînement.",
+              "Networking et systèmes complets augmentent la captation de valeur.",
+              "Antithèse Le cycle IA peut être surinvesti.",
+              "Si les clients ne monétisent pas suffisamment leurs dépenses, ils peuvent réduire les commandes ou favoriser leurs propres ASIC.",
+              "Une normalisation simultanée de la croissance, des marges et du multiple créerait un downside important.",
+              "Débat central L’inférence et l’agentic AI peuvent-elles compenser durablement la normalisation des dépenses d’entraînement et la montée des puces propriétaires ?",
+              "Scénarios Bear : 140–175 $ — ralentissement des capex et compression des marges.",
+              "Base : 225–275 $ — croissance normalisée, marges encore supérieures à 70 %.",
+              "Bull : 300–360 $ — inference et Rubin prolongent l’hypercroissance.",
+              "Critères d’invalidation Croissance Data Center sous 20 % pendant deux trimestres.",
+              "Marge brute sous 68–70 % sans cause temporaire.",
+              "Perte significative de parts de marché.",
+              "Révisions collectives à la baisse des capex hyperscalers.",
+              "Retard majeur de Rubin.",
+              "Plan d’exécution Conserver les 4 actions.",
+              "Ne pas renforcer avant la prochaine publication.",
+              "Réexaminer sous 190–200 $ si le poids est inférieur à 9 %.",
+              "Renforcement plus intéressant sous 180–190 $ si la thèse reste intacte.",
+              "Geler les achats si la ligne dépasse 10 %.",
+              "HANDOFF FINAL Entreprise : NVIDIA Ticker : NVDA Date : 6 août 2026 Décision : Conserver Priorité : Forte comme position, faible comme nouvel achat Confiance : Élevée sur le business, moyenne sur la valorisation Poids cible : 9 % Poids maximal : 9–10 % Prix / condition d’entrée : Réexamen sous 190–200 $ Source de financement : Aucun financement immédiat Thèse en trois points Moat CUDA et plateforme complète.",
+              "Demande IA encore très puissante.",
+              "Inference et Rubin peuvent prolonger le cycle.",
+              "Risques en trois points Normalisation des capex hyperscalers.",
+              "ASIC propriétaires et pression concurrentielle.",
+              "Concentration excessive du portefeuille sur l’IA et les semi-conducteurs."
+            ],
+            "score": null,
+            "verdict": "Conserver",
+            "confidence": "High",
+            "projectionStatus": "absent",
+            "diagnostics": []
+          },
+          {
+            "schemaVersion": "1.0.0",
+            "id": "3b437ea7af3581a39faeea983a56cb74",
+            "title": "NVIDIA — Portfolio Check v1",
+            "sourceUrl": "https://app.notion.com/p/NVIDIA-Portfolio-Check-v1-3b437ea7af3581a39faeea983a56cb74",
+            "family": "portfolio",
+            "originalFamily": null,
+            "sourceKind": "analysis",
+            "agent": "Portfolio Manager",
+            "status": "Superseded",
+            "date": "2026-08-06",
+            "lastEditedTime": "2026-08-07T10:27:00.000Z",
+            "companyIds": [
+              "3b337ea7af35811eb7e5e934f832c389"
+            ],
+            "revision": "2026-08-07T10:27:00.000Z",
+            "sourceFreshness": "unknown",
+            "archived": true,
+            "provenance": {
+              "kind": "notion",
+              "sourceId": "3b437ea7-af35-81a3-9fae-ea983a56cb74",
+              "revision": "2026-08-07T10:27:00.000Z",
+              "capturedAt": "2026-08-07T10:27:00.000Z"
+            },
+            "summary": "**Verdict : conserver — position déjà à la cible**",
+            "handoffSummary": "4 actions à un PRU de 160,80 €. La ligne est proche de la cible de 9 %, tandis que l’exposition économique à NVIDIA est amplifiée par TSMC, BESI, Advantest, Microsoft, Nebius et l’ETF semi. Ne pas renforcer maintenant.",
+            "previewSummaryItems": [
+              "**Verdict : conserver — position déjà à la cible**"
+            ],
+            "score": null,
+            "verdict": "Hold; position already at target",
+            "confidence": "High",
+            "projectionStatus": "absent",
+            "diagnostics": []
+          },
+          {
+            "schemaVersion": "1.0.0",
+            "id": "3b537ea7af358118949aea81b5ac078e",
+            "title": "NVIDIA — Valuation Check v3 — Skill Full",
+            "sourceUrl": "https://app.notion.com/p/NVIDIA-Valuation-Check-v3-Skill-Full-3b537ea7af358118949aea81b5ac078e",
+            "family": "valuation",
+            "originalFamily": null,
+            "sourceKind": "analysis",
+            "agent": "Valuation Analyst",
+            "status": "Superseded",
+            "date": "2026-08-07",
+            "lastEditedTime": "2026-08-07T08:11:00.000Z",
+            "companyIds": [
+              "3b337ea7af35811eb7e5e934f832c389"
+            ],
+            "revision": "2026-08-07T08:11:00.000Z",
+            "sourceFreshness": "unknown",
+            "archived": true,
+            "provenance": {
+              "kind": "notion",
+              "sourceId": "3b537ea7-af35-8118-949a-ea81b5ac078e",
+              "revision": "2026-08-07T08:11:00.000Z",
+              "capturedAt": "2026-08-07T08:11:00.000Z"
+            },
+            "summary": "**Verdict : Attractive**.\nCAGR Bear/Base/Bull : **-4,5 / 15,4 / 24,7 %**.\n**Prix max 12 % : ~250 USD**.\nFair value actuelle : **245–270 USD**.\nLe titre est moins cher en forward qu'en trailing; la marge de sécurité reste moyenne à cause du cycle IA et de la concentration.",
+            "handoffSummary": "Attractive. Prix max 12 % ~250 USD; Bear/Base/Bull 170/440/650 USD; CAGR base ~15,4 %. Fair value 245–270 USD; DCF 185–265 USD.",
+            "previewSummaryItems": [
+              "**Verdict : Attractive**.",
+              "CAGR Bear/Base/Bull : **-4,5 / 15,4 / 24,7 %**.",
+              "**Prix max 12 % : ~250 USD**.",
+              "Fair value actuelle : **245–270 USD**.",
+              "Le titre est moins cher en forward qu'en trailing; la marge de sécurité reste moyenne à cause du cycle IA et de la concentration."
+            ],
+            "score": null,
+            "verdict": "Attractive",
+            "confidence": "High",
+            "projectionStatus": "absent",
+            "diagnostics": []
+          },
+          {
+            "schemaVersion": "1.0.0",
+            "id": "3b537ea7af3581b9b88cc66775e74b1e",
+            "title": "NVIDIA — Valuation Check v2",
+            "sourceUrl": "https://app.notion.com/p/NVIDIA-Valuation-Check-v2-3b537ea7af3581b9b88cc66775e74b1e",
+            "family": "valuation",
+            "originalFamily": null,
+            "sourceKind": "analysis",
+            "agent": "Valuation Analyst",
+            "status": "Superseded",
+            "date": "2026-08-07",
+            "lastEditedTime": "2026-08-07T06:52:00.000Z",
+            "companyIds": [],
+            "revision": "2026-08-07T06:52:00.000Z",
+            "sourceFreshness": "unknown",
+            "archived": true,
+            "provenance": {
+              "kind": "notion",
+              "sourceId": "3b537ea7-af35-81b9-b88c-c66775e74b1e",
+              "revision": "2026-08-07T06:52:00.000Z",
+              "capturedAt": "2026-08-07T06:52:00.000Z"
+            },
+            "summary": "**Verdict : valorisation correcte à légèrement attractive — score 74/100.\n** À 218,99 USD, NVIDIA ne se paie plus comme une valeur d’hypercroissance extrême sur les bénéfices forward.\nLa croissance implicite reste exigeante, mais le rapport rendement/risque est meilleur qu’il y a un an.\nLa fair value centrale ressort à **245–270 USD**, avec un point milieu proche de **255 USD**.\nLa marge de sécurité reste toutefois insuffisante pour un renforcement agressif avant le Q2 FY2027.",
+            "handoffSummary": "À 218,99 USD, NVIDIA est moins chère sur les bénéfices forward que sur le trailing. La fair value centrale ressort à 245–270 USD, point milieu ~255 USD. Dans le scénario base (BPA FY2027 normalisé ~9 USD, +15 %/an sur cinq ans, multiple terminal 24x), le rendement attendu est ~15 %/an ; le prix maximum pour viser 12 % est ~250 USD. Le DCF est plus prudent, ~185–265 USD. Conserver ; renforcer surtout sous 210 USD, plus franchement vers 180–195 USD si les estimations restent intactes.",
+            "previewSummaryItems": [
+              "**Verdict : valorisation correcte à légèrement attractive — score 74/100.",
+              "** À 218,99 USD, NVIDIA ne se paie plus comme une valeur d’hypercroissance extrême sur les bénéfices forward.",
+              "La croissance implicite reste exigeante, mais le rapport rendement/risque est meilleur qu’il y a un an.",
+              "La fair value centrale ressort à **245–270 USD**, avec un point milieu proche de **255 USD**.",
+              "La marge de sécurité reste toutefois insuffisante pour un renforcement agressif avant le Q2 FY2027."
+            ],
+            "score": "74",
+            "verdict": "Correcte à légèrement attractive — fair value 245–270 USD, marge de sécurité limitée",
+            "confidence": "Medium",
+            "projectionStatus": "absent",
+            "diagnostics": [
+              {
+                "code": "unsupported_block",
+                "message": "Bloc unrepresented_snapshot non pris en charge par le lecteur.",
+                "severity": "warning"
+              }
+            ]
+          },
+          {
+            "schemaVersion": "1.0.0",
+            "id": "3b437ea7af3581e6abf5d48d42a64fe0",
+            "title": "NVIDIA — Valuation Check v1",
+            "sourceUrl": "https://app.notion.com/p/NVIDIA-Valuation-Check-v1-3b437ea7af3581e6abf5d48d42a64fe0",
+            "family": "valuation",
+            "originalFamily": null,
+            "sourceKind": "analysis",
+            "agent": "Valuation Analyst",
+            "status": "Superseded",
+            "date": "2026-08-06",
+            "lastEditedTime": "2026-08-07T06:04:00.000Z",
+            "companyIds": [
+              "3b337ea7af35811eb7e5e934f832c389"
+            ],
+            "revision": "2026-08-07T06:04:00.000Z",
+            "sourceFreshness": "unknown",
+            "archived": true,
+            "provenance": {
+              "kind": "notion",
+              "sourceId": "3b437ea7-af35-81e6-abf5-d48d42a64fe0",
+              "revision": "2026-08-07T06:04:00.000Z",
+              "capturedAt": "2026-08-07T06:04:00.000Z"
+            },
+            "summary": "**Verdict : raisonnable, mais pas bon marché — Confiance moyenne**",
+            "handoffSummary": "Valorisation non excessive au regard de la croissance actuelle, mais le cours suppose une croissance forte et des marges durablement élevées. Zone de réexamen 190–200 $, attractive sous 180–190 $ si la thèse reste intacte.",
+            "previewSummaryItems": [
+              "**Verdict : raisonnable, mais pas bon marché — Confiance moyenne**"
+            ],
+            "score": "72",
+            "verdict": "Fair to moderately attractive",
+            "confidence": "Medium",
+            "projectionStatus": "absent",
+            "diagnostics": []
+          },
+          {
+            "schemaVersion": "1.0.0",
+            "id": "3b437ea7af3581e58d2ace73102f2536",
+            "title": "NVIDIA — Business Check v1",
+            "sourceUrl": "https://app.notion.com/p/NVIDIA-Business-Check-v1-3b437ea7af3581e58d2ace73102f2536",
+            "family": "business",
+            "originalFamily": null,
+            "sourceKind": "analysis",
+            "agent": "Business Analyst",
+            "status": "Superseded",
+            "date": "2026-08-06",
+            "lastEditedTime": "2026-08-06T13:09:00.000Z",
+            "companyIds": [
+              "3b337ea7af35811eb7e5e934f832c389"
+            ],
+            "revision": "2026-08-06T13:09:00.000Z",
+            "sourceFreshness": "unknown",
+            "archived": true,
+            "provenance": {
+              "kind": "notion",
+              "sourceId": "3b437ea7-af35-81e5-8d2a-ce73102f2536",
+              "revision": "2026-08-06T13:09:00.000Z",
+              "capturedAt": "2026-08-06T13:09:00.000Z"
+            },
+            "summary": "**Verdict : Excellent — Confiance élevée**",
+            "handoffSummary": "Business exceptionnel : leadership GPU IA, CUDA, networking et systèmes complets. Croissance et marges hors normes, mais forte concentration Data Center et dépendance aux hyperscalers.",
+            "previewSummaryItems": [
+              "**Verdict : Excellent — Confiance élevée**"
+            ],
+            "score": "94",
+            "verdict": "Excellent",
+            "confidence": "High",
+            "projectionStatus": "absent",
+            "diagnostics": []
+          },
+          {
+            "schemaVersion": "1.0.0",
+            "id": "3b437ea7af35819baabbc1cce905723e",
+            "title": "NVIDIA — Short Check v1",
+            "sourceUrl": "https://app.notion.com/p/NVIDIA-Short-Check-v1-3b437ea7af35819baabbc1cce905723e",
+            "family": "short",
+            "originalFamily": null,
+            "sourceKind": "analysis",
+            "agent": "Short Seller",
+            "status": "Validated",
+            "date": "2026-08-06",
+            "lastEditedTime": "2026-08-06T09:27:00.000Z",
+            "companyIds": [
+              "3b337ea7af35811eb7e5e934f832c389"
+            ],
+            "revision": "2026-08-06T09:27:00.000Z",
+            "sourceFreshness": "unknown",
+            "archived": true,
+            "provenance": {
+              "kind": "notion",
+              "sourceId": "3b437ea7-af35-819b-aabb-c1cce905723e",
+              "revision": "2026-08-06T09:27:00.000Z",
+              "capturedAt": "2026-08-06T09:27:00.000Z"
+            },
+            "summary": "**Verdict : ne pas shorter, mais ne pas ignorer les risques**",
+            "handoffSummary": "Pas de thèse short immédiate : fondamentaux trop puissants. Les risques majeurs sont la concentration hyperscalers, les ASIC propriétaires, une baisse de marge, la Chine et une correction de valorisation.",
+            "previewSummaryItems": [
+              "**Verdict : ne pas shorter, mais ne pas ignorer les risques**"
+            ],
+            "score": null,
+            "verdict": "No short; meaningful downside risks",
+            "confidence": "High",
+            "projectionStatus": "absent",
+            "diagnostics": []
+          }
+        ]
+      },
+      "metadata": {
+        "revision": null,
+        "freshness": "unknown",
+        "provenance": {
+          "kind": "notion",
+          "sourceId": "3b337ea7af35811eb7e5e934f832c389",
+          "revision": null,
+          "capturedAt": null
+        },
+        "diagnostics": []
+      }
+    }
+  },
+  "isError": false
+}

@@ -1,0 +1,98 @@
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "{\"project_id\":\"appgprj_6a7d7a1233a08191a8d35b746b284e95\",\"binding_name\":\"DB\",\"table_name\":\"notion_analysis_writes\",\"columns\":[\"run_id\",\"digest\",\"page_id\",\"phase\",\"owner\",\"lease_until\",\"previous_current\"],\"rows\":[{\"run_id\":\"[\\\"FV-LITE-20261005-NATIVE\\\",\\\"business\\\"]\",\"digest\":\"aef73986947de3dd100753d052c5368bd872ddcdf42ee23a24e93d8882d3402a\",\"page_id\":\"3f037ea7-af35-8102-9b02-d3ed4a721563\",\"phase\":\"persisted\",\"owner\":null,\"lease_until\":0,\"previous_current\":null},{\"run_id\":\"[\\\"FV-LITE-20261005-NATIVE\\\",\\\"valuation\\\"]\",\"digest\":\"04925ee8c39b646c83fa6501425445a68c99794ae729441a5ae1f8fc3275e34e\",\"page_id\":\"3f037ea7-af35-81f0-b810-e934dda62b9d\",\"phase\":\"persisted\",\"owner\":null,\"lease_until\":0,\"previous_current\":null},{\"run_id\":\"[\\\"NVDA-FA-20261005-NATIVE\\\",\\\"business\\\"]\",\"digest\":\"04567a84a4c595288bc38aa61f63e66b46db2f152366b182120b8672c54de765\",\"page_id\":null,\"phase\":\"new\",\"owner\":null,\"lease_until\":0,\"previous_current\":null},{\"run_id\":\"[\\\"mcp-personal-stale-e4b16a67-d389-489a-a49b-86011cc2eb05\\\",\\\"business\\\"]\",\"digest\":\"43bc16e64901810ff7fd2d8e1e370f570261c701d64ac82d002b47a603087dc0\",\"page_id\":null,\"phase\":\"new\",\"owner\":null,\"lease_until\":0,\"previous_current\":null},{\"run_id\":\"[\\\"mcp-personal-test-542859c4-9baf-4291-8f79-89fe4a848db5\\\",\\\"business\\\"]\",\"digest\":\"71e7358395049a25a1b1d8f9b66f1f667aeea504805b7405f8de449eab5f1b47\",\"page_id\":\"3ef37ea7-af35-8175-b336-c1f20fba5efd\",\"phase\":\"persisted\",\"owner\":null,\"lease_until\":0,\"previous_current\":null},{\"run_id\":\"[\\\"mcp-personal-test-a920b9b0-7825-4434-8dc8-d0e2fb297b3c\\\",\\\"business\\\"]\",\"digest\":\"9adf627122715ba2c40a2cf175b64548d32499b768b59255f9718cda6e65fc34\",\"page_id\":\"3ef37ea7-af35-8127-b0c1-ebc46e2b86e8\",\"phase\":\"persisted\",\"owner\":null,\"lease_until\":0,\"previous_current\":null},{\"run_id\":\"[\\\"mcp-personal-test-bd3756f5-7b6f-49f4-830e-1f0ede6bca1d\\\",\\\"business\\\"]\",\"digest\":\"ffdc9b3090ecf0db40863e6cef20aac58029a96cf86a0615e927cc42436d766e\",\"page_id\":\"3ef37ea7-af35-816f-8ef2-f42a3b1ddd01\",\"phase\":\"persisted\",\"owner\":null,\"lease_until\":0,\"previous_current\":null}],\"limit\":25,\"offset\":0,\"has_more\":false,\"model_projection\":{\"truncated\":false,\"truncated_values\":0,\"omitted_columns\":0,\"omitted_rows\":0,\"next_offset\":null}}"
+    }
+  ],
+  "structuredContent": {
+    "project_id": "appgprj_6a7d7a1233a08191a8d35b746b284e95",
+    "binding_name": "DB",
+    "table_name": "notion_analysis_writes",
+    "columns": [
+      "run_id",
+      "digest",
+      "page_id",
+      "phase",
+      "owner",
+      "lease_until",
+      "previous_current"
+    ],
+    "rows": [
+      {
+        "run_id": "[\"FV-LITE-20261005-NATIVE\",\"business\"]",
+        "digest": "aef73986947de3dd100753d052c5368bd872ddcdf42ee23a24e93d8882d3402a",
+        "page_id": "3f037ea7-af35-8102-9b02-d3ed4a721563",
+        "phase": "persisted",
+        "owner": null,
+        "lease_until": 0,
+        "previous_current": null
+      },
+      {
+        "run_id": "[\"FV-LITE-20261005-NATIVE\",\"valuation\"]",
+        "digest": "04925ee8c39b646c83fa6501425445a68c99794ae729441a5ae1f8fc3275e34e",
+        "page_id": "3f037ea7-af35-81f0-b810-e934dda62b9d",
+        "phase": "persisted",
+        "owner": null,
+        "lease_until": 0,
+        "previous_current": null
+      },
+      {
+        "run_id": "[\"NVDA-FA-20261005-NATIVE\",\"business\"]",
+        "digest": "04567a84a4c595288bc38aa61f63e66b46db2f152366b182120b8672c54de765",
+        "page_id": null,
+        "phase": "new",
+        "owner": null,
+        "lease_until": 0,
+        "previous_current": null
+      },
+      {
+        "run_id": "[\"mcp-personal-stale-e4b16a67-d389-489a-a49b-86011cc2eb05\",\"business\"]",
+        "digest": "43bc16e64901810ff7fd2d8e1e370f570261c701d64ac82d002b47a603087dc0",
+        "page_id": null,
+        "phase": "new",
+        "owner": null,
+        "lease_until": 0,
+        "previous_current": null
+      },
+      {
+        "run_id": "[\"mcp-personal-test-542859c4-9baf-4291-8f79-89fe4a848db5\",\"business\"]",
+        "digest": "71e7358395049a25a1b1d8f9b66f1f667aeea504805b7405f8de449eab5f1b47",
+        "page_id": "3ef37ea7-af35-8175-b336-c1f20fba5efd",
+        "phase": "persisted",
+        "owner": null,
+        "lease_until": 0,
+        "previous_current": null
+      },
+      {
+        "run_id": "[\"mcp-personal-test-a920b9b0-7825-4434-8dc8-d0e2fb297b3c\",\"business\"]",
+        "digest": "9adf627122715ba2c40a2cf175b64548d32499b768b59255f9718cda6e65fc34",
+        "page_id": "3ef37ea7-af35-8127-b0c1-ebc46e2b86e8",
+        "phase": "persisted",
+        "owner": null,
+        "lease_until": 0,
+        "previous_current": null
+      },
+      {
+        "run_id": "[\"mcp-personal-test-bd3756f5-7b6f-49f4-830e-1f0ede6bca1d\",\"business\"]",
+        "digest": "ffdc9b3090ecf0db40863e6cef20aac58029a96cf86a0615e927cc42436d766e",
+        "page_id": "3ef37ea7-af35-816f-8ef2-f42a3b1ddd01",
+        "phase": "persisted",
+        "owner": null,
+        "lease_until": 0,
+        "previous_current": null
+      }
+    ],
+    "limit": 25,
+    "offset": 0,
+    "has_more": false,
+    "model_projection": {
+      "truncated": false,
+      "truncated_values": 0,
+      "omitted_columns": 0,
+      "omitted_rows": 0,
+      "next_offset": null
+    }
+  },
+  "isError": false
+}

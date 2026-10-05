@@ -1,0 +1,261 @@
+TAP version 13
+# (node:76760) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: callout without icon omits icon entirely
+ok 1 - callout without icon omits icon entirely
+  ---
+  duration_ms: 98.380428
+  type: 'test'
+  ...
+# Subtest: callout with emoji preserves the Notion icon DTO
+ok 2 - callout with emoji preserves the Notion icon DTO
+  ---
+  duration_ms: 11.760464
+  type: 'test'
+  ...
+# Subtest: Notion rejection diagnostics retain structural validation paths without echoed payload or secrets
+ok 3 - Notion rejection diagnostics retain structural validation paths without echoed payload or secrets
+  ---
+  duration_ms: 8.60323
+  type: 'test'
+  ...
+# Subtest: nominal save re-reads Notion and verifies the server-assigned identity through Core
+ok 4 - nominal save re-reads Notion and verifies the server-assigned identity through Core
+  ---
+  duration_ms: 32.171381
+  type: 'test'
+  ...
+# Subtest: creation accepts a canonical intent identity without requiring a physical Notion UUID
+ok 5 - creation accepts a canonical intent identity without requiring a physical Notion UUID
+  ---
+  duration_ms: 10.346569
+  type: 'test'
+  ...
+# Subtest: same run re-reads actual state without duplicate or repeat promotion
+ok 6 - same run re-reads actual state without duplicate or repeat promotion
+  ---
+  duration_ms: 14.455732
+  type: 'test'
+  ...
+# Subtest: validated save indexes the promoted Current relation without rebuilding unrelated links
+ok 7 - validated save indexes the promoted Current relation without rebuilding unrelated links
+  ---
+  duration_ms: 7.401469
+  type: 'test'
+  ...
+# Subtest: incompatible same run conflicts before another create
+ok 8 - incompatible same run conflicts before another create
+  ---
+  duration_ms: 8.742335
+  type: 'test'
+  ...
+# Subtest: stale expectedRevision cannot mutate an existing analysis
+ok 9 - stale expectedRevision cannot mutate an existing analysis
+  ---
+  duration_ms: 8.623419
+  type: 'test'
+  ...
+# notion_request_rejected { status: 404, type: 'unknown', code: 'unknown', validation: [] }
+# Subtest: Company absent fails before persistence
+ok 10 - Company absent fails before persistence
+  ---
+  duration_ms: 9.609155
+  type: 'test'
+  ...
+# Subtest: inconsistent input Company relation is rejected before mutation
+ok 11 - inconsistent input Company relation is rejected before mutation
+  ---
+  duration_ms: 3.27858
+  type: 'test'
+  ...
+# notion_request_rejected { status: 403, type: 'unknown', code: 'unknown', validation: [] }
+# Subtest: persistence OK / promotion KO returns resumable pending and safely resumes
+ok 12 - persistence OK / promotion KO returns resumable pending and safely resumes
+  ---
+  duration_ms: 8.831413
+  type: 'test'
+  ...
+# Subtest: promotion OK / final verification KO never returns verified
+ok 13 - promotion OK / final verification KO never returns verified
+  ---
+  duration_ms: 5.947944
+  type: 'test'
+  ...
+# Subtest: ambiguous create timeout reconciles Run ID before any mutation retry
+ok 14 - ambiguous create timeout reconciles Run ID before any mutation retry
+  ---
+  duration_ms: 6.171818
+  type: 'test'
+  ...
+# Subtest: ambiguous promotion reconciles Company rather than blindly repeating PATCH
+ok 15 - ambiguous promotion reconciles Company rather than blindly repeating PATCH
+  ---
+  duration_ms: 7.980367
+  type: 'test'
+  ...
+# notion_request_rejected { status: 429, type: 'unknown', code: 'unknown', validation: [] }
+# Subtest: rate limited mutation is attempted once and does not certify persistence
+ok 16 - rate limited mutation is attempted once and does not certify persistence
+  ---
+  duration_ms: 6.593236
+  type: 'test'
+  ...
+# Subtest: wrong final Current returns partial, never verified
+ok 17 - wrong final Current returns partial, never verified
+  ---
+  duration_ms: 6.005733
+  type: 'test'
+  ...
+# Subtest: concurrent same-run writers share the D1 lease and create at most one page
+ok 18 - concurrent same-run writers share the D1 lease and create at most one page
+  ---
+  duration_ms: 8.452318
+  type: 'test'
+  ...
+# Subtest: metadata update checks source revision and preserves the existing report body
+ok 19 - metadata update checks source revision and preserves the existing report body
+  ---
+  duration_ms: 11.708974
+  type: 'test'
+  ...
+# Subtest: position reads source lifecycle: open, closed, absent, inconsistent and invalid
+ok 20 - position reads source lifecycle: open, closed, absent, inconsistent and invalid
+  ---
+  duration_ms: 11.395295
+  type: 'test'
+  ...
+# Subtest: unresolved ambiguous create is fenced across replays, not blindly retried
+ok 21 - unresolved ambiguous create is fenced across replays, not blindly retried
+  ---
+  duration_ms: 6.911789
+  type: 'test'
+  ...
+# Subtest: Draft persistence is readable through MCP Core without promoting Current
+ok 22 - Draft persistence is readable through MCP Core without promoting Current
+  ---
+  duration_ms: 10.746241
+  type: 'test'
+  ...
+# Subtest: Draft save and replay update only their page indexes and avoid a second create
+ok 23 - Draft save and replay update only their page indexes and avoid a second create
+  ---
+  duration_ms: 7.878277
+  type: 'test'
+  ...
+# Subtest: adapter canonicalizes dashed update identity before receipt validation
+ok 24 - adapter canonicalizes dashed update identity before receipt validation
+  ---
+  duration_ms: 11.860841
+  type: 'test'
+  ...
+# Subtest: long report is written in bounded chunks and completely re-read before verified
+ok 25 - long report is written in bounded chunks and completely re-read before verified
+  ---
+  duration_ms: 30.493693
+  type: 'test'
+  ...
+# Subtest: long Draft certifies the final append with a complete read without a redundant full scan
+ok 26 - long Draft certifies the final append with a complete read without a redundant full scan
+  ---
+  duration_ms: 20.217745
+  type: 'test'
+  ...
+# Subtest: long Draft cannot certify content changed during the final append read
+ok 27 - long Draft cannot certify content changed during the final append read
+  ---
+  duration_ms: 10.76628
+  type: 'test'
+  ...
+# Subtest: ambiguous append reconciles the exact block prefix without duplicating content
+ok 28 - ambiguous append reconciles the exact block prefix without duplicating content
+  ---
+  duration_ms: 25.214233
+  type: 'test'
+  ...
+# Subtest: lost D1 lease is detected before a Current mutation
+ok 29 - lost D1 lease is detected before a Current mutation
+  ---
+  duration_ms: 9.18523
+  type: 'test'
+  ...
+# Subtest: production shared Run ID remains idempotent independently for Business and Valuation modules
+ok 30 - production shared Run ID remains idempotent independently for Business and Valuation modules
+  ---
+  duration_ms: 15.26072
+  type: 'test'
+  ...
+# Subtest: physical Company must be a relation; schema mismatch cannot yield verified
+ok 31 - physical Company must be a relation; schema mismatch cannot yield verified
+  ---
+  duration_ms: 4.284325
+  type: 'test'
+  ...
+# Subtest: production source without a Summary property preserves the canonical summary in the report body
+ok 32 - production source without a Summary property preserves the canonical summary in the report body
+  ---
+  duration_ms: 7.600507
+  type: 'test'
+  ...
+# Subtest: Company archived during final verification cannot yield verified
+ok 33 - Company archived during final verification cannot yield verified
+  ---
+  duration_ms: 6.897439
+  type: 'test'
+  ...
+# Subtest: revisioned update cannot retype a Business Current page as Valuation
+ok 34 - revisioned update cannot retype a Business Current page as Valuation
+  ---
+  duration_ms: 8.899348
+  type: 'test'
+  ...
+# notion_request_rejected {
+#   status: 400,
+#   type: 'error',
+#   code: 'validation_error',
+#   validation: [ { path: 'body.children[6].callout.icon', expected: 'object' } ]
+# }
+# Subtest: provider diagnostic survives the adapter Core bridge without sensitive content
+ok 35 - provider diagnostic survives the adapter Core bridge without sensitive content
+  ---
+  duration_ms: 5.86488
+  type: 'test'
+  ...
+# Subtest: provider rich-text-array limit rejects before a mutation
+ok 36 - provider rich-text-array limit rejects before a mutation
+  ---
+  duration_ms: 5.395357
+  type: 'test'
+  ...
+# Subtest: provider table-children limit rejects before a mutation
+ok 37 - provider table-children limit rejects before a mutation
+  ---
+  duration_ms: 3.964057
+  type: 'test'
+  ...
+# Subtest: provider link-url limit rejects before a mutation
+ok 38 - provider link-url limit rejects before a mutation
+  ---
+  duration_ms: 7.464939
+  type: 'test'
+  ...
+# Subtest: provider utf8-size limit rejects before a mutation
+ok 39 - provider utf8-size limit rejects before a mutation
+  ---
+  duration_ms: 5.443417
+  type: 'test'
+  ...
+# Subtest: supported block DTOs omit absent optional values while nullable properties remain valid
+ok 40 - supported block DTOs omit absent optional values while nullable properties remain valid
+  ---
+  duration_ms: 7.874316
+  type: 'test'
+  ...
+1..40
+# tests 40
+# suites 0
+# pass 40
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 628.250377

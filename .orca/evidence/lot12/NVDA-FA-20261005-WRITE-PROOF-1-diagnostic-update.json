@@ -1,0 +1,45 @@
+{
+  "receiptUnchanged": true,
+  "receiptStatus": "partial",
+  "writerPersisted": false,
+  "writerVerified": false,
+  "observablePersistence": true,
+  "mcpReadbackNowAvailable": true,
+  "analysisId": "3f037ea7af3581a2acfbc17bc6c1e29d",
+  "revision": "2026-10-05T15:30:00.000Z",
+  "status": "Draft",
+  "score": "92",
+  "verdict": "Excellent",
+  "callout": [
+    {
+      "id": "3f037ea7-af35-815f-adf6-e421b286de23",
+      "icon": "💡"
+    }
+  ],
+  "diagnostics": [
+    {
+      "code": "unsupported_block",
+      "message": "Bloc unrepresented_snapshot non pris en charge par le lecteur.",
+      "severity": "warning"
+    },
+    {
+      "code": "unsupported_block",
+      "message": "Bloc unrepresented_snapshot non pris en charge par le lecteur.",
+      "severity": "warning"
+    },
+    {
+      "code": "unsupported_block",
+      "message": "Bloc unrepresented_snapshot non pris en charge par le lecteur.",
+      "severity": "warning"
+    },
+    {
+      "code": "unsupported_block",
+      "message": "Bloc unrepresented_snapshot non pris en charge par le lecteur.",
+      "severity": "warning"
+    }
+  ],
+  "journalPhase": "persisting",
+  "productionChanges": false,
+  "writeCalls": 0,
+  "lot12": "PARTIAL"
+}

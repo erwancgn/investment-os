@@ -1,4 +1,18 @@
-# Verdict final Lot 12 — PARTIAL / NO-GO
+# Verdict Lot 12 — blocker fermé, validation de clôture attendue
+
+## Mise à jour v240 — checkpoint avant validation/alignement
+
+READ AN-599 complet après correctif de humanReadableNotionBlocks : 9/9 tables, Evidence Ledger/Gates et 275/275 groupes natifs présents. Preuve archivée AN-599-tables-v240-mcp-readback.json / AN-599-tables-final-checkpoint.json. Site v240 / 2987b557052fe9afd56f895636de57b14062d530, env21, WRITE fermé, aucun nouveau WRITE. Tests299/299 et typecheck/build/artifact PASS. Arrêt avant alignement GitHub/plugin selon consigne. Les checkpoints BLOCKED ci-dessous sont historiques ; ce blocker documentaire est désormais fermé.
+
+## Checkpoint final 2026-10-05 — preuve PROOF-2
+
+Correctif callout asymétrique publié v237 / 0172d13eec50e0356664fbe5505edce28a3dbdd0. Tests 298/298, typecheck/build/artifact PASS. Un seul WRITE Business Draft sur NVDA-FA-20261005-WRITE-PROOF-2 crée AN-599 (3f037ea7af35815b85bfd367eac6549a) : receipt persisted, persisted:true, promoted:false, verified:false attendu Draft, journal persisted, batch D1 et READ MCP immédiat prouvés. Current inchangé, aucun doublon inattendu observé.
+
+Gate documentaire échoué : neuf tables Notion présentes mais zéro table dans le readback immédiat ; 162/275 groupes de texte/cellules manquent, notamment Evidence Ledger/Gates. Writer children() stocke dans block[type].children ; reader children() attend block.children. Aucun second WRITE ni correction supplémentaire.
+
+WRITE fermé, v239 / HEAD 03cff56c81b5f39501bdbdc293d32ce365bf0959 / environnement21, déploiement confirmé. Checkout Sites clean et poussé ; miroir GitHub non aligné et dirty, préservé. Lot13 non démarré. Détails et reprise : investment-os-lot12-handoff-2026-10-05.md à la racine du workspace.
+
+Les sections ci-dessous conservent les checkpoints historiques ; les receipts AN-597/AN-598 ne sont pas requalifiés rétroactivement.
 
 Date : 2026-10-05. Aucun Lot 13 commencé.
 
@@ -67,3 +81,7 @@ Comparaison 1.3.0→actuel qualitative seulement, source1.3.0 non disponible pou
 - Dette résiduelle PARTIAL : Evidence Gates, génération canonique native, doublons documentaire/lectures, tests autonomes Earnings/Setup, absence de receipts et relectures des outputs nouveaux.
 
 La phrase de gate globale n’est PAS démontrée. Verdict Lot12 PARTIAL / NO-GO. Les réparations locales sont reviewables, pas des receipts. Une nouvelle tentative WRITE ne doit pas être automatique : avant décision explicite, il reste à combler les preuves financières et à faire produire des payloads canoniques par les Skills. Lot13 non démarré.
+
+## Checkpoint WRITE PROOF 1 — 2026-10-05
+
+Lot12 reste PARTIAL : receipt partial (persistence_verification_failed), persisted:false/verified:false, get_analysis_by_id=null. AN-598 Draft est observable dans Notion. WRITE refermé sur v236 et refus hébergé forbidden/not_started vérifié. Voir NVDA-FA-20261005-WRITE-PROOF-1-write-checkpoint.md. Aucun retry ni Lot13.

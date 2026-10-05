@@ -1,0 +1,102 @@
+TAP version 13
+# Subtest: service Core imports only domain modules and no source, UI or transport runtime
+ok 1 - service Core imports only domain modules and no source, UI or transport runtime
+  ---
+  duration_ms: 68.605265
+  type: 'test'
+  ...
+# Subtest: core validates canonical reader results, preserves options, and classifies missing ports
+ok 2 - core validates canonical reader results, preserves options, and classifies missing ports
+  ---
+  duration_ms: 20.104493
+  type: 'test'
+  ...
+# Subtest: company resolution respects exact ticker, name, aliases, market ambiguity and absence
+ok 3 - company resolution respects exact ticker, name, aliases, market ambiguity and absence
+  ---
+  duration_ms: 43.720474
+  type: 'test'
+  ...
+# Subtest: analysis by ID enforces identity and canonical validation
+ok 4 - analysis by ID enforces identity and canonical validation
+  ---
+  duration_ms: 1.245409
+  type: 'test'
+  ...
+# Subtest: Current selection rejects broken explicit pointers and validates hydrated document context
+ok 5 - Current selection rejects broken explicit pointers and validates hydrated document context
+  ---
+  duration_ms: 1.533728
+  type: 'test'
+  ...
+# Subtest: list results and read failures are validated and sanitized
+ok 6 - list results and read failures are validated and sanitized
+  ---
+  duration_ms: 0.723319
+  type: 'test'
+  ...
+# Subtest: save validates run identity, revision and company references and only reports adapter receipts
+ok 7 - save validates run identity, revision and company references and only reports adapter receipts
+  ---
+  duration_ms: 1.3938
+  type: 'test'
+  ...
+# Subtest: closed positions can be addressed separately and do not enter portfolio holdings
+ok 8 - closed positions can be addressed separately and do not enter portfolio holdings
+  ---
+  duration_ms: 0.657497
+  type: 'test'
+  ...
+# (node:72862) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: read adapter preserves legacy company/document/portfolio payloads while validating canonical projections
+ok 9 - read adapter preserves legacy company/document/portfolio payloads while validating canonical projections
+  ---
+  duration_ms: 314.019197
+  type: 'test'
+  ...
+# Subtest: identity adapter resolves from company rows without reading analysis bodies
+ok 10 - identity adapter resolves from company rows without reading analysis bodies
+  ---
+  duration_ms: 6.432988
+  type: 'test'
+  ...
+# Subtest: history lookup by UUID preserves the archived legacy document and source date
+ok 11 - history lookup by UUID preserves the archived legacy document and source date
+  ---
+  duration_ms: 10.686728
+  type: 'test'
+  ...
+# Subtest: Current adapter separates Business, CIO Memo, Decision and Earnings pointers and loads only the selected body
+ok 12 - Current adapter separates Business, CIO Memo, Decision and Earnings pointers and loads only the selected body
+  ---
+  duration_ms: 41.672245
+  type: 'test'
+  ...
+# Subtest: Current selector reports wrong owner, wrong family, archived target and missing memo pointer distinctly
+ok 13 - Current selector reports wrong owner, wrong family, archived target and missing memo pointer distinctly
+  ---
+  duration_ms: 14.731745
+  type: 'test'
+  ...
+# Subtest: integrity listing retains historical body metadata and date/projection state
+ok 14 - integrity listing retains historical body metadata and date/projection state
+  ---
+  duration_ms: 13.962896
+  type: 'test'
+  ...
+# Subtest: explicit Company relations own primary links; title fallback and secondary links remain intact
+ok 15 - explicit Company relations own primary links; title fallback and secondary links remain intact
+  ---
+  duration_ms: 14.174885
+  type: 'test'
+  ...
+1..15
+# tests 15
+# suites 0
+# pass 15
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 575.646631

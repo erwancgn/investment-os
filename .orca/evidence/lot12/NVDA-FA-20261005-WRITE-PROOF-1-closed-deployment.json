@@ -1,0 +1,24 @@
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "Action completed."
+    }
+  ],
+  "structuredContent": {
+    "id": "appgdep_6ac3c3152b588191ab9fbd6cdebfe871",
+    "project_id": "appgprj_6a7d7a1233a08191a8d35b746b284e95",
+    "title": "Investment OS",
+    "version_id": "appgprj_6a7d7a1233a08191a8d35b746b284e95~appgver_70fab5d769948191b52f25546a705a62",
+    "type": "publish",
+    "status": "succeeded",
+    "url": "https://investment-os.erwancognee94.chatgpt.site",
+    "has_mcp": true,
+    "screenshot_asset_pointer": null,
+    "provider_deployment_id": "site---6a7d7a1233a08191a8d35b746b284e95",
+    "failure_message": null,
+    "env_set_revision": 19,
+    "updated_at": "2026-10-05T15:32:51.492793+00:00"
+  },
+  "isError": false
+}

@@ -1,0 +1,479 @@
+TAP version 13
+# Subtest: a supported paragraph plus an unsupported Notion task both survive normalization
+ok 1 - a supported paragraph plus an unsupported Notion task both survive normalization
+  ---
+  duration_ms: 211.469662
+  type: 'test'
+  ...
+# Subtest: list and table residual markup is detected and cleaned without losing cell text
+ok 2 - list and table residual markup is detected and cleaned without losing cell text
+  ---
+  duration_ms: 1.992038
+  type: 'test'
+  ...
+# Subtest: two-column HTML tables become canonical typed table blocks
+ok 3 - two-column HTML tables become canonical typed table blocks
+  ---
+  duration_ms: 2.893082
+  type: 'test'
+  ...
+# Subtest: nested Notion descendants, bookmarks and table descendants retain canonical content and source IDs
+ok 4 - nested Notion descendants, bookmarks and table descendants retain canonical content and source IDs
+  ---
+  duration_ms: 4.678097
+  type: 'test'
+  ...
+# Subtest: adjacent ordered Notion items keep one continuous list and all source IDs
+ok 5 - adjacent ordered Notion items keep one continuous list and all source IDs
+  ---
+  duration_ms: 118.87572
+  type: 'test'
+  ...
+# Subtest: legacy Advantest and partial scenario facts become numeric canonical metrics with source blocks
+ok 6 - legacy Advantest and partial scenario facts become numeric canonical metrics with source blocks
+  ---
+  duration_ms: 15.343105
+  type: 'test'
+  ...
+# Subtest: scenario punctuation variants share valuation-summary extraction and normalize to equal numbers
+ok 7 - scenario punctuation variants share valuation-summary extraction and normalize to equal numbers
+  ---
+  duration_ms: 6.305973
+  type: 'test'
+  ...
+# Subtest: TL;DR tables remain visible in server-rendered analysis even when not summarized
+ok 8 - TL;DR tables remain visible in server-rendered analysis even when not summarized
+  ---
+  duration_ms: 8.596987
+  type: 'test'
+  ...
+# Subtest: scenario table with an extra hypothesis column stays visible and is not promoted
+ok 9 - scenario table with an extra hypothesis column stays visible and is not promoted
+  ---
+  duration_ms: 8.739413
+  type: 'test'
+  ...
+# Subtest: horizontal scenarios choose shareholder CAGR over EPS CAGR and retain dividend-inclusive values
+ok 10 - horizontal scenarios choose shareholder CAGR over EPS CAGR and retain dividend-inclusive values
+  ---
+  duration_ms: 0.691388
+  type: 'test'
+  ...
+# Subtest: invalid legacy dates are diagnosed while the normalized contract stays valid
+ok 11 - invalid legacy dates are diagnosed while the normalized contract stays valid
+  ---
+  duration_ms: 1.223951
+  type: 'test'
+  ...
+# Subtest: unmapped runtime document categories retain their original family as unknown
+ok 12 - unmapped runtime document categories retain their original family as unknown
+  ---
+  duration_ms: 0.747106
+  type: 'test'
+  ...
+# Subtest: company preview keeps the reader summary and removes canonical body from serialized payload
+ok 13 - company preview keeps the reader summary and removes canonical body from serialized payload
+  ---
+  duration_ms: 12.858379
+  type: 'test'
+  ...
+# Subtest: valid projection evidence hydrates canonical numeric metrics without copying evidenceIds into metric contracts
+ok 14 - valid projection evidence hydrates canonical numeric metrics without copying evidenceIds into metric contracts
+  ---
+  duration_ms: 3.67644
+  type: 'test'
+  ...
+# Subtest: absent, invalid, null, malformed and family-mismatched projections fall back to report content
+ok 15 - absent, invalid, null, malformed and family-mismatched projections fall back to report content
+  ---
+  duration_ms: 4.064539
+  type: 'test'
+  ...
+# Subtest: production reader renders the same business structure for distinct companies and keeps family compositions
+ok 16 - production reader renders the same business structure for distinct companies and keeps family compositions
+  ---
+  duration_ms: 39.829871
+  type: 'test'
+  ...
+# Subtest: CIO memo reasoning keeps canonical links after API serialization
+ok 17 - CIO memo reasoning keeps canonical links after API serialization
+  ---
+  duration_ms: 3.176163
+  type: 'test'
+  ...
+# Subtest: CompanyAnalysisDocument accepts validated canonical API bodies and keeps stale content on refresh failure
+ok 18 - CompanyAnalysisDocument accepts validated canonical API bodies and keeps stale content on refresh failure
+  ---
+  duration_ms: 5.998038
+  type: 'test'
+  ...
+# Subtest: CompanyAnalysisDocument rejects wrong-ID or invalid canonical bodies and still accepts legacy text
+ok 19 - CompanyAnalysisDocument rejects wrong-ID or invalid canonical bodies and still accepts legacy text
+  ---
+  duration_ms: 4.703501
+  type: 'test'
+  ...
+# Subtest: citation numbers and source list share the same sorted order
+ok 20 - citation numbers and source list share the same sorted order
+  ---
+  duration_ms: 2.46456
+  type: 'test'
+  ...
+# (node:63681) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: read adapter preserves legacy company/document/portfolio payloads while validating canonical projections
+ok 21 - read adapter preserves legacy company/document/portfolio payloads while validating canonical projections
+  ---
+  duration_ms: 409.329172
+  type: 'test'
+  ...
+# Subtest: identity adapter resolves from company rows without reading analysis bodies
+ok 22 - identity adapter resolves from company rows without reading analysis bodies
+  ---
+  duration_ms: 12.743227
+  type: 'test'
+  ...
+# Subtest: history lookup by UUID preserves the archived legacy document and source date
+ok 23 - history lookup by UUID preserves the archived legacy document and source date
+  ---
+  duration_ms: 18.956648
+  type: 'test'
+  ...
+# Subtest: Current adapter separates Business, CIO Memo, Decision and Earnings pointers and loads only the selected body
+ok 24 - Current adapter separates Business, CIO Memo, Decision and Earnings pointers and loads only the selected body
+  ---
+  duration_ms: 48.592871
+  type: 'test'
+  ...
+# Subtest: Current selector reports wrong owner, wrong family, archived target and missing memo pointer distinctly
+ok 25 - Current selector reports wrong owner, wrong family, archived target and missing memo pointer distinctly
+  ---
+  duration_ms: 33.409692
+  type: 'test'
+  ...
+# Subtest: integrity listing retains historical body metadata and date/projection state
+ok 26 - integrity listing retains historical body metadata and date/projection state
+  ---
+  duration_ms: 14.699861
+  type: 'test'
+  ...
+# Subtest: explicit Company relations own primary links; title fallback and secondary links remain intact
+ok 27 - explicit Company relations own primary links; title fallback and secondary links remain intact
+  ---
+  duration_ms: 22.161368
+  type: 'test'
+  ...
+# (node:63682) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: callout semantic verification null -> 💡
+ok 28 - callout semantic verification null -> 💡
+  ---
+  duration_ms: 352.101831
+  type: 'test'
+  ...
+# Subtest: callout semantic verification 🔥 -> 🔥
+ok 29 - callout semantic verification 🔥 -> 🔥
+  ---
+  duration_ms: 14.849127
+  type: 'test'
+  ...
+# Subtest: callout semantic verification 🔥 -> 💡
+ok 30 - callout semantic verification 🔥 -> 💡
+  ---
+  duration_ms: 14.41676
+  type: 'test'
+  ...
+# Subtest: exact AN-598 payload with provider callout icon reaches persisted journal, D1 and immediate readback
+ok 31 - exact AN-598 payload with provider callout icon reaches persisted journal, D1 and immediate readback
+  ---
+  duration_ms: 62.54152
+  type: 'test'
+  ...
+# Subtest: callout without icon omits icon entirely
+ok 32 - callout without icon omits icon entirely
+  ---
+  duration_ms: 9.032498
+  type: 'test'
+  ...
+# Subtest: callout with emoji preserves the Notion icon DTO
+ok 33 - callout with emoji preserves the Notion icon DTO
+  ---
+  duration_ms: 7.918875
+  type: 'test'
+  ...
+# Subtest: Notion rejection diagnostics retain structural validation paths without echoed payload or secrets
+ok 34 - Notion rejection diagnostics retain structural validation paths without echoed payload or secrets
+  ---
+  duration_ms: 13.505969
+  type: 'test'
+  ...
+# Subtest: nominal save re-reads Notion and verifies the server-assigned identity through Core
+ok 35 - nominal save re-reads Notion and verifies the server-assigned identity through Core
+  ---
+  duration_ms: 41.466004
+  type: 'test'
+  ...
+# Subtest: creation accepts a canonical intent identity without requiring a physical Notion UUID
+ok 36 - creation accepts a canonical intent identity without requiring a physical Notion UUID
+  ---
+  duration_ms: 12.500102
+  type: 'test'
+  ...
+# Subtest: same run re-reads actual state without duplicate or repeat promotion
+ok 37 - same run re-reads actual state without duplicate or repeat promotion
+  ---
+  duration_ms: 14.940155
+  type: 'test'
+  ...
+# Subtest: validated save indexes the promoted Current relation without rebuilding unrelated links
+ok 38 - validated save indexes the promoted Current relation without rebuilding unrelated links
+  ---
+  duration_ms: 12.540549
+  type: 'test'
+  ...
+# Subtest: incompatible same run conflicts before another create
+ok 39 - incompatible same run conflicts before another create
+  ---
+  duration_ms: 9.765329
+  type: 'test'
+  ...
+# Subtest: stale expectedRevision cannot mutate an existing analysis
+ok 40 - stale expectedRevision cannot mutate an existing analysis
+  ---
+  duration_ms: 8.577905
+  type: 'test'
+  ...
+# notion_request_rejected { status: 404, type: 'unknown', code: 'unknown', validation: [] }
+# Subtest: Company absent fails before persistence
+ok 41 - Company absent fails before persistence
+  ---
+  duration_ms: 7.613285
+  type: 'test'
+  ...
+# Subtest: inconsistent input Company relation is rejected before mutation
+ok 42 - inconsistent input Company relation is rejected before mutation
+  ---
+  duration_ms: 3.570575
+  type: 'test'
+  ...
+# notion_request_rejected { status: 403, type: 'unknown', code: 'unknown', validation: [] }
+# Subtest: persistence OK / promotion KO returns resumable pending and safely resumes
+ok 43 - persistence OK / promotion KO returns resumable pending and safely resumes
+  ---
+  duration_ms: 10.863883
+  type: 'test'
+  ...
+# Subtest: promotion OK / final verification KO never returns verified
+ok 44 - promotion OK / final verification KO never returns verified
+  ---
+  duration_ms: 6.283377
+  type: 'test'
+  ...
+# Subtest: ambiguous create timeout reconciles Run ID before any mutation retry
+ok 45 - ambiguous create timeout reconciles Run ID before any mutation retry
+  ---
+  duration_ms: 6.379755
+  type: 'test'
+  ...
+# Subtest: ambiguous promotion reconciles Company rather than blindly repeating PATCH
+ok 46 - ambiguous promotion reconciles Company rather than blindly repeating PATCH
+  ---
+  duration_ms: 7.479156
+  type: 'test'
+  ...
+# notion_request_rejected { status: 429, type: 'unknown', code: 'unknown', validation: [] }
+# Subtest: rate limited mutation is attempted once and does not certify persistence
+ok 47 - rate limited mutation is attempted once and does not certify persistence
+  ---
+  duration_ms: 4.646012
+  type: 'test'
+  ...
+# Subtest: wrong final Current returns partial, never verified
+ok 48 - wrong final Current returns partial, never verified
+  ---
+  duration_ms: 5.84075
+  type: 'test'
+  ...
+# Subtest: concurrent same-run writers share the D1 lease and create at most one page
+ok 49 - concurrent same-run writers share the D1 lease and create at most one page
+  ---
+  duration_ms: 10.84662
+  type: 'test'
+  ...
+# Subtest: metadata update checks source revision and preserves the existing report body
+ok 50 - metadata update checks source revision and preserves the existing report body
+  ---
+  duration_ms: 8.736011
+  type: 'test'
+  ...
+# Subtest: position reads source lifecycle: open, closed, absent, inconsistent and invalid
+ok 51 - position reads source lifecycle: open, closed, absent, inconsistent and invalid
+  ---
+  duration_ms: 9.626334
+  type: 'test'
+  ...
+# Subtest: unresolved ambiguous create is fenced across replays, not blindly retried
+ok 52 - unresolved ambiguous create is fenced across replays, not blindly retried
+  ---
+  duration_ms: 8.518609
+  type: 'test'
+  ...
+# Subtest: Draft persistence is readable through MCP Core without promoting Current
+ok 53 - Draft persistence is readable through MCP Core without promoting Current
+  ---
+  duration_ms: 7.06006
+  type: 'test'
+  ...
+# Subtest: Draft save and replay update only their page indexes and avoid a second create
+ok 54 - Draft save and replay update only their page indexes and avoid a second create
+  ---
+  duration_ms: 6.212463
+  type: 'test'
+  ...
+# Subtest: adapter canonicalizes dashed update identity before receipt validation
+ok 55 - adapter canonicalizes dashed update identity before receipt validation
+  ---
+  duration_ms: 10.220124
+  type: 'test'
+  ...
+# Subtest: long report is written in bounded chunks and completely re-read before verified
+ok 56 - long report is written in bounded chunks and completely re-read before verified
+  ---
+  duration_ms: 31.932853
+  type: 'test'
+  ...
+# Subtest: long Draft certifies the final append with a complete read without a redundant full scan
+ok 57 - long Draft certifies the final append with a complete read without a redundant full scan
+  ---
+  duration_ms: 21.067439
+  type: 'test'
+  ...
+# Subtest: long Draft cannot certify content changed during the final append read
+ok 58 - long Draft cannot certify content changed during the final append read
+  ---
+  duration_ms: 10.854505
+  type: 'test'
+  ...
+# Subtest: ambiguous append reconciles the exact block prefix without duplicating content
+ok 59 - ambiguous append reconciles the exact block prefix without duplicating content
+  ---
+  duration_ms: 17.669112
+  type: 'test'
+  ...
+# Subtest: lost D1 lease is detected before a Current mutation
+ok 60 - lost D1 lease is detected before a Current mutation
+  ---
+  duration_ms: 7.269185
+  type: 'test'
+  ...
+# Subtest: production shared Run ID remains idempotent independently for Business and Valuation modules
+ok 61 - production shared Run ID remains idempotent independently for Business and Valuation modules
+  ---
+  duration_ms: 15.043483
+  type: 'test'
+  ...
+# Subtest: physical Company must be a relation; schema mismatch cannot yield verified
+ok 62 - physical Company must be a relation; schema mismatch cannot yield verified
+  ---
+  duration_ms: 4.938991
+  type: 'test'
+  ...
+# Subtest: production source without a Summary property preserves the canonical summary in the report body
+ok 63 - production source without a Summary property preserves the canonical summary in the report body
+  ---
+  duration_ms: 7.47081
+  type: 'test'
+  ...
+# Subtest: Company archived during final verification cannot yield verified
+ok 64 - Company archived during final verification cannot yield verified
+  ---
+  duration_ms: 5.308787
+  type: 'test'
+  ...
+# Subtest: revisioned update cannot retype a Business Current page as Valuation
+ok 65 - revisioned update cannot retype a Business Current page as Valuation
+  ---
+  duration_ms: 9.436514
+  type: 'test'
+  ...
+# notion_request_rejected {
+#   status: 400,
+#   type: 'error',
+#   code: 'validation_error',
+#   validation: [ { path: 'body.children[6].callout.icon', expected: 'object' } ]
+# }
+# Subtest: provider diagnostic survives the adapter Core bridge without sensitive content
+ok 66 - provider diagnostic survives the adapter Core bridge without sensitive content
+  ---
+  duration_ms: 5.062056
+  type: 'test'
+  ...
+# Subtest: provider rich-text-array limit rejects before a mutation
+ok 67 - provider rich-text-array limit rejects before a mutation
+  ---
+  duration_ms: 3.77314
+  type: 'test'
+  ...
+# Subtest: provider table-children limit rejects before a mutation
+ok 68 - provider table-children limit rejects before a mutation
+  ---
+  duration_ms: 3.551342
+  type: 'test'
+  ...
+# Subtest: provider link-url limit rejects before a mutation
+ok 69 - provider link-url limit rejects before a mutation
+  ---
+  duration_ms: 6.968418
+  type: 'test'
+  ...
+# Subtest: provider utf8-size limit rejects before a mutation
+ok 70 - provider utf8-size limit rejects before a mutation
+  ---
+  duration_ms: 4.976207
+  type: 'test'
+  ...
+# Subtest: supported block DTOs omit absent optional values while nullable properties remain valid
+ok 71 - supported block DTOs omit absent optional values while nullable properties remain valid
+  ---
+  duration_ms: 7.429828
+  type: 'test'
+  ...
+# Subtest: accepts only a captured projection with resolved freshness checks and exact numeric support
+ok 72 - accepts only a captured projection with resolved freshness checks and exact numeric support
+  ---
+  duration_ms: 179.134392
+  type: 'test'
+  ...
+# Subtest: rejects stale or malformed metadata and future timestamps deterministically
+ok 73 - rejects stale or malformed metadata and future timestamps deterministically
+  ---
+  duration_ms: 2.459379
+  type: 'test'
+  ...
+# Subtest: projection is absent without the exact marker and invalid on duplicates or bad JSON
+ok 74 - projection is absent without the exact marker and invalid on duplicates or bad JSON
+  ---
+  duration_ms: 1.53822
+  type: 'test'
+  ...
+# Subtest: machine payload is excluded from the human-facing Notion body
+ok 75 - machine payload is excluded from the human-facing Notion body
+  ---
+  duration_ms: 0.474989
+  type: 'test'
+  ...
+# Subtest: provider children normalize once into the imported snapshot shape without changing other blocks
+ok 76 - provider children normalize once into the imported snapshot shape without changing other blocks
+  ---
+  duration_ms: 1.401033
+  type: 'test'
+  ...
+1..76
+# tests 76
+# suites 0
+# pass 76
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1055.978889

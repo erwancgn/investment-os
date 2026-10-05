@@ -1,0 +1,143 @@
+{
+  "officialSource": {
+    "repository": "https://github.com/makenotion/notion-sdk-js",
+    "commit": "37d6d24b56dfb15633164fb1eaffd8d836360500",
+    "apiVersion": "2026-03-11",
+    "installedNotionSdk": false
+  },
+  "network": "NONE: injected fetch only",
+  "officialTypeValidation": "PASS",
+  "officialDtoCount": 12,
+  "payloads": [
+    {
+      "file": "FV-LITE-20261005-NATIVE_full_value_draft_intents.json",
+      "kind": "business",
+      "mcpPublishedInputSchema": "PASS",
+      "isAnalysisAndCore": "PASS",
+      "providerDto": "PASS",
+      "digest": "aef73986947de3dd100753d052c5368bd872ddcdf42ee23a24e93d8882d3402a",
+      "requests": 1,
+      "maxRequestBytes": 140113
+    },
+    {
+      "file": "FV-LITE-20261005-NATIVE_full_value_draft_intents.json",
+      "kind": "valuation",
+      "mcpPublishedInputSchema": "PASS",
+      "isAnalysisAndCore": "PASS",
+      "providerDto": "PASS",
+      "digest": "04925ee8c39b646c83fa6501425445a68c99794ae729441a5ae1f8fc3275e34e",
+      "requests": 2,
+      "maxRequestBytes": 119643
+    },
+    {
+      "file": "NVDA-FA-20261005-NATIVE-calls-final.json",
+      "kind": "business",
+      "mcpPublishedInputSchema": "PASS",
+      "isAnalysisAndCore": "PASS",
+      "providerDto": "PASS",
+      "digest": "3cd252ab46ca1b55fc2982811a714d5ef2f76092d1e4bd717b9ac54da1bd20fb",
+      "requests": 1,
+      "maxRequestBytes": 65108,
+      "callout": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "Verdict: Excellent — 92/100 [E:B1]. NVIDIA conserve un moat full-stack exceptionnel; la croissance et les marges restent hors norme. Le rôle croissant de facilitateur financier et l’ampleur des engagements ajoutent un tail risk corrélé, sans invalider le business central."
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "code": false,
+              "underline": false,
+              "color": "default"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "file": "NVDA-FA-20261005-NATIVE-calls-final.json",
+      "kind": "valuation",
+      "mcpPublishedInputSchema": "PASS",
+      "isAnalysisAndCore": "PASS",
+      "providerDto": "PASS",
+      "digest": "836798049706631b02f363ef99779a8238a7956a0b4bdbeca306744caefd126f",
+      "requests": 1,
+      "maxRequestBytes": 86487
+    },
+    {
+      "file": "NVDA-FA-20261005-NATIVE-calls-final.json",
+      "kind": "short",
+      "mcpPublishedInputSchema": "PASS",
+      "isAnalysisAndCore": "PASS",
+      "providerDto": "PASS",
+      "digest": "e204eca148fd0c73918dc3b5da900a16e414433b527cec227ad380d22fed4a69",
+      "requests": 1,
+      "maxRequestBytes": 78526
+    },
+    {
+      "file": "NVDA-FA-20261005-NATIVE-calls-final.json",
+      "kind": "portfolio",
+      "mcpPublishedInputSchema": "PASS",
+      "isAnalysisAndCore": "PASS",
+      "providerDto": "PASS",
+      "digest": "606e48d08d9dfc6e4a4bb5e0fead9e9d2c6a01f2e7e67f8509e34444988f1641",
+      "requests": 1,
+      "maxRequestBytes": 64691
+    },
+    {
+      "file": "NVDA-FA-20261005-NATIVE-calls-final.json",
+      "kind": "cio_memo",
+      "mcpPublishedInputSchema": "PASS",
+      "isAnalysisAndCore": "PASS",
+      "providerDto": "PASS",
+      "digest": "1e726b763c14af67e7f7b0a57260884807e9f2eac0a3cd816198905d8a74b729",
+      "requests": 1,
+      "maxRequestBytes": 65642
+    }
+  ],
+  "idempotence": {
+    "oldDigest": "04567a84a4c595288bc38aa61f63e66b46db2f152366b182120b8672c54de765",
+    "newDigest": "3cd252ab46ca1b55fc2982811a714d5ef2f76092d1e4bd717b9ac54da1bd20fb",
+    "oldCallout": {
+      "rich_text": [
+        {
+          "type": "text",
+          "text": {
+            "content": "Verdict: Excellent — 92/100 [E:B1]. NVIDIA conserve un moat full-stack exceptionnel; la croissance et les marges restent hors norme. Le rôle croissant de facilitateur financier et l’ampleur des engagements ajoutent un tail risk corrélé, sans invalider le business central."
+          },
+          "annotations": {
+            "bold": false,
+            "italic": false,
+            "strikethrough": false,
+            "code": false,
+            "underline": false,
+            "color": "default"
+          }
+        }
+      ],
+      "icon": null
+    },
+    "newCallout": {
+      "rich_text": [
+        {
+          "type": "text",
+          "text": {
+            "content": "Verdict: Excellent — 92/100 [E:B1]. NVIDIA conserve un moat full-stack exceptionnel; la croissance et les marges restent hors norme. Le rôle croissant de facilitateur financier et l’ampleur des engagements ajoutent un tail risk corrélé, sans invalider le business central."
+          },
+          "annotations": {
+            "bold": false,
+            "italic": false,
+            "strikethrough": false,
+            "code": false,
+            "underline": false,
+            "color": "default"
+          }
+        }
+      ]
+    },
+    "staleRequest": "PASS: old digest fences new mapper before provider mutation"
+  }
+}

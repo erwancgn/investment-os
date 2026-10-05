@@ -1,0 +1,11 @@
+import {readFile,writeFile} from 'node:fs/promises';import assert from 'node:assert/strict';
+const e='/Users/ec/orca/workspaces/investment-os-stabilization/hawkfish/.orca/evidence/lot12',run='NVDA-FA-20261005-WRITE-PROOF-2',root=process.cwd();
+const dto=JSON.parse(await readFile(e+'/'+run+'-business-provider-dto.json','utf8')),args=JSON.parse(await readFile(e+'/'+run+'-business-save-arguments.json','utf8'));const {fixture}=await import(root+'/tests/fixtures/notion-write-harness.mjs');const f=await fixture();
+try {
+const properties=Object.fromEntries(Object.entries(dto.properties).map(([name,p])=>[name,{type:Object.keys(p)[0],...p}]));const page={id:'3f037ea7-af35-815b-85bf-d367eac6549a',parent:dto.parent,properties,last_edited_time:'2026-10-05T16:14:00.000Z',url:'https://notion.so/3f037ea7af35815b85bfd367eac6549a'};
+const blocks=structuredClone(dto.children);await f.api.documentUpsertStatement(f.db,'analyses',page,blocks).run();
+const result=await f.api.createInvestmentService(f.db).getAnalysisById(page.id.replaceAll('-',''));assert.equal(result.status,'ok');const a=result.data,tables=a.content.blocks.filter(b=>b.type==='table'),expected=args.input.analysis.content.blocks.filter(b=>b.type==='table');assert.equal(tables.length,9);
+const plain=x=>x.map(s=>s.text).join('').replace(/[*_`~]/g,'');const shape=b=>({header:b.header,rows:b.rows.map(row=>row.map(plain))});assert.deepEqual(tables.map(shape),expected.map(shape));
+const ledger=tables.some(b=>b.rows.some(row=>row.some(cell=>plain(cell).includes('same-run Business Full scoring'))));const gate=tables.some(b=>b.rows.some(row=>row.some(cell=>plain(cell).includes('Material facts E / calculations D'))));assert.ok(ledger&&gate);assert.deepEqual(blocks,dto.children,'snapshot source unchanged');
+await writeFile(e+'/AN-599-tables-offline-readback.json',JSON.stringify(result,null,2));const report={snapshot:'Exact archived AN-599 provider DTO and properties',networkCalls:0,liveWrites:0,tables:9,nineTablesExactCellsAndHeaders:true,evidenceLedger:true,evidenceGate:true,sourceSnapshotUnchanged:true,coreStatus:result.status};await writeFile(e+'/AN-599-tables-offline-proof.json',JSON.stringify(report,null,2));console.log(JSON.stringify(report));
+}finally{f.sql.close();}

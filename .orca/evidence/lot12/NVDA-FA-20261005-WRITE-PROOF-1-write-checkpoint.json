@@ -1,0 +1,64 @@
+{
+  "runId": "NVDA-FA-20261005-WRITE-PROOF-1",
+  "saveAnalysis": {
+    "envelopeStatus": "completed",
+    "coreStatus": "ok",
+    "receipt": {
+      "schemaVersion": "1.0.0",
+      "status": "partial",
+      "analysisId": "3f037ea7af3581a2acfbc17bc6c1e29d",
+      "runId": "NVDA-FA-20261005-WRITE-PROOF-1",
+      "revision": "2026-10-05T15:30:00.000Z",
+      "persisted": false,
+      "promoted": false,
+      "verified": false,
+      "diagnostics": [
+        {
+          "code": "persistence_verification_failed",
+          "message": "État relu ou reprise nécessaire; aucune transaction Notion atomique.",
+          "severity": "warning"
+        }
+      ]
+    }
+  },
+  "writerTermination": "proven_returned_partial_receipt",
+  "persistence": {
+    "receiptPersisted": false,
+    "observableNotionPage": true,
+    "certified": false
+  },
+  "verification": {
+    "receiptVerified": false,
+    "canonicalMcpReadback": false,
+    "notionDocumentRead": true
+  },
+  "notion": {
+    "analysisId": "3f037ea7af3581a2acfbc17bc6c1e29d",
+    "displayId": "AN-598",
+    "status": "Draft",
+    "companyId": "3b337ea7af35811eb7e5e934f832c389",
+    "score": 92,
+    "verdict": "Excellent",
+    "unexpectedDuplicateObserved": false,
+    "duplicateSearchLimitation": "Fuzzy workspace search is not an exhaustive exact Run ID query.",
+    "calloutIconObserved": "💡",
+    "calloutIconRequestedAbsent": true
+  },
+  "writeClosed": true,
+  "closedSiteVersion": 236,
+  "closedCommit": "77122e9cb9a0fcb081b9c821219ac5cf41290d14",
+  "closedEnvRevision": 19,
+  "hostedWriteRejection": {
+    "verified": true,
+    "code": "forbidden",
+    "outcome": "not_started"
+  },
+  "invocations": {
+    "enabledSaveAnalysis": 1,
+    "automaticRetries": 0,
+    "closedRejectionProbe": 1
+  },
+  "lot12Gate": "PARTIAL / NO-GO for closure: partial receipt and null canonical readback",
+  "nextStep": "READ-only diagnosis of persistence_verification_failed and missing MCP snapshot/index, no retry or mutation.",
+  "lot13Started": false
+}

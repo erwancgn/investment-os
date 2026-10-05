@@ -1,0 +1,28 @@
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "{\"contractVersion\":\"1.0.0\",\"scope\":\"personal\",\"status\":\"rejected\",\"error\":{\"code\":\"forbidden\",\"message\":\"Accès refusé.\",\"retryable\":false,\"outcome\":\"not_started\"},\"diagnostics\":[{\"code\":\"scope_permission\",\"message\":\"Accès refusé.\",\"severity\":\"error\"}]}"
+    }
+  ],
+  "structuredContent": {
+    "contractVersion": "1.0.0",
+    "scope": "personal",
+    "status": "rejected",
+    "error": {
+      "code": "forbidden",
+      "message": "Accès refusé.",
+      "retryable": false,
+      "outcome": "not_started"
+    },
+    "diagnostics": [
+      {
+        "code": "scope_permission",
+        "message": "Accès refusé.",
+        "severity": "error"
+      }
+    ],
+    "error_code": "INVALID_ARGUMENT"
+  },
+  "isError": true
+}

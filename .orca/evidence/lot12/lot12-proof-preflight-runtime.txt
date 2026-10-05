@@ -1,0 +1,15 @@
+
+> investment-os@0.1.0 verify:mcp-runtime
+> node scripts/verify-mcp-runtime.mjs
+
+(node:88179) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+resolve_company: PASS 13ms
+get_company: PASS 57ms
+get_portfolio: PASS 12ms
+get_position: PASS 11ms
+get_current_analysis: PASS 22ms
+get_analysis_by_id: PASS 18ms
+get_quote: PASS 8ms
+workerd: initialization/discovery, identity resolution, 6 demo READ, auth, release-closed WRITE, version, browser boundary PASS
+catalog JSON bytes: 645741

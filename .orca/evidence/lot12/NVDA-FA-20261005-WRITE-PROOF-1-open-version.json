@@ -1,0 +1,26 @@
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "Action completed."
+    }
+  ],
+  "structuredContent": {
+    "id": "appgprj_6a7d7a1233a08191a8d35b746b284e95~appgver_fea31fe1c78081919b4a42be7696c8fc",
+    "project_id": "appgprj_6a7d7a1233a08191a8d35b746b284e95",
+    "version_number": 235,
+    "source": {
+      "commit_sha": "37a6b95754db07c3bd7d38abb77703f73c9512f1"
+    },
+    "archive_storage": {
+      "archive_format": "tar",
+      "sediment_file_id": "file_000000007bf48210ac56e2a21df0b39f",
+      "content_hash": "sha256:003394b648503518a4b2b77e212c455638512bb1de79bfacf3955e1c897b57e1",
+      "size_bytes": 3543040,
+      "file_count": 69
+    },
+    "screenshot_url": null,
+    "deployment_id": null
+  },
+  "isError": false
+}

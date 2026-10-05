@@ -1,0 +1,2826 @@
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "{\"contractVersion\":\"1.0.0\",\"status\":\"completed\"}"
+    }
+  ],
+  "structuredContent": {
+    "contractVersion": "1.0.0",
+    "scope": "personal",
+    "status": "completed",
+    "result": {
+      "schemaVersion": "1.0.0",
+      "status": "ok",
+      "data": {
+        "schemaVersion": "1.0.0",
+        "kind": "business",
+        "header": {
+          "schemaVersion": "1.0.0",
+          "id": "3f037ea7af35815b85bfd367eac6549a",
+          "title": "NVIDIA — Business Check Full — NVDA-FA-20261005-WRITE-PROOF-2",
+          "sourceUrl": "https://app.notion.com/p/NVIDIA-Business-Check-Full-NVDA-FA-20261005-WRITE-PROOF-2-3f037ea7af35815b85bfd367eac6549a",
+          "family": "business",
+          "originalFamily": null,
+          "sourceKind": "analysis",
+          "agent": "Business Analyst",
+          "status": "Draft",
+          "date": "2026-10-05",
+          "lastEditedTime": "2026-10-05T16:14:00.000Z",
+          "companyIds": [
+            "3b337ea7af35811eb7e5e934f832c389"
+          ],
+          "revision": "2026-10-05T16:14:00.000Z",
+          "sourceFreshness": "unknown",
+          "archived": true,
+          "provenance": {
+            "kind": "notion",
+            "sourceId": "3f037ea7-af35-815b-85bf-d367eac6549a",
+            "revision": "2026-10-05T16:14:00.000Z",
+            "capturedAt": "2026-10-05T16:14:00.000Z"
+          }
+        },
+        "content": {
+          "schemaVersion": "1.0.0",
+          "blocks": [
+            {
+              "id": "3f037ea7-af35-81cc-b9bb-c09d4dbf7f6d",
+              "sourceIds": [
+                "3f037ea7-af35-81cc-b9bb-c09d4dbf7f6d"
+              ],
+              "type": "heading",
+              "level": 2,
+              "text": [
+                {
+                  "text": "TL;DR",
+                  "marks": [],
+                  "href": null
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-8154-a838-c783f4296b85",
+              "sourceIds": [
+                "3f037ea7-af35-8154-a838-c783f4296b85"
+              ],
+              "type": "paragraph",
+              "text": [
+                {
+                  "text": "Business: Excellent — 92/100. Moat full-stack exceptionnel; croissance et marges fortes; tail risk de financement/capacité en hausse.",
+                  "marks": [],
+                  "href": null
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-8141-8d31-d82ad4aa27c5",
+              "sourceIds": [
+                "3f037ea7-af35-8141-8d31-d82ad4aa27c5"
+              ],
+              "type": "heading",
+              "level": 2,
+              "text": [
+                {
+                  "text": "Rapport complet",
+                  "marks": [],
+                  "href": null
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-8173-b5ca-f808986420b1",
+              "sourceIds": [
+                "3f037ea7-af35-8173-b5ca-f808986420b1"
+              ],
+              "type": "heading",
+              "level": 1,
+              "text": [
+                {
+                  "text": "Business Check — NVIDIA",
+                  "marks": [],
+                  "href": null
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-812d-a26e-cffed451ef10",
+              "sourceIds": [
+                "3f037ea7-af35-812d-a26e-cffed451ef10"
+              ],
+              "type": "paragraph",
+              "text": [
+                {
+                  "text": "Run ID: NVDA-FA-20261005-WRITE-PROOF-2. Date: 2026-10-05. Ticker: NVDA. Exchange: NASDAQ. Currency: USD. Business score 92/100 [E:B1]. Confiance: High. Persistance: NOT_REQUIRED.",
+                  "marks": [],
+                  "href": null
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-8186-b60c-ff5c4ba5b24a",
+              "sourceIds": [
+                "3f037ea7-af35-8186-b60c-ff5c4ba5b24a"
+              ],
+              "type": "heading",
+              "level": 1,
+              "text": [
+                {
+                  "text": "TL;DR",
+                  "marks": [],
+                  "href": null
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-813f-9e8d-c2cf3d25a59a",
+              "sourceIds": [
+                "3f037ea7-af35-813f-9e8d-c2cf3d25a59a"
+              ],
+              "type": "callout",
+              "text": [
+                {
+                  "text": "Verdict: Excellent — 92/100 [E:B1]. NVIDIA conserve un moat full-stack exceptionnel; la croissance et les marges restent hors norme. Le rôle croissant de facilitateur financier et l’ampleur des engagements ajoutent un tail risk corrélé, sans invalider le business central.",
+                  "marks": [],
+                  "href": null
+                }
+              ],
+              "icon": "💡"
+            },
+            {
+              "id": "3f037ea7-af35-81b9-be5b-fbf2653b7881",
+              "sourceIds": [
+                "3f037ea7-af35-81b9-be5b-fbf2653b7881"
+              ],
+              "type": "table",
+              "rows": [
+                [
+                  [
+                    {
+                      "text": "Élément",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Verdict",
+                      "marks": [],
+                      "href": null
+                    }
+                  ]
+                ],
+                [
+                  [
+                    {
+                      "text": "Business model",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Fort",
+                      "marks": [],
+                      "href": null
+                    }
+                  ]
+                ],
+                [
+                  [
+                    {
+                      "text": "Moat",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Très fort",
+                      "marks": [],
+                      "href": null
+                    }
+                  ]
+                ],
+                [
+                  [
+                    {
+                      "text": "Croissance structurelle",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Forte",
+                      "marks": [],
+                      "href": null
+                    }
+                  ]
+                ],
+                [
+                  [
+                    {
+                      "text": "Qualité financière",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Forte",
+                      "marks": [],
+                      "href": null
+                    }
+                  ]
+                ],
+                [
+                  [
+                    {
+                      "text": "Résilience",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Moyenne",
+                      "marks": [],
+                      "href": null
+                    }
+                  ]
+                ],
+                [
+                  [
+                    {
+                      "text": "Score",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "92/100 [E:B1]",
+                      "marks": [],
+                      "href": null
+                    }
+                  ]
+                ]
+              ],
+              "header": true
+            },
+            {
+              "id": "3f037ea7-af35-81a3-906b-ff94c0a8553d",
+              "sourceIds": [
+                "3f037ea7-af35-81a3-906b-ff94c0a8553d",
+                "3f037ea7-af35-818b-b28f-db0f783ab2c4"
+              ],
+              "type": "list",
+              "ordered": false,
+              "items": [
+                [
+                  {
+                    "text": "Forces: moat système CUDA + accélérateurs + networking; economics et génération de cash; cadence Blackwell/Rubin.",
+                    "marks": [],
+                    "href": null
+                  }
+                ],
+                [
+                  {
+                    "text": "Risques: concentration du capex IA; réponse d’offre/capacité; financement et contreparties de l’écosystème.",
+                    "marks": [],
+                    "href": null
+                  }
+                ]
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-8164-a9d5-ed1725c69af8",
+              "sourceIds": [
+                "3f037ea7-af35-8164-a9d5-ed1725c69af8"
+              ],
+              "type": "heading",
+              "level": 1,
+              "text": [
+                {
+                  "text": "1. Schéma du business",
+                  "marks": [],
+                  "href": null
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-813c-84a0-c7de0744e0d3",
+              "sourceIds": [
+                "3f037ea7-af35-813c-84a0-c7de0744e0d3"
+              ],
+              "type": "paragraph",
+              "text": [
+                {
+                  "text": "Chaîne économique: fournisseurs foundry/packaging/HBM → NVIDIA → OEM/ODM/CSP/AI cloud → utilisateurs finaux. NVIDIA élargit la captation de valeur du GPU vers rack-scale, networking, CPU/interconnect et software.",
+                  "marks": [],
+                  "href": null
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-81b1-a5f2-cdc31d4c41c5",
+              "sourceIds": [
+                "3f037ea7-af35-81b1-a5f2-cdc31d4c41c5"
+              ],
+              "type": "heading",
+              "level": 1,
+              "text": [
+                {
+                  "text": "2. Business model",
+                  "marks": [],
+                  "href": null
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-8183-aa60-eb3428bd65f6",
+              "sourceIds": [
+                "3f037ea7-af35-8183-aa60-eb3428bd65f6"
+              ],
+              "type": "paragraph",
+              "text": [
+                {
+                  "text": "Au Q2 FY2027, le Data Center représente environ 89 Md$ de revenu sur 96,2 Md$ consolidés [E:B2][E:B3], soit ~92,5% [D:B1]. Le business reste majoritairement transactionnel en hardware, avec une répétition économique élevée mais non contractuellement garantie.",
+                  "marks": [],
+                  "href": null
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-81f9-b6c7-f74c41420ace",
+              "sourceIds": [
+                "3f037ea7-af35-81f9-b6c7-f74c41420ace"
+              ],
+              "type": "paragraph",
+              "text": [
+                {
+                  "text": "La concentration clients est matérielle: cinq clients directs représentent 22%, 14%, 13%, 11% et 10% des créances au 26 juillet 2026 [E:B8].",
+                  "marks": [],
+                  "href": null
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-81bc-bb01-fe7888fa495a",
+              "sourceIds": [
+                "3f037ea7-af35-81bc-bb01-fe7888fa495a"
+              ],
+              "type": "heading",
+              "level": 1,
+              "text": [
+                {
+                  "text": "3. Marché et structure",
+                  "marks": [],
+                  "href": null
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-8150-9db8-ecf16dfda8c5",
+              "sourceIds": [
+                "3f037ea7-af35-8150-9db8-ecf16dfda8c5"
+              ],
+              "type": "paragraph",
+              "text": [
+                {
+                  "text": "Le marché adressé exact TAM/SAM/SOM n’est pas prouvé de façon suffisamment homogène dans ce run. GAP: aucune estimation externe unique n’est retenue comme fait. Le signal structurel observable reste la croissance Data Center de NVIDIA à 117% y/y au Q2 FY2027 [E:B3].",
+                  "marks": [],
+                  "href": null
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-8101-b2e2-ed197f646511",
+              "sourceIds": [
+                "3f037ea7-af35-8101-b2e2-ed197f646511"
+              ],
+              "type": "heading",
+              "level": 1,
+              "text": [
+                {
+                  "text": "4. Produits",
+                  "marks": [],
+                  "href": null
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-8133-9650-dce7ec209583",
+              "sourceIds": [
+                "3f037ea7-af35-8133-9650-dce7ec209583"
+              ],
+              "type": "paragraph",
+              "text": [
+                {
+                  "text": "Blackwell/Blackwell Ultra restent le cœur de la génération actuelle; Vera Rubin constitue la prochaine étape de roadmap. Le caractère exact du calendrier commercial par sous-produit n’est pas reconstruit ici sans locator additionnel; la roadmap reste un élément qualitatif.",
+                  "marks": [],
+                  "href": null
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-811d-a6f1-d3a1199cdb7c",
+              "sourceIds": [
+                "3f037ea7-af35-811d-a6f1-d3a1199cdb7c"
+              ],
+              "type": "heading",
+              "level": 1,
+              "text": [
+                {
+                  "text": "5. Concurrence et moat",
+                  "marks": [],
+                  "href": null
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-81c7-b2a5-eb35c93ae28e",
+              "sourceIds": [
+                "3f037ea7-af35-81c7-b2a5-eb35c93ae28e"
+              ],
+              "type": "paragraph",
+              "text": [
+                {
+                  "text": "Le moat vient du co-design hardware/software/networking et des coûts de switching liés à CUDA. Les concurrents pertinents incluent AMD et les accélérateurs propriétaires des hyperscalers. L’écart de taille reste très important: NVIDIA Data Center a généré 89 Md$ au Q2 FY2027 [E:B3].",
+                  "marks": [],
+                  "href": null
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-81c4-9629-d80ad083b375",
+              "sourceIds": [
+                "3f037ea7-af35-81c4-9629-d80ad083b375"
+              ],
+              "type": "heading",
+              "level": 1,
+              "text": [
+                {
+                  "text": "6. Qualité financière",
+                  "marks": [],
+                  "href": null
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-814c-bdf5-d42fedeb08d4",
+              "sourceIds": [
+                "3f037ea7-af35-814c-bdf5-d42fedeb08d4"
+              ],
+              "type": "table",
+              "rows": [
+                [
+                  [
+                    {
+                      "text": "Période",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "CA",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Marge brute",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Operating income",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "CFO",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "FCF approx.",
+                      "marks": [],
+                      "href": null
+                    }
+                  ]
+                ],
+                [
+                  [
+                    {
+                      "text": "FY2024",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "60,9 Md$ [E:B4]",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "72,7% [E:B4]",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "33,0 Md$ [E:B4]",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "28,1 Md$ [E:B4]",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "~27,0 Md$ [D:B2]",
+                      "marks": [],
+                      "href": null
+                    }
+                  ]
+                ],
+                [
+                  [
+                    {
+                      "text": "FY2025",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "130,5 Md$ [E:B4]",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "75,0% [E:B4]",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "81,5 Md$ [E:B4]",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "64,1 Md$ [E:B4]",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "~60,9 Md$ [D:B3]",
+                      "marks": [],
+                      "href": null
+                    }
+                  ]
+                ],
+                [
+                  [
+                    {
+                      "text": "FY2026",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "215,9 Md$ [E:B4]",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "71,1% [E:B4]",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "130,4 Md$ [E:B4]",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "102,7 Md$ [E:B4]",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "~96,7 Md$ [D:B4]",
+                      "marks": [],
+                      "href": null
+                    }
+                  ]
+                ],
+                [
+                  [
+                    {
+                      "text": "Q2 FY2027",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "96,2 Md$ [E:B2]",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "75,0% [E:B2]",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "63,7 Md$ [E:B2]",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "—",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "—",
+                      "marks": [],
+                      "href": null
+                    }
+                  ]
+                ]
+              ],
+              "header": true
+            },
+            {
+              "id": "3f037ea7-af35-81c2-a491-d31e64df739c",
+              "sourceIds": [
+                "3f037ea7-af35-81c2-a491-d31e64df739c"
+              ],
+              "type": "paragraph",
+              "text": [
+                {
+                  "text": "Le H1 FY2027 affiche 74,421 Md$ de CFO [E:B5]. Les créances sont 63,059 Md$ et les stocks 31,575 Md$ [E:B6][E:B7], ce qui impose une surveillance accrue de la conversion cash.",
+                  "marks": [],
+                  "href": null
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-812a-9ea5-d7da2e0db2fa",
+              "sourceIds": [
+                "3f037ea7-af35-812a-9ea5-d7da2e0db2fa"
+              ],
+              "type": "heading",
+              "level": 1,
+              "text": [
+                {
+                  "text": "7. Management",
+                  "marks": [],
+                  "href": null
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-81e2-acce-f9bbcfa1744a",
+              "sourceIds": [
+                "3f037ea7-af35-81e2-acce-f9bbcfa1744a"
+              ],
+              "type": "paragraph",
+              "text": [
+                {
+                  "text": "L’exécution produit et industrielle sous Jensen Huang reste un point fort. La principale réserve de gouvernance économique n’est pas l’allocation historique mais l’expansion des mécanismes de soutien/financement à l’écosystème, qui augmente la corrélation au cycle.",
+                  "marks": [],
+                  "href": null
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-8194-8415-e2ddbbf511bb",
+              "sourceIds": [
+                "3f037ea7-af35-8194-8415-e2ddbbf511bb"
+              ],
+              "type": "heading",
+              "level": 1,
+              "text": [
+                {
+                  "text": "8. Croissance 5–10 ans",
+                  "marks": [],
+                  "href": null
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-81d0-8181-ca6f47aa2638",
+              "sourceIds": [
+                "3f037ea7-af35-81d0-8181-ca6f47aa2638",
+                "3f037ea7-af35-8136-9075-d52e611059a6",
+                "3f037ea7-af35-81f2-9d84-e1dabbe29969",
+                "3f037ea7-af35-8120-8a61-f6d473e4003f"
+              ],
+              "type": "list",
+              "ordered": false,
+              "items": [
+                [
+                  {
+                    "text": "Training: moteur confirmé.",
+                    "marks": [],
+                    "href": null
+                  }
+                ],
+                [
+                  {
+                    "text": "Inference: moteur probable à confirmé.",
+                    "marks": [],
+                    "href": null
+                  }
+                ],
+                [
+                  {
+                    "text": "Networking/systèmes complets: moteur confirmé.",
+                    "marks": [],
+                    "href": null
+                  }
+                ],
+                [
+                  {
+                    "text": "Sovereign/physical AI: moteurs potentiels; contribution exacte non prouvée dans ce run.",
+                    "marks": [],
+                    "href": null
+                  }
+                ]
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-8115-81ff-f6e078253c21",
+              "sourceIds": [
+                "3f037ea7-af35-8115-81ff-f6e078253c21"
+              ],
+              "type": "heading",
+              "level": 1,
+              "text": [
+                {
+                  "text": "9. Risques / bear industriel",
+                  "marks": [],
+                  "href": null
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-8126-8f97-fd6e14236c72",
+              "sourceIds": [
+                "3f037ea7-af35-8126-8f97-fd6e14236c72"
+              ],
+              "type": "table",
+              "rows": [
+                [
+                  [
+                    {
+                      "text": "Risque",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Mécanisme",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Indicateur",
+                      "marks": [],
+                      "href": null
+                    }
+                  ]
+                ],
+                [
+                  [
+                    {
+                      "text": "Capex IA ralentit",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "moins de demande accélérateurs",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "croissance Data Center",
+                      "marks": [],
+                      "href": null
+                    }
+                  ]
+                ],
+                [
+                  [
+                    {
+                      "text": "Custom silicon",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "part de valeur captée baisse",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "mix hyperscaler",
+                      "marks": [],
+                      "href": null
+                    }
+                  ]
+                ],
+                [
+                  [
+                    {
+                      "text": "Surcapacité",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "pricing/utilisation baissent",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "utilisation/rental economics",
+                      "marks": [],
+                      "href": null
+                    }
+                  ]
+                ],
+                [
+                  [
+                    {
+                      "text": "BFR/financement",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "cash conversion se dégrade",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "AR/CFO",
+                      "marks": [],
+                      "href": null
+                    }
+                  ]
+                ],
+                [
+                  [
+                    {
+                      "text": "Restrictions Chine",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "marché adressable réduit",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "licences/export controls",
+                      "marks": [],
+                      "href": null
+                    }
+                  ]
+                ]
+              ],
+              "header": true
+            },
+            {
+              "id": "3f037ea7-af35-8189-8875-c0b085c34ea2",
+              "sourceIds": [
+                "3f037ea7-af35-8189-8875-c0b085c34ea2"
+              ],
+              "type": "heading",
+              "level": 1,
+              "text": [
+                {
+                  "text": "10. Peers",
+                  "marks": [],
+                  "href": null
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-819a-8de6-eab707707d78",
+              "sourceIds": [
+                "3f037ea7-af35-819a-8de6-eab707707d78"
+              ],
+              "type": "paragraph",
+              "text": [
+                {
+                  "text": "La comparaison peer est limitée par l’hétérogénéité des modèles. AMD reste le challenger marchand principal; les ASIC hyperscalers constituent une concurrence verticale. Aucun multiple peer homogène n’est utilisé pour scorer Business.",
+                  "marks": [],
+                  "href": null
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-8171-8e4d-c51ff74d8dd6",
+              "sourceIds": [
+                "3f037ea7-af35-8171-8e4d-c51ff74d8dd6"
+              ],
+              "type": "heading",
+              "level": 1,
+              "text": [
+                {
+                  "text": "11. Score",
+                  "marks": [],
+                  "href": null
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-81b6-adb5-cea01d1a0b0f",
+              "sourceIds": [
+                "3f037ea7-af35-81b6-adb5-cea01d1a0b0f"
+              ],
+              "type": "table",
+              "rows": [
+                [
+                  [
+                    {
+                      "text": "Critère",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Score",
+                      "marks": [],
+                      "href": null
+                    }
+                  ]
+                ],
+                [
+                  [
+                    {
+                      "text": "Business model",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "15/15",
+                      "marks": [],
+                      "href": null
+                    }
+                  ]
+                ],
+                [
+                  [
+                    {
+                      "text": "Market",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "15/15",
+                      "marks": [],
+                      "href": null
+                    }
+                  ]
+                ],
+                [
+                  [
+                    {
+                      "text": "Moat",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "20/20",
+                      "marks": [],
+                      "href": null
+                    }
+                  ]
+                ],
+                [
+                  [
+                    {
+                      "text": "Financial quality",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "14/15",
+                      "marks": [],
+                      "href": null
+                    }
+                  ]
+                ],
+                [
+                  [
+                    {
+                      "text": "Management",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "9/10",
+                      "marks": [],
+                      "href": null
+                    }
+                  ]
+                ],
+                [
+                  [
+                    {
+                      "text": "Competition",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "10/10",
+                      "marks": [],
+                      "href": null
+                    }
+                  ]
+                ],
+                [
+                  [
+                    {
+                      "text": "Resilience",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "5/10",
+                      "marks": [],
+                      "href": null
+                    }
+                  ]
+                ],
+                [
+                  [
+                    {
+                      "text": "Visibility",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "4/5",
+                      "marks": [],
+                      "href": null
+                    }
+                  ]
+                ],
+                [
+                  [
+                    {
+                      "text": "Total",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "92/100 [E:B1]",
+                      "marks": [],
+                      "href": null
+                    }
+                  ]
+                ]
+              ],
+              "header": true
+            },
+            {
+              "id": "3f037ea7-af35-8187-a8ff-e45a581146b8",
+              "sourceIds": [
+                "3f037ea7-af35-8187-a8ff-e45a581146b8"
+              ],
+              "type": "heading",
+              "level": 1,
+              "text": [
+                {
+                  "text": "12. Prochains résultats",
+                  "marks": [],
+                  "href": null
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-811a-bd26-e437859ead55",
+              "sourceIds": [
+                "3f037ea7-af35-811a-bd26-e437859ead55"
+              ],
+              "type": "paragraph",
+              "text": [
+                {
+                  "text": "Guide Q3: revenu 108 Md$ ±2% et marge brute autour de 74% [E:B9]. Ce sont des déclarations de management, pas des résultats réalisés.",
+                  "marks": [],
+                  "href": null
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-81da-ba94-feb5eebf8607",
+              "sourceIds": [
+                "3f037ea7-af35-81da-ba94-feb5eebf8607"
+              ],
+              "type": "heading",
+              "level": 1,
+              "text": [
+                {
+                  "text": "13. Questions ouvertes",
+                  "marks": [],
+                  "href": null
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-816f-9f5d-ea37f80a45d2",
+              "sourceIds": [
+                "3f037ea7-af35-816f-9f5d-ea37f80a45d2",
+                "3f037ea7-af35-810f-9593-f1dc31d37074",
+                "3f037ea7-af35-816a-8c33-c006f9b4c760",
+                "3f037ea7-af35-813e-a15c-e1a008a58730"
+              ],
+              "type": "list",
+              "ordered": false,
+              "items": [
+                [
+                  {
+                    "text": "Utilisation économique des clusters ajoutés.",
+                    "marks": [],
+                    "href": null
+                  }
+                ],
+                [
+                  {
+                    "text": "Rental yields et residual values.",
+                    "marks": [],
+                    "href": null
+                  }
+                ],
+                [
+                  {
+                    "text": "Part de demande marginale soutenue par financement/backstops.",
+                    "marks": [],
+                    "href": null
+                  }
+                ],
+                [
+                  {
+                    "text": "Part capturable du TAM face au custom silicon.",
+                    "marks": [],
+                    "href": null
+                  }
+                ]
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-81e8-b982-c95f5d11cd78",
+              "sourceIds": [
+                "3f037ea7-af35-81e8-b982-c95f5d11cd78"
+              ],
+              "type": "heading",
+              "level": 1,
+              "text": [
+                {
+                  "text": "14. Takeaways",
+                  "marks": [],
+                  "href": null
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-8150-97c0-e21c2339a788",
+              "sourceIds": [
+                "3f037ea7-af35-8150-97c0-e21c2339a788",
+                "3f037ea7-af35-819b-8817-e17ab891b342",
+                "3f037ea7-af35-8184-9603-c5ce6c4bf0b7"
+              ],
+              "type": "list",
+              "ordered": false,
+              "items": [
+                [
+                  {
+                    "text": "Le business reste Excellent 92/100 [E:B1].",
+                    "marks": [],
+                    "href": null
+                  }
+                ],
+                [
+                  {
+                    "text": "Les résultats Q2 FY2027 confirment une croissance et des marges exceptionnelles [E:B2][E:B3].",
+                    "marks": [],
+                    "href": null
+                  }
+                ],
+                [
+                  {
+                    "text": "Le principal changement de risque concerne BFR, engagements et réflexivité, pas le moat central.",
+                    "marks": [],
+                    "href": null
+                  }
+                ]
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-81d8-8ec1-e28a81885640",
+              "sourceIds": [
+                "3f037ea7-af35-81d8-8ec1-e28a81885640"
+              ],
+              "type": "heading",
+              "level": 1,
+              "text": [
+                {
+                  "text": "15. Conclusion finale",
+                  "marks": [],
+                  "href": null
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-815c-88dd-d9707e6eef82",
+              "sourceIds": [
+                "3f037ea7-af35-815c-88dd-d9707e6eef82"
+              ],
+              "type": "paragraph",
+              "text": [
+                {
+                  "text": "NVIDIA mérite une valorisation premium en raison de son moat système, de son economics et de sa cadence produit. La qualité business reste excellente; la résilience est la composante la plus faible en raison de la concentration et du risque de cycle.",
+                  "marks": [],
+                  "href": null
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-812e-a1e7-d2f110dd34e2",
+              "sourceIds": [
+                "3f037ea7-af35-812e-a1e7-d2f110dd34e2"
+              ],
+              "type": "heading",
+              "level": 1,
+              "text": [
+                {
+                  "text": "16. Sources",
+                  "marks": [],
+                  "href": null
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-81c2-8b52-e0d732b0fec8",
+              "sourceIds": [
+                "3f037ea7-af35-81c2-8b52-e0d732b0fec8"
+              ],
+              "type": "paragraph",
+              "text": [
+                {
+                  "text": "NVIDIA Q2 FY2027 results — période Q2 FY2027; consulté pendant le run; locator: Revenue / Data Center / gross margin / Q3 outlook — ",
+                  "marks": [],
+                  "href": null
+                },
+                {
+                  "text": "https://investor.nvidia.com/news/press-release-details/2026/NVIDIA-Announces-Financial-Results-for-Second-Quarter-Fiscal-2027/",
+                  "marks": [],
+                  "href": "https://investor.nvidia.com/news/press-release-details/2026/NVIDIA-Announces-Financial-Results-for-Second-Quarter-Fiscal-2027/"
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-8140-b2df-e92cce057f57",
+              "sourceIds": [
+                "3f037ea7-af35-8140-b2df-e92cce057f57"
+              ],
+              "type": "paragraph",
+              "text": [
+                {
+                  "text": "NVIDIA Q2 FY2027 10-Q — période close 2026-07-26; locator: balance sheet, cash flows, customer concentration, payment terms — ",
+                  "marks": [],
+                  "href": null
+                },
+                {
+                  "text": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000075/nvda-20260726.htm",
+                  "marks": [],
+                  "href": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000075/nvda-20260726.htm"
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-812b-a630-ed4ce1ae7efc",
+              "sourceIds": [
+                "3f037ea7-af35-812b-a630-ed4ce1ae7efc"
+              ],
+              "type": "paragraph",
+              "text": [
+                {
+                  "text": "NVIDIA FY2026 10-K — FY2026; locator: historical financial statements — ",
+                  "marks": [],
+                  "href": null
+                },
+                {
+                  "text": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000021/nvda-20260125.htm",
+                  "marks": [],
+                  "href": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000021/nvda-20260125.htm"
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-811c-933d-cbd0f2fb44c2",
+              "sourceIds": [
+                "3f037ea7-af35-811c-933d-cbd0f2fb44c2"
+              ],
+              "type": "heading",
+              "level": 1,
+              "text": [
+                {
+                  "text": "Evidence Ledger",
+                  "marks": [],
+                  "href": null
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-81b2-9825-e5eb813889a6",
+              "sourceIds": [
+                "3f037ea7-af35-81b2-9825-e5eb813889a6"
+              ],
+              "type": "table",
+              "rows": [
+                [
+                  [
+                    {
+                      "text": "ID",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Claim",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Période/asOf",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Locator",
+                      "marks": [],
+                      "href": null
+                    }
+                  ]
+                ],
+                [
+                  [
+                    {
+                      "text": "E:B1",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Business score 92/100",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "2026-10-05",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "same-run Business Full scoring",
+                      "marks": [],
+                      "href": null
+                    }
+                  ]
+                ],
+                [
+                  [
+                    {
+                      "text": "E:B2",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Q2 revenue 96,221 Md$, GM ~75%, op income 63,734 Md$",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Q2 FY2027",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Q2 results / 10-Q income statement",
+                      "marks": [],
+                      "href": null
+                    }
+                  ]
+                ],
+                [
+                  [
+                    {
+                      "text": "E:B3",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Data Center 89 Md$, +117% y/y",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Q2 FY2027",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Q2 results Data Center",
+                      "marks": [],
+                      "href": null
+                    }
+                  ]
+                ],
+                [
+                  [
+                    {
+                      "text": "E:B4",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "FY24–FY26 historical revenue/margins/op income/CFO",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "FY2024–FY2026",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "FY2026 10-K financial statements",
+                      "marks": [],
+                      "href": null
+                    }
+                  ]
+                ],
+                [
+                  [
+                    {
+                      "text": "E:B5",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "H1 FY2027 CFO 74,421 Md$",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "H1 FY2027",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "10-Q cash flows",
+                      "marks": [],
+                      "href": null
+                    }
+                  ]
+                ],
+                [
+                  [
+                    {
+                      "text": "E:B6",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "AR 63,059 Md$",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "2026-07-26",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "10-Q balance sheet",
+                      "marks": [],
+                      "href": null
+                    }
+                  ]
+                ],
+                [
+                  [
+                    {
+                      "text": "E:B7",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Inventory 31,575 Md$",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "2026-07-26",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "10-Q balance sheet",
+                      "marks": [],
+                      "href": null
+                    }
+                  ]
+                ],
+                [
+                  [
+                    {
+                      "text": "E:B8",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Top AR customers 22/14/13/11/10%",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "2026-07-26",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "10-Q customer concentration note",
+                      "marks": [],
+                      "href": null
+                    }
+                  ]
+                ],
+                [
+                  [
+                    {
+                      "text": "E:B9",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Q3 guide 108 Md$ ±2%; GM ~74%",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Q3 FY2027 guidance",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Q2 results outlook",
+                      "marks": [],
+                      "href": null
+                    }
+                  ]
+                ]
+              ],
+              "header": true
+            },
+            {
+              "id": "3f037ea7-af35-8127-901f-d0d3c47353f9",
+              "sourceIds": [
+                "3f037ea7-af35-8127-901f-d0d3c47353f9"
+              ],
+              "type": "heading",
+              "level": 1,
+              "text": [
+                {
+                  "text": "Derivation Ledger",
+                  "marks": [],
+                  "href": null
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-8114-9f49-e7c4e458adb1",
+              "sourceIds": [
+                "3f037ea7-af35-8114-9f49-e7c4e458adb1"
+              ],
+              "type": "table",
+              "rows": [
+                [
+                  [
+                    {
+                      "text": "ID",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Formula",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Résultat",
+                      "marks": [],
+                      "href": null
+                    }
+                  ]
+                ],
+                [
+                  [
+                    {
+                      "text": "D:B1",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "89 / 96.221",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "~92,5% Data Center mix",
+                      "marks": [],
+                      "href": null
+                    }
+                  ]
+                ],
+                [
+                  [
+                    {
+                      "text": "D:B2",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "FY24 CFO - capex/intangibles",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "~27,0 Md$ FCF",
+                      "marks": [],
+                      "href": null
+                    }
+                  ]
+                ],
+                [
+                  [
+                    {
+                      "text": "D:B3",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "FY25 CFO - capex/intangibles",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "~60,9 Md$ FCF",
+                      "marks": [],
+                      "href": null
+                    }
+                  ]
+                ],
+                [
+                  [
+                    {
+                      "text": "D:B4",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "FY26 CFO - capex/intangibles",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "~96,7 Md$ FCF",
+                      "marks": [],
+                      "href": null
+                    }
+                  ]
+                ]
+              ],
+              "header": true
+            },
+            {
+              "id": "3f037ea7-af35-81f2-87e8-f3451df5e4aa",
+              "sourceIds": [
+                "3f037ea7-af35-81f2-87e8-f3451df5e4aa"
+              ],
+              "type": "heading",
+              "level": 1,
+              "text": [
+                {
+                  "text": "Evidence Gate",
+                  "marks": [],
+                  "href": null
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-813d-90c6-dfb2d83e1a7f",
+              "sourceIds": [
+                "3f037ea7-af35-813d-90c6-dfb2d83e1a7f"
+              ],
+              "type": "table",
+              "rows": [
+                [
+                  [
+                    {
+                      "text": "Gate",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Statut",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Gap / qualification",
+                      "marks": [],
+                      "href": null
+                    }
+                  ]
+                ],
+                [
+                  [
+                    {
+                      "text": "Identity",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "PASS",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Company READ réel + resolve_company déjà prouvés.",
+                      "marks": [],
+                      "href": null
+                    }
+                  ]
+                ],
+                [
+                  [
+                    {
+                      "text": "Material factual claims",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "PASS",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Q2/Q1/FY26, balance, customers, commitments and cash-flow have atomic E locators in the NATIVE proof appendix.",
+                      "marks": [],
+                      "href": null
+                    }
+                  ]
+                ],
+                [
+                  [
+                    {
+                      "text": "Hypotheses / inferences / methodology",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "PASS",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Moat, roadmap economics and reflexivity are classified H/I/M rather than false primary evidence.",
+                      "marks": [],
+                      "href": null
+                    }
+                  ]
+                ],
+                [
+                  [
+                    {
+                      "text": "TAM/SAM/SOM exact",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "GAP externe non bloquant",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "No homogeneous external figure retained.",
+                      "marks": [],
+                      "href": null
+                    }
+                  ]
+                ],
+                [
+                  [
+                    {
+                      "text": "Utilization / rental yields",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "GAP externe non bloquant",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "No homogeneous published series retained.",
+                      "marks": [],
+                      "href": null
+                    }
+                  ]
+                ],
+                [
+                  [
+                    {
+                      "text": "Projection",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "ABSENT autorisée",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Not a serialization blocker.",
+                      "marks": [],
+                      "href": null
+                    }
+                  ]
+                ]
+              ],
+              "header": true
+            },
+            {
+              "id": "3f037ea7-af35-812a-a8cb-d9ae78b63a62",
+              "sourceIds": [
+                "3f037ea7-af35-812a-a8cb-d9ae78b63a62"
+              ],
+              "type": "heading",
+              "level": 1,
+              "text": [
+                {
+                  "text": "HANDOFF — BUSINESS v1.3.0",
+                  "marks": [],
+                  "href": null
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-815f-beff-c71bad2e51e8",
+              "sourceIds": [
+                "3f037ea7-af35-815f-beff-c71bad2e51e8"
+              ],
+              "type": "paragraph",
+              "text": [
+                {
+                  "text": "contract",
+                  "marks": [],
+                  "href": null
+                },
+                {
+                  "text": "version: 1.3.0. Run ID: NVDA-FA-20261005-WRITE-PROOF-2. NVIDIA/NVDA. Conclusion: Excellent — 92/100 [E:B1]. Confidence: High. Leading indicators: utilization/rental economics, AR/CFO, supply/backstop exposure. Gaps: TAM exact; locators atomiques de plusieurs claims qualitatifs. Persistance: NOT",
+                  "marks": [
+                    "italic"
+                  ],
+                  "href": null
+                },
+                {
+                  "text": "REQUIRED.",
+                  "marks": [],
+                  "href": null
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-81fd-981a-c0c405c39fb4",
+              "sourceIds": [
+                "3f037ea7-af35-81fd-981a-c0c405c39fb4"
+              ],
+              "type": "heading",
+              "level": 1,
+              "text": [
+                {
+                  "text": "NATIVE — preuves primaires complémentaires",
+                  "marks": [],
+                  "href": null
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-81b6-ad57-df9e6142bc40",
+              "sourceIds": [
+                "3f037ea7-af35-81b6-ad57-df9e6142bc40"
+              ],
+              "type": "table",
+              "rows": [
+                [
+                  [
+                    {
+                      "text": "Tag",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Nature",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Claim / locator atomique",
+                      "marks": [],
+                      "href": null
+                    }
+                  ]
+                ],
+                [
+                  [
+                    {
+                      "text": "[E:BN-Q2]",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "E",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "NVIDIA IR Q2 FY27 — Q2 Fiscal 2027 Summary: revenue 96,221 Md$, GAAP GM 75,0%, op income 63,734 Md$, NI 59,688 Md$; Data Center highlights: 89,0 Md$; Q3 Outlook: 108,0 Md$ ±2%, GM 74,0% ±50 pb.",
+                      "marks": [],
+                      "href": null
+                    }
+                  ]
+                ],
+                [
+                  [
+                    {
+                      "text": "[E:BN-Q1]",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "E",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "NVIDIA IR Q1 FY27 — Q1 Fiscal 2027 Summary: revenue 81,615 Md$, GAAP GM 74,9%, op income 53,536 Md$, NI 58,321 Md$; Data Center 75,2 Md$.",
+                      "marks": [],
+                      "href": null
+                    }
+                  ]
+                ],
+                [
+                  [
+                    {
+                      "text": "[E:BN-FY26]",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "E",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "NVIDIA IR FY26 — Fiscal 2026 Summary: revenue 215,938 Md$, GM 71,1%, op income 130,387 Md$, NI 120,067 Md$.",
+                      "marks": [],
+                      "href": null
+                    }
+                  ]
+                ],
+                [
+                  [
+                    {
+                      "text": "[E:BN-BAL]",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "E",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "SEC Q2 FY27 10-Q — Balance Sheet/Cash Flows: AR 63,059 Md$, inventory 31,575 Md$, H1 CFO 74,421 Md$.",
+                      "marks": [],
+                      "href": null
+                    }
+                  ]
+                ],
+                [
+                  [
+                    {
+                      "text": "[E:BN-CUST]",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "E",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "SEC Q2 FY27 10-Q — customer concentration/payment terms: AR 22/14/13/11/10%; certains termes 90 jours à un an.",
+                      "marks": [],
+                      "href": null
+                    }
+                  ]
+                ],
+                [
+                  [
+                    {
+                      "text": "[E:BN-COMMIT]",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "E",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "SEC Q2 FY27 10-Q — commitments/MD&A: supply/capacity commitments 279 Md$ vs 119 Md$ prior quarter.",
+                      "marks": [],
+                      "href": null
+                    }
+                  ]
+                ],
+                [
+                  [
+                    {
+                      "text": "[E:BN-RUBIN]",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "E",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "SEC Q2 FY27 10-Q — recent developments: Blackwell majority of system shipments; Rubin began production shipments in Q3 FY27.",
+                      "marks": [],
+                      "href": null
+                    }
+                  ]
+                ],
+                [
+                  [
+                    {
+                      "text": "[D:BN-DCMIX]",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "D",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "89,0 / 96,221 = ~92,5% Data Center mix.",
+                      "marks": [],
+                      "href": null
+                    }
+                  ]
+                ],
+                [
+                  [
+                    {
+                      "text": "[D:BN-FCF26]",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "D",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "FY26 CFO 102,718 - capex/intangibles 6,042 = 96,676 Md$ simplified FCF.",
+                      "marks": [],
+                      "href": null
+                    }
+                  ]
+                ],
+                [
+                  [
+                    {
+                      "text": "[H:BN-RUBIN]",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "H",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Future Rubin economics are an underwriting hypothesis, not a primary fact.",
+                      "marks": [],
+                      "href": null
+                    }
+                  ]
+                ],
+                [
+                  [
+                    {
+                      "text": "[I:BN-MOAT]",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "I",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Full-stack moat / switching-cost conclusion is analyst inference.",
+                      "marks": [],
+                      "href": null
+                    }
+                  ]
+                ],
+                [
+                  [
+                    {
+                      "text": "[M:BN-SCORE]",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "M",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "92/100 uses the Business Framework scoring rubric.",
+                      "marks": [],
+                      "href": null
+                    }
+                  ]
+                ]
+              ],
+              "header": true
+            },
+            {
+              "id": "3f037ea7-af35-81c1-b201-c48e962af952",
+              "sourceIds": [
+                "3f037ea7-af35-81c1-b201-c48e962af952"
+              ],
+              "type": "paragraph",
+              "text": [
+                {
+                  "text": "NVIDIA IR Q2 FY27 — 2026-08-26 — Q2 Fiscal 2027 Summary / Data Center highlights / Q3 Outlook — https://investor.nvidia.com/news/press-release-details/2026/NVIDIA-Announces-Financial-Results-for-Second-Quarter-Fiscal-2027/",
+                  "marks": [],
+                  "href": "https://investor.nvidia.com/news/press-release-details/2026/NVIDIA-Announces-Financial-Results-for-Second-Quarter-Fiscal-2027/"
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-81eb-b036-cbdfc8ed7b9e",
+              "sourceIds": [
+                "3f037ea7-af35-81eb-b036-cbdfc8ed7b9e"
+              ],
+              "type": "paragraph",
+              "text": [
+                {
+                  "text": "NVIDIA IR Q1 FY27 — 2026-05-20 — Q1 Fiscal 2027 Summary — https://investor.nvidia.com/news/press-release-details/2026/NVIDIA-Announces-Financial-Results-for-First-Quarter-Fiscal-2027/default.aspx",
+                  "marks": [],
+                  "href": "https://investor.nvidia.com/news/press-release-details/2026/NVIDIA-Announces-Financial-Results-for-First-Quarter-Fiscal-2027/default.aspx"
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-8176-a642-c32f29591f22",
+              "sourceIds": [
+                "3f037ea7-af35-8176-a642-c32f29591f22"
+              ],
+              "type": "paragraph",
+              "text": [
+                {
+                  "text": "NVIDIA IR FY26 — 2026-02-25 — Fiscal 2026 Summary — https://investor.nvidia.com/news/press-release-details/2026/NVIDIA-Announces-Financial-Results-for-Fourth-Quarter-and-Fiscal-2026/",
+                  "marks": [],
+                  "href": "https://investor.nvidia.com/news/press-release-details/2026/NVIDIA-Announces-Financial-Results-for-Fourth-Quarter-and-Fiscal-2026/"
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-8159-8297-ffa3d4c62d3a",
+              "sourceIds": [
+                "3f037ea7-af35-8159-8297-ffa3d4c62d3a"
+              ],
+              "type": "paragraph",
+              "text": [
+                {
+                  "text": "SEC Q2 FY27 10-Q — Balance Sheet / Cash Flows / Note 7 / Note 10 / MD&A — https://www.sec.gov/Archives/edgar/data/1045810/000104581026000075/nvda-20260726.htm",
+                  "marks": [],
+                  "href": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000075/nvda-20260726.htm"
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-81a0-b8a8-cc75b12360f2",
+              "sourceIds": [
+                "3f037ea7-af35-81a0-b8a8-cc75b12360f2"
+              ],
+              "type": "heading",
+              "level": 1,
+              "text": [
+                {
+                  "text": "NATIVE Evidence Gate",
+                  "marks": [],
+                  "href": null
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-81c0-98ff-e490ed681ebf",
+              "sourceIds": [
+                "3f037ea7-af35-81c0-98ff-e490ed681ebf"
+              ],
+              "type": "table",
+              "rows": [
+                [
+                  [
+                    {
+                      "text": "Gate",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Statut",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Gaps",
+                      "marks": [],
+                      "href": null
+                    }
+                  ]
+                ],
+                [
+                  [
+                    {
+                      "text": "Material facts E / calculations D",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "PASS",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Q2/Q1/FY26/balance/commitments have atomic locators.",
+                      "marks": [],
+                      "href": null
+                    }
+                  ]
+                ],
+                [
+                  [
+                    {
+                      "text": "Hypotheses / inferences / method",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "PASS",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "H/I/M are not claimed as primary evidence.",
+                      "marks": [],
+                      "href": null
+                    }
+                  ]
+                ],
+                [
+                  [
+                    {
+                      "text": "TAM/SAM/SOM exact",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "GAP externe non bloquant",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "No homogeneous figure retained.",
+                      "marks": [],
+                      "href": null
+                    }
+                  ]
+                ],
+                [
+                  [
+                    {
+                      "text": "Utilization/rental yields",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "GAP externe non bloquant",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Not published as a homogeneous series.",
+                      "marks": [],
+                      "href": null
+                    }
+                  ]
+                ],
+                [
+                  [
+                    {
+                      "text": "Projection",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "ABSENT autorisée",
+                      "marks": [],
+                      "href": null
+                    }
+                  ],
+                  [
+                    {
+                      "text": "Not a serialization blocker.",
+                      "marks": [],
+                      "href": null
+                    }
+                  ]
+                ]
+              ],
+              "header": true
+            },
+            {
+              "id": "3f037ea7-af35-8159-b8b2-f6bf2cd22a70",
+              "sourceIds": [
+                "3f037ea7-af35-8159-b8b2-f6bf2cd22a70"
+              ],
+              "type": "heading",
+              "level": 1,
+              "text": [
+                {
+                  "text": "HANDOFF — BUSINESS v1.3.0",
+                  "marks": [],
+                  "href": null
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-81e5-a7e0-f012dd4a583f",
+              "sourceIds": [
+                "3f037ea7-af35-81e5-a7e0-f012dd4a583f"
+              ],
+              "type": "paragraph",
+              "text": [
+                {
+                  "text": "contract",
+                  "marks": [],
+                  "href": null
+                },
+                {
+                  "text": "version: 1.3.0; plugin",
+                  "marks": [
+                    "italic"
+                  ],
+                  "href": null
+                },
+                {
+                  "text": "version: 1.3.10; run",
+                  "marks": [],
+                  "href": null
+                },
+                {
+                  "text": "id: NVDA-FA-20261005-WRITE-PROOF-2; module: Business; conclusion: Excellent — 92/100 [D:B-SCORE]; confidence: High; gaps externes: TAM exact, utilization/rental; persistence",
+                  "marks": [
+                    "italic"
+                  ],
+                  "href": null
+                },
+                {
+                  "text": "status: NOT_REQUIRED.",
+                  "marks": [],
+                  "href": null
+                }
+              ]
+            },
+            {
+              "id": "3f037ea7-af35-815b-85bf-d367eac6549a:block:63",
+              "sourceIds": [
+                "3f037ea7-af35-815b-85bf-d367eac6549a"
+              ],
+              "type": "unsupported",
+              "sourceType": "unrepresented_snapshot",
+              "text": "Run ID: NVDA-FA-20261005-WRITE-PROOF-2 Analysis Date: 2026-10-05 Verdict: Excellent Confidence: High Source Freshness: Unknown Status: Draft Analysis: NVIDIA — Business Check Full — NVDA-FA-20261005-WRITE-PROOF-2 TL;DR Business: Excellent — 92/100. Moat full-stack exceptionnel; croissance et marges fortes; tail risk de financement/capacité en hausse. Rapport complet Business Check — NVIDIA Run ID: NVDA-FA-20261005-WRITE-PROOF-2. Date: 2026-10-05. Ticker: NVDA. Exchange: NASDAQ. Currency: USD. Business score 92/100 [E:B1]. Confiance: High. Persistance: NOT_REQUIRED. TL;DR Verdict: Excellent — 92/100 [E:B1]. NVIDIA conserve un moat full-stack exceptionnel; la croissance et les marges restent hors norme. Le rôle croissant de facilitateur financier et l’ampleur des engagements ajoutent un tail risk corrélé, sans invalider le business central. Élément | Verdict Business model | Fort Moat | Très fort Croissance structurelle | Forte Qualité financière | Forte Résilience | Moyenne Score | 92/100 [E:B1] Forces: moat système CUDA + accélérateurs + networking; economics et génération de cash; cadence Blackwell/Rubin. Risques: concentration du capex IA; réponse d’offre/capacité; financement et contreparties de l’écosystème.",
+              "diagnostic": {
+                "code": "unsupported_block",
+                "message": "Bloc unrepresented_snapshot non pris en charge par le lecteur.",
+                "severity": "warning"
+              }
+            },
+            {
+              "id": "3f037ea7-af35-815b-85bf-d367eac6549a:block:64",
+              "sourceIds": [
+                "3f037ea7-af35-815b-85bf-d367eac6549a"
+              ],
+              "type": "unsupported",
+              "sourceType": "unrepresented_snapshot",
+              "text": "Critère | Score Business model | 15/15 Market | 15/15 Moat | 20/20 Financial quality | 14/15 Management | 9/10 Competition | 10/10 Resilience | 5/10 Visibility | 4/5 Total | 92/100 [E:B1]",
+              "diagnostic": {
+                "code": "unsupported_block",
+                "message": "Bloc unrepresented_snapshot non pris en charge par le lecteur.",
+                "severity": "warning"
+              }
+            },
+            {
+              "id": "3f037ea7-af35-815b-85bf-d367eac6549a:block:65",
+              "sourceIds": [
+                "3f037ea7-af35-815b-85bf-d367eac6549a"
+              ],
+              "type": "unsupported",
+              "sourceType": "unrepresented_snapshot",
+              "text": "NVIDIA Q2 FY2027 results — période Q2 FY2027; consulté pendant le run; locator: Revenue / Data Center / gross margin / Q3 outlook — https://investor.nvidia.com/news/press-release-details/2026/NVIDIA-Announces-Financial-Results-for-Second-Quarter-Fiscal-2027/ NVIDIA Q2 FY2027 10-Q — période close 2026-07-26; locator: balance sheet, cash flows, customer concentration, payment terms — https://www.sec.gov/Archives/edgar/data/1045810/000104581026000075/nvda-20260726.htm NVIDIA FY2026 10-K — FY2026; locator: historical financial statements — https://www.sec.gov/Archives/edgar/data/1045810/000104581026000021/nvda-20260125.htm Evidence Ledger",
+              "diagnostic": {
+                "code": "unsupported_block",
+                "message": "Bloc unrepresented_snapshot non pris en charge par le lecteur.",
+                "severity": "warning"
+              }
+            },
+            {
+              "id": "3f037ea7-af35-815b-85bf-d367eac6549a:block:66",
+              "sourceIds": [
+                "3f037ea7-af35-815b-85bf-d367eac6549a"
+              ],
+              "type": "unsupported",
+              "sourceType": "unrepresented_snapshot",
+              "text": "NVIDIA IR Q2 FY27 — 2026-08-26 — Q2 Fiscal 2027 Summary / Data Center highlights / Q3 Outlook — https://investor.nvidia.com/news/press-release-details/2026/NVIDIA-Announces-Financial-Results-for-Second-Quarter-Fiscal-2027/ NVIDIA IR Q1 FY27 — 2026-05-20 — Q1 Fiscal 2027 Summary — https://investor.nvidia.com/news/press-release-details/2026/NVIDIA-Announces-Financial-Results-for-First-Quarter-Fiscal-2027/default.aspx NVIDIA IR FY26 — 2026-02-25 — Fiscal 2026 Summary — https://investor.nvidia.com/news/press-release-details/2026/NVIDIA-Announces-Financial-Results-for-Fourth-Quarter-and-Fiscal-2026/ SEC Q2 FY27 10-Q — Balance Sheet / Cash Flows / Note 7 / Note 10 / MD&A — https://www.sec.gov/Archives/edgar/data/1045810/000104581026000075/nvda-20260726.htm NATIVE Evidence Gate",
+              "diagnostic": {
+                "code": "unsupported_block",
+                "message": "Bloc unrepresented_snapshot non pris en charge par le lecteur.",
+                "severity": "warning"
+              }
+            }
+          ]
+        },
+        "summary": "Business: Excellent — 92/100.\nMoat full-stack exceptionnel; croissance et marges fortes; tail risk de financement/capacité en hausse.",
+        "verdict": "Excellent",
+        "confidence": "High",
+        "presentation": {
+          "facts": [],
+          "thresholds": [],
+          "scenarios": []
+        },
+        "projection": {
+          "status": "absent"
+        },
+        "diagnostics": [
+          {
+            "code": "unsupported_block",
+            "message": "Bloc unrepresented_snapshot non pris en charge par le lecteur.",
+            "severity": "warning"
+          },
+          {
+            "code": "unsupported_block",
+            "message": "Bloc unrepresented_snapshot non pris en charge par le lecteur.",
+            "severity": "warning"
+          },
+          {
+            "code": "unsupported_block",
+            "message": "Bloc unrepresented_snapshot non pris en charge par le lecteur.",
+            "severity": "warning"
+          },
+          {
+            "code": "unsupported_block",
+            "message": "Bloc unrepresented_snapshot non pris en charge par le lecteur.",
+            "severity": "warning"
+          }
+        ],
+        "score": "92"
+      },
+      "metadata": {
+        "revision": "2026-10-05T16:14:00.000Z",
+        "freshness": "unknown",
+        "provenance": {
+          "kind": "notion",
+          "sourceId": "3f037ea7-af35-815b-85bf-d367eac6549a",
+          "revision": "2026-10-05T16:14:00.000Z",
+          "capturedAt": "2026-10-05T16:14:00.000Z"
+        },
+        "diagnostics": [
+          {
+            "code": "unsupported_block",
+            "message": "Bloc unrepresented_snapshot non pris en charge par le lecteur.",
+            "severity": "warning"
+          },
+          {
+            "code": "unsupported_block",
+            "message": "Bloc unrepresented_snapshot non pris en charge par le lecteur.",
+            "severity": "warning"
+          },
+          {
+            "code": "unsupported_block",
+            "message": "Bloc unrepresented_snapshot non pris en charge par le lecteur.",
+            "severity": "warning"
+          },
+          {
+            "code": "unsupported_block",
+            "message": "Bloc unrepresented_snapshot non pris en charge par le lecteur.",
+            "severity": "warning"
+          }
+        ]
+      }
+    }
+  },
+  "isError": false
+}

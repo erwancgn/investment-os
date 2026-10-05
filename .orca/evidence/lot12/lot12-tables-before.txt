@@ -1,0 +1,35 @@
+TAP version 13
+# (node:62718) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: exact AN-598 payload with provider callout icon reaches persisted journal, D1 and immediate readback
+not ok 1 - exact AN-598 payload with provider callout icon reaches persisted journal, D1 and immediate readback
+  ---
+  duration_ms: 240.933798
+  type: 'test'
+  location: '/private/tmp/lot12-site-source/tests/notion-adapter-write.test.mjs:25:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    all AN-598/AN-599 native tables survive the writer snapshot
+    
+    0 !== 9
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 9
+  actual: 0
+  operator: 'strictEqual'
+  stack: |-
+    file:///private/tmp/lot12-site-source/tests/notion-adapter-write.test.mjs:39:9
+    async withFixture (file:///private/tmp/lot12-site-source/tests/fixtures/notion-write-harness.mjs:64:70)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 0
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 384.786597

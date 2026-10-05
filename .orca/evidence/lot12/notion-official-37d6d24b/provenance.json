@@ -1,0 +1,9 @@
+{
+  "commit": "37d6d24b56dfb15633164fb1eaffd8d836360500",
+  "repository": "https://github.com/makenotion/notion-sdk-js",
+  "sha256": {
+    "common.ts": "57ecc5178c3b104b60eecf8ac10e831b3656ca1fad911ca662675b65f0e2efd4",
+    "pages.ts": "f43db9f74fbc8be13d866635240696dd0422986b07ef8d496d93a81307b7c9ef",
+    "blocks.ts": "25e0c3a14cb491177711abb5a117cb5f56c87d40e8405f5585fedc289256553b"
+  }
+}

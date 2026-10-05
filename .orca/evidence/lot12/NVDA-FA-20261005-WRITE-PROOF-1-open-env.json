@@ -1,0 +1,23 @@
+{
+  "revision": 18,
+  "writeFlags": [
+    {
+      "key": "MCP_WRITE_DELEGATED",
+      "value": "1",
+      "is_secret": false,
+      "type": "envvar"
+    },
+    {
+      "key": "MCP_WRITE_ENABLED",
+      "value": "1",
+      "is_secret": false,
+      "type": "envvar"
+    },
+    {
+      "key": "MCP_WRITE_TEST_RUN_IDS",
+      "value": "NVDA-FA-20261005-WRITE-PROOF-1",
+      "is_secret": false,
+      "type": "envvar"
+    }
+  ]
+}
