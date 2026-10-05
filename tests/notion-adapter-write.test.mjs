@@ -34,6 +34,13 @@ test('exact AN-598 payload with provider callout icon reaches persisted journal,
  assert.equal(f.sql.prepare('SELECT phase FROM notion_analysis_writes').get().phase,'persisted');
  assert.equal(f.sql.prepare("SELECT COUNT(*) AS n FROM notion_documents WHERE source_key='analyses'").get().n,1);
  const read=await service.getAnalysisById(result.data.analysisId);assert.equal(read.status,'ok');assert.equal(read.data.header.id,result.data.analysisId);assert.equal(read.data.score,'92');assert.equal(read.data.verdict,'Excellent');
+ const tables=read.data.content.blocks.filter(b=>b.type==='table');
+ const expected=args.input.analysis.content.blocks.filter(b=>b.type==='table');
+ assert.equal(tables.length,9,'all AN-598/AN-599 native tables survive the writer snapshot');
+ const plain=segments=>segments.map(s=>s.text).join('').replace(/[*_`~]/g,'');
+ assert.deepEqual(tables.map(b=>({header:b.header,rows:b.rows.map(row=>row.map(plain))})),expected.map(b=>({header:b.header,rows:b.rows.map(row=>row.map(plain))})));
+ assert.ok(tables.some(b=>b.rows.some(row=>row.some(cell=>plain(cell).includes('Material facts E / calculations D')))));
+ assert.ok(tables.some(b=>b.rows.some(row=>row.some(cell=>plain(cell).includes('same-run Business Full scoring')))));
  assert.equal(f.creates,1);assert.equal(f.promotions,0);
 }));
 for(const icon of [null,'⭐'])test(`callout ${icon===null?'without icon omits icon entirely':'with emoji preserves the Notion icon DTO'}`,()=>withFixture({},async f=>{

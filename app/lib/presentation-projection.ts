@@ -103,8 +103,15 @@ export function humanReadableNotionBlocks(value: unknown): unknown[] {
       if (record(value[index + 1]).type === "code") index++;
       continue;
     }
-    const nested = Array.isArray(block.children) ? humanReadableNotionBlocks(block.children) : undefined;
-    filtered.push(nested ? { ...block, children: nested } : block);
+    const body = record(block[type]);
+    // Provider bodies and imported snapshots enter the same reader representation.
+    const sourceChildren = Array.isArray(block.children) ? block.children : body.children;
+    const nested = Array.isArray(sourceChildren) ? humanReadableNotionBlocks(sourceChildren) : undefined;
+    if (nested) {
+      const content = { ...body };
+      delete content.children;
+      filtered.push({ ...block, [type]: content, children: nested });
+    } else filtered.push(block);
   }
   return filtered;
 }
