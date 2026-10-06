@@ -259,6 +259,14 @@ test("review: Yahoo quote symbol honours the company's exchange, never borrows a
   assert.equal(quoteSymbolFor("ASML", "Euronext Amsterdam"), "ASML.AS");
 });
 
+test("exchange table covers the main non-US/EU listings, with MIC and Google spellings", async () => {
+  const { quoteSymbolFor } = await api();
+  const cases = [["SAP", "Xetra", "SAP.DE"], ["SAP", "XETR", "SAP.DE"], ["NOVO-B", "Nasdaq Copenhagen", "NOVO-B.CO"], ["0700", "HKG", "0700.HK"], ["SHOP", "TSX", "SHOP.TO"],
+    ["BHP", "ASX", "BHP.AX"], ["ENI", "Borsa Italiana", "ENI.MI"], ["ITX", "BME", "ITX.MC"], ["NESN", "SIX Swiss Exchange", "NESN.SW"], ["2330", "TWSE", "2330.TW"], ["005930", "KRX", "005930.KS"]];
+  for (const [ticker, exchange, expected] of cases) assert.equal(quoteSymbolFor(ticker, exchange), expected, `${ticker} @ ${exchange}`);
+  assert.equal(quoteSymbolFor("SHOP.TO", "Bourse inconnue"), "SHOP.TO", "an explicit known suffix needs no exchange");
+});
+
 test("review: create_company duplicate rule is the same in the Core and on live Notion pages (exchange-aware)", async () => {
   const { companyDuplicates } = await api();
   const known = [{ companyId: "fr-su", canonicalName: "Schneider Electric", ticker: "SU.PA", exchange: "Euronext Paris", assetId: null, aliases: [], isin: "FR0000121972" }];

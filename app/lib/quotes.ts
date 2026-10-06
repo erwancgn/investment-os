@@ -1,5 +1,7 @@
 import { quoteSymbolFor } from "../../core/services/market-identity.ts";
-export type Currency="EUR"|"USD"|"JPY"|"GBP"|"SEK"|"KRW"|"CHF";
+/** Foreign currencies converted to EUR through Yahoo EUR<code>=X. One list drives the type, the symbols and the FX instruments. */
+export const FX_CURRENCY_CODES=["USD","JPY","GBP","SEK","KRW","CHF","CAD","AUD","HKD","DKK","NOK","SGD","TWD","CNY","PLN","INR","BRL","ILS","MXN","ZAR"] as const;
+export type Currency="EUR"|typeof FX_CURRENCY_CODES[number];
 export type Instrument={id:string;name:string;yahooSymbol:string;googleSymbol?:string;expectedCurrency:Currency;exchangeTimezone:string;
   /** Not catalogued: any Yahoo symbol, currency taken from the provider. */
   dynamic?:boolean};
@@ -24,13 +26,14 @@ export function yahooSymbolForTicker(ticker:string){
   return yahooSymbolsByTicker[canonical]??canonical;
 }
 
-const fxSymbols:Record<Exclude<Currency,"EUR">,string>={USD:"EURUSD=X",JPY:"EURJPY=X",GBP:"EURGBP=X",SEK:"EURSEK=X",KRW:"EURKRW=X",CHF:"EURCHF=X"};
+const fxSymbols=Object.fromEntries(FX_CURRENCY_CODES.map(code=>[code,`EUR${code}=X`])) as Record<Exclude<Currency,"EUR">,string>;
 
 export function historicalPriceInEur(price:number,currency:Currency,eurPerCurrencyUnit:number){
   if(!Number.isFinite(price)||price<=0||!Number.isFinite(eurPerCurrencyUnit)||eurPerCurrencyUnit<=0)return null;
   return currency==="EUR"?price:price/eurPerCurrencyUnit;
 }
 
+/** LEGACY: catalogue of the original PWA portfolio, kept only for its history/basket screens. Analyses and MCP quotes never need it: any Yahoo symbol is quoted live (instrumentFor). */
 export const instruments:Record<string,Instrument>={
   ese:{id:"ese",name:"BNP Easy S&P 500",yahooSymbol:"ESE.PA",googleSymbol:"ESE:EPA",expectedCurrency:"EUR",exchangeTimezone:"Europe/Paris"},
   nvda:{id:"nvda",name:"NVIDIA",yahooSymbol:"NVDA",googleSymbol:"NVDA:NASDAQ",expectedCurrency:"USD",exchangeTimezone:"America/New_York"},
@@ -52,14 +55,7 @@ export const instruments:Record<string,Instrument>={
   ,lite:{id:"lite",name:"Lumentum",yahooSymbol:"LITE",googleSymbol:"LITE:NASDAQ",expectedCurrency:"USD",exchangeTimezone:"America/New_York"}
 };
 
-const fxInstruments:Record<string,Instrument>={
-  "fx-usd":{id:"fx-usd",name:"EUR/USD",yahooSymbol:"EURUSD=X",expectedCurrency:"USD",exchangeTimezone:"UTC"},
-  "fx-jpy":{id:"fx-jpy",name:"EUR/JPY",yahooSymbol:"EURJPY=X",expectedCurrency:"JPY",exchangeTimezone:"UTC"},
-  "fx-gbp":{id:"fx-gbp",name:"EUR/GBP",yahooSymbol:"EURGBP=X",expectedCurrency:"GBP",exchangeTimezone:"UTC"},
-  "fx-chf":{id:"fx-chf",name:"EUR/CHF",yahooSymbol:"EURCHF=X",expectedCurrency:"CHF",exchangeTimezone:"UTC"},
-  "fx-sek":{id:"fx-sek",name:"EUR/SEK",yahooSymbol:"EURSEK=X",expectedCurrency:"SEK",exchangeTimezone:"UTC"},
-  "fx-krw":{id:"fx-krw",name:"EUR/KRW",yahooSymbol:"EURKRW=X",expectedCurrency:"KRW",exchangeTimezone:"UTC"}
-};
+const fxInstruments:Record<string,Instrument>=Object.fromEntries(FX_CURRENCY_CODES.map(code=>[`fx-${code.toLowerCase()}`,{id:`fx-${code.toLowerCase()}`,name:`EUR/${code}`,yahooSymbol:`EUR${code}=X`,expectedCurrency:code,exchangeTimezone:"UTC"} as Instrument]));
 const allInstruments={...instruments,...fxInstruments};
 /** Yahoo symbol syntax (upper case): SU.PA, MU, BRK-B, 2330.TW, ^FCHI. Anything else never reaches the network. */
 const YAHOO_SYMBOL=/^[A-Z0-9^][A-Z0-9.\-=^]{0,19}$/;
@@ -69,7 +65,7 @@ function instrumentFor(id:string):Instrument|null{
   if(known)return known;
   return YAHOO_SYMBOL.test(id)&&!id.includes("..")?{id,name:id,yahooSymbol:id,expectedCurrency:"EUR",exchangeTimezone:"UTC",dynamic:true}:null;
 }
-const FX_CURRENCIES=new Set(["EUR","USD","JPY","GBP","SEK","KRW","CHF"]);
+const FX_CURRENCIES=new Set<string>(["EUR",...FX_CURRENCY_CODES]);
 /** Yahoo quotes London listings in pence (GBp/GBX): normalize to pounds, as the history reader already does. */
 function normalizePence(q:ProviderQuote):ProviderQuote{
   if(q.currency!=="GBp"&&q.currency!=="GBX")return q;

@@ -2,7 +2,7 @@
 import { handleImageOptimization, DEFAULT_DEVICE_SIZES, DEFAULT_IMAGE_SIZES } from "vinext/server/image-optimization";
 import handler from "vinext/server/app-router-entry";
 import { instruments } from "../app/lib/quotes";
-import { acquireNotionSourceSyncLock, acquireNotionSyncLock, notionSources, notionStatus, syncNotionAllSources, syncNotionSource, rebuildDocumentCompanyLinks, rebuildNotionRelations, normalizeStoredDocumentText, documentCompanyLinks, finalizeNotionImports, processNextNotionImport, processNextNotionWebhookEvent, recordNotionWebhookEvent, configureNotionWebhook, notionWebhookVerificationToken, releaseNotionSourceSyncLock, releaseNotionSyncLock, type NotionSourceKey } from "../app/lib/notion-sync";
+import { acquireNotionSourceSyncLock, acquireNotionSyncLock, notionSources, notionStatus, syncNotionAllSources, syncNotionSource, rebuildDocumentCompanyLinks, rebuildNotionRelations, configureNotionSources, normalizeStoredDocumentText, documentCompanyLinks, finalizeNotionImports, processNextNotionImport, processNextNotionWebhookEvent, recordNotionWebhookEvent, configureNotionWebhook, notionWebhookVerificationToken, releaseNotionSourceSyncLock, releaseNotionSyncLock, type NotionSourceKey } from "../app/lib/notion-sync";
 import { auditCompanyWatchlistRelations, listCompanies } from "../app/lib/investment-data";
 import { createInvestmentService, createInvestmentReadAdapter } from "../adapters/notion/investment-reads";
 
@@ -24,6 +24,8 @@ interface Env {
   /** Email address of the Site owner, set as a private runtime variable. */
   OWNER_EMAIL?: string;
   MCP_WRITE_ENABLED?: string;
+  /** Optional JSON overriding Notion data-source IDs per key, e.g. {"companies":"<uuid>"}. */
+  NOTION_SOURCES?: string;
   IMAGES: {
     input(stream: ReadableStream): {
       transform(options: Record<string, unknown>): {
@@ -175,6 +177,9 @@ async function launchNotionRefresh(env:Env,ctx:ExecutionContext,{forceScan=false
 // dangerouslyAllowSVG: true in next.config.js and uncomment below:
 // const imageConfig: ImageConfig = { dangerouslyAllowSVG: true };
 
+const MCP_REFRESH_CHECK_MS = 60_000;
+let lastMcpRefreshCheck = 0;
+
 // One handler per Worker isolate: retain active WRITE fences beyond response deadlines.
 const mcpHandlers = new WeakMap<Env, ReturnType<typeof createMcpHandler>>();
 function mcpHandler(env: Env) {
@@ -193,12 +198,21 @@ function mcpHandler(env: Env) {
 const worker = {
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
     const url = new URL(request.url);
+    try { configureNotionSources(env.NOTION_SOURCES); } catch (error) { return Response.json({ error: error instanceof Error ? error.message : "NOTION_SOURCES invalide." }, { status: 500 }); }
     if (url.pathname === "/.well-known/openai-apps-challenge" && request.method === "GET") {
       return new Response("mpJR0O_0nS7S-EeztZzEmb3vDetAaOaA2jyVm67yHCo", {
         headers: { "content-type": "text/plain; charset=utf-8", "cache-control": "public, max-age=300" },
       });
     }
-    if (url.pathname === "/mcp") return mcpHandler(env)(request, task => ctx.waitUntil(task));
+    if (url.pathname === "/mcp") {
+      const response = await mcpHandler(env)(request, task => ctx.waitUntil(task));
+      // No cron on Sites: an authenticated MCP request refreshes a stale Notion cache in the background (locked, throttled per isolate).
+      if (response.ok && env.NOTION_TOKEN && Date.now() - lastMcpRefreshCheck > MCP_REFRESH_CHECK_MS) {
+        lastMcpRefreshCheck = Date.now();
+        ctx.waitUntil(launchNotionRefresh(env, ctx).then(() => undefined, error => console.error("MCP cache refresh failed", error)));
+      }
+      return response;
+    }
     const owner = hasOwnerIdentity(request, env);
     const scope = requestedScope(request, owner);
 

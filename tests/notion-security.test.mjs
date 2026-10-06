@@ -430,3 +430,31 @@ test('normalizer exceptions are tagged safely at the document mapping boundary',
   assert.equal(log.stage, 'normalization');
   assert.doesNotMatch(logs[0], /private normalizer detail/);
 });
+
+test('an invalid NOTION_SOURCES variable stops every route with an explicit error instead of a silent fallback', async () => {
+  const { default: worker } = await loadWorker();
+  const response = await worker.fetch(new Request('https://investment-os.test/api/session'), { NOTION_SOURCES: '{"companies":"nope"}' }, { waitUntil() {}, passThroughOnException() {} });
+  assert.equal(response.status, 500);
+  assert.match((await response.json()).error, /NOTION_SOURCES/);
+});
+
+test('an authenticated MCP call refreshes a stale Notion cache in the background, throttled per isolate', async () => {
+  const { default: worker } = await loadWorker();
+  const tasks = []; const ctx = { waitUntil: task => tasks.push(task), passThroughOnException() {} };
+  let touched = 0;
+  const DB = { prepare() { touched += 1; throw new Error('db stub'); } };
+  const call = () => worker.fetch(new Request('https://investment-os.test/mcp', {
+    method: 'POST',
+    headers: { 'content-type': 'application/json', accept: 'application/json, text/event-stream', 'oai-authenticated-user-id': 'u1', 'oai-authenticated-user-email': 'owner@example.test' },
+    body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'tools/list', params: {} }),
+  }), { OWNER_EMAIL: 'owner@example.test', NOTION_TOKEN: 'token', DB }, ctx);
+  const first = await call();
+  assert.equal(first.status, 200);
+  await Promise.all(tasks);
+  assert.ok(touched >= 1, 'the cache freshness is checked after a successful MCP call');
+  const before = touched;
+  await call(); await Promise.all(tasks);
+  assert.equal(touched, before, 'a second call within the throttle window does not re-check');
+  const anonymous = await worker.fetch(new Request('https://investment-os.test/mcp', { method: 'POST', body: '{}' }), { OWNER_EMAIL: 'owner@example.test', NOTION_TOKEN: 'token', DB }, ctx);
+  assert.notEqual(anonymous.status, 200);
+});

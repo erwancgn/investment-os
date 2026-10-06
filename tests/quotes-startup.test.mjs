@@ -59,3 +59,11 @@ test('legacy ticker fixes never override the exchange stored in Notion', async (
  assert.equal(quoteSymbolForListing('ASML', 'NASDAQ'), 'ASML', 'the US listing stored in Notion wins');
  assert.equal(quoteSymbolForListing('ASML', 'Euronext Amsterdam'), 'ASML.AS');
 });
+
+test('currencies beyond the original seven (DKK, HKD, CAD) convert to EUR from cached FX',async()=>{
+ for(const [code,price,rate,expected] of [['DKK',745,7.45,100],['HKD',780,7.8,100],['CAD',150,1.5,100]]){
+  const symbol=`TEST-${code}.XX`;
+  const [q]=await getQuotes([symbol],false,dbFor({[symbol]:cached(code,price),[`fx-${code.toLowerCase()}`]:cached(code,rate)}),true);
+  assert.equal(q.nativeCurrency,code);assert.ok(Math.abs(q.eurPrice-expected)<1e-9,`${code}: ${q.eurPrice}`);
+ }
+});

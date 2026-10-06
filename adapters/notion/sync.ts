@@ -3,7 +3,7 @@ import { humanReadableNotionBlocks, verifyPresentationProjection } from "../../a
 const NOTION_API = "https://api.notion.com/v1";
 const NOTION_VERSION = "2026-03-11";
 
-export const notionSources = {
+const DEFAULT_NOTION_SOURCES = {
   companies: "3b337ea7-af35-802b-97bf-000bb8d741de",
   analyses: "84b60cc9-5546-4a05-b37f-0982114f3777",
   earnings: "0accd120-da19-418c-af6f-e617c1b89f55",
@@ -14,7 +14,28 @@ export const notionSources = {
   sources: "103006cf-2cb5-4fc9-8a9e-ad79c24ee79d",
 } as const;
 
-export type NotionSourceKey = keyof typeof notionSources;
+export type NotionSourceKey = keyof typeof DEFAULT_NOTION_SOURCES;
+/** Notion data-source IDs. Defaults belong to this deployment; the NOTION_SOURCES variable (JSON) overrides them per key. */
+export const notionSources: Record<NotionSourceKey, string> = { ...DEFAULT_NOTION_SOURCES };
+/**
+ * Applies the NOTION_SOURCES runtime variable, e.g. {"companies":"<uuid>"}. Idempotent (always starts from the defaults).
+ * A malformed value throws: silently falling back could read or write another workspace's database.
+ */
+export function configureNotionSources(raw: string | undefined | null) {
+  const next: Record<NotionSourceKey, string> = { ...DEFAULT_NOTION_SOURCES };
+  if (raw && raw.trim()) {
+    let parsed: unknown;
+    try { parsed = JSON.parse(raw); } catch { throw new Error("NOTION_SOURCES n'est pas un JSON valide."); }
+    if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) throw new Error("NOTION_SOURCES doit être un objet JSON.");
+    for (const [key, value] of Object.entries(parsed as Record<string, unknown>)) {
+      if (!(key in DEFAULT_NOTION_SOURCES)) throw new Error(`NOTION_SOURCES: clé inconnue « ${key} ».`);
+      if (typeof value !== "string" || !/^[0-9a-f]{8}-?[0-9a-f]{4}-?[0-9a-f]{4}-?[0-9a-f]{4}-?[0-9a-f]{12}$/i.test(value.trim())) throw new Error(`NOTION_SOURCES: identifiant invalide pour « ${key} ».`);
+      next[key as NotionSourceKey] = value.trim().toLowerCase();
+    }
+  }
+  Object.assign(notionSources, next);
+  return notionSources;
+}
 export const notionSyncSources = Object.keys(notionSources) as NotionSourceKey[];
 type JsonRecord = Record<string, unknown>;
 
@@ -796,6 +817,8 @@ export async function normalizeStoredDocumentText(db: D1Database) {
   return { scanned: rows.length, updated };
 }
 
+const COMPACT_SOURCE_MAX_PAGES = 20;
+
 export async function syncNotionSource(db:D1Database,token:string,sourceKey:NotionSourceKey,maximumChangedPages=100,forceRefresh=false){
   void maximumChangedPages;
   void forceRefresh;
@@ -814,12 +837,16 @@ export async function syncNotionSource(db:D1Database,token:string,sourceKey:Noti
     if (sourceKey === PORTFOLIO_SOURCE || sourceKey === ETF_EXPOSURES_SOURCE) {
       const syncCompactSource = async (compactSource:NotionSourceKey) => {
         const compactDataSourceId=notionSources[compactSource];
-        const result = compactSource === sourceKey
-          ? await queryDataSource(token, dataSourceId, undefined, 100)
-          : await queryDataSource(token, compactDataSourceId, undefined, 100);
-        const pages = (Array.isArray(result.results) ? result.results.map(asRecord) : [])
-          .filter(page => typeof page.id === "string" && page.id.length > 0);
-        if (result.has_more === true) throw new Error(`La base ${compactSource === PORTFOLIO_SOURCE ? "Portfolio" : "ETF Country Exposure"} dépasse 100 lignes; pagination requise.`);
+        // Follow Notion's cursor: a table above 100 rows is read completely, within a hard page cap.
+        const pages: JsonRecord[] = [];
+        let cursor: string | undefined;
+        for (let pageIndex = 0; ; pageIndex += 1) {
+          if (pageIndex >= COMPACT_SOURCE_MAX_PAGES) throw new Error(`La base ${compactSource === PORTFOLIO_SOURCE ? "Portfolio" : "ETF Country Exposure"} dépasse ${COMPACT_SOURCE_MAX_PAGES * 100} lignes.`);
+          const result = await queryDataSource(token, compactDataSourceId, cursor, 100);
+          pages.push(...(Array.isArray(result.results) ? result.results.map(asRecord) : []).filter(page => typeof page.id === "string" && page.id.length > 0));
+          if (result.has_more !== true || typeof result.next_cursor !== "string") break;
+          cursor = result.next_cursor;
+        }
 
         const storedRows = (await db.prepare("SELECT page_id FROM notion_documents WHERE source_key=?")
           .bind(compactSource).all<{page_id:string}>()).results ?? [];

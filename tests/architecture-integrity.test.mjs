@@ -19,7 +19,9 @@ test("the Worker mounts the MCP endpoint with Sites authentication", async () =>
   const worker = await read("worker/index.ts");
   assert.match(worker, /import \{ createMcpHandler \} from "\.\.\/transports\/mcp\/server"/);
   assert.match(worker, /import \{ authenticateSitesMcp \} from "\.\.\/transports\/mcp\/sites-auth"/);
-  assert.match(worker, /url\.pathname === "\/mcp"\) return mcpHandler\(env\)/);
+  assert.match(worker, /url\.pathname === "\/mcp"\) \{\s+const response = await mcpHandler\(env\)/);
+  // No cron on Sites: a successful MCP call refreshes a stale Notion cache in the background.
+  assert.match(worker, /launchNotionRefresh\(env, ctx\)/);
   // Forgetting the hosting policy would let any schema-valid WRITE reach the Core.
   assert.match(worker, /import \{ authorizeSitesWrite \} from "\.\.\/transports\/mcp\/site-write-policy"/);
   assert.match(worker, /authorizeWrite: authorizeSitesWrite,/);

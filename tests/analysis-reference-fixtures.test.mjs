@@ -319,7 +319,7 @@ test("portfolio refresh uses structured properties without downloading page bloc
   assert.match(source, /pages\.map\(page => documentUpsertStatement\(db, sourceKey, page, \[\]\)\)/);
   assert.doesNotMatch(source, /readBlockTree/);
   assert.match(source, /if \(sourceKey === PORTFOLIO_SOURCE\)/);
-  assert.match(source, /queryDataSource\(token, dataSourceId, undefined, 100\)/);
+  assert.match(source, /queryDataSource\(token, compactDataSourceId, cursor, 100\)/);
 });
 
 test("trajectory reads both targets from Notion and keeps active positions outside target visible", async () => {
