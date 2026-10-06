@@ -135,7 +135,12 @@ export function createMcpHandler(runtime: McpRuntime) {
     if (!validators[name].input(raw).valid) return rejected("invalid_input", scope);
     const input = raw as McpInputs[ToolName];
     if (write && runtime.authorizeWrite && !runtime.authorizeWrite(name, input)) return rejected("forbidden", scope);
-    if (write && activeWrites.has(caller.subject)) return rejected("rate_limit", scope);
+    if (write && activeWrites.has(caller.subject)) {
+      // A previous WRITE (possibly past its response deadline) is still running: nothing was attempted for this one.
+      const busy = rejected("rate_limit", scope);
+      if (busy.status === "rejected") busy.diagnostics[0] = { code: "write_in_progress", message: "Une écriture précédente est encore en cours ; rien n'a été tenté.", severity: "error" };
+      return busy;
+    }
     if (write ? !allow(writeWindows, writeLimit, caller.subject) : !allow(readWindows, readLimit, caller.subject)) return rejected("rate_limit", scope);
     if (write) activeWrites.add(caller.subject);
     const deadline = write ? MCP_LIMITS.writeTimeoutMs : MCP_LIMITS.readTimeoutMs;

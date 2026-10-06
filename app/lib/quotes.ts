@@ -14,7 +14,8 @@ const yahooSymbolsByTicker:Record<string,string>={
 
 /** Quote asset for a Company listing when no catalogued instrument matches: legacy symbol fixes first, then the exchange rule. */
 export function quoteSymbolForListing(ticker:string,exchange:string|null):string|null{
-  const legacy=yahooSymbolsByTicker[ticker.trim().toUpperCase()];
+  // Legacy fixes only fill a missing exchange; the listing stored in Notion always wins.
+  const legacy=exchange?undefined:yahooSymbolsByTicker[ticker.trim().toUpperCase()];
   return legacy??quoteSymbolFor(ticker,exchange);
 }
 

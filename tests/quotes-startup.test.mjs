@@ -52,3 +52,10 @@ test('any valid Yahoo symbol is quoted live, no hard-coded catalogue needed', as
   assert.equal(bad.freshness, 'unavailable'); assert.ok(bad.warnings.includes('unknown_asset')); assert.equal(seen.length, 0, 'invalid symbols never reach the network');
  } finally { globalThis.fetch = previous; }
 });
+
+test('legacy ticker fixes never override the exchange stored in Notion', async () => {
+ const { quoteSymbolForListing } = await import('../app/lib/quotes.ts');
+ assert.equal(quoteSymbolForListing('ASML', null), 'ASML.AS', 'no exchange: legacy fix applies');
+ assert.equal(quoteSymbolForListing('ASML', 'NASDAQ'), 'ASML', 'the US listing stored in Notion wins');
+ assert.equal(quoteSymbolForListing('ASML', 'Euronext Amsterdam'), 'ASML.AS');
+});

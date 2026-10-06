@@ -378,3 +378,17 @@ test("create_company over MCP: production policy, Core validation and duplicate 
   const ok = await call(h, "create_company", { ...base, input });
   assert.equal(ok.result.data.status, "created"); assert.equal(created, 1);
 });
+
+test("a WRITE still running (e.g. after a 30 s timeout) blocks the next one with a distinct, not_started diagnostic", async () => {
+  let release;
+  const gate = new Promise(r => { release = r; });
+  const core = api.createInvestmentCore({ renderReportContent: () => ({ schemaVersion: "1.0.0", blocks: [{ id: "b", type: "paragraph", text: [{ text: "x", marks: [], href: null }], sourceIds: ["s"] }] }),
+    writeAnalysis: async intent => { await gate; return { schemaVersion: "1.0.0", status: "persisted", analysisId: "a", runId: intent.runId, revision: "r", persisted: true, promoted: false, verified: false, diagnostics: [] }; } });
+  const h = sitesHandler(core);
+  const first = call(h, "save_analysis", { ...base, input: reportInput({ runId: "SLOW-1" }) });
+  await turn();
+  const second = await call(h, "save_analysis", { ...base, input: reportInput({ runId: "SLOW-1", kind: "valuation", score: 50 }) });
+  assert.equal(second.error.code, "rate_limit"); assert.equal(second.error.outcome, "not_started");
+  assert.equal(second.diagnostics[0].code, "write_in_progress");
+  release(); assert.equal((await first).result.status, "ok");
+});
