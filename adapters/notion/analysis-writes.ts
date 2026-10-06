@@ -181,6 +181,11 @@ export function createNotionClient(options:NotionWriteOptions){
   return {read,mutate};
 }
 
+/** Human meaning of each receipt code; the default is kept for incomplete or concurrent outcomes. */
+const receiptMessages:Record<string,string>={
+  promotion_not_required:"Brouillon enregistré et relu ; aucune promotion Current n'était demandée.",
+  current_changed_concurrently:"Analyse enregistrée ; le pointeur Current a changé entre-temps et n'a pas été promu.",
+};
 export function createNotionAnalysisWriter(db:D1Database,options:NotionWriteOptions){
   const sources={...notionSources,...options.sources};
   const {read,mutate}=createNotionClient(options);
@@ -276,7 +281,7 @@ export function createNotionAnalysisWriter(db:D1Database,options:NotionWriteOpti
     const lease=await db.prepare("UPDATE notion_analysis_writes SET owner=?,lease_until=? WHERE run_id=? AND (owner IS NULL OR lease_until<?)").bind(owner,Date.now()+180000,writeKey,Date.now()).run();
     if(Number(lease.meta?.changes??0)!==1)throw fault("stale_request");
     let analysisId=journal.page_id??input.analysis.header.id,actualIdentityKnown=Boolean(journal.page_id),persisted=false,promoted=false,mutated=false,revision:string|null=null;
-    const receipt=(status:SaveAnalysisReceipt["status"],code?:string):SaveAnalysisReceipt=>({schemaVersion:"1.0.0",status,analysisId:id(analysisId),runId:input.runId,revision,persisted,promoted,verified:status==="verified",diagnostics:code?[{code,message:"État relu ou reprise nécessaire; aucune transaction Notion atomique.",severity:status==="verified"?"info":"warning"}]:[]});
+    const receipt=(status:SaveAnalysisReceipt["status"],code?:string):SaveAnalysisReceipt=>({schemaVersion:"1.0.0",status,analysisId:id(analysisId),runId:input.runId,revision,persisted,promoted,verified:status==="verified",diagnostics:code?[{code,message:receiptMessages[code]??"État relu ou reprise nécessaire; aucune transaction Notion atomique.",severity:code==="promotion_not_required"?"info":status==="verified"?"info":"warning"}]:[]});
     const saveJournal=async(phase:string)=>{
       const result=await db.prepare("UPDATE notion_analysis_writes SET page_id=?,phase=?,lease_until=? WHERE run_id=? AND owner=?").bind(actualIdentityKnown?analysisId:null,phase,Date.now()+180000,writeKey,owner).run();
       if(Number(result.meta?.changes??0)!==1)throw fault("stale_request");

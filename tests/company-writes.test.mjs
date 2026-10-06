@@ -94,3 +94,13 @@ test("create_company adapter: refuses before any write when the Companies schema
     assert.equal(notion.calls.filter(c => c.method === "POST" && c.path === "/pages").length, 0);
   } finally { companySchema.properties.ISIN = { type: "rich_text", rich_text: {} }; data.sql.close(); }
 });
+
+test("a Draft receipt explains itself: persisted, read back, no promotion requested (info, not a warning)", async () => {
+  const { input } = await import("./fixtures/notion-write-harness.mjs");
+  const data = await fixture();
+  const draft = input(); draft.analysis.header.status = "Draft";
+  const receipt = await data.writer(draft);
+  assert.equal(receipt.status, "persisted");
+  assert.deepEqual(receipt.diagnostics, [{ code: "promotion_not_required", message: "Brouillon enregistré et relu ; aucune promotion Current n'était demandée.", severity: "info" }]);
+  data.sql.close();
+});
