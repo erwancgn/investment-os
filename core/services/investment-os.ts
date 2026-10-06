@@ -61,18 +61,62 @@ async function invoke<T>(port: (() => Promise<T>) | undefined, validate: (value:
 }
 function validId(id: string): boolean { return typeof id === "string" && id.length > 0 && id.trim() === id; }
 const identityKey = (value: string) => value.normalize("NFKD").replace(/[\u0300-\u036f]/g, "").toLocaleLowerCase("en").replace(/[^\p{L}\p{N}]+/gu, " ").trim().replace(/\s+/g, " ");
-const tickerKey = (value: string) => value.normalize("NFKC").toLocaleUpperCase("en");
+const tickerKey = (value: string) => value.normalize("NFKC").trim().toLocaleUpperCase("en");
 /** Ticker without a trailing exchange suffix ("SU.PA" → "SU"); a suffix is a dot plus 1–4 letters. */
 const tickerBase = (value: string) => tickerKey(value).replace(/\.[A-Z]{1,4}$/, "");
-const tickerMatches = (stored: string, query: string) => tickerKey(stored) === tickerKey(query) || tickerBase(stored) === tickerKey(query);
-const legalSuffix = /\s+(?:incorporated|inc|corporation|corp|company|co|limited|ltd|plc|holdings|holding|group|sa|se|ag|nv)$/;
+const tickerMatches = (stored: string, query: string) => /^[A-Z0-9][A-Z0-9.\-]{0,14}$/.test(tickerKey(query)) && (tickerKey(stored) === tickerKey(query) || tickerBase(stored) === tickerBase(query));
+const legalSuffix = /\s+(?:incorporated|inc|corporation|corp|company|co|limited|ltd|plc|holdings|holding|group|sa|se|ag|nv|n v|s a|spa|s p a)$/;
 function companyBase(value: string) {
   let base = identityKey(value);
   while (legalSuffix.test(base)) base = base.replace(legalSuffix, "");
   return base;
 }
+/** ISO 6166: 2 letters, 9 alphanumerics, 1 Luhn check digit computed on the letter-expanded string. */
+export function normalizeIsin(value: string): string | null {
+  const isin = value.replace(/[\s-]+/g, "").toUpperCase();
+  if (!/^[A-Z]{2}[A-Z0-9]{9}[0-9]$/.test(isin)) return null;
+  const digits = isin.split("").map(c => /[A-Z]/.test(c) ? String(c.charCodeAt(0) - 55) : c).join("");
+  let sum = 0;
+  for (let i = 0; i < digits.length; i++) { let d = Number(digits[digits.length - 1 - i]); if (i % 2 === 1) { d *= 2; if (d > 9) d -= 9; } sum += d; }
+  return sum % 10 === 0 ? isin : null;
+}
+/** Exchange spellings models use (MIC, Bloomberg/Google codes, city) → one comparable key. */
+const EXCHANGE_ALIASES: Record<string, string[]> = {
+  "euronext paris": ["epa", "xpar", "par", "pa", "paris", "euronext paris"],
+  "euronext amsterdam": ["ams", "xams", "as", "amsterdam", "euronext amsterdam"],
+  "nasdaq": ["nasdaq", "xnas", "nas", "nasdaq gs", "nasdaqgs", "nasdaq global select"],
+  "nyse": ["nyse", "xnys", "new york stock exchange", "n"],
+  "tokyo stock exchange": ["tse", "xtks", "tyo", "tokyo", "tokyo stock exchange"],
+  "six swiss exchange": ["six", "xswx", "swx", "sw", "zurich", "six swiss exchange"],
+  "london stock exchange": ["lse", "xlon", "lon", "london", "london stock exchange"],
+  "nasdaq stockholm": ["sto", "xsto", "st", "stockholm", "nasdaq stockholm"],
+};
+const exchangeKey = (value: string) => { const key = identityKey(value); return Object.keys(EXCHANGE_ALIASES).find(name => EXCHANGE_ALIASES[name].includes(key)) ?? key; };
+/** "Schneider (SU)", "Alphabet - GOOGL", "MU/NASDAQ" → the whole query and each part. */
+function queryVariants(query: string): string[] {
+  const parts = [query, ...query.split(/[()[\]\/,|]|\s[-–]\s/)].map(part => part.trim()).filter(part => part.length > 0);
+  return [...new Set(parts)];
+}
+const tokens = (value: string) => companyBase(value).split(" ").filter(Boolean);
+/** Strength of an exact key: 3 ISIN / full ticker / name or alias, 2 ticker without its exchange suffix, 0 none. */
+function exactStrength(item: CompanyIdentity, variant: string): number {
+  const isin = normalizeIsin(variant);
+  if (isin) return item.isin && normalizeIsin(item.isin) === isin ? 3 : 0;
+  const base = companyBase(variant);
+  if (base.length > 0 && (companyBase(item.canonicalName) === base || item.aliases.some(alias => companyBase(alias) === base))) return 3;
+  if (!item.ticker || !tickerMatches(item.ticker, variant)) return 0;
+  // A full ticker only outranks a base ticker when the query itself carries the exchange suffix.
+  return tickerBase(variant) !== tickerKey(variant) && tickerKey(item.ticker) === tickerKey(variant) ? 3 : 2;
+}
+/** Partial: every word of the query starts a word of the name (≥ 4 letters in total). Never resolves on its own. */
+function partialMatch(item: CompanyIdentity, variant: string): boolean {
+  const query = tokens(variant);
+  if (query.join("").length < 4) return false;
+  return [item.canonicalName, ...item.aliases].some(name => { const words = tokens(name); return query.every(q => words.some(w => w.startsWith(q))); });
+}
 function validIdentity(value: unknown): value is CompanyIdentity {
-  return isRecord(value) && Object.keys(value).every(key => ["companyId", "canonicalName", "ticker", "exchange", "assetId", "aliases"].includes(key)) &&
+  return isRecord(value) && Object.keys(value).every(key => ["companyId", "canonicalName", "ticker", "exchange", "assetId", "aliases", "isin"].includes(key)) &&
+    (value.isin === undefined || value.isin === null || typeof value.isin === "string") &&
     validId(value.companyId as string) && validId(value.canonicalName as string) && typeof value.ticker === "string" &&
     (value.exchange === null || typeof value.exchange === "string") && (value.assetId === null || typeof value.assetId === "string") &&
     Array.isArray(value.aliases) && value.aliases.every(alias => typeof alias === "string");
@@ -118,6 +162,35 @@ function validReceipt(receipt: unknown, input: SaveAnalysisInput): receipt is Sa
     Array.isArray(value.diagnostics) && value.diagnostics.every(d => !!d && typeof d.code === "string" && typeof d.message === "string" && ["info", "warning", "error"].includes(d.severity));
 }
 
+/** One matcher for resolve_company and create_company duplicate checks. Exact keys resolve; partial keys only propose. */
+export function matchCompanies(identities: CompanyIdentity[], query: string, market?: string): CompanyResolution {
+  const variants = queryVariants(query);
+  const marketKey = market ? exchangeKey(market) : null;
+  const inMarket = (item: CompanyIdentity) => !marketKey || exchangeKey(item.exchange ?? "") === marketKey;
+  // Rank by corroboration first (name AND ticker beats ticker alone), then by key strength (SU.PA beats SU).
+  const score = (item: CompanyIdentity) => {
+    const strengths = variants.map(variant => exactStrength(item, variant));
+    const hits = variants.filter((variant, n) => strengths[n] > 0 || partialMatch(item, variant)).length;
+    return { best: Math.max(0, ...strengths), hits };
+  };
+  const scored = identities.map(item => ({ item, ...score(item) }));
+  const top = (rows: typeof scored) => { const max = Math.max(...rows.map(r => r.hits * 10 + r.best)); return rows.filter(r => r.hits * 10 + r.best === max).map(r => r.item); };
+  const exactRows = scored.filter(r => r.best > 0);
+  const inMarketRows = exactRows.filter(r => inMarket(r.item));
+  const partial = exactRows.length ? [] : identities.filter(item => variants.some(variant => partialMatch(item, variant)));
+  // The market narrows before ranking; a wrong or unknown market never hides a company: it is proposed for confirmation.
+  const inMarketTop = inMarketRows.length ? top(inMarketRows) : [];
+  const [status, matches]: [CompanyResolution["status"], CompanyIdentity[]] =
+    inMarketTop.length === 1 ? ["resolved", inMarketTop]
+    : inMarketTop.length > 1 ? ["ambiguous", inMarketTop]
+    : exactRows.length ? ["ambiguous", top(exactRows)]
+    : partial.length ? ["ambiguous", partial]
+    : ["not_found", []];
+  const candidates = matches.map(item => ({ companyId: item.companyId, canonicalName: item.canonicalName, ticker: item.ticker, exchange: item.exchange, assetId: item.assetId, isin: item.isin ? normalizeIsin(item.isin) ?? item.isin : null }))
+    .sort((a, b) => a.canonicalName.localeCompare(b.canonicalName) || a.companyId.localeCompare(b.companyId));
+  return { status, candidates };
+}
+
 export function createInvestmentCore(ports: InvestmentPorts) {
   return {
     async resolveCompany(query: string, market?: string): Promise<ServiceResult<CompanyResolution>> {
@@ -126,16 +199,7 @@ export function createInvestmentCore(ports: InvestmentPorts) {
       try {
         const identities = await ports.readCompanyIdentities();
         if (!Array.isArray(identities) || !identities.every(validIdentity) || new Set(identities.map(item => item.companyId)).size !== identities.length) return serviceError("mapping") as ServiceResult<CompanyResolution>;
-        const key = identityKey(query);
-        const marketKey = market && identityKey(market);
-        const eligible = identities.filter(item => !marketKey || identityKey(item.exchange ?? "") === marketKey);
-        const ticker = eligible.filter(item => item.ticker && tickerMatches(item.ticker, query));
-        const name = eligible.filter(item => identityKey(item.canonicalName) === key);
-        const alias = eligible.filter(item => item.aliases.some(value => identityKey(value) === key) || companyBase(item.canonicalName) === key);
-        const exact = eligible.filter(item => ticker.includes(item) || name.includes(item));
-        const matches = exact.length ? exact : alias;
-        const candidates = matches.map(({ aliases: _aliases, ...candidate }) => candidate).sort((a, b) => a.canonicalName.localeCompare(b.canonicalName) || a.companyId.localeCompare(b.companyId));
-        return ok({ status: candidates.length === 0 ? "not_found" : candidates.length === 1 ? "resolved" : "ambiguous", candidates });
+        return ok(matchCompanies(identities, query, market));
       } catch (error) { return serviceError(errorCode(error)) as ServiceResult<CompanyResolution>; }
     },
     getCompany(id: string): Promise<ServiceResult<CompanyPreview | null>> {

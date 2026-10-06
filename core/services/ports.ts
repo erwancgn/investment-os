@@ -65,10 +65,14 @@ export type CompanyIdentity = {
   exchange: string | null;
   assetId: string | null;
   aliases: string[];
+  /** ISO 6166 identifier when the source holds one. */
+  isin?: string | null;
 };
+export type CompanyCandidate = { companyId: string; canonicalName: string; ticker: string; exchange: string | null; assetId: string | null; isin: string | null };
+/** `resolved`: exactly one exact match. `ambiguous`: several, a market mismatch or a partial name — confirm, never guess. */
 export type CompanyResolution = {
   status: "resolved" | "ambiguous" | "not_found";
-  candidates: Omit<CompanyIdentity, "aliases">[];
+  candidates: CompanyCandidate[];
 };
 
 /** Domain-only ports. Source IDs, storage, and transport details belong in adapters. */

@@ -4612,6 +4612,12 @@
     "T69": {
       "type": "object",
       "properties": {
+        "companyId": {
+          "type": "string"
+        },
+        "canonicalName": {
+          "type": "string"
+        },
         "ticker": {
           "type": "string"
         },
@@ -4635,19 +4641,24 @@
             }
           ]
         },
-        "companyId": {
-          "type": "string"
-        },
-        "canonicalName": {
-          "type": "string"
+        "isin": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
         }
       },
       "required": [
+        "companyId",
+        "canonicalName",
         "ticker",
         "exchange",
         "assetId",
-        "companyId",
-        "canonicalName"
+        "isin"
       ],
       "additionalProperties": false
     },

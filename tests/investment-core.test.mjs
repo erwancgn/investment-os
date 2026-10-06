@@ -166,3 +166,40 @@ test("resolveCompany matches a ticker with or without its exchange suffix and sa
   assert.equal((await core.resolveCompany("MS")).data.status, "not_found", "a prefix is not a ticker");
   assert.equal((await core.resolveCompany("MSFT")).data.status, "resolved", "unsuffixed tickers unchanged");
 });
+
+const lot9Identities = [
+  { companyId: "fr-su", canonicalName: "Schneider Electric", ticker: "SU.PA", exchange: "Euronext Paris", assetId: null, aliases: [], isin: "FR0000121972" },
+  { companyId: "us-mu", canonicalName: "Micron Technology", ticker: "MU", exchange: "NASDAQ", assetId: "mu", aliases: [], isin: "US5951121038" },
+  { companyId: "us-googl", canonicalName: "Alphabet Inc.", ticker: "GOOGL", exchange: "NASDAQ", assetId: "googl", aliases: ["Google"], isin: "US02079K3059" },
+  { companyId: "ca-su", canonicalName: "Suncor Energy", ticker: "SU", exchange: "NYSE", assetId: null, aliases: [] },
+];
+
+test("resolveCompany: real-world spellings of known companies never come back not_found (Lot 9 regressions)", async () => {
+  const { createInvestmentCore } = await api();
+  const core = createInvestmentCore({ readCompanyIdentities: async () => lot9Identities });
+  const ids = async (query, market) => { const r = (await core.resolveCompany(query, market)).data; return { status: r.status, ids: r.candidates.map(c => c.companyId).sort() }; };
+  // Lot 9 failures, now resolved.
+  assert.deepEqual(await ids("Schneider (SU)"), { status: "resolved", ids: ["fr-su"] }, "name + ticker in parentheses");
+  assert.deepEqual(await ids("Schneider Electric", "EPA"), { status: "resolved", ids: ["fr-su"] }, "exchange code alias");
+  assert.deepEqual(await ids("SU", "Euronext Paris"), { status: "resolved", ids: ["fr-su"] }, "base ticker + exchange");
+  assert.deepEqual(await ids("Schneider Electric SE"), { status: "resolved", ids: ["fr-su"] }, "legal form ignored");
+  assert.deepEqual(await ids("FR0000121972"), { status: "resolved", ids: ["fr-su"] }, "ISIN");
+  assert.deepEqual(await ids("fr 0000 121972"), { status: "resolved", ids: ["fr-su"] }, "ISIN with spaces, lower case");
+  assert.deepEqual(await ids("Micron"), { status: "ambiguous", ids: ["us-mu"] }, "partial name is a candidate to confirm, never not_found");
+  assert.deepEqual(await ids("Micron Technology Inc"), { status: "resolved", ids: ["us-mu"] });
+  assert.deepEqual(await ids("MU", "NASDAQ"), { status: "resolved", ids: ["us-mu"] });
+  assert.deepEqual(await ids("MU", "XNAS"), { status: "resolved", ids: ["us-mu"] }, "MIC code alias");
+  assert.deepEqual(await ids("Alphabet (GOOGL)"), { status: "resolved", ids: ["us-googl"] });
+  assert.deepEqual(await ids("Google"), { status: "resolved", ids: ["us-googl"] }, "alias");
+  // Market filter never hides an existing company.
+  assert.deepEqual(await ids("Micron Technology", "NYSE"), { status: "ambiguous", ids: ["us-mu"] }, "wrong market: candidate kept for confirmation");
+  // Ambiguity is never guessed.
+  assert.deepEqual(await ids("SU"), { status: "ambiguous", ids: ["ca-su", "fr-su"] });
+  assert.deepEqual(await ids("Schneider"), { status: "ambiguous", ids: ["fr-su"] });
+  // Genuinely unknown stays not_found; short noise does not match everything.
+  assert.deepEqual(await ids("Hermès International"), { status: "not_found", ids: [] });
+  assert.deepEqual(await ids("SA"), { status: "not_found", ids: [] });
+  // Candidates expose the ISIN so a model can confirm identity.
+  assert.equal((await core.resolveCompany("FR0000121972")).data.candidates[0].isin, "FR0000121972");
+  assert.equal((await core.resolveCompany("Suncor Energy")).data.candidates[0].isin, null);
+});

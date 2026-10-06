@@ -57,7 +57,7 @@ async function fixture() {
   const insert = sqlite.prepare("INSERT INTO notion_documents VALUES(?,?,?,?,?,?,?,?,?)");
   const save = (id, source, name, properties, plainText, blocks = "[]", edited = "2026-09-30T10:00:00Z") => insert.run(id, source, name, `https://notion.so/${id}`, edited, JSON.stringify(properties), blocks, plainText, "2026-09-30T10:00:00Z");
   save(ids.company, "companies", "Example Systems", {
-    Company: title("Example Systems"), Ticker: rich("EXM"), "Current Business Analysis": relation(ids.current), Currency: rich("USD"),
+    Company: title("Example Systems"), Ticker: rich("EXM"), ISIN: rich("US0378331005"), "Current Business Analysis": relation(ids.current), Currency: rich("USD"),
   }, "");
   const reportBlocks = JSON.stringify([{ id: "report-paragraph", type: "paragraph", paragraph: { rich_text: [{ plain_text: "Revenue grew steadily." }] } }]);
   save(ids.current, "analyses", "Example Business Analysis", {
@@ -117,6 +117,9 @@ test("identity adapter resolves from company rows without reading analysis bodie
   assert.equal(ticker.data.candidates[0].companyId, data.ids.company.replaceAll("-", ""));
   assert.deepEqual([...data.reads.bodyIds], []);
   assert.equal((await service.resolveCompany("Unknown")).data.status, "not_found");
+  const byIsin = await service.resolveCompany("US0378331005");
+  assert.equal(byIsin.data.status, "resolved", "ISIN read from the Notion cache");
+  assert.equal(byIsin.data.candidates[0].isin, "US0378331005");
   data.sqlite.close();
 });
 

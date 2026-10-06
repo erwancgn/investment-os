@@ -100,6 +100,7 @@ function notionPorts(db: D1Database, writes?: NotionWriteOptions): InvestmentPor
           canonicalName: String(propertyValue(properties, "Company") || row.title),
           ticker, exchange,
           assetId: assets.length === 1 ? assets[0].id : null,
+          isin: String(propertyValue(properties, "ISIN") ?? "").trim() || null,
           aliases: Array.isArray(aliasValue) ? aliasValue.map(String) : typeof aliasValue === "string" ? aliasValue.split(/[,;\n]/).map(value => value.trim()).filter(Boolean) : [],
         };
       });
