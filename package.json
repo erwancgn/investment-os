@@ -13,7 +13,7 @@
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "typecheck": "tsc --noEmit --pretty false",
-    "test": "npm run typecheck && npm run build && node --test tests/ai-prompt.test.mjs tests/demo-data.test.mjs tests/resource-cache-scope.test.mjs tests/rendered-html.test.mjs tests/analysis-reference-fixtures.test.mjs tests/analysis-inline-format.test.mjs tests/analysis-canonical-renderer.test.mjs tests/cio-summary-routing.test.mjs tests/presentation-projection.test.mjs tests/performance.test.mjs tests/notion-security.test.mjs tests/quotes-startup.test.mjs tests/theme-baskets.test.mjs tests/theme-basket-warmup.test.mjs tests/audit-css-governance.test.mjs tests/audit-css-ownership.test.mjs tests/storybook-coverage.test.mjs tests/domain-current-selection.test.mjs tests/domain-analysis-contracts.test.mjs tests/domain-investment-contracts.test.mjs tests/domain-portfolio.test.mjs tests/investment-core.test.mjs tests/investment-read-adapter.test.mjs tests/notion-adapter-write.test.mjs tests/lot13-notion-roundtrip.test.mjs tests/mcp-contract.test.mjs tests/mcp-server.test.mjs",
+    "test": "node scripts/check-lockfile.mjs && npm run typecheck && npm run build && node --test tests/architecture-integrity.test.mjs tests/ai-prompt.test.mjs tests/demo-data.test.mjs tests/resource-cache-scope.test.mjs tests/rendered-html.test.mjs tests/analysis-reference-fixtures.test.mjs tests/analysis-inline-format.test.mjs tests/analysis-canonical-renderer.test.mjs tests/cio-summary-routing.test.mjs tests/presentation-projection.test.mjs tests/performance.test.mjs tests/notion-security.test.mjs tests/quotes-startup.test.mjs tests/theme-baskets.test.mjs tests/theme-basket-warmup.test.mjs tests/audit-css-governance.test.mjs tests/audit-css-ownership.test.mjs tests/storybook-coverage.test.mjs tests/domain-current-selection.test.mjs tests/domain-analysis-contracts.test.mjs tests/domain-investment-contracts.test.mjs tests/domain-portfolio.test.mjs tests/investment-core.test.mjs tests/investment-read-adapter.test.mjs tests/notion-adapter-write.test.mjs tests/lot13-notion-roundtrip.test.mjs tests/mcp-contract.test.mjs tests/mcp-server.test.mjs",
     "validate:artifact": "bash scripts/validate-artifact.sh",
     "lint": "bash scripts/sites-env.sh -- eslint . --ignore-pattern dist --ignore-pattern .next --ignore-pattern storybook-static",
     "audit:css": "node scripts/audit-dead-css.mjs",
@@ -27,7 +27,8 @@
     "test:mcp-server": "node --test tests/mcp-server.test.mjs",
     "verify:mcp-runtime": "node scripts/verify-mcp-runtime.mjs",
     "test:domain": "node --test tests/domain-current-selection.test.mjs tests/domain-analysis-contracts.test.mjs tests/domain-investment-contracts.test.mjs tests/domain-portfolio.test.mjs tests/investment-core.test.mjs",
-    "db:generate": "bash scripts/sites-env.sh -- drizzle-kit generate"
+    "db:generate": "bash scripts/sites-env.sh -- drizzle-kit generate",
+    "check:lockfile": "node scripts/check-lockfile.mjs"
   },
   "dependencies": {
     "@cfworker/json-schema": "4.1.1",
