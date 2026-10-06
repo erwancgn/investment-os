@@ -314,3 +314,20 @@ test("2 MiB tool arguments are accepted independently of JSON-RPC framing", asyn
   args.input.analysis.header.title += "x";
   assert.equal((await call(h, "save_analysis", args)).error.code, "limit_exceeded"); assert.equal(calls, 1);
 });
+
+test("catalog publishes only reachable output definitions and text mirrors completed results", async () => {
+  const json = await (await handler()(request("", base, { body: { method: "tools/list", params: {} } }))).json();
+  const bytes = value => Buffer.byteLength(JSON.stringify(value));
+  for (const tool of json.result.tools) {
+    const defs = tool.outputSchema.definitions ?? {};
+    const refs = new Set(JSON.stringify(tool.outputSchema).match(/#\/definitions\/[A-Za-z0-9_.-]+/g)?.map(ref => ref.split("/").at(-1)) ?? []);
+    assert.deepEqual(Object.keys(defs).sort(), [...refs].sort(), `${tool.name} publishes unreachable definitions`);
+  }
+  assert.ok(bytes(json.result.tools) < 400_000, `catalog ${bytes(json.result.tools)} bytes`);
+  const demo = api.createMcpHandler({ authenticate: () => caller, service: () => api.createDemoInvestmentService() });
+  const response = await (await demo(request("get_portfolio", { ...base, scope: "demo" }))).json();
+  assert.equal(response.result.structuredContent.status, "completed");
+  assert.equal(response.result.structuredContent.result.status, "ok");
+  // Text-only clients receive the same completed envelope, not only its status.
+  assert.deepEqual(JSON.parse(response.result.content[0].text), response.result.structuredContent);
+});

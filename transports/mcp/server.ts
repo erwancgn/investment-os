@@ -39,10 +39,29 @@ function inlineInputSchema(value: unknown): unknown {
   }
   return Object.fromEntries(Object.entries(value).filter(([key]) => key !== "definitions").map(([key, item]) => [key, inlineInputSchema(item)]));
 }
+/** Published schemas keep only the definitions reachable from the tool's own root (catalog size). */
+function reachableDefinitions(root: unknown): Record<string, unknown> {
+  const found: Record<string, unknown> = {};
+  const visit = (value: unknown): void => {
+    if (Array.isArray(value)) { value.forEach(visit); return; }
+    if (!isRecord(value)) return;
+    if (typeof value.$ref === "string") {
+      const name = value.$ref.split("/").at(-1) as keyof typeof schemas.definitions;
+      if (!(name in found)) { found[name] = schemas.definitions[name]; visit(schemas.definitions[name]); }
+    }
+    for (const [key, item] of Object.entries(value)) if (key !== "definitions") visit(item);
+  };
+  visit(root);
+  return found;
+}
+function publishedOutputSchema(name: ToolName) {
+  const schema = schemaFor(name, "outputSchema");
+  return { ...schema, definitions: reachableDefinitions(schema) };
+}
 export const mcpToolCatalog: Tool[] = Object.entries(MCP_TOOLS).map(([name, spec]) => ({
   name, description: spec.description,
   inputSchema: inlineInputSchema(schemaFor(name as ToolName, "inputSchema")) as Tool["inputSchema"],
-  outputSchema: schemaFor(name as ToolName, "outputSchema") as Tool["outputSchema"],
+  outputSchema: publishedOutputSchema(name as ToolName) as Tool["outputSchema"],
   annotations: { readOnlyHint: spec.access === "READ", destructiveHint: spec.access === "WRITE", idempotentHint: spec.access === "READ", openWorldHint: true },
 }));
 const messages: Record<McpTransportErrorCode, string> = {
@@ -143,10 +162,9 @@ export function createMcpHandler(runtime: McpRuntime) {
     server.setRequestHandler(CallToolRequestSchema, async ({ params }) => {
       if (!Object.hasOwn(MCP_TOOLS, params.name)) throw new McpError(ErrorCode.InvalidParams, "Tool inconnu.");
       const output = await call(params.name as ToolName, params.arguments, caller!, keepAlive);
-      // Some hosted clients expose only text when isError is true. Transport rejections
-      // contain fixed safe diagnostics, never the input or private Core data.
-      const text = output.status === "rejected" || output.result.status === "error" ? output : { contractVersion: MCP_CONTRACT_VERSION, status: output.status };
-      return { structuredContent: output as unknown as Record<string, unknown>, content: [{ type: "text", text: JSON.stringify(text) }],
+      // MCP spec: structured results SHOULD also be serialized as text for clients that
+      // only read content blocks. Same envelope, already scope-checked and size-bounded.
+      return { structuredContent: output as unknown as Record<string, unknown>, content: [{ type: "text", text: JSON.stringify(output) }],
         isError: output.status === "rejected" || output.result.status === "error" };
     });
     const transport = new WebStandardStreamableHTTPServerTransport({ sessionIdGenerator: undefined, enableJsonResponse: true });
