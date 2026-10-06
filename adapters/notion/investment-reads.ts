@@ -139,7 +139,14 @@ function notionPorts(db: D1Database, writes?: NotionWriteOptions): InvestmentPor
 }
 
 export function createInvestmentService(db: D1Database, writes?: NotionWriteOptions) {
-  const service=createInvestmentCore(notionPorts(db, writes));
+  const core=createInvestmentCore(notionPorts(db, writes));
+  // Notion IDs reach MCP as compact, dashed, upper-case or page URLs; the Core compares canonical (compact) IDs.
+  const service={...core,
+    getCompany:(id:string)=>core.getCompany(normalizeNotionPageId(id)),
+    getPosition:(id:string,options?:ReadOptions)=>core.getPosition(normalizeNotionPageId(id),options),
+    getAnalysisById:(id:string)=>core.getAnalysisById(normalizeNotionPageId(id)),
+    getCurrentAnalysis:(companyId:string,family:CurrentAnalysisFamily)=>core.getCurrentAnalysis(normalizeNotionPageId(companyId),family),
+  };
   if(!writes)return service;
   return {...service,async saveAnalysis(input:SaveAnalysisInput|SaveReportInput){
     const diagnostics:Diagnostic[]=[];

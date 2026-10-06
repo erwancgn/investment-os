@@ -333,3 +333,17 @@ test("explicit Company relations own primary links; title fallback and secondary
   assert.equal(selectCurrentAnalysis(fallbackValuation).status, "absent", "a content-only edge never makes a document selectable as owned research");
   data.sqlite.close();
 });
+
+test("MCP service accepts Notion IDs as dashed UUID, upper case or page URL (no mapping error)", async () => {
+  const { createInvestmentService } = (await apis()).adapter;
+  const data = await fixture();
+  const service = createInvestmentService(data.db);
+  const compact = data.ids.company.replaceAll("-", "").toLowerCase();
+  const dashed = `${compact.slice(0, 8)}-${compact.slice(8, 12)}-${compact.slice(12, 16)}-${compact.slice(16, 20)}-${compact.slice(20)}`;
+  for (const id of [compact, dashed, dashed.toUpperCase(), `https://www.notion.so/Example-Systems-${compact}?pvs=4`]) {
+    const company = await service.getCompany(id);
+    assert.equal(company.status, "ok", id); assert.equal(company.data?.id, compact, id);
+    assert.equal((await service.getCurrentAnalysis(id, "business")).status, "ok", `current ${id}`);
+  }
+  data.sqlite.close();
+});

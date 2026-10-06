@@ -210,7 +210,7 @@ function normalizedMatch(value: string): string {
 export function normalizeNotionPageId(value: string): string {
   const raw = String(value ?? "").trim();
   if (!raw) return "";
-  const fromUrl = raw.match(/(?:^|\/)([0-9a-f]{32}|[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12})(?:[/?#]|$)/i)?.[1];
+  const fromUrl = raw.match(/(?:^|[\/-])([0-9a-f]{32}|[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12})(?:[/?#]|$)/i)?.[1];
   const candidate = fromUrl ?? raw;
   const compact = candidate.replaceAll("-", "").toLowerCase();
   return /^[0-9a-f]{32}$/.test(compact) ? compact : raw;
