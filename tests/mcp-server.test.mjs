@@ -12,7 +12,7 @@ import { fixture, input as writeInput } from "./fixtures/notion-write-harness.mj
 import * as f from "./fixtures/investment-contracts.mjs";
 
 await mkdir(".sites-runtime", { recursive: true });
-const bundle = await build({ stdin: { contents: 'export * from "./transports/mcp/server.ts"; export * from "./transports/mcp/sites-auth.ts"; export * from "./core/services/investment-os.ts"; export * from "./adapters/demo/investment-reads.ts"; export * from "./transports/mcp/site-campaign.ts";', resolveDir: process.cwd() }, bundle: true, write: false, platform: "node", format: "esm", packages: "external", metafile: true });
+const bundle = await build({ stdin: { contents: 'export * from "./transports/mcp/server.ts"; export * from "./transports/mcp/sites-auth.ts"; export * from "./core/services/investment-os.ts"; export * from "./adapters/demo/investment-reads.ts"; export * from "./transports/mcp/site-write-policy.ts";', resolveDir: process.cwd() }, bundle: true, write: false, platform: "node", format: "esm", packages: "external", metafile: true });
 await writeFile(".sites-runtime/mcp-test.mjs", bundle.outputFiles[0].text);
 const api = await import(`../.sites-runtime/mcp-test.mjs?${Date.now()}`);
 const caller = { subject: "fixture-owner", scopes: ["personal", "demo"], permissions: ["investment:read", "investment:write"], writeApproved: true };
@@ -56,93 +56,55 @@ test("auth excludes payload identity, cookies, bypass credentials and browser wr
   assert.deepEqual(c.permissions, ["investment:read"]); assert.equal(c.writeApproved, false);
   assert.equal(api.authenticateSitesMcp(new Request("https://site/mcp", { headers: { cookie: "investment-os-scope=personal", "OAI-Sites-Authorization": "Bearer fixture-only" } }), {}), null);
   assert.equal((await handler()(request("save_analysis", { ...base, input: writeInput() }, { headers: { origin: "http://localhost" } }))).status, 403);
-  const other = api.authenticateSitesMcp(identityRequest, { OWNER_EMAIL: "other@example.test", MCP_WRITE_ENABLED: "1", MCP_WRITE_DELEGATED: "1" });
+  const other = api.authenticateSitesMcp(identityRequest, { OWNER_EMAIL: "other@example.test", MCP_WRITE_ENABLED: "1" });
   assert.deepEqual(other.scopes, ["demo"]); assert.deepEqual(other.permissions, ["investment:read"]);
 });
 
-test("Sites WRITE is release-closed; even a fixture allowlist cannot bypass the campaign policy", async () => {
+test("Sites WRITE: owner-only, one kill switch, nothing else can open it", async () => {
   const identityRequest = new Request("https://site/mcp", { headers: { "oai-authenticated-user-id": "user", "oai-authenticated-user-email": "owner@example.test" } });
-  const flags = { OWNER_EMAIL: "owner@example.test", MCP_WRITE_ENABLED: "1", MCP_WRITE_DELEGATED: "1", MCP_WRITE_TEST_RUN_IDS: "allowed-run" };
-  for (const missing of ["MCP_WRITE_ENABLED", "MCP_WRITE_DELEGATED", "MCP_WRITE_TEST_RUN_IDS"]) {
-    const restricted = api.authenticateSitesMcp(identityRequest, { ...flags, [missing]: undefined });
-    assert.deepEqual(restricted.permissions, ["investment:read"]);
-    assert.equal(restricted.writeApproved, false);
+  const open = api.authenticateSitesMcp(identityRequest, { OWNER_EMAIL: "owner@example.test", MCP_WRITE_ENABLED: "1" });
+  assert.deepEqual(open.permissions, ["investment:read", "investment:write"]); assert.equal(open.writeApproved, true);
+  for (const value of [undefined, "0", "true", " 1", ""]) {
+    const closed = api.authenticateSitesMcp(identityRequest, { OWNER_EMAIL: "owner@example.test", MCP_WRITE_ENABLED: value });
+    assert.deepEqual(closed.permissions, ["investment:read"], `MCP_WRITE_ENABLED=${value}`); assert.equal(closed.writeApproved, false);
   }
-  const identity = api.authenticateSitesMcp(identityRequest, { OWNER_EMAIL: "owner@example.test", MCP_WRITE_ENABLED: "1", MCP_WRITE_DELEGATED: "1", MCP_WRITE_TEST_RUN_IDS: "allowed-run" });
-  assert.deepEqual(identity.permissions, ["investment:read"]);
-  assert.equal(identity.writeApproved, false);
-  let closedCalls = 0;
-  const closedOwner = api.authenticateSitesMcp(identityRequest, { ...flags, MCP_WRITE_TEST_RUN_IDS: "FV-SU-20261006-LOT9-E2E" });
-  const closedOutput = await call(handler({ saveAnalysis: async () => { closedCalls++; throw new Error("closed write reached Core"); } }, closedOwner), "save_analysis", { ...base, input: writeInput() });
-  assert.equal(closedOutput.error.code, "forbidden"); assert.equal(closedOutput.error.outcome, "not_started"); assert.equal(closedCalls, 0);
-  const authorizedFixture = { ...identity, permissions: ["investment:read", "investment:write"], writeApproved: true };
-  let calls = 0;
-  const core = { saveAnalysis: async () => { calls++; throw new Error("write reached"); } };
-  const denied = await call(handler(core, authorizedFixture), "save_analysis", { ...base, input: { ...writeInput(), runId: "other-run" } });
-  assert.equal(denied.error.code, "forbidden"); assert.equal(denied.error.outcome, "not_started"); assert.equal(calls, 0);
-  const allowlistedButUnmapped = await call(handler(core, authorizedFixture), "save_analysis", { ...base, input: { ...writeInput(), runId: "allowed-run" } });
-  assert.equal(allowlistedButUnmapped.error.code, "forbidden"); assert.equal(calls, 0);
+  const other = api.authenticateSitesMcp(identityRequest, { OWNER_EMAIL: "other@example.test", MCP_WRITE_ENABLED: "1" });
+  assert.deepEqual(other.scopes, ["demo"]); assert.deepEqual(other.permissions, ["investment:read"]); assert.equal(other.writeApproved, false);
+  assert.equal("allowedWriteRunIds" in open, false, "no campaign allowlist remains");
 });
 
-test("Sites campaign dispatch is exact, Draft-only, new-only, and expires before Core", async () => {
-  const runId = "FV-SU-20261006-LOT9-E2E";
-  const allowedWriteRunIds = [runId, "ER-MU-20261006-LOT9-E2E", "FA-GOOGL-20261006-LOT9-E2E"];
-  const identity = { ...caller, allowedWriteRunIds };
+const reportInput = (overrides = {}) => ({ format: "report", runId: "BC-PROD-20261006", kind: "business", companyId: "3b337ea7af3581ca97c4f048f9d52b1c", title: "Business Check", date: "2026-10-06", status: "Draft", reportMarkdown: "# Rapport\n\nTexte.", summary: null, verdict: null, confidence: null, score: 80, ...overrides });
+const sitesHandler = (core, extra = {}) => api.createMcpHandler({ authenticate: () => caller, service: () => core, authorizeWrite: api.authorizeSitesWrite, ...extra });
+
+test("Sites production WRITE policy: report form only, Draft or Validated, before the Core", async () => {
   let calls = 0;
-  const core = api.createInvestmentCore({ writeAnalysis: async intent => { calls++; return { schemaVersion: "1.0.0", status: "persisted", analysisId: "assigned-analysis", runId: intent.runId, revision: "2026-10-06T12:00:00Z", persisted: true, promoted: false, verified: false, diagnostics: [] }; } });
-  const campaignInput = (campaignRunId = runId, companyId = "3b337ea7af3581ca97c4f048f9d52b1c", family = "business") => {
-    const intent = writeInput();
-    intent.runId = campaignRunId;
-    intent.companyIds = [companyId];
-    intent.analysis.header.companyIds = [companyId];
-    intent.analysis.header.status = "Draft";
-    intent.analysis.kind = family;
-    intent.analysis.header.family = family;
-    intent.analysis.header.agent = family === "earnings" ? "Earnings" : family === "cio_memo" ? "Investment Memo" : `${family[0].toUpperCase()}${family.slice(1)} Analyst`;
-    if (family === "earnings") { delete intent.analysis.score; intent.analysis.earningsReview = { fiscalPeriod: null, guidance: null, guidanceVsConsensus: null, confidence: null, refreshes: [] }; }
-    if (family === "cio_memo") { delete intent.analysis.score; intent.analysis.handoffSummary = null; }
-    return intent;
-  };
-  const previousNow = Date.now;
-  Date.now = () => Date.parse("2026-10-06T12:00:00Z");
-  try {
-    const h = handler(core, identity);
-    const accepted = await call(h, "save_analysis", { ...base, input: campaignInput() });
-    assert.equal(accepted.result?.status, "ok", JSON.stringify(accepted));
-    assert.equal(calls, 1, "the exact authorized Draft reaches the fake Core");
-    for (const [id, company, family] of [
-      ["ER-MU-20261006-LOT9-E2E", "3b537ea7af3581bd9d9bd65dcfe03d97", "earnings"],
-      ["FA-GOOGL-20261006-LOT9-E2E", "3b337ea7af35819e8bd8f12ea7fb5dc4", "cio_memo"],
-    ]) assert.equal((await call(h, "save_analysis", { ...base, input: campaignInput(id, company, family) })).result.status, "ok");
-    assert.equal(calls, 3, "each exact company/family campaign has a nominal path");
+  const core = api.createInvestmentCore({ renderReportContent: () => ({ schemaVersion: "1.0.0", blocks: [{ id: "b", type: "paragraph", text: [{ text: "x" }], sourceIds: ["s"] }] }),
+    writeAnalysis: async intent => { calls++; return { schemaVersion: "1.0.0", status: "persisted", analysisId: "assigned", runId: intent.runId, revision: "2026-10-06T12:00:00Z", persisted: true, promoted: false, verified: false, diagnostics: [] }; } });
+  const h = sitesHandler(core);
+  assert.equal((await call(h, "save_analysis", { ...base, input: reportInput() })).result?.status, "ok", "Draft report");
+  assert.equal((await call(h, "save_analysis", { ...base, input: reportInput({ runId: "BC-PROD-2", status: "Validated" }) })).result?.status, "ok", "Validated report");
+  assert.equal(calls, 2);
+  const legacy = await call(h, "save_analysis", { ...base, input: writeInput() });
+  assert.equal(legacy.error.code, "forbidden", "the unpublished 1.0 object form is not writable in production"); assert.equal(legacy.error.outcome, "not_started");
+  assert.equal((await call(h, "save_analysis", { ...base, scope: "demo", input: reportInput({ runId: "BC-PROD-3" }) })).error.code, "forbidden", "demo never writes");
+  assert.equal(calls, 2, "refused intents never reach the Core");
+  assert.equal(api.authorizeSitesWrite("save_analysis", { ...base, input: { ...reportInput(), status: "Superseded" } }), false);
+  assert.equal(api.authorizeSitesWrite("save_analysis", { ...base, input: null }), false);
+  assert.equal(api.authorizeSitesWrite("get_company", { ...base, id: "c" }), false, "only known WRITE tools are authorized");
+});
 
-    const wrongCompany = campaignInput();
-    wrongCompany.companyIds = ["3b537ea7af3581bd9d9bd65dcfe03d97"];
-    wrongCompany.analysis.header.companyIds = [...wrongCompany.companyIds];
-    const wrongFamily = campaignInput();
-    wrongFamily.analysis.kind = "generic";
-    wrongFamily.analysis.header.family = "generic";
-    delete wrongFamily.analysis.score;
-    const validated = campaignInput(); validated.analysis.header.status = "Validated";
-    const revisionUpdate = { ...campaignInput(), expectedRevision: "2026-10-06T11:00:00Z" };
-    const differentRun = { ...campaignInput(), runId: "OTHER-LOT13-RUN" };
-    for (const input of [wrongCompany, wrongFamily, validated, revisionUpdate, differentRun]) {
-      const denied = await call(h, "save_analysis", { ...base, input });
-      assert.equal(denied.error.code, "forbidden");
-      assert.equal(denied.error.outcome, "not_started");
-    }
-    assert.equal(calls, 3, "invalid campaign intents never reach Core");
-
-    Date.now = () => Date.parse(api.SITE_CAMPAIGN_EXPIRES_AT);
-    const expired = await call(h, "save_analysis", { ...base, input: campaignInput() });
-    assert.equal(expired.error.code, "forbidden");
-    assert.equal(calls, 3, "expired campaign never reaches Core");
-
-    Date.now = () => Date.parse("2026-10-06T12:00:00Z");
-    const noAllowlist = await call(handler(core, { ...identity, allowedWriteRunIds: [] }), "save_analysis", { ...base, input: campaignInput() });
-    assert.equal(noAllowlist.error.code, "forbidden");
-    assert.equal(calls, 3, "missing allowlist never reaches Core");
-  } finally { Date.now = previousNow; }
+test("MCP spec rate limiting: WRITE has its own per-caller budget, checked before the Core", async () => {
+  let now = 0, calls = 0;
+  const core = api.createInvestmentCore({ renderReportContent: () => ({ schemaVersion: "1.0.0", blocks: [{ id: "b", type: "paragraph", text: [{ text: "x" }], sourceIds: ["s"] }] }),
+    writeAnalysis: async intent => { calls++; return { schemaVersion: "1.0.0", status: "persisted", analysisId: "a", runId: intent.runId, revision: "r", persisted: true, promoted: false, verified: false, diagnostics: [] }; } });
+  const h = sitesHandler(core, { writeRateLimit: { max: 2, windowMs: 86_400_000, now: () => now } });
+  for (const n of [1, 2]) assert.equal((await call(h, "save_analysis", { ...base, input: reportInput({ runId: `R${n}` }) })).result?.status, "ok");
+  const limited = await call(h, "save_analysis", { ...base, input: reportInput({ runId: "R3" }) });
+  assert.equal(limited.error.code, "rate_limit"); assert.equal(limited.error.outcome, "not_started"); assert.equal(calls, 2);
+  assert.equal((await call(h, "get_company", { ...base, id: "c" })).status, "completed", "READ budget is separate");
+  now += 86_400_001;
+  assert.equal((await call(h, "save_analysis", { ...base, input: reportInput({ runId: "R4" }) })).result?.status, "ok", "window resets");
+  assert.equal(api.MCP_LIMITS?.writesPerWindow ?? 40, 40);
 });
 
 test("permissions, scope isolation, mutation confirmation and unauthorized never reach Core", async () => {
@@ -360,20 +322,6 @@ test("report form: validated by the published schema, built by the Core, refused
   assert.match(coreRejected.result.metadata.diagnostics[0].message, /score must be an integer/);
 });
 
-test("Sites campaign policy applies the same envelope to the report form", async () => {
-  const { isAuthorizedSiteCampaignWrite, SITE_CAMPAIGN_EXPIRES_AT } = api;
-  const before = Date.parse(SITE_CAMPAIGN_EXPIRES_AT) - 60_000;
-  const runId = "FV-SU-20261006-LOT9-E2E", allowed = [runId];
-  const report = { format: "report", runId, kind: "business", companyId: "3b337ea7-af35-81ca-97c4-f048f9d52b1c", title: "t", date: "2026-10-06", status: "Draft", reportMarkdown: "x", summary: null, verdict: null, confidence: null };
-  assert.equal(isAuthorizedSiteCampaignWrite(report, allowed, before), true);
-  assert.equal(isAuthorizedSiteCampaignWrite({ ...report, status: "Validated" }, allowed, before), false);
-  assert.equal(isAuthorizedSiteCampaignWrite({ ...report, kind: "short" }, allowed, before), false);
-  assert.equal(isAuthorizedSiteCampaignWrite({ ...report, companyId: "other" }, allowed, before), false);
-  assert.equal(isAuthorizedSiteCampaignWrite(report, [], before), false);
-  assert.equal(isAuthorizedSiteCampaignWrite({ ...report, runId: "constructor" }, ["constructor"], before), false, "no prototype lookup");
-  assert.equal(isAuthorizedSiteCampaignWrite(report, allowed, Date.parse(SITE_CAMPAIGN_EXPIRES_AT)), false, "expired");
-});
-
 test("MCP tools spec: servers MUST rate limit tool invocations — READ budget per caller, isolated and windowed", async () => {
   let now = 1_000_000, calls = 0;
   const core = api.createInvestmentCore({ readCompany: async () => { calls++; return null; } });
@@ -388,18 +336,17 @@ test("MCP tools spec: servers MUST rate limit tool invocations — READ budget p
   assert.equal((await as("alice")()).status, "completed", "window resets");
 });
 
-test("review fix: report form cannot bypass write approval, demo refusal or the campaign envelope", async () => {
+test("review fix: report form cannot bypass write approval, demo refusal or the production policy", async () => {
   let calls = 0;
   const core = api.createInvestmentCore({ renderReportContent: () => ({ schemaVersion: "1.0.0", blocks: [] }), writeAnalysis: async () => { calls++; throw new Error("must not write"); } });
   const report = { format: "report", runId: "FV-SU-20261006-LOT9-E2E", kind: "business", companyId: "3b337ea7af3581ca97c4f048f9d52b1c", title: "t", date: "2026-10-06", status: "Draft", reportMarkdown: "x", summary: null, verdict: null, confidence: null };
   const cases = [
     [{ ...caller, writeApproved: false }, base, report, "confirmation_required"],
     [caller, { ...base, scope: "demo" }, report, "forbidden"],
-    [{ ...caller, allowedWriteRunIds: [report.runId] }, base, { ...report, kind: "short" }, "forbidden"],
-    [{ ...caller, allowedWriteRunIds: [report.runId] }, base, { ...report, status: "Validated" }, "forbidden"],
+    [{ ...caller, permissions: ["investment:read"] }, base, report, "forbidden"],
   ];
   for (const [identity, args, input, code] of cases) {
-    const result = await call(handler(core, identity), "save_analysis", { ...args, input });
+    const result = await call(api.createMcpHandler({ authenticate: () => identity, service: () => core, authorizeWrite: api.authorizeSitesWrite }), "save_analysis", { ...args, input });
     assert.equal(result.status, "rejected"); assert.equal(result.error.code, code);
   }
   assert.equal(calls, 0);
@@ -414,11 +361,3 @@ test("review fix: the READ limiter memory is hard-capped", async () => {
   assert.ok(tracked !== undefined && tracked <= 3, `tracked callers ${tracked}`);
 });
 
-test("Lot 9 campaign: exact run list, no Lot 13 replay, short bounded window", async () => {
-  const { isAuthorizedSiteCampaignWrite, SITE_WRITE_CAMPAIGNS, SITE_CAMPAIGN_EXPIRES_AT } = api;
-  assert.deepEqual(Object.keys(SITE_WRITE_CAMPAIGNS).sort(), ["ER-MU-20261006-LOT9-E2E", "FA-GOOGL-20261006-LOT9-E2E", "FV-SU-20261006-LOT9-E2E"]);
-  const old = { format: "report", runId: "ER-MU-20261006-LOT13-E2E", kind: "earnings", companyId: "3b537ea7af3581bd9d9bd65dcfe03d97", title: "t", date: "2026-10-06", status: "Draft", reportMarkdown: "x", summary: null, verdict: null, confidence: null };
-  assert.equal(isAuthorizedSiteCampaignWrite(old, [old.runId], Date.parse("2026-10-06T13:00:00Z")), false, "Lot 13 run ids are not replayable");
-  assert.ok(Date.parse(SITE_CAMPAIGN_EXPIRES_AT) > Date.parse("2026-10-06T13:30:00Z"));
-  assert.ok(Date.parse(SITE_CAMPAIGN_EXPIRES_AT) <= Date.parse("2026-10-06T22:00:00Z"), "window capped at the evening");
-});

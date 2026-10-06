@@ -48,4 +48,4 @@ export const MCP_TOOLS = {
   save_analysis: { title: "Enregistrer une analyse", description: "Enregistrer le rapport d'un module (format \"report\" : rapport Markdown + champs du handoff) ; le Core construit l'analyse et renvoie le receipt de persistance sans altération. Un seul appel par intention, jamais de retry.", operation: "saveAnalysis", arguments: ["input"], access: "WRITE" },
   get_quote: { title: "Lire une cotation", description: "Lire une cotation et ses indications de fraîcheur, source et disponibilité.", operation: "getQuote", arguments: ["assetId", "options"], access: "READ" },
 } as const;
-export const MCP_LIMITS = { requestBytes: 2_097_152, responseBytes: 4_194_304, readTimeoutMs: 30_000, writeTimeoutMs: 30_000, readAttempts: 2, writeAttempts: 1, readsPerWindow: 120, readWindowMs: 60_000 } as const;
+export const MCP_LIMITS = { requestBytes: 2_097_152, responseBytes: 4_194_304, readTimeoutMs: 30_000, writeTimeoutMs: 30_000, readAttempts: 2, writeAttempts: 1, readsPerWindow: 120, readWindowMs: 60_000, writesPerWindow: 40, writeWindowMs: 86_400_000 } as const;

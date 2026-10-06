@@ -8,6 +8,7 @@ import { createInvestmentService, createInvestmentReadAdapter } from "../adapter
 
 import { createMcpHandler } from "../transports/mcp/server";
 import { authenticateSitesMcp } from "../transports/mcp/sites-auth";
+import { authorizeSitesWrite } from "../transports/mcp/site-write-policy";
 import { createDemoInvestmentService } from "../adapters/demo/investment-reads";
 
 import { companyPreview } from "../app/lib/company-preview";
@@ -23,8 +24,6 @@ interface Env {
   /** Email address of the Site owner, set as a private runtime variable. */
   OWNER_EMAIL?: string;
   MCP_WRITE_ENABLED?: string;
-  MCP_WRITE_DELEGATED?: string;
-  MCP_WRITE_TEST_RUN_IDS?: string;
   IMAGES: {
     input(stream: ReadableStream): {
       transform(options: Record<string, unknown>): {
@@ -183,6 +182,7 @@ function mcpHandler(env: Env) {
   if (!mcp) {
     mcp = createMcpHandler({
       authenticate: request => authenticateSitesMcp(request, env),
+      authorizeWrite: authorizeSitesWrite,
       service: scope => scope === "demo" ? createDemoInvestmentService() : createInvestmentService(env.DB, env.NOTION_TOKEN ? { token: env.NOTION_TOKEN } : undefined),
     });
     mcpHandlers.set(env, mcp);

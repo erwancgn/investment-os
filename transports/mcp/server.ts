@@ -7,18 +7,21 @@ import schemas from "../../contracts/mcp.v1.schema.json";
 import { MCP_CONTRACT_VERSION, MCP_LIMITS, MCP_TOOLS, type McpInputs, type McpOutput, type McpScope, type McpTransportErrorCode } from "../../contracts/mcp";
 import { isRecord } from "../../core/contracts/common";
 import type { createInvestmentCore } from "../../core/services/investment-os";
-import { isAuthorizedSiteCampaignWrite } from "./site-campaign";
 
 type Core = ReturnType<typeof createInvestmentCore>;
 type ToolName = keyof McpInputs;
 /** Trusted runtime context, never parsed from tool arguments. */
-export type McpCaller = { subject: string; scopes: McpScope[]; permissions: ("investment:read" | "investment:write")[]; writeApproved: boolean; allowedWriteRunIds?: string[] };
+export type McpCaller = { subject: string; scopes: McpScope[]; permissions: ("investment:read" | "investment:write")[]; writeApproved: boolean };
 export type McpRuntime = {
   authenticate: (request: Request) => Promise<McpCaller | null> | McpCaller | null;
   service: (scope: McpScope, caller: McpCaller) => Core;
   waitUntil?: (promise: Promise<unknown>) => void;
   /** Per-caller READ budget (MCP spec: servers MUST rate limit tool invocations). Isolate-local. */
   readRateLimit?: { max: number; windowMs: number; now?: () => number; maxCallers?: number };
+  /** Per-caller WRITE budget, separate from READ. Isolate-local, like the READ limiter. */
+  writeRateLimit?: { max: number; windowMs: number; now?: () => number };
+  /** Hosting write policy, applied after schema validation and before the Core. Absent: no extra policy. */
+  authorizeWrite?: (name: ToolName, input: unknown) => boolean;
 };
 const provider = new CfWorkerJsonSchemaValidator({ draft: "7" });
 const schemaFor = (name: ToolName, field: "inputSchema" | "outputSchema") => {
@@ -80,7 +83,7 @@ export const mcpToolCatalog: Tool[] = Object.entries(MCP_TOOLS).map(([name, spec
 const messages: Record<McpTransportErrorCode, string> = {
   invalid_input: "Paramètres transport invalides.", unsupported_version: "Contrat supporté : 1.0.0.",
   unauthorized: "Authentification requise.", forbidden: "Accès refusé.", confirmation_required: "Délégation de mutation requise.",
-  limit_exceeded: "Limite de taille dépassée.", timeout: "Délai transport dépassé.", network: "Transport indisponible.", rate_limit: "Opération déjà en cours.",
+  limit_exceeded: "Limite de taille dépassée.", timeout: "Délai transport dépassé.", network: "Transport indisponible.", rate_limit: "Limite de débit atteinte ou opération déjà en cours.",
 };
 const diagnosticCodes: Record<McpTransportErrorCode, string> = { invalid_input: "input_schema", unsupported_version: "contract_version", unauthorized: "caller_auth", forbidden: "scope_permission", confirmation_required: "mutation_confirmation", limit_exceeded: "payload_limit", timeout: "transport_timeout", network: "transport_network", rate_limit: "transport_rate_limit" };
 const rejected = (code: McpTransportErrorCode, scope: McpScope | null = null, outcome: "not_started" | "unknown" = "not_started"): McpOutput<never> => ({
@@ -103,19 +106,21 @@ export function createMcpHandler(runtime: McpRuntime) {
   const activeWrites = new Set<string>();
   const readLimit = { max: runtime.readRateLimit?.max ?? MCP_LIMITS.readsPerWindow, windowMs: runtime.readRateLimit?.windowMs ?? MCP_LIMITS.readWindowMs, now: runtime.readRateLimit?.now ?? Date.now, maxCallers: runtime.readRateLimit?.maxCallers ?? 1000 };
   const readWindows = new Map<string, { start: number; count: number }>();
-  /** Fixed window per subject; WRITE keeps its own single-flight fence. */
-  function allowRead(subject: string): boolean {
-    const now = readLimit.now();
-    const window = readWindows.get(subject);
-    if (!window || now - window.start >= readLimit.windowMs) {
-      readWindows.delete(subject);
-      for (const [key, value] of readWindows) if (now - value.start >= readLimit.windowMs) readWindows.delete(key);
+  const writeLimit = { max: runtime.writeRateLimit?.max ?? MCP_LIMITS.writesPerWindow, windowMs: runtime.writeRateLimit?.windowMs ?? MCP_LIMITS.writeWindowMs, now: runtime.writeRateLimit?.now ?? Date.now, maxCallers: readLimit.maxCallers };
+  const writeWindows = new Map<string, { start: number; count: number }>();
+  /** Fixed window per subject, one budget map per access kind; WRITE also keeps its single-flight fence. */
+  function allow(windows: Map<string, { start: number; count: number }>, limit: { max: number; windowMs: number; now: () => number; maxCallers: number }, subject: string): boolean {
+    const now = limit.now();
+    const window = windows.get(subject);
+    if (!window || now - window.start >= limit.windowMs) {
+      windows.delete(subject);
+      for (const [key, value] of windows) if (now - value.start >= limit.windowMs) windows.delete(key);
       // Hard cap: evict the oldest tracked caller (Map keeps insertion order).
-      while (readWindows.size >= readLimit.maxCallers) readWindows.delete(readWindows.keys().next().value!);
-      readWindows.set(subject, { start: now, count: 1 });
+      while (windows.size >= limit.maxCallers) windows.delete(windows.keys().next().value!);
+      windows.set(subject, { start: now, count: 1 });
       return true;
     }
-    if (window.count >= readLimit.max) return false;
+    if (window.count >= limit.max) return false;
     window.count++;
     return true;
   }
@@ -129,9 +134,9 @@ export function createMcpHandler(runtime: McpRuntime) {
     if (bytes(raw) > MCP_LIMITS.requestBytes) return rejected("limit_exceeded", scope);
     if (!validators[name].input(raw).valid) return rejected("invalid_input", scope);
     const input = raw as McpInputs[ToolName];
-    if (write && caller.allowedWriteRunIds && !isAuthorizedSiteCampaignWrite((input as McpInputs["save_analysis"]).input, caller.allowedWriteRunIds)) return rejected("forbidden", scope);
+    if (write && runtime.authorizeWrite && !runtime.authorizeWrite(name, input)) return rejected("forbidden", scope);
     if (write && activeWrites.has(caller.subject)) return rejected("rate_limit", scope);
-    if (!write && !allowRead(caller.subject)) return rejected("rate_limit", scope);
+    if (write ? !allow(writeWindows, writeLimit, caller.subject) : !allow(readWindows, readLimit, caller.subject)) return rejected("rate_limit", scope);
     if (write) activeWrites.add(caller.subject);
     const deadline = write ? MCP_LIMITS.writeTimeoutMs : MCP_LIMITS.readTimeoutMs;
     let timer: ReturnType<typeof setTimeout> | undefined;

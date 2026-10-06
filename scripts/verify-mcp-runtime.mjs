@@ -13,7 +13,7 @@ const mf = new Miniflare({ scriptPath: `${root}/index.js`, modules: true, module
   modulesRules: [{ type: "ESModule", include: ["**/*.js", "**/*.mjs"], fallthrough: true }],
   compatibilityDate: config.compatibility_date, compatibilityFlags: config.compatibility_flags,
   d1Databases: { DB: "mcp-lot11-isolated" }, d1Persist: false,
-  bindings: { OWNER_EMAIL: "owner@example.test", MCP_WRITE_ENABLED: "1", MCP_WRITE_DELEGATED: "1", NOTION_TOKEN: "fixture-only" },
+  bindings: { OWNER_EMAIL: "owner@example.test", MCP_WRITE_ENABLED: "1", NOTION_TOKEN: "fixture-only" },
   outboundService: async request => {
     assert.equal(new URL(request.url).hostname, "api.notion.com", "No live provider access permitted");
     const body = await request.text();
