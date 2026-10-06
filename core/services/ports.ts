@@ -20,10 +20,12 @@ export type SaveAnalysisInput = {
 /** Families a skill can persist through the report form (Decisions are not writable). */
 export type ReportKind = "business" | "valuation" | "short" | "portfolio" | "cio_memo" | "earnings";
 export type ReportRefreshStatus = "not-needed" | "monitor" | "recommended" | "required";
+/** Options configured on the Notion Earnings "Guidance vs Consensus" select. */
+export type ReportGuidanceVsConsensus = "Above" | "Inline" | "Below" | "Not Available";
 export type ReportEarnings = {
   fiscalPeriod: string | null;
   guidance: string | null;
-  guidanceVsConsensus: string | null;
+  guidanceVsConsensus: ReportGuidanceVsConsensus | null;
   refreshes: { business: ReportRefreshStatus | null; valuation: ReportRefreshStatus | null; short: ReportRefreshStatus | null; portfolio: ReportRefreshStatus | null; memo: ReportRefreshStatus | null };
 };
 /** Contract 1.1 write form: the skill sends its report and handoff fields; the Core builds the Analysis. */

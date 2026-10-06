@@ -62,6 +62,9 @@ async function invoke<T>(port: (() => Promise<T>) | undefined, validate: (value:
 function validId(id: string): boolean { return typeof id === "string" && id.length > 0 && id.trim() === id; }
 const identityKey = (value: string) => value.normalize("NFKD").replace(/[\u0300-\u036f]/g, "").toLocaleLowerCase("en").replace(/[^\p{L}\p{N}]+/gu, " ").trim().replace(/\s+/g, " ");
 const tickerKey = (value: string) => value.normalize("NFKC").toLocaleUpperCase("en");
+/** Ticker without a trailing exchange suffix ("SU.PA" → "SU"); a suffix is a dot plus 1–4 letters. */
+const tickerBase = (value: string) => tickerKey(value).replace(/\.[A-Z]{1,4}$/, "");
+const tickerMatches = (stored: string, query: string) => tickerKey(stored) === tickerKey(query) || tickerBase(stored) === tickerKey(query);
 const legalSuffix = /\s+(?:incorporated|inc|corporation|corp|company|co|limited|ltd|plc|holdings|holding|group|sa|se|ag|nv)$/;
 function companyBase(value: string) {
   let base = identityKey(value);
@@ -126,7 +129,7 @@ export function createInvestmentCore(ports: InvestmentPorts) {
         const key = identityKey(query);
         const marketKey = market && identityKey(market);
         const eligible = identities.filter(item => !marketKey || identityKey(item.exchange ?? "") === marketKey);
-        const ticker = eligible.filter(item => item.ticker && tickerKey(item.ticker) === tickerKey(query));
+        const ticker = eligible.filter(item => item.ticker && tickerMatches(item.ticker, query));
         const name = eligible.filter(item => identityKey(item.canonicalName) === key);
         const alias = eligible.filter(item => item.aliases.some(value => identityKey(value) === key) || companyBase(item.canonicalName) === key);
         const exact = eligible.filter(item => ticker.includes(item) || name.includes(item));

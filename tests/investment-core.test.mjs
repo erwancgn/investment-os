@@ -150,3 +150,19 @@ test("closed positions can be addressed separately and do not enter portfolio ho
   assert.equal((await core.getPosition("closed-1")).data.lifecycle, "closed");
   assert.equal((await core.getPortfolio()).data.positions.some(position => position.lifecycle === "closed"), false);
 });
+
+test("resolveCompany matches a ticker with or without its exchange suffix and says so when ambiguous", async () => {
+  const { createInvestmentCore } = await api();
+  const identities = [
+    { companyId: "fr-su", canonicalName: "Schneider Electric", ticker: "SU.PA", exchange: "Euronext Paris", assetId: null, aliases: [] },
+    { companyId: "uk-su", canonicalName: "Example Suffix Plc", ticker: "SU.L", exchange: "LSE", assetId: null, aliases: [] },
+    { companyId: "us-ms", canonicalName: "Microsoft Corporation", ticker: "MSFT", exchange: "NASDAQ", assetId: null, aliases: [] },
+  ];
+  const core = createInvestmentCore({ readCompanyIdentities: async () => identities });
+  assert.equal((await core.resolveCompany("SU.PA")).data.candidates[0].companyId, "fr-su", "full ticker");
+  assert.equal((await core.resolveCompany("su.pa")).data.status, "resolved", "case-insensitive");
+  assert.deepEqual((await core.resolveCompany("SU", "Euronext Paris")).data.candidates.map(c => c.companyId), ["fr-su"], "base ticker + exchange");
+  assert.equal((await core.resolveCompany("SU")).data.status, "ambiguous", "base ticker across exchanges is ambiguous, never guessed");
+  assert.equal((await core.resolveCompany("MS")).data.status, "not_found", "a prefix is not a ticker");
+  assert.equal((await core.resolveCompany("MSFT")).data.status, "resolved", "unsuffixed tickers unchanged");
+});

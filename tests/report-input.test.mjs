@@ -170,3 +170,15 @@ test("review fix: a receipt that still carries the synthesized id is never prese
   const lying = await m.createInvestmentCore({ renderReportContent: m.reportContentRenderer, writeAnalysis: receipt("persisted", undefined, { persisted: true }) }).saveAnalysis(report());
   assert.equal(lying.status, "error"); assert.equal(lying.error.code, "mapping");
 });
+
+test("guidanceVsConsensus accepts only the configured Notion options and the error lists them", async () => {
+  const m = await api();
+  const make = value => report({ kind: "earnings", score: undefined, earnings: { fiscalPeriod: "Q1 FY2026", guidance: "Raised", guidanceVsConsensus: value, refreshes: {} } });
+  for (const ok of ["Above", "Inline", "Below", "Not Available", null]) assert.equal(m.analysisFromReport(make(ok), m.reportContentRenderer).ok, true, String(ok));
+  for (const bad of ["Above consensus", "In line", "above", "Not Applicable", ""]) {
+    const r = m.analysisFromReport(make(bad), m.reportContentRenderer);
+    assert.equal(r.ok, false, bad);
+    assert.ok(r.issues.some(i => i.includes("earnings.guidanceVsConsensus must be Above, Inline, Below, Not Available or null")), JSON.stringify(r.issues));
+    assert.ok(!JSON.stringify(r.issues).includes(bad || "\u0000"), "value is not echoed");
+  }
+});

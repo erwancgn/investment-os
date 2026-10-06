@@ -8,6 +8,7 @@ const KINDS: readonly ReportKind[] = ["business", "valuation", "short", "portfol
 const AGENTS: Record<ReportKind, string> = { business: "Business Analyst", valuation: "Valuation Analyst", short: "Short Seller", portfolio: "Portfolio Manager", cio_memo: "Investment Memo", earnings: "Earnings" };
 const REFRESH_KEYS = ["business", "valuation", "short", "portfolio", "memo"] as const;
 const REFRESH_LABELS: Record<(typeof REFRESH_KEYS)[number], string> = { business: "Business", valuation: "Valorisation", short: "Short", portfolio: "Portfolio", memo: "Mémo CIO" };
+const GUIDANCE_VS_CONSENSUS = ["Above", "Inline", "Below", "Not Available"] as const;
 const REFRESH_STATUSES: readonly ReportRefreshStatus[] = ["not-needed", "monitor", "recommended", "required"];
 const EVIDENCE = /\[E:([A-Za-z0-9][A-Za-z0-9_.:-]{0,127})\]/g;
 
@@ -66,7 +67,8 @@ function validate(input: SaveReportInput): string[] {
     const e = input.earnings;
     if (!isRecord(e)) issues.push("earnings is required for earnings");
     else {
-      for (const key of ["fiscalPeriod", "guidance", "guidanceVsConsensus"] as const) if (!nullableText(e[key], REPORT_LIMITS.textChars)) issues.push(`earnings.${key} must be a string or null`);
+      if (!(e.guidanceVsConsensus === null || (GUIDANCE_VS_CONSENSUS as readonly unknown[]).includes(e.guidanceVsConsensus))) issues.push(`earnings.guidanceVsConsensus must be ${GUIDANCE_VS_CONSENSUS.join(", ")} or null`);
+      for (const key of ["fiscalPeriod", "guidance"] as const) if (!nullableText(e[key], REPORT_LIMITS.textChars)) issues.push(`earnings.${key} must be a string or null`);
       const refreshes = isRecord(e.refreshes) ? e.refreshes : null;
       if (!refreshes || Object.keys(refreshes).some(key => !(REFRESH_KEYS as readonly string[]).includes(key))) issues.push(`earnings.refreshes must only contain ${REFRESH_KEYS.join(", ")}`);
       else for (const key of REFRESH_KEYS) {

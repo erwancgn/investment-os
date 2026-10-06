@@ -4100,7 +4100,16 @@
               "type": "null"
             },
             {
-              "type": "string"
+              "const": "Above"
+            },
+            {
+              "const": "Inline"
+            },
+            {
+              "const": "Below"
+            },
+            {
+              "const": "Not Available"
             }
           ]
         },
