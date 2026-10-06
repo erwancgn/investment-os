@@ -11,7 +11,7 @@ export type NotionWriteOptions = { onDiagnostic?:(diagnostic:Diagnostic)=>void; 
 const object=(value:unknown):RecordValue=>value&&typeof value==="object"?value as RecordValue:{};
 const id=(value:unknown)=>normalizeNotionPageId(String(value??""));
 const uuid=(value:string)=>/^[a-f0-9]{32}$/.test(id(value));
-const fault=(code:string)=>Object.assign(new Error("Écriture Notion interrompue."),{code});
+const fault=(code:string,detail?:string)=>Object.assign(new Error("Écriture Notion interrompue."),{code,...(detail?{detail}:{})});
 const transient=(error:unknown)=>["network","timeout","rate_limit"].includes(String(object(error).code));
 const text=(value:string)=>(value.match(/[\s\S]{1,2000}/g)??[" "]).map(content=>({type:"text",text:{content}}));
 const agents:Record<string,string>={business:"Business Analyst",valuation:"Valuation Analyst",short:"Short Seller",portfolio:"Portfolio Manager",cio_memo:"Investment Memo",earnings:"Earnings",decision:"Investment Decision"};
@@ -23,14 +23,14 @@ function richText(segments:InlineSegment[]){return segments.flatMap(segment=>{
 /** Write-side mapping only; the existing normalizer remains the sole content reader. */
 function blocksFor(blocks:AnalysisBlock[]):RecordValue[]{return blocks.flatMap(block=>{
   const wrap=(type:string,body:RecordValue)=>({object:"block",type,[type]:body});
-  if(block.type==="unsupported")throw fault("invalid_input");
+  if(block.type==="unsupported")throw fault("invalid_input","unsupported block");
   if(block.type==="divider")return [wrap("divider",{})];
   if(block.type==="list")return block.items.map(item=>wrap(block.ordered?"numbered_list_item":"bulleted_list_item",{rich_text:richText(item)}));
   if(block.type==="table"){
-    if(!block.rows.length||!block.rows[0].length||block.rows.some(row=>row.length!==block.rows[0].length))throw fault("invalid_input");
+    if(!block.rows.length||!block.rows[0].length||block.rows.some(row=>row.length!==block.rows[0].length))throw fault("invalid_input","table rows have different column counts");
     return [wrap("table",{table_width:block.rows[0].length,has_column_header:block.header,has_row_header:false,children:block.rows.map(row=>wrap("table_row",{cells:row.map(richText)}))})];
   }
-  if(block.type==="heading"&&block.level>3)throw fault("invalid_input");
+  if(block.type==="heading"&&block.level>3)throw fault("invalid_input","heading level 4 or deeper is not supported");
   const type=block.type==="heading"?`heading_${block.level}`:block.type;
   return [wrap(type,{rich_text:richText(block.text),...(block.type==="callout"&&block.icon?{icon:{type:"emoji",emoji:block.icon}}:{})})];
 });}
@@ -45,14 +45,14 @@ function semanticBlock(value:unknown,expected:unknown=value):unknown {
 }
 // Provider limits apply to each emitted request, including nested table rows and rich text.
 function validateProviderBody(body:unknown){
-  if(new TextEncoder().encode(JSON.stringify(body)).byteLength>500000)throw fault("invalid_input");
+  if(new TextEncoder().encode(JSON.stringify(body)).byteLength>500000)throw fault("invalid_input","request body larger than 500000 bytes");
   let blocks=0;
   function visit(value:unknown,key=""){
-    if(Array.isArray(value)){if(value.length>100)throw fault("invalid_input");value.forEach(item=>visit(item,key));}
+    if(Array.isArray(value)){if(value.length>100)throw fault("invalid_input","more than 100 items in one Notion array (formatted segments, list or table rows)");value.forEach(item=>visit(item,key));}
     else if(value&&typeof value==="object"){
-      if(object(value).object==="block"&&++blocks>1000)throw fault("invalid_input");
+      if(object(value).object==="block"&&++blocks>1000)throw fault("invalid_input","more than 1000 blocks in one request");
       for(const [name,item] of Object.entries(value))visit(item,name);
-    }else if(typeof value==="string"&&(key==="content"||key==="url")&&value.length>2000)throw fault("invalid_input");
+    }else if(typeof value==="string"&&(key==="content"||key==="url")&&value.length>2000)throw fault("invalid_input","text or link longer than 2000 characters");
   }
   visit(body);
 }
@@ -244,8 +244,8 @@ export function createNotionAnalysisWriter(db:D1Database,options:NotionWriteOpti
     });
   }
   return async function writeAnalysis(input:SaveAnalysisInput):Promise<SaveAnalysisReceipt>{
-    if(!isAnalysis(input.analysis)||!input.runId.trim()||(input.expectedRevision!==null&&!uuid(input.analysis.header.id))||!input.companyIds.length||input.companyIds.some(v=>!uuid(v))||new Set(input.companyIds.map(id)).size!==input.companyIds.length||!equal(input.companyIds.map(id).sort(),input.analysis.header.companyIds.map(id).sort())||input.analysis.header.archived)throw fault("invalid_input");
-    if(input.analysis.header.sourceKind!==(input.analysis.kind==="decision"?"decision":"analysis")||/superseded|archiv|obsolet|historique|historical|remplac/i.test(input.analysis.header.status))throw fault("invalid_input");
+    if(!isAnalysis(input.analysis)||!input.runId.trim()||(input.expectedRevision!==null&&!uuid(input.analysis.header.id))||!input.companyIds.length||input.companyIds.some(v=>!uuid(v))||new Set(input.companyIds.map(id)).size!==input.companyIds.length||!equal(input.companyIds.map(id).sort(),input.analysis.header.companyIds.map(id).sort())||input.analysis.header.archived)throw fault("invalid_input","analysis, run id or company ids are inconsistent");
+    if(input.analysis.header.sourceKind!==(input.analysis.kind==="decision"?"decision":"analysis")||/superseded|archiv|obsolet|historique|historical|remplac/i.test(input.analysis.header.status))throw fault("invalid_input","source kind or status is not writable");
     const family=input.analysis.kind;
     const moduleAgent=agents[family]??input.analysis.header.agent;
     if(!moduleAgent)throw fault("mapping");
@@ -260,7 +260,7 @@ export function createNotionAnalysisWriter(db:D1Database,options:NotionWriteOpti
       {object:"block",type:"heading_2",heading_2:{rich_text:text("Rapport complet")}},
       ...blocksFor(input.analysis.content.blocks),
     ]:blocksFor(input.analysis.content.blocks);
-    if(new TextEncoder().encode(JSON.stringify(desiredBlocks)).byteLength>450000)throw fault("invalid_input");
+    if(new TextEncoder().encode(JSON.stringify(desiredBlocks)).byteLength>450000)throw fault("invalid_input","report body larger than 450000 bytes");
     // Preflight all chunks before leasing a journal or performing any provider mutation.
     validateProviderBody({parent:{type:"data_source_id",data_source_id:source},properties:expected,children:desiredBlocks.slice(0,100)});
     for(let start=100;start<desiredBlocks.length;start+=100)validateProviderBody({children:desiredBlocks.slice(start,start+100)});
@@ -321,7 +321,7 @@ export function createNotionAnalysisWriter(db:D1Database,options:NotionWriteOpti
           const target=await page(input.analysis.header.id);
           if(propertyValue(target.properties,"Agent")!==moduleAgent||target.archived||target.in_trash||target.last_edited_time!==input.expectedRevision||id(object(target.parent).data_source_id)!==id(source)||!equal((propertyValue(target.properties,"Company") as string[]??[]).map(id).sort(),input.companyIds.map(id).sort()))throw fault("stale_request");
           // Updating an existing report is allowed only with an unchanged body; content revisions create a new run/page.
-          if(!blocksMatch(await children(target.id),desiredBlocks))throw fault("invalid_input");
+          if(!blocksMatch(await children(target.id),desiredBlocks))throw fault("invalid_input","a report already exists for this run with a different body; use a new runId for a content revision");
           analysisId=target.id;actualIdentityKnown=true;await saveJournal("updating");mutated=true;
           try{existing=await mutate(`/pages/${target.id}`,"PATCH",{properties:expected}) as unknown as Page;}
           catch(error){if(!transient(error))throw error;const found=await lookup(source,input.runId,moduleAgent,runProperty);if(found.length!==1)return receipt("partial","update_unconfirmed");existing=found[0];}

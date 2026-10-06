@@ -182,3 +182,37 @@ test("guidanceVsConsensus accepts only the configured Notion options and the err
     assert.ok(!JSON.stringify(r.issues).includes(bad || "\u0000"), "value is not echoed");
   }
 });
+
+const tableMarkdown = rows => `# T\n\n${rows.join("\n")}\n\nFin.`;
+
+test("hardening: a table with ragged rows is completed, never refused, and writes end to end", () => withFixture({}, async f => {
+  const m = await api();
+  const ragged = tableMarkdown(["| Critère | Score |", "| --- | --- |", "| Business model | 13/15 |", "| Moat |", "| Résilience | 9/10 | extra |"]);
+  const built = m.analysisFromReport(report({ reportMarkdown: ragged }), m.reportContentRenderer);
+  assert.equal(built.ok, true, built.issues?.join("; "));
+  const table = built.input.analysis.content.blocks.find(b => b.type === "table");
+  assert.deepEqual([...new Set(table.rows.map(r => r.length))], [3], "every row has the widest row's column count");
+  assert.equal(m.isAnalysis(built.input.analysis), true);
+  const service = f.api.createInvestmentService(f.db, f.options);
+  const saved = await service.saveAnalysis(report({ reportMarkdown: ragged, verdict: null, confidence: null, score: null }));
+  assert.equal(saved.status, "ok", JSON.stringify(saved));
+}));
+
+test("hardening: provider limits the writer enforces are named field-level issues, not a bare invalid_input", async () => {
+  const m = await api();
+  const dense = Array.from({ length: 120 }, (_, i) => `**b${i}** t${i}`).join(" ");
+  const issues = m.analysisFromReport(report({ reportMarkdown: dense }), m.reportContentRenderer).issues;
+  assert.ok(issues.some(issue => /more than 100 formatted segments \(block \d+\)/.test(issue)), issues.join("; "));
+  const longUrl = m.analysisFromReport(report({ reportMarkdown: `[x](https://example.com/${"a".repeat(2100)})` }), m.reportContentRenderer).issues;
+  assert.ok(longUrl.some(issue => /link longer than 2000 characters \(block \d+\)/.test(issue)), longUrl.join("; "));
+  for (const issue of [...issues, ...longUrl]) assert.equal(issue.includes("aaaa"), false, "never echoes content");
+});
+
+test("hardening: a provider refusal that reaches the Core carries a diagnostic naming the rule", async () => {
+  const m = await api();
+  const core = m.createInvestmentCore({ renderReportContent: m.reportContentRenderer, writeAnalysis: async () => { throw Object.assign(new Error("x"), { code: "invalid_input", detail: "table rows have different column counts" }); } });
+  const result = await core.saveAnalysis(report());
+  assert.equal(result.error.code, "invalid_input");
+  assert.deepEqual(result.metadata.diagnostics.map(d => d.code), ["write_input"]);
+  assert.match(result.metadata.diagnostics[0].message, /table rows have different column counts/);
+});

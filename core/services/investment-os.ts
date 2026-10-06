@@ -295,7 +295,12 @@ export function createInvestmentCore(ports: InvestmentPorts) {
         const unresolved: Diagnostic[] = synthesized ? [{ code: "analysis_id_unresolved", message: "La page Notion n'est pas encore identifiée ; analysisId n'est pas un identifiant de page.", severity: "warning", path: "analysisId" }] : [];
         const result = ok(receipt, [...receipt.diagnostics, ...unresolved]);
         return { ...result, metadata: { revision: receipt.revision, freshness: "unknown", provenance: input.analysis.header.provenance, diagnostics: [...input.analysis.diagnostics, ...receipt.diagnostics, ...unresolved] } };
-      } catch (error) { return serviceError(errorCode(error)) as ServiceResult<SaveAnalysisReceipt>; }
+      } catch (error) {
+        const code = errorCode(error), detail = (error as { detail?: unknown } | null)?.detail;
+        // A provider-side input refusal names its rule (field-level, never content) instead of a bare invalid_input.
+        const diagnostics: Diagnostic[] = code === "invalid_input" && typeof detail === "string" && detail ? [{ code: "write_input", message: detail, severity: "error", path: "input" }] : [];
+        return serviceError(code, diagnostics) as ServiceResult<SaveAnalysisReceipt>;
+      }
     },
     getQuote(assetId: string, options?: ReadOptions): Promise<ServiceResult<Quote>> {
       if (!validId(assetId)) return Promise.resolve(serviceError("invalid_input") as ServiceResult<Quote>);

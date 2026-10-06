@@ -80,6 +80,23 @@ function validate(input: SaveReportInput): string[] {
   return issues;
 }
 
+/** Notion request limits the writer enforces (2000 chars per text piece or link, 100 items per array). Named here so a refusal says which rule. */
+function segmentGroups(block: AnalysisBlock): InlineSegment[][] {
+  if (block.type === "list") return block.items;
+  if (block.type === "table") return block.rows.flat();
+  if (block.type === "divider" || block.type === "unsupported") return [];
+  return [block.text];
+}
+function providerLimitIssues(block: AnalysisBlock): string[] {
+  const issues: string[] = [];
+  const groups = segmentGroups(block);
+  const pieces = (group: InlineSegment[]) => group.reduce((sum, segment) => sum + Math.max(1, Math.ceil(segment.text.length / 2000)), 0);
+  if (groups.some(group => pieces(group) > 100)) issues.push("a paragraph, list item or table cell has more than 100 formatted segments");
+  if (groups.some(group => group.some(segment => (segment.href?.length ?? 0) > 2000))) issues.push("link longer than 2000 characters");
+  if (block.type === "table" && block.rows.length > 100) issues.push("table has more than 100 rows");
+  return issues;
+}
+
 /** Build the canonical Analysis from a report. `render` is the adapter's existing Markdown reader. */
 export function analysisFromReport(input: SaveReportInput, render: (markdown: string) => AnalysisContent): ReportBuild {
   if (!isReportInput(input)) return { ok: false, issues: ["format must be report"] };
@@ -88,12 +105,18 @@ export function analysisFromReport(input: SaveReportInput, render: (markdown: st
   const rendered = render(input.reportMarkdown).blocks;
   const blocks: AnalysisBlock[] = rendered.map((block, index) => {
     const id = `${input.runId}:${input.kind}:b${index}`;
+    // Notion tables are rectangular: a short or long row (model-written Markdown) is completed with empty cells, never refused.
+    if (block.type === "table") {
+      const width = Math.max(0, ...block.rows.map(row => row.length));
+      block = { ...block, rows: block.rows.map(row => row.length === width ? row : [...row, ...Array.from({ length: width - row.length }, () => [] as InlineSegment[])]) };
+    }
     const evidence = [...new Set(Array.from(blockText(block).matchAll(EVIDENCE), match => match[1]))];
     return { ...block, id, sourceIds: evidence.length ? evidence : [`derived:${id}`] } as AnalysisBlock;
   });
   blocks.forEach((block, index) => {
     if (block.type === "heading" && block.level > 3) issues.push(`heading level 4 or deeper is not supported (block ${index})`);
     if (block.type === "unsupported") issues.push(`unsupported block (block ${index})`);
+    for (const rule of providerLimitIssues(block)) issues.push(`${rule} (block ${index})`);
   });
   if (!blocks.length) issues.push("reportMarkdown has no readable block");
   if (issues.length) return { ok: false, issues };
