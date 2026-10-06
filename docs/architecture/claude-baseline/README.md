@@ -4,7 +4,7 @@
 
 - Sites v245 : `93a7497de4af5191405b09978bba595b1532bbfe`.
 - Déploiement `appgdep_6ac4ba811c088191bf10d31773b2649d` : succeeded, has_mcp=true, environnement 25.
-- Sources applicatives et tests : export exact du commit Sites, sans build généré ni secrets.
+- Sources applicatives et tests : base Sites v245 complétée par les corrections locales non publiées décrites ci-dessous, sans build généré ni secrets.
 - Plugin : copie complète de la release installée 1.3.10, incluant références, assets et métadonnées. Hashes dans plugin-sha256.json. Snapshot de travail, pas connexion OAuth Claude automatiquement configurée.
 - MCP serveur : `transports/mcp/`, Core : `core/`, providers : `adapters/`. Endpoint existant `/mcp` sur le Site. Auth réelle et droits nécessaires pour usage distant ; aucun token exporté.
 
@@ -16,7 +16,7 @@ Pour travailler sur les skills avec Claude, consulter directement `plugins/inves
 
 ## Corrections locales non publiées
 
-Le deuxième commit conserve le tree de travail local observé, notamment writer, normalizer, projection valuation et test Lot13. Il n'est pas déployé sur Sites. Le premier commit conserve le snapshot v245.
+La branche conserve le tree de travail local observé, notamment writer, normalizer, projection valuation et test Lot13. Il n'est pas déployé sur Sites. La provenance publiée est v245 ; les modifications locales sont incluses dans cette branche et ne sont pas déployées.
 
 ## Validation exécutée dans cette branche
 
