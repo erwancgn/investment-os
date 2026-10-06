@@ -7,6 +7,7 @@ import schemas from "../../contracts/mcp.v1.schema.json";
 import { MCP_CONTRACT_VERSION, MCP_LIMITS, MCP_TOOLS, type McpInputs, type McpOutput, type McpScope, type McpTransportErrorCode } from "../../contracts/mcp";
 import { isRecord } from "../../core/contracts/common";
 import type { createInvestmentCore } from "../../core/services/investment-os";
+import { isAuthorizedSiteCampaignWrite } from "./site-campaign";
 
 type Core = ReturnType<typeof createInvestmentCore>;
 type ToolName = keyof McpInputs;
@@ -78,7 +79,7 @@ export function createMcpHandler(runtime: McpRuntime) {
     if (bytes(raw) > MCP_LIMITS.requestBytes) return rejected("limit_exceeded", scope);
     if (!validators[name].input(raw).valid) return rejected("invalid_input", scope);
     const input = raw as McpInputs[ToolName];
-    if (write && caller.allowedWriteRunIds && !caller.allowedWriteRunIds.includes((input as McpInputs["save_analysis"]).input.runId)) return rejected("forbidden", scope);
+    if (write && caller.allowedWriteRunIds && !isAuthorizedSiteCampaignWrite((input as McpInputs["save_analysis"]).input, caller.allowedWriteRunIds)) return rejected("forbidden", scope);
     if (write && activeWrites.has(caller.subject)) return rejected("rate_limit", scope);
     if (write) activeWrites.add(caller.subject);
     const deadline = write ? MCP_LIMITS.writeTimeoutMs : MCP_LIMITS.readTimeoutMs;

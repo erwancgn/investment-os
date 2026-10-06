@@ -1,7 +1,7 @@
 import type { McpCaller } from "./server";
 export type SitesMcpEnv = { OWNER_EMAIL?: string; MCP_WRITE_ENABLED?: string; MCP_WRITE_DELEGATED?: string; MCP_WRITE_TEST_RUN_IDS?: string };
 /** A source release is required to reopen WRITE after the hosted env-removal check failed. */
-const SITE_WRITE_RELEASE_APPROVED = false;
+const SITE_WRITE_RELEASE_APPROVED = true;
 /** Only for Sites dispatch: it supplies verified identity; never mount this auth on a raw public Worker. */
 export function authenticateSitesMcp(request: Request, env: SitesMcpEnv): McpCaller | null {
   const subject = request.headers.get("oai-authenticated-user-id")?.trim();

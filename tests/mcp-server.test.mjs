@@ -55,7 +55,7 @@ test("auth excludes payload identity, cookies, bypass credentials and browser wr
   assert.deepEqual(other.scopes, ["demo"]); assert.deepEqual(other.permissions, ["investment:read"]);
 });
 
-test("Sites WRITE is release-closed; transport fence admits only configured run IDs when explicitly authorized", async () => {
+test("Sites WRITE is release-closed; even a fixture allowlist cannot bypass the campaign policy", async () => {
   const identityRequest = new Request("https://site/mcp", { headers: { "oai-authenticated-user-id": "user", "oai-authenticated-user-email": "owner@example.test" } });
   const flags = { OWNER_EMAIL: "owner@example.test", MCP_WRITE_ENABLED: "1", MCP_WRITE_DELEGATED: "1", MCP_WRITE_TEST_RUN_IDS: "allowed-run" };
   for (const missing of ["MCP_WRITE_ENABLED", "MCP_WRITE_DELEGATED", "MCP_WRITE_TEST_RUN_IDS"]) {
@@ -66,13 +66,78 @@ test("Sites WRITE is release-closed; transport fence admits only configured run 
   const identity = api.authenticateSitesMcp(identityRequest, { OWNER_EMAIL: "owner@example.test", MCP_WRITE_ENABLED: "1", MCP_WRITE_DELEGATED: "1", MCP_WRITE_TEST_RUN_IDS: "allowed-run" });
   assert.deepEqual(identity.permissions, ["investment:read"]);
   assert.equal(identity.writeApproved, false);
+  let closedCalls = 0;
+  const closedOwner = api.authenticateSitesMcp(identityRequest, { ...flags, MCP_WRITE_TEST_RUN_IDS: "FV-SU-20261006-LOT13-E2E" });
+  const closedOutput = await call(handler({ saveAnalysis: async () => { closedCalls++; throw new Error("closed write reached Core"); } }, closedOwner), "save_analysis", { ...base, input: writeInput() });
+  assert.equal(closedOutput.error.code, "forbidden"); assert.equal(closedOutput.error.outcome, "not_started"); assert.equal(closedCalls, 0);
   const authorizedFixture = { ...identity, permissions: ["investment:read", "investment:write"], writeApproved: true };
   let calls = 0;
   const core = { saveAnalysis: async () => { calls++; throw new Error("write reached"); } };
   const denied = await call(handler(core, authorizedFixture), "save_analysis", { ...base, input: { ...writeInput(), runId: "other-run" } });
   assert.equal(denied.error.code, "forbidden"); assert.equal(denied.error.outcome, "not_started"); assert.equal(calls, 0);
-  await call(handler(core, authorizedFixture), "save_analysis", { ...base, input: { ...writeInput(), runId: "allowed-run" } });
-  assert.equal(calls, 1);
+  const allowlistedButUnmapped = await call(handler(core, authorizedFixture), "save_analysis", { ...base, input: { ...writeInput(), runId: "allowed-run" } });
+  assert.equal(allowlistedButUnmapped.error.code, "forbidden"); assert.equal(calls, 0);
+});
+
+test("Sites campaign dispatch is exact, Draft-only, new-only, and expires before Core", async () => {
+  const runId = "FV-SU-20261006-LOT13-E2E";
+  const allowedWriteRunIds = [runId, "ER-MU-20261006-LOT13-E2E", "FA-GOOGL-20261006-LOT13-E2E"];
+  const identity = { ...caller, allowedWriteRunIds };
+  let calls = 0;
+  const core = api.createInvestmentCore({ writeAnalysis: async intent => { calls++; return { schemaVersion: "1.0.0", status: "persisted", analysisId: "assigned-analysis", runId: intent.runId, revision: "2026-10-06T12:00:00Z", persisted: true, promoted: false, verified: false, diagnostics: [] }; } });
+  const campaignInput = (campaignRunId = runId, companyId = "3b337ea7af3581ca97c4f048f9d52b1c", family = "business") => {
+    const intent = writeInput();
+    intent.runId = campaignRunId;
+    intent.companyIds = [companyId];
+    intent.analysis.header.companyIds = [companyId];
+    intent.analysis.header.status = "Draft";
+    intent.analysis.kind = family;
+    intent.analysis.header.family = family;
+    intent.analysis.header.agent = family === "earnings" ? "Earnings" : family === "cio_memo" ? "Investment Memo" : `${family[0].toUpperCase()}${family.slice(1)} Analyst`;
+    if (family === "earnings") { delete intent.analysis.score; intent.analysis.earningsReview = { fiscalPeriod: null, guidance: null, guidanceVsConsensus: null, confidence: null, refreshes: [] }; }
+    if (family === "cio_memo") { delete intent.analysis.score; intent.analysis.handoffSummary = null; }
+    return intent;
+  };
+  const previousNow = Date.now;
+  Date.now = () => Date.parse("2026-10-06T12:00:00Z");
+  try {
+    const h = handler(core, identity);
+    const accepted = await call(h, "save_analysis", { ...base, input: campaignInput() });
+    assert.equal(accepted.result?.status, "ok", JSON.stringify(accepted));
+    assert.equal(calls, 1, "the exact authorized Draft reaches the fake Core");
+    for (const [id, company, family] of [
+      ["ER-MU-20261006-LOT13-E2E", "3b537ea7af3581bd9d9bd65dcfe03d97", "earnings"],
+      ["FA-GOOGL-20261006-LOT13-E2E", "3b337ea7af35819e8bd8f12ea7fb5dc4", "cio_memo"],
+    ]) assert.equal((await call(h, "save_analysis", { ...base, input: campaignInput(id, company, family) })).result.status, "ok");
+    assert.equal(calls, 3, "each exact company/family campaign has a nominal path");
+
+    const wrongCompany = campaignInput();
+    wrongCompany.companyIds = ["3b537ea7af3581bd9d9bd65dcfe03d97"];
+    wrongCompany.analysis.header.companyIds = [...wrongCompany.companyIds];
+    const wrongFamily = campaignInput();
+    wrongFamily.analysis.kind = "generic";
+    wrongFamily.analysis.header.family = "generic";
+    delete wrongFamily.analysis.score;
+    const validated = campaignInput(); validated.analysis.header.status = "Validated";
+    const revisionUpdate = { ...campaignInput(), expectedRevision: "2026-10-06T11:00:00Z" };
+    const differentRun = { ...campaignInput(), runId: "OTHER-LOT13-RUN" };
+    for (const input of [wrongCompany, wrongFamily, validated, revisionUpdate, differentRun]) {
+      const denied = await call(h, "save_analysis", { ...base, input });
+      assert.equal(denied.error.code, "forbidden");
+      assert.equal(denied.error.outcome, "not_started");
+    }
+    assert.equal(calls, 3, "invalid campaign intents never reach Core");
+
+    Date.now = () => Date.parse("2026-10-06T14:00:00Z");
+    const expired = await call(h, "save_analysis", { ...base, input: campaignInput() });
+    assert.equal(expired.error.code, "forbidden");
+    assert.equal(calls, 3, "expired campaign never reaches Core");
+
+    Date.now = () => Date.parse("2026-10-06T12:00:00Z");
+    const noAllowlist = await call(handler(core, { ...identity, allowedWriteRunIds: [] }), "save_analysis", { ...base, input: campaignInput() });
+    assert.equal(noAllowlist.error.code, "forbidden");
+    assert.equal(calls, 3, "missing allowlist never reaches Core");
+  } finally { Date.now = previousNow; }
 });
 
 test("permissions, scope isolation, mutation confirmation and unauthorized never reach Core", async () => {
