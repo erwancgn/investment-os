@@ -12,7 +12,7 @@ import { companyPreview } from "../../app/lib/company-preview";
 import { normalizeAnalysisDocument } from "../../app/lib/document-presentation";
 import { canonicalAnalysisContent, parseNotionText } from "../../app/lib/notion-renderer";
 import { normalizeNotionPageId } from "./sync";
-import { getQuotes, instruments, type QuoteView } from "../../app/lib/quotes";
+import { getQuotes, instruments, quoteSymbolForTicker, type QuoteView } from "../../app/lib/quotes";
 
 export const analysisOf = (document: CompanyDocument, normalized = document.normalizedAnalysis ?? normalizeAnalysisDocument(document)) => {
   const analysis = normalized.analysis;
@@ -100,7 +100,8 @@ function notionPorts(db: D1Database, writes?: NotionWriteOptions): InvestmentPor
           companyId: normalizeNotionPageId(row.page_id),
           canonicalName: String(propertyValue(properties, "Company") || row.title),
           ticker, exchange,
-          assetId: assets.length === 1 ? assets[0].id : null,
+          // Catalogued instrument (PWA portfolio) first; otherwise the live Yahoo symbol of the ticker.
+          assetId: assets.length === 1 ? assets[0].id : ticker ? quoteSymbolForTicker(ticker) : null,
           isin: String(propertyValue(properties, "ISIN") ?? "").trim() || null,
           aliases: Array.isArray(aliasValue) ? aliasValue.map(String) : typeof aliasValue === "string" ? aliasValue.split(/[,;\n]/).map(value => value.trim()).filter(Boolean) : [],
         };
