@@ -13,5 +13,7 @@ export function authorizeSitesWrite(name: keyof McpInputs, raw: unknown): boolea
     // Only the published report form: the Core builds the Analysis. Draft or Validated (Validated promotes Current).
     return isReportInput(input) && (input.status === "Draft" || input.status === "Validated");
   }
+  // Field rules and duplicate checks belong to the Core and the writer.
+  if (name === "create_company") return isRecord(raw.input);
   return false;
 }

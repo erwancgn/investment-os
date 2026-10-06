@@ -27,9 +27,9 @@ test("transport import boundary and canonical discovery schemas", async () => {
   const b = await build({ entryPoints: ["transports/mcp/server.ts"], bundle: true, write: false, platform: "node", format: "esm", packages: "external", metafile: true });
   assert.ok(Object.keys(b.metafile.inputs).every(p => !/^(app|adapters|worker)\//.test(p)));
   const result = await handler()(request("", base, { body: { method: "tools/list", params: {} } }));
-  const json = await result.json(); assert.equal(json.result.tools.length, 8);
+  const json = await result.json(); assert.equal(json.result.tools.length, 9);
   assert.equal(json.result.tools.some(t => t.name === "list_analyses"), false);
-  for (const tool of json.result.tools) { assert.equal(ToolSchema.safeParse(tool).success,true); assert.equal(tool.outputSchema.type,"object"); assert.equal(tool.inputSchema.type, "object"); assert.equal(JSON.stringify(tool.inputSchema).includes('"$ref"'), false); assert.equal(tool.annotations.readOnlyHint, tool.name !== "save_analysis"); }
+  for (const tool of json.result.tools) { assert.equal(ToolSchema.safeParse(tool).success,true); assert.equal(tool.outputSchema.type,"object"); assert.equal(tool.inputSchema.type, "object"); assert.equal(JSON.stringify(tool.inputSchema).includes('"$ref"'), false); assert.equal(tool.annotations.readOnlyHint, !["save_analysis", "create_company"].includes(tool.name)); }
   // Contract 1.1: save_analysis publishes only the report form (the 1.0 object form stays accepted, unpublished).
   const save = json.result.tools.find(t => t.name === "save_analysis").inputSchema;
   const input = save.properties.input;
@@ -239,7 +239,7 @@ test("local runtime: SDK client initialize/discover, real adapter WRITE receipts
     try {
       const unauthenticated = await fetch(url, { method: "POST", headers: { "content-type": "application/json" }, body: "{}" }); assert.equal(unauthenticated.status, 401);
       await client.connect(new StreamableHTTPClientTransport(url, { requestInit: { headers: { authorization: `Bearer ${token}` } } }));
-      assert.equal((await client.listTools()).tools.length, 8);
+      assert.equal((await client.listTools()).tools.length, 9);
       const intent = writeInput(); if (status === "persisted") intent.analysis.header.status = "Draft";
       const one = await client.callTool({ name: "save_analysis", arguments: { ...base, input: intent } });
       assert.equal(one.structuredContent.result.data.status, status); assert.equal(data.creates, 1);
@@ -362,3 +362,19 @@ test("review fix: the READ limiter memory is hard-capped", async () => {
   assert.ok(tracked !== undefined && tracked <= 3, `tracked callers ${tracked}`);
 });
 
+
+test("create_company over MCP: production policy, Core validation and duplicate answer", async () => {
+  let created = 0;
+  const identities = [{ companyId: "fr-su", canonicalName: "Schneider Electric", ticker: "SU.PA", exchange: "Euronext Paris", assetId: null, aliases: [], isin: "FR0000121972" }];
+  const core = api.createInvestmentCore({ readCompanyIdentities: async () => identities, createCompany: async input => { created++; return { status: "created", candidates: [{ companyId: "new", canonicalName: input.name, ticker: input.ticker, exchange: input.exchange, assetId: null, isin: input.isin }] }; } });
+  const h = sitesHandler(core);
+  const input = { name: "Hermès International", ticker: "RMS.PA", exchange: "Euronext Paris", isin: "FR0000052292", currency: "EUR", country: "France" };
+  assert.equal((await call(h, "create_company", { ...base, scope: "demo", input })).error.code, "forbidden");
+  assert.equal((await call(api.createMcpHandler({ authenticate: () => ({ ...caller, permissions: ["investment:read"], writeApproved: false }), service: () => core, authorizeWrite: api.authorizeSitesWrite }), "create_company", { ...base, input })).error.code, "forbidden");
+  assert.equal((await call(h, "create_company", { ...base, input: { ...input, isin: "FR0000052293" } })).result.error.code, "invalid_input", "bad ISIN checksum");
+  const duplicate = await call(h, "create_company", { ...base, input: { ...input, name: "Schneider Electric SE", ticker: "SU.PA", isin: "FR0000121972" } });
+  assert.equal(duplicate.result.data.status, "existing"); assert.equal(duplicate.result.data.candidates[0].companyId, "fr-su");
+  assert.equal(created, 0);
+  const ok = await call(h, "create_company", { ...base, input });
+  assert.equal(ok.result.data.status, "created"); assert.equal(created, 1);
+});

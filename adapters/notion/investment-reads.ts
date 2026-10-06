@@ -1,4 +1,5 @@
 import { createNotionAnalysisWriter, type NotionWriteOptions } from "./analysis-writes";
+import { createNotionCompanyWriter } from "./company-writes";
 import type { CompanyIdentity, InvestmentPorts, SaveAnalysisInput, SaveReportInput } from "../../core/services/ports";
 import { createInvestmentCore, type ReadOptions } from "../../core/services/investment-os";
 import { isReportInput } from "../../core/analysis/report";
@@ -106,7 +107,7 @@ function notionPorts(db: D1Database, writes?: NotionWriteOptions): InvestmentPor
       });
     },
     readPosition: (id, options) => readPosition(db, id, options),
-    ...(writes ? { writeAnalysis: createNotionAnalysisWriter(db, writes), renderReportContent: reportContentRenderer } : {}),
+    ...(writes ? { writeAnalysis: createNotionAnalysisWriter(db, writes), createCompany: createNotionCompanyWriter(db, writes), renderReportContent: reportContentRenderer } : {}),
     readCurrentContext: async (companyId, family) => {
       const context = await readCurrentAnalysisContext(db, companyId, family);
       for (const candidate of context.candidates) currentCandidates.set(candidate.id, candidate);

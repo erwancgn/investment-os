@@ -75,9 +75,16 @@ export type CompanyResolution = {
   candidates: CompanyCandidate[];
 };
 
+/** create_company input: ISIN is mandatory, it is the only identifier unique to a security. */
+export type CreateCompanyInput = { name: string; ticker: string; exchange: string | null; isin: string; currency: string | null; country: string | null };
+/** `existing`: the company (or a conflicting one) is already known; nothing was written. */
+export type CompanyCreation = { status: "created" | "existing"; candidates: CompanyCandidate[] };
+
 /** Domain-only ports. Source IDs, storage, and transport details belong in adapters. */
 export type InvestmentPorts = {
   readCompanyIdentities?: () => Promise<CompanyIdentity[]>;
+  /** Re-checks duplicates against the live source before writing; never creates a second page for a known ISIN/ticker/name. */
+  createCompany?: (input: CreateCompanyInput) => Promise<CompanyCreation>;
   readCompany?: (id: string) => Promise<CompanyPreview | null>;
   readPortfolio?: (options?: ReadOptions) => Promise<Portfolio>;
   readPosition?: (id: string, options?: ReadOptions) => Promise<Position | null>;

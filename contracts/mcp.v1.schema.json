@@ -10,10 +10,10 @@
       "outputSchema": {
         "anyOf": [
           {
-            "$ref": "#/definitions/T61"
+            "$ref": "#/definitions/T63"
           },
           {
-            "$ref": "#/definitions/T63"
+            "$ref": "#/definitions/T65"
           }
         ]
       }
@@ -25,10 +25,10 @@
       "outputSchema": {
         "anyOf": [
           {
-            "$ref": "#/definitions/T61"
+            "$ref": "#/definitions/T63"
           },
           {
-            "$ref": "#/definitions/T70"
+            "$ref": "#/definitions/T72"
           }
         ]
       }
@@ -40,10 +40,10 @@
       "outputSchema": {
         "anyOf": [
           {
-            "$ref": "#/definitions/T61"
+            "$ref": "#/definitions/T63"
           },
           {
-            "$ref": "#/definitions/T75"
+            "$ref": "#/definitions/T77"
           }
         ]
       }
@@ -55,10 +55,10 @@
       "outputSchema": {
         "anyOf": [
           {
-            "$ref": "#/definitions/T61"
+            "$ref": "#/definitions/T63"
           },
           {
-            "$ref": "#/definitions/T92"
+            "$ref": "#/definitions/T94"
           }
         ]
       }
@@ -70,10 +70,10 @@
       "outputSchema": {
         "anyOf": [
           {
-            "$ref": "#/definitions/T61"
+            "$ref": "#/definitions/T63"
           },
           {
-            "$ref": "#/definitions/T94"
+            "$ref": "#/definitions/T96"
           }
         ]
       }
@@ -85,10 +85,10 @@
       "outputSchema": {
         "anyOf": [
           {
-            "$ref": "#/definitions/T61"
+            "$ref": "#/definitions/T63"
           },
           {
-            "$ref": "#/definitions/T94"
+            "$ref": "#/definitions/T96"
           }
         ]
       }
@@ -100,10 +100,10 @@
       "outputSchema": {
         "anyOf": [
           {
-            "$ref": "#/definitions/T61"
+            "$ref": "#/definitions/T63"
           },
           {
-            "$ref": "#/definitions/T96"
+            "$ref": "#/definitions/T98"
           }
         ]
       }
@@ -115,10 +115,25 @@
       "outputSchema": {
         "anyOf": [
           {
-            "$ref": "#/definitions/T61"
+            "$ref": "#/definitions/T63"
           },
           {
-            "$ref": "#/definitions/T100"
+            "$ref": "#/definitions/T102"
+          }
+        ]
+      }
+    },
+    "create_company": {
+      "inputSchema": {
+        "$ref": "#/definitions/T61"
+      },
+      "outputSchema": {
+        "anyOf": [
+          {
+            "$ref": "#/definitions/T63"
+          },
+          {
+            "$ref": "#/definitions/T105"
           }
         ]
       }
@@ -4275,6 +4290,86 @@
         "scope": {
           "anyOf": [
             {
+              "const": "personal"
+            },
+            {
+              "const": "demo"
+            }
+          ]
+        },
+        "input": {
+          "$ref": "#/definitions/T62"
+        }
+      },
+      "required": [
+        "contractVersion",
+        "scope",
+        "input"
+      ],
+      "additionalProperties": false
+    },
+    "T62": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "ticker": {
+          "type": "string"
+        },
+        "exchange": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "isin": {
+          "type": "string"
+        },
+        "currency": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "country": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "required": [
+        "name",
+        "ticker",
+        "exchange",
+        "isin",
+        "currency",
+        "country"
+      ],
+      "additionalProperties": false
+    },
+    "T63": {
+      "type": "object",
+      "properties": {
+        "contractVersion": {
+          "const": "1.0.0"
+        },
+        "scope": {
+          "anyOf": [
+            {
               "type": "null"
             },
             {
@@ -4289,7 +4384,7 @@
           "const": "rejected"
         },
         "error": {
-          "$ref": "#/definitions/T62"
+          "$ref": "#/definitions/T64"
         },
         "diagnostics": {
           "type": "array",
@@ -4307,7 +4402,7 @@
       ],
       "additionalProperties": false
     },
-    "T62": {
+    "T64": {
       "type": "object",
       "properties": {
         "code": {
@@ -4373,7 +4468,7 @@
       ],
       "additionalProperties": false
     },
-    "T63": {
+    "T65": {
       "type": "object",
       "properties": {
         "contractVersion": {
@@ -4395,10 +4490,10 @@
         "result": {
           "anyOf": [
             {
-              "$ref": "#/definitions/T64"
+              "$ref": "#/definitions/T66"
             },
             {
-              "$ref": "#/definitions/T67"
+              "$ref": "#/definitions/T69"
             }
           ]
         }
@@ -4411,7 +4506,7 @@
       ],
       "additionalProperties": false
     },
-    "T64": {
+    "T66": {
       "type": "object",
       "properties": {
         "schemaVersion": {
@@ -4421,10 +4516,10 @@
           "const": "error"
         },
         "error": {
-          "$ref": "#/definitions/T65"
+          "$ref": "#/definitions/T67"
         },
         "metadata": {
-          "$ref": "#/definitions/T66"
+          "$ref": "#/definitions/T68"
         }
       },
       "required": [
@@ -4435,7 +4530,7 @@
       ],
       "additionalProperties": false
     },
-    "T65": {
+    "T67": {
       "type": "object",
       "properties": {
         "code": {
@@ -4505,7 +4600,7 @@
       ],
       "additionalProperties": false
     },
-    "T66": {
+    "T68": {
       "type": "object",
       "properties": {
         "revision": {
@@ -4556,7 +4651,7 @@
       ],
       "additionalProperties": false
     },
-    "T67": {
+    "T69": {
       "type": "object",
       "properties": {
         "schemaVersion": {
@@ -4566,10 +4661,10 @@
           "const": "ok"
         },
         "data": {
-          "$ref": "#/definitions/T68"
+          "$ref": "#/definitions/T70"
         },
         "metadata": {
-          "$ref": "#/definitions/T66"
+          "$ref": "#/definitions/T68"
         }
       },
       "required": [
@@ -4580,7 +4675,7 @@
       ],
       "additionalProperties": false
     },
-    "T68": {
+    "T70": {
       "type": "object",
       "properties": {
         "status": {
@@ -4599,7 +4694,7 @@
         "candidates": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/T69"
+            "$ref": "#/definitions/T71"
           }
         }
       },
@@ -4609,7 +4704,7 @@
       ],
       "additionalProperties": false
     },
-    "T69": {
+    "T71": {
       "type": "object",
       "properties": {
         "companyId": {
@@ -4662,7 +4757,7 @@
       ],
       "additionalProperties": false
     },
-    "T70": {
+    "T72": {
       "type": "object",
       "properties": {
         "contractVersion": {
@@ -4684,10 +4779,10 @@
         "result": {
           "anyOf": [
             {
-              "$ref": "#/definitions/T64"
+              "$ref": "#/definitions/T66"
             },
             {
-              "$ref": "#/definitions/T71"
+              "$ref": "#/definitions/T73"
             }
           ]
         }
@@ -4700,7 +4795,7 @@
       ],
       "additionalProperties": false
     },
-    "T71": {
+    "T73": {
       "type": "object",
       "properties": {
         "schemaVersion": {
@@ -4715,12 +4810,12 @@
               "type": "null"
             },
             {
-              "$ref": "#/definitions/T72"
+              "$ref": "#/definitions/T74"
             }
           ]
         },
         "metadata": {
-          "$ref": "#/definitions/T66"
+          "$ref": "#/definitions/T68"
         }
       },
       "required": [
@@ -4731,7 +4826,7 @@
       ],
       "additionalProperties": false
     },
-    "T72": {
+    "T74": {
       "type": "object",
       "properties": {
         "schemaVersion": {
@@ -4828,7 +4923,7 @@
         "researchReferences": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/T73"
+            "$ref": "#/definitions/T75"
           }
         },
         "provenance": {
@@ -4837,31 +4932,31 @@
         "analyses": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/T74"
+            "$ref": "#/definitions/T76"
           }
         },
         "earnings": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/T74"
+            "$ref": "#/definitions/T76"
           }
         },
         "decisions": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/T74"
+            "$ref": "#/definitions/T76"
           }
         },
         "portfolioDocuments": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/T74"
+            "$ref": "#/definitions/T76"
           }
         },
         "archives": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/T74"
+            "$ref": "#/definitions/T76"
           }
         }
       },
@@ -4896,7 +4991,7 @@
       ],
       "additionalProperties": false
     },
-    "T73": {
+    "T75": {
       "type": "object",
       "properties": {
         "schemaVersion": {
@@ -4986,7 +5081,7 @@
       ],
       "additionalProperties": false
     },
-    "T74": {
+    "T76": {
       "type": "object",
       "properties": {
         "schemaVersion": {
@@ -5224,7 +5319,7 @@
       ],
       "additionalProperties": false
     },
-    "T75": {
+    "T77": {
       "type": "object",
       "properties": {
         "contractVersion": {
@@ -5246,10 +5341,10 @@
         "result": {
           "anyOf": [
             {
-              "$ref": "#/definitions/T64"
+              "$ref": "#/definitions/T66"
             },
             {
-              "$ref": "#/definitions/T76"
+              "$ref": "#/definitions/T78"
             }
           ]
         }
@@ -5262,7 +5357,7 @@
       ],
       "additionalProperties": false
     },
-    "T76": {
+    "T78": {
       "type": "object",
       "properties": {
         "schemaVersion": {
@@ -5272,10 +5367,10 @@
           "const": "ok"
         },
         "data": {
-          "$ref": "#/definitions/T77"
+          "$ref": "#/definitions/T79"
         },
         "metadata": {
-          "$ref": "#/definitions/T66"
+          "$ref": "#/definitions/T68"
         }
       },
       "required": [
@@ -5286,7 +5381,7 @@
       ],
       "additionalProperties": false
     },
-    "T77": {
+    "T79": {
       "type": "object",
       "properties": {
         "schemaVersion": {
@@ -5321,28 +5416,28 @@
         "targetLines": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/T78"
+            "$ref": "#/definitions/T80"
           }
         },
         "targetTotals": {
-          "$ref": "#/definitions/T79"
+          "$ref": "#/definitions/T81"
         },
         "totals": {
-          "$ref": "#/definitions/T80"
+          "$ref": "#/definitions/T82"
         },
         "slices": {
-          "$ref": "#/definitions/T81"
+          "$ref": "#/definitions/T83"
         },
         "positions": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/T82"
+            "$ref": "#/definitions/T84"
           }
         },
         "closedPositions": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/T84"
+            "$ref": "#/definitions/T86"
           }
         },
         "refreshPending": {
@@ -5358,17 +5453,17 @@
         "sectors": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/T85"
+            "$ref": "#/definitions/T87"
           }
         },
         "coverage": {
-          "$ref": "#/definitions/T86"
+          "$ref": "#/definitions/T88"
         },
         "reconciliation": {
-          "$ref": "#/definitions/T87"
+          "$ref": "#/definitions/T89"
         },
         "calculation": {
-          "$ref": "#/definitions/T91"
+          "$ref": "#/definitions/T93"
         },
         "provenance": {
           "$ref": "#/definitions/T12"
@@ -5393,7 +5488,7 @@
       ],
       "additionalProperties": false
     },
-    "T78": {
+    "T80": {
       "type": "object",
       "properties": {
         "id": {
@@ -5425,7 +5520,7 @@
       ],
       "additionalProperties": false
     },
-    "T79": {
+    "T81": {
       "type": "object",
       "properties": {
         "target10kWeight": {
@@ -5441,7 +5536,7 @@
       ],
       "additionalProperties": false
     },
-    "T80": {
+    "T82": {
       "type": "object",
       "properties": {
         "marketValueEur": {
@@ -5503,15 +5598,15 @@
       ],
       "additionalProperties": false
     },
-    "T81": {
+    "T83": {
       "type": "object",
       "properties": {},
       "required": [],
       "additionalProperties": {
-        "$ref": "#/definitions/T80"
+        "$ref": "#/definitions/T82"
       }
     },
-    "T82": {
+    "T84": {
       "type": "object",
       "properties": {
         "schemaVersion": {
@@ -5560,19 +5655,19 @@
         "countryExposures": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/T83"
+            "$ref": "#/definitions/T85"
           }
         },
         "sectorExposures": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/T83"
+            "$ref": "#/definitions/T85"
           }
         },
         "themeExposures": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/T83"
+            "$ref": "#/definitions/T85"
           }
         },
         "quantity": {
@@ -5861,7 +5956,7 @@
       ],
       "additionalProperties": false
     },
-    "T83": {
+    "T85": {
       "type": "object",
       "properties": {
         "name": {
@@ -5877,7 +5972,7 @@
       ],
       "additionalProperties": false
     },
-    "T84": {
+    "T86": {
       "type": "object",
       "properties": {
         "schemaVersion": {
@@ -5926,19 +6021,19 @@
         "countryExposures": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/T83"
+            "$ref": "#/definitions/T85"
           }
         },
         "sectorExposures": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/T83"
+            "$ref": "#/definitions/T85"
           }
         },
         "themeExposures": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/T83"
+            "$ref": "#/definitions/T85"
           }
         },
         "quantity": {
@@ -6237,7 +6332,7 @@
       ],
       "additionalProperties": false
     },
-    "T85": {
+    "T87": {
       "type": "object",
       "properties": {
         "name": {
@@ -6257,7 +6352,7 @@
       ],
       "additionalProperties": false
     },
-    "T86": {
+    "T88": {
       "type": "object",
       "properties": {
         "live": {
@@ -6289,7 +6384,7 @@
       ],
       "additionalProperties": false
     },
-    "T87": {
+    "T89": {
       "type": "object",
       "properties": {
         "status": {
@@ -6317,11 +6412,11 @@
         "issues": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/T88"
+            "$ref": "#/definitions/T90"
           }
         },
         "accountChecks": {
-          "$ref": "#/definitions/T89"
+          "$ref": "#/definitions/T91"
         }
       },
       "required": [
@@ -6334,7 +6429,7 @@
       ],
       "additionalProperties": false
     },
-    "T88": {
+    "T90": {
       "type": "object",
       "properties": {
         "positionId": {
@@ -6383,7 +6478,7 @@
       ],
       "additionalProperties": false
     },
-    "T90": {
+    "T92": {
       "type": "object",
       "properties": {
         "linesValueEur": {
@@ -6403,15 +6498,15 @@
       ],
       "additionalProperties": false
     },
-    "T89": {
+    "T91": {
       "type": "object",
       "properties": {},
       "required": [],
       "additionalProperties": {
-        "$ref": "#/definitions/T90"
+        "$ref": "#/definitions/T92"
       }
     },
-    "T91": {
+    "T93": {
       "type": "object",
       "properties": {
         "pnlScope": {
@@ -6439,78 +6534,6 @@
       ],
       "additionalProperties": false
     },
-    "T92": {
-      "type": "object",
-      "properties": {
-        "contractVersion": {
-          "const": "1.0.0"
-        },
-        "scope": {
-          "anyOf": [
-            {
-              "const": "personal"
-            },
-            {
-              "const": "demo"
-            }
-          ]
-        },
-        "status": {
-          "const": "completed"
-        },
-        "result": {
-          "anyOf": [
-            {
-              "$ref": "#/definitions/T64"
-            },
-            {
-              "$ref": "#/definitions/T93"
-            }
-          ]
-        }
-      },
-      "required": [
-        "contractVersion",
-        "scope",
-        "status",
-        "result"
-      ],
-      "additionalProperties": false
-    },
-    "T93": {
-      "type": "object",
-      "properties": {
-        "schemaVersion": {
-          "const": "1.0.0"
-        },
-        "status": {
-          "const": "ok"
-        },
-        "data": {
-          "anyOf": [
-            {
-              "type": "null"
-            },
-            {
-              "$ref": "#/definitions/T82"
-            },
-            {
-              "$ref": "#/definitions/T84"
-            }
-          ]
-        },
-        "metadata": {
-          "$ref": "#/definitions/T66"
-        }
-      },
-      "required": [
-        "schemaVersion",
-        "status",
-        "data",
-        "metadata"
-      ],
-      "additionalProperties": false
-    },
     "T94": {
       "type": "object",
       "properties": {
@@ -6533,7 +6556,7 @@
         "result": {
           "anyOf": [
             {
-              "$ref": "#/definitions/T64"
+              "$ref": "#/definitions/T66"
             },
             {
               "$ref": "#/definitions/T95"
@@ -6550,6 +6573,78 @@
       "additionalProperties": false
     },
     "T95": {
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "const": "1.0.0"
+        },
+        "status": {
+          "const": "ok"
+        },
+        "data": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/definitions/T84"
+            },
+            {
+              "$ref": "#/definitions/T86"
+            }
+          ]
+        },
+        "metadata": {
+          "$ref": "#/definitions/T68"
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "status",
+        "data",
+        "metadata"
+      ],
+      "additionalProperties": false
+    },
+    "T96": {
+      "type": "object",
+      "properties": {
+        "contractVersion": {
+          "const": "1.0.0"
+        },
+        "scope": {
+          "anyOf": [
+            {
+              "const": "personal"
+            },
+            {
+              "const": "demo"
+            }
+          ]
+        },
+        "status": {
+          "const": "completed"
+        },
+        "result": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/T66"
+            },
+            {
+              "$ref": "#/definitions/T97"
+            }
+          ]
+        }
+      },
+      "required": [
+        "contractVersion",
+        "scope",
+        "status",
+        "result"
+      ],
+      "additionalProperties": false
+    },
+    "T97": {
       "type": "object",
       "properties": {
         "schemaVersion": {
@@ -6590,7 +6685,7 @@
           ]
         },
         "metadata": {
-          "$ref": "#/definitions/T66"
+          "$ref": "#/definitions/T68"
         }
       },
       "required": [
@@ -6601,7 +6696,7 @@
       ],
       "additionalProperties": false
     },
-    "T96": {
+    "T98": {
       "type": "object",
       "properties": {
         "contractVersion": {
@@ -6623,10 +6718,10 @@
         "result": {
           "anyOf": [
             {
-              "$ref": "#/definitions/T64"
+              "$ref": "#/definitions/T66"
             },
             {
-              "$ref": "#/definitions/T97"
+              "$ref": "#/definitions/T99"
             }
           ]
         }
@@ -6639,7 +6734,7 @@
       ],
       "additionalProperties": false
     },
-    "T97": {
+    "T99": {
       "type": "object",
       "properties": {
         "schemaVersion": {
@@ -6649,10 +6744,10 @@
           "const": "ok"
         },
         "data": {
-          "$ref": "#/definitions/T98"
+          "$ref": "#/definitions/T100"
         },
         "metadata": {
-          "$ref": "#/definitions/T66"
+          "$ref": "#/definitions/T68"
         }
       },
       "required": [
@@ -6663,7 +6758,7 @@
       ],
       "additionalProperties": false
     },
-    "T98": {
+    "T100": {
       "type": "object",
       "properties": {
         "schemaVersion": {
@@ -6734,7 +6829,7 @@
         "diagnostics": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/T99"
+            "$ref": "#/definitions/T101"
           }
         }
       },
@@ -6751,7 +6846,7 @@
       ],
       "additionalProperties": false
     },
-    "T99": {
+    "T101": {
       "type": "object",
       "properties": {
         "code": {
@@ -6781,7 +6876,7 @@
       ],
       "additionalProperties": false
     },
-    "T100": {
+    "T102": {
       "type": "object",
       "properties": {
         "contractVersion": {
@@ -6803,10 +6898,10 @@
         "result": {
           "anyOf": [
             {
-              "$ref": "#/definitions/T64"
+              "$ref": "#/definitions/T66"
             },
             {
-              "$ref": "#/definitions/T101"
+              "$ref": "#/definitions/T103"
             }
           ]
         }
@@ -6819,7 +6914,7 @@
       ],
       "additionalProperties": false
     },
-    "T101": {
+    "T103": {
       "type": "object",
       "properties": {
         "schemaVersion": {
@@ -6829,10 +6924,10 @@
           "const": "ok"
         },
         "data": {
-          "$ref": "#/definitions/T102"
+          "$ref": "#/definitions/T104"
         },
         "metadata": {
-          "$ref": "#/definitions/T66"
+          "$ref": "#/definitions/T68"
         }
       },
       "required": [
@@ -6843,7 +6938,7 @@
       ],
       "additionalProperties": false
     },
-    "T102": {
+    "T104": {
       "type": "object",
       "properties": {
         "schemaVersion": {
@@ -7009,6 +7104,94 @@
         "isFallback",
         "warnings",
         "provenance"
+      ],
+      "additionalProperties": false
+    },
+    "T105": {
+      "type": "object",
+      "properties": {
+        "contractVersion": {
+          "const": "1.0.0"
+        },
+        "scope": {
+          "anyOf": [
+            {
+              "const": "personal"
+            },
+            {
+              "const": "demo"
+            }
+          ]
+        },
+        "status": {
+          "const": "completed"
+        },
+        "result": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/T66"
+            },
+            {
+              "$ref": "#/definitions/T106"
+            }
+          ]
+        }
+      },
+      "required": [
+        "contractVersion",
+        "scope",
+        "status",
+        "result"
+      ],
+      "additionalProperties": false
+    },
+    "T106": {
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "const": "1.0.0"
+        },
+        "status": {
+          "const": "ok"
+        },
+        "data": {
+          "$ref": "#/definitions/T107"
+        },
+        "metadata": {
+          "$ref": "#/definitions/T68"
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "status",
+        "data",
+        "metadata"
+      ],
+      "additionalProperties": false
+    },
+    "T107": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "anyOf": [
+            {
+              "const": "created"
+            },
+            {
+              "const": "existing"
+            }
+          ]
+        },
+        "candidates": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/T71"
+          }
+        }
+      },
+      "required": [
+        "status",
+        "candidates"
       ],
       "additionalProperties": false
     }

@@ -203,3 +203,32 @@ test("resolveCompany: real-world spellings of known companies never come back no
   assert.equal((await core.resolveCompany("FR0000121972")).data.candidates[0].isin, "FR0000121972");
   assert.equal((await core.resolveCompany("Suncor Energy")).data.candidates[0].isin, null);
 });
+
+test("createCompany: ISIN required and checked, duplicates refused from the cache before any write", async () => {
+  const { createInvestmentCore } = await api();
+  const created = [];
+  const core = createInvestmentCore({ readCompanyIdentities: async () => lot9Identities, createCompany: async input => { created.push(input); return { status: "created", candidates: [{ companyId: "new-id", canonicalName: input.name, ticker: input.ticker, exchange: input.exchange, assetId: null, isin: input.isin }] }; } });
+  const valid = { name: "Hermès International", ticker: "rms.pa", exchange: "Euronext Paris", isin: "FR0000052292", currency: "EUR", country: "France" };
+  // Field validation never reaches the port.
+  for (const bad of [{ ...valid, isin: null }, { ...valid, isin: "FR0000052293" }, { ...valid, name: " " }, { ...valid, ticker: "R M S" }, { ...valid, currency: "euro" }, { ...valid, extra: 1 }]) {
+    const r = await core.createCompany(bad);
+    assert.equal(r.status, "error", JSON.stringify(bad)); assert.equal(r.error.code, "invalid_input");
+  }
+  // Every duplicate key short-circuits to "existing": ISIN, full or base ticker, name with or without legal form.
+  for (const duplicate of [
+    { ...valid, name: "Schneider Electric SE", ticker: "SU.PA", isin: "FR0000121972" },
+    { ...valid, name: "Totally Different Name", isin: "FR0000121972" },
+    { ...valid, name: "Micron Technology Inc", ticker: "MU", isin: "US5951121038" },
+    { ...valid, name: "Micron", ticker: "MU", isin: "US5951121038" },
+    { ...valid, name: "New Name", ticker: "GOOGL", isin: "US38259P5089" },
+  ]) {
+    const r = await core.createCompany(duplicate);
+    assert.equal(r.status, "ok", JSON.stringify(duplicate)); assert.equal(r.data.status, "existing", JSON.stringify(duplicate));
+    assert.ok(r.data.candidates.length >= 1);
+  }
+  assert.equal(created.length, 0, "no duplicate reached the writer");
+  const r = await core.createCompany(valid);
+  assert.equal(r.data.status, "created");
+  assert.deepEqual(created, [{ name: "Hermès International", ticker: "RMS.PA", exchange: "Euronext Paris", isin: "FR0000052292", currency: "EUR", country: "France" }], "normalized input");
+  assert.equal((await createInvestmentCore({ readCompanyIdentities: async () => [] }).createCompany(valid)).error.code, "dependency");
+});

@@ -44,7 +44,7 @@ test("checked-in schemas are deterministic and derived from current Core types",
 
 test("contract has no executable domain, server or runtime imports", () => {
   assert.deepEqual(Object.keys(contractBuild.metafile.inputs), ["contracts/mcp.ts"]);
-  assert.equal(Object.values(contract.MCP_TOOLS).filter(t => t.access === "WRITE").length, 1);
+  assert.deepEqual(Object.entries(contract.MCP_TOOLS).filter(([, t]) => t.access === "WRITE").map(([name]) => name).sort(), ["create_company", "save_analysis"]);
   assert.equal(contract.MCP_TOOLS.save_analysis.access, "WRITE");
   assert.deepEqual(contract.MCP_LIMITS, { requestBytes: 2097152, responseBytes: 4194304, readTimeoutMs: 30000, writeTimeoutMs: 30000, readAttempts: 2, writeAttempts: 1, readsPerWindow: 120, readWindowMs: 60000, writesPerWindow: 40, writeWindowMs: 86400000 });
 });

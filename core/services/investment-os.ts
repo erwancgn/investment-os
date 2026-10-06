@@ -2,9 +2,9 @@ import { SCHEMA_VERSION, isRecord, type Diagnostic, type ServiceErrorCode, type 
 import { isAnalysis, isAnalysisPreview, type Analysis, type AnalysisPreview } from "../contracts/analysis.ts";
 import { isCompanyPreview, isPosition, isQuote, validatePortfolio, type CompanyPreview, type Portfolio, type Position, type Quote } from "../contracts/investment.ts";
 import { selectCurrentAnalysis, type CurrentAnalysisFamily, type CurrentSelectionInput } from "../analysis/current-selection.ts";
-import type { CompanyIdentity, CompanyResolution, InvestmentPorts, ListAnalysesParams, ReadOptions, SaveAnalysisInput, SaveAnalysisReceipt, SaveReportInput } from "./ports.ts";
+import type { CompanyCreation, CompanyIdentity, CompanyResolution, CreateCompanyInput, InvestmentPorts, ListAnalysesParams, ReadOptions, SaveAnalysisInput, SaveAnalysisReceipt, SaveReportInput } from "./ports.ts";
 import { analysisFromReport, isReportInput } from "../analysis/report.ts";
-export type { CompanyIdentity, CompanyResolution, InvestmentPorts, ListAnalysesParams, ReadOptions, SaveAnalysisInput, SaveAnalysisReceipt, SaveReportInput } from "./ports.ts";
+export type { CompanyCreation, CompanyIdentity, CompanyResolution, CreateCompanyInput, InvestmentPorts, ListAnalysesParams, ReadOptions, SaveAnalysisInput, SaveAnalysisReceipt, SaveReportInput } from "./ports.ts";
 
 const emptyMetadata = (): ServiceMetadata => ({ revision: null, freshness: "unknown", provenance: null, diagnostics: [] });
 const messages: Record<ServiceErrorCode, string> = {
@@ -162,6 +162,7 @@ function validReceipt(receipt: unknown, input: SaveAnalysisInput): receipt is Sa
     Array.isArray(value.diagnostics) && value.diagnostics.every(d => !!d && typeof d.code === "string" && typeof d.message === "string" && ["info", "warning", "error"].includes(d.severity));
 }
 
+const candidateOf = (item: CompanyIdentity) => ({ companyId: item.companyId, canonicalName: item.canonicalName, ticker: item.ticker, exchange: item.exchange, assetId: item.assetId, isin: item.isin ? normalizeIsin(item.isin) ?? item.isin : null });
 /** One matcher for resolve_company and create_company duplicate checks. Exact keys resolve; partial keys only propose. */
 export function matchCompanies(identities: CompanyIdentity[], query: string, market?: string): CompanyResolution {
   const variants = queryVariants(query);
@@ -186,9 +187,32 @@ export function matchCompanies(identities: CompanyIdentity[], query: string, mar
     : exactRows.length ? ["ambiguous", top(exactRows)]
     : partial.length ? ["ambiguous", partial]
     : ["not_found", []];
-  const candidates = matches.map(item => ({ companyId: item.companyId, canonicalName: item.canonicalName, ticker: item.ticker, exchange: item.exchange, assetId: item.assetId, isin: item.isin ? normalizeIsin(item.isin) ?? item.isin : null }))
+  const candidates = matches.map(candidateOf)
     .sort((a, b) => a.canonicalName.localeCompare(b.canonicalName) || a.companyId.localeCompare(b.companyId));
   return { status, candidates };
+}
+
+/** Field rules for create_company; returns the normalized input or null. Values are never echoed. */
+export function normalizeCreateCompany(value: unknown): CreateCompanyInput | null {
+  if (!isRecord(value) || !Object.keys(value).every(key => ["name", "ticker", "exchange", "isin", "currency", "country"].includes(key))) return null;
+  const text = (v: unknown, max: number) => typeof v === "string" && v.trim().length > 0 && v.trim().length <= max ? v.trim() : null;
+  const nullable = (v: unknown, max: number) => v === null || v === undefined ? null : text(v, max);
+  const name = text(value.name, 200), ticker = typeof value.ticker === "string" ? tickerKey(value.ticker) : "";
+  const isin = typeof value.isin === "string" ? normalizeIsin(value.isin) : null;
+  const exchange = nullable(value.exchange, 64), country = nullable(value.country, 64);
+  const currency = value.currency === null || value.currency === undefined ? null : typeof value.currency === "string" && /^[A-Z]{3}$/.test(value.currency.trim()) ? value.currency.trim() : undefined;
+  if (!name || !/^[A-Z0-9][A-Z0-9.\-]{0,14}$/.test(ticker) || !isin || currency === undefined) return null;
+  if ((value.exchange != null && !exchange) || (value.country != null && !country)) return null;
+  return { name, ticker, exchange, isin, currency, country };
+}
+/** Duplicate keys for creation: same ISIN, same name (legal form ignored), same full ticker, or same base ticker on the same exchange. */
+export function companyDuplicates(identities: CompanyIdentity[], input: CreateCompanyInput) {
+  const name = companyBase(input.name), market = input.exchange ? exchangeKey(input.exchange) : null;
+  return identities.filter(item =>
+    (item.isin && normalizeIsin(item.isin) === input.isin) ||
+    companyBase(item.canonicalName) === name || item.aliases.some(alias => companyBase(alias) === name) ||
+    (item.ticker && tickerKey(item.ticker) === input.ticker) ||
+    (item.ticker && tickerBase(item.ticker) === tickerBase(input.ticker) && (!market || !item.exchange || exchangeKey(item.exchange) === market)));
 }
 
 export function createInvestmentCore(ports: InvestmentPorts) {
@@ -201,6 +225,21 @@ export function createInvestmentCore(ports: InvestmentPorts) {
         if (!Array.isArray(identities) || !identities.every(validIdentity) || new Set(identities.map(item => item.companyId)).size !== identities.length) return serviceError("mapping") as ServiceResult<CompanyResolution>;
         return ok(matchCompanies(identities, query, market));
       } catch (error) { return serviceError(errorCode(error)) as ServiceResult<CompanyResolution>; }
+    },
+    /** WRITE: cache duplicate check first (cheap, no mutation), then the port re-checks the live source and creates. */
+    async createCompany(input: CreateCompanyInput): Promise<ServiceResult<CompanyCreation>> {
+      const normalized = normalizeCreateCompany(input);
+      if (!normalized) return serviceError("invalid_input") as ServiceResult<CompanyCreation>;
+      if (!ports.readCompanyIdentities || !ports.createCompany) return serviceError("dependency") as ServiceResult<CompanyCreation>;
+      try {
+        const identities = await ports.readCompanyIdentities();
+        if (!Array.isArray(identities) || !identities.every(validIdentity)) return serviceError("mapping") as ServiceResult<CompanyCreation>;
+        const duplicates = companyDuplicates(identities, normalized);
+        if (duplicates.length) return ok({ status: "existing", candidates: duplicates.map(candidateOf) });
+        const created = await ports.createCompany(normalized);
+        if (!isRecord(created) || !["created", "existing"].includes(created.status as string) || !Array.isArray(created.candidates) || !created.candidates.length) return serviceError("mapping") as ServiceResult<CompanyCreation>;
+        return ok(created);
+      } catch (error) { return serviceError(errorCode(error)) as ServiceResult<CompanyCreation>; }
     },
     getCompany(id: string): Promise<ServiceResult<CompanyPreview | null>> {
       if (!validId(id)) return Promise.resolve(serviceError("invalid_input") as ServiceResult<CompanyPreview | null>);

@@ -33,7 +33,7 @@ try {
   const url = new URL("/mcp", await mf.ready);
   assert.equal((await fetch(url, { method: "POST", body: "{}", headers: { "content-type": "application/json" } })).status, 401);
   await client.connect(new StreamableHTTPClientTransport(url, { requestInit: { headers } }));
-  const list = await client.listTools(); assert.equal(list.tools.length, 8);
+  const list = await client.listTools(); assert.equal(list.tools.length, 9);
   const read = async (name, args) => { const start = performance.now(); const r = await client.callTool({ name, arguments: { ...base, ...args } }); assert.equal(r.structuredContent.status, "completed", name); assert.equal(r.structuredContent.result.status, "ok", name); console.log(`${name}: PASS ${Math.round(performance.now() - start)}ms`); return r.structuredContent.result.data; };
   const resolved = await read("resolve_company", { query: "LUMA" }); assert.equal(resolved.status, "resolved");
   const company = await read("get_company", { id: resolved.candidates[0].companyId }); assert.ok(company);

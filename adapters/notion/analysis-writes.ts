@@ -145,8 +145,9 @@ export function mapAnalysisProperties(input:SaveAnalysisInput,schema:RecordValue
 /** Preflight a write against a data source schema without any provider call. Empty = compatible. */
 export function preflightAnalysisWrite(input:SaveAnalysisInput,schema:RecordValue):string[]{return mapAnalysisProperties(input,schema).issues;}
 
-export function createNotionAnalysisWriter(db:D1Database,options:NotionWriteOptions){
-  const requestFetch=options.fetch??fetch,sources={...notionSources,...options.sources};
+/** One Notion HTTP client for every writer: bounded reads with backoff, exactly one attempt per mutation. */
+export function createNotionClient(options:NotionWriteOptions){
+  const requestFetch=options.fetch??fetch;
   const sleep=options.sleep??(ms=>new Promise(resolve=>setTimeout(resolve,ms)));
   const attempts=Math.max(1,Math.min(options.attempts??3,3))||3;
   async function request(path:string,method="GET",body?:unknown):Promise<RecordValue>{
@@ -177,6 +178,12 @@ export function createNotionAnalysisWriter(db:D1Database,options:NotionWriteOpti
     // Lot 12: exactly one provider attempt per mutation, including HTTP 429.
     return request(path,method,body);
   }
+  return {read,mutate};
+}
+
+export function createNotionAnalysisWriter(db:D1Database,options:NotionWriteOptions){
+  const sources={...notionSources,...options.sources};
+  const {read,mutate}=createNotionClient(options);
   const page=async(pageId:string)=>await read(`/pages/${pageId}`) as unknown as Page;
   async function children(pageId:string):Promise<RecordValue[]>{
     let cursor:string|undefined;const result:RecordValue[]=[];
