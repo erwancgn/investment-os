@@ -34,11 +34,14 @@ export function decodeHtmlEntities(value: string): string {
   return decoded;
 }
 
+/** An HTML/Notion tag starts with a letter or "/" and stays on one line: "<10 %" or "a < b ... c > d" is text, never markup. */
+const TAG = /<\/?[A-Za-z][^<>\n]*>/g;
+
 function textOnly(value: string): string {
   return decodeHtmlEntities(value
     .replace(/<mention-page[^>]*url="([^"]+)"[^>]*>(.*?)<\/mention-page>/gi, "[$2]($1)")
     .replace(/<mention-page[^>]*url="([^"]+)"[^>]*\s*\/>/gi, "[Page Notion]($1)")
-    .replace(/<[^>]+>/g, "")
+    .replace(TAG, "")
     .replace(/\\([>$~])/g, "$1")
   ).trim();
 }
@@ -93,7 +96,7 @@ export function normalizeNotionText(raw: string, title = ""): string {
     .replace(/<li\b[^>]*>([\s\S]*?)<\/li>/gi, (_, body) => `- ${textOnly(body)}\n`)
     .replace(/<br\s*\/?>(?:\n)?/gi, "\n")
     .replace(/<\/?(?:p|div|section|article|ul|ol|blockquote)\b[^>]*>/gi, "\n")
-    .replace(/<[^>]+>/g, "");
+    .replace(TAG, "");
   value = decodeHtmlEntities(value).replace(/\r/g, "").replace(/[ \t]+\n/g, "\n");
   let lines = value.split("\n").map(line => line.trim());
   if (title && lines[0]?.toLowerCase() === title.trim().toLowerCase()) lines = lines.slice(1);

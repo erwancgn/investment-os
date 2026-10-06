@@ -216,3 +216,49 @@ test("hardening: a provider refusal that reaches the Core carries a diagnostic n
   assert.deepEqual(result.metadata.diagnostics.map(d => d.code), ["write_input"]);
   assert.match(result.metadata.diagnostics[0].message, /table rows have different column counts/);
 });
+
+test("regression (Xiaomi Business): '<' and '>' in prose or table cells are text, never a tag that swallows what lies between", async () => {
+  const m = await api();
+  const markdown = [
+    "# Surveillance", "",
+    "| KPI | Seuil d'alerte |", "|---|---|", "| Marge brute smartphones | maintien <10 % |", "| Livraisons | croissance <10 % YoY |", "",
+    "| Source | Niveau |", "|---|---|", "| IoT | >1.16 Md appareils |", "",
+    "Si a < b et c > d, la phrase reste entière.",
+  ].join("\n");
+  const built = m.analysisFromReport(report({ reportMarkdown: markdown }), m.reportContentRenderer);
+  assert.equal(built.ok, true, built.issues?.join("; "));
+  const blocks = built.input.analysis.content.blocks;
+  const tables = blocks.filter(b => b.type === "table");
+  assert.equal(tables.length, 2, "two separate tables stay separate");
+  for (const table of tables) assert.equal(new Set(table.rows.map(r => r.length)).size, 1, "no ragged row");
+  const flat = JSON.stringify(blocks);
+  for (const kept of ["maintien <10 %", "croissance <10 % YoY", ">1.16 Md appareils", "a < b et c > d"]) assert.ok(flat.includes(kept), `lost: ${kept}`);
+  assert.deepEqual(built.input.analysis.diagnostics, [], "nothing had to be completed");
+});
+
+test("real tags are still stripped", async () => {
+  const m = await api();
+  const built = m.analysisFromReport(report({ reportMarkdown: "Texte <b>gras</b> et <br/> suite <mention-page url=\"https://x.com\"/>" }), m.reportContentRenderer);
+  const flat = JSON.stringify(built.input.analysis.content.blocks);
+  assert.equal(flat.includes("<b>"), false); assert.equal(flat.includes("<br"), false);
+});
+
+test("a ragged table is completed and the receipt carries a warning", async () => {
+  const m = await api();
+  const built = m.analysisFromReport(report({ reportMarkdown: "| A | B |\n|---|---|\n| 1 |\n| 2 | 3 |" }), m.reportContentRenderer);
+  assert.deepEqual(built.input.analysis.diagnostics.map(d => d.code), ["table_rows_completed"]);
+  assert.equal(m.isAnalysis(built.input.analysis), true);
+});
+
+test("regression: the exact Xiaomi Business report (13.8k chars) saves end to end, nothing lost, nothing to complete", () => withFixture({}, async f => {
+  const markdown = await readFile(new URL("./fixtures/xiaomi-business-report.md", import.meta.url), "utf8");
+  const m = await api();
+  const built = m.analysisFromReport(report({ reportMarkdown: markdown }), m.reportContentRenderer);
+  assert.equal(built.ok, true, built.issues?.join("; "));
+  assert.deepEqual(built.input.analysis.diagnostics, []);
+  for (const table of built.input.analysis.content.blocks.filter(b => b.type === "table")) assert.equal(new Set(table.rows.map(r => r.length)).size, 1);
+  const flat = JSON.stringify(built.input.analysis.content.blocks);
+  for (const kept of ["maintien <10 %", "croissance <10 %", "<10 % YoY", "Base installée >1.16 Md", ">1.16 Md appareils connectés", "baisse >10 % prolongée"]) assert.ok(flat.includes(kept), `lost: ${kept}`);
+  const saved = await f.api.createInvestmentService(f.db, f.options).saveAnalysis(report({ reportMarkdown: markdown, verdict: null, confidence: null, score: null }));
+  assert.equal(saved.status, "ok", JSON.stringify(saved));
+}));

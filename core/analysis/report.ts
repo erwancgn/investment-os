@@ -103,11 +103,13 @@ export function analysisFromReport(input: SaveReportInput, render: (markdown: st
   const issues = validate(input);
   if (issues.length) return { ok: false, issues };
   const rendered = render(input.reportMarkdown).blocks;
+  let completedTables = 0;
   const blocks: AnalysisBlock[] = rendered.map((block, index) => {
     const id = `${input.runId}:${input.kind}:b${index}`;
     // Notion tables are rectangular: a short or long row (model-written Markdown) is completed with empty cells, never refused.
     if (block.type === "table") {
       const width = Math.max(0, ...block.rows.map(row => row.length));
+      if (block.rows.some(row => row.length !== width)) completedTables += 1;
       block = { ...block, rows: block.rows.map(row => row.length === width ? row : [...row, ...Array.from({ length: width - row.length }, () => [] as InlineSegment[])]) };
     }
     const evidence = [...new Set(Array.from(blockText(block).matchAll(EVIDENCE), match => match[1]))];
@@ -136,7 +138,7 @@ export function analysisFromReport(input: SaveReportInput, render: (markdown: st
     summary: input.summary, verdict: input.verdict, confidence: input.confidence,
     presentation: { facts: [], scenarios: [], thresholds: [] },
     projection: { status: "absent" as const },
-    diagnostics: [],
+    diagnostics: completedTables ? [{ code: "table_rows_completed", message: `${completedTables} table${completedTables > 1 ? "s" : ""} had rows with different column counts; missing cells were left empty.`, severity: "warning" as const, path: "reportMarkdown" }] : [],
   };
   let analysis: Analysis;
   if (kind === "business" || kind === "valuation") analysis = { ...base, kind, header: { ...base.header, family: kind }, score: input.score === undefined || input.score === null ? null : String(input.score) } as Analysis;

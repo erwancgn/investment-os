@@ -26,7 +26,7 @@ export function inlineSegments(value: string, marks: InlineMark[] = [], href: st
     } else {
       const link = part.match(/^\[([^\]]+)\]\(([^)]+)\)$/);
       if (link && isSafeHttpUrl(link[2])) output.push(...inlineSegments(link[1], marks, link[2]));
-      else append(part.replace(/\*\*/g, "").replace(/<\/?\s*(?:strong|b|em|i)\b[^>]*>/gi, ""));
+      else append(part.replace(/\*\*/g, "").replace(/<\/?(?:strong|b|em|i)\b[^<>\n]*>/gi, ""));
     }
   }
   return output;
@@ -42,5 +42,5 @@ export function plainInlineText(value: string): string {
     .replace(/`([^`\n]+)`/g, "$1")
     .replace(/(?<!\*)\*([^*\n]+)\*(?!\*)/g, "$1")
     .replace(/(?<![\p{L}\p{N}_])_([^_\n]+)_(?![\p{L}\p{N}_])/gu, "$1")
-    .replace(/<\/?\s*(?:strong|b|em|i)\b[^>]*>/gi, "");
+    .replace(/<\/?(?:strong|b|em|i)\b[^<>\n]*>/gi, "");
 }
