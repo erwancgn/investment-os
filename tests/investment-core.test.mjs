@@ -232,3 +232,38 @@ test("createCompany: ISIN required and checked, duplicates refused from the cach
   assert.deepEqual(created, [{ name: "Hermès International", ticker: "RMS.PA", exchange: "Euronext Paris", isin: "FR0000052292", currency: "EUR", country: "France" }], "normalized input");
   assert.equal((await createInvestmentCore({ readCompanyIdentities: async () => [] }).createCompany(valid)).error.code, "dependency");
 });
+
+test("review: a ticker whose exchange suffix contradicts the stored listing never resolves silently", async () => {
+  const { createInvestmentCore } = await api();
+  const core = createInvestmentCore({ readCompanyIdentities: async () => [
+    { companyId: "ca-su", canonicalName: "Suncor Energy", ticker: "SU", exchange: "NYSE", assetId: null, aliases: [] },
+    { companyId: "brk-a", canonicalName: "Berkshire Hathaway", ticker: "BRK.A", exchange: "NYSE", assetId: null, aliases: [] },
+    { companyId: "fr-ai", canonicalName: "Air Liquide", ticker: "AI", exchange: "Euronext Paris", assetId: null, aliases: [] },
+  ] });
+  const status = async (q, m) => (await core.resolveCompany(q, m)).data;
+  assert.equal((await status("SU.PA")).status, "ambiguous", "Paris suffix vs a NYSE listing: confirm, never resolve to Suncor");
+  assert.equal((await status("BRK.B")).status, "ambiguous", "another share class is not the same security");
+  assert.equal((await status("AI.PA")).status, "resolved", "suffix consistent with the stored exchange still resolves");
+  assert.equal((await status("SU")).status, "resolved", "no suffix: unchanged");
+});
+
+test("review: Yahoo quote symbol honours the company's exchange, never borrows a US listing", async () => {
+  const { quoteSymbolFor } = await api();
+  assert.equal(quoteSymbolFor("AI", "Euronext Paris"), "AI.PA");
+  assert.equal(quoteSymbolFor("SU.PA", "Euronext Paris"), "SU.PA");
+  assert.equal(quoteSymbolFor("MU", "NASDAQ"), "MU");
+  assert.equal(quoteSymbolFor("BARC", "London Stock Exchange"), "BARC.L");
+  assert.equal(quoteSymbolFor("6758", "Tokyo Stock Exchange"), "6758.T");
+  assert.equal(quoteSymbolFor("XYZ", null), null, "unknown exchange without suffix: not quotable rather than wrong");
+  assert.equal(quoteSymbolFor("XYZ", "Bourse inconnue"), null);
+  assert.equal(quoteSymbolFor("ASML", "Euronext Amsterdam"), "ASML.AS");
+});
+
+test("review: create_company duplicate rule is the same in the Core and on live Notion pages (exchange-aware)", async () => {
+  const { companyDuplicates } = await api();
+  const known = [{ companyId: "fr-su", canonicalName: "Schneider Electric", ticker: "SU.PA", exchange: "Euronext Paris", assetId: null, aliases: [], isin: "FR0000121972" }];
+  const suncor = { name: "Suncor Energy", ticker: "SU", exchange: "NYSE", isin: "CA8672241079", currency: "USD", country: null };
+  assert.deepEqual(companyDuplicates(known, suncor), [], "same base ticker on another exchange is a different company");
+  assert.equal(companyDuplicates(known, { ...suncor, exchange: "Euronext Paris" }).length, 1);
+  assert.equal(companyDuplicates(known, { ...suncor, exchange: null }).length, 1, "unknown exchange stays conservative");
+});

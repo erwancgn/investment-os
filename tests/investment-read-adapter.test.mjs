@@ -120,7 +120,7 @@ test("identity adapter resolves from company rows without reading analysis bodie
   const byIsin = await service.resolveCompany("US0378331005");
   assert.equal(byIsin.data.status, "resolved", "ISIN read from the Notion cache");
   assert.equal(byIsin.data.candidates[0].isin, "US0378331005");
-  assert.equal(byIsin.data.candidates[0].assetId, "EXM", "uncatalogued company: its Yahoo ticker is the quote asset");
+  assert.equal(byIsin.data.candidates[0].assetId, null, "no exchange on the listing: no guessed quote symbol");
   data.sqlite.close();
 });
 

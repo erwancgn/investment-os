@@ -2,8 +2,10 @@ import { SCHEMA_VERSION, isRecord, type Diagnostic, type ServiceErrorCode, type 
 import { isAnalysis, isAnalysisPreview, type Analysis, type AnalysisPreview } from "../contracts/analysis.ts";
 import { isCompanyPreview, isPosition, isQuote, validatePortfolio, type CompanyPreview, type Portfolio, type Position, type Quote } from "../contracts/investment.ts";
 import { selectCurrentAnalysis, type CurrentAnalysisFamily, type CurrentSelectionInput } from "../analysis/current-selection.ts";
+import { exchangeKey, exchangeSuffixOf, identityKey, yahooSuffix } from "./market-identity.ts";
 import type { CompanyCreation, CompanyIdentity, CompanyResolution, CreateCompanyInput, InvestmentPorts, ListAnalysesParams, ReadOptions, SaveAnalysisInput, SaveAnalysisReceipt, SaveReportInput } from "./ports.ts";
 import { analysisFromReport, isReportInput } from "../analysis/report.ts";
+export { quoteSymbolFor } from "./market-identity.ts";
 export type { CompanyCreation, CompanyIdentity, CompanyResolution, CreateCompanyInput, InvestmentPorts, ListAnalysesParams, ReadOptions, SaveAnalysisInput, SaveAnalysisReceipt, SaveReportInput } from "./ports.ts";
 
 const emptyMetadata = (): ServiceMetadata => ({ revision: null, freshness: "unknown", provenance: null, diagnostics: [] });
@@ -60,7 +62,6 @@ async function invoke<T>(port: (() => Promise<T>) | undefined, validate: (value:
   } catch (error) { return serviceError(errorCode(error)) as ServiceResult<T>; }
 }
 function validId(id: string): boolean { return typeof id === "string" && id.length > 0 && id.trim() === id; }
-const identityKey = (value: string) => value.normalize("NFKD").replace(/[\u0300-\u036f]/g, "").toLocaleLowerCase("en").replace(/[^\p{L}\p{N}]+/gu, " ").trim().replace(/\s+/g, " ");
 const tickerKey = (value: string) => value.normalize("NFKC").trim().toLocaleUpperCase("en");
 /** Ticker without a trailing exchange suffix ("SU.PA" → "SU"); a suffix is a dot plus 1–4 letters. */
 const tickerBase = (value: string) => tickerKey(value).replace(/\.[A-Z]{1,4}$/, "");
@@ -80,18 +81,6 @@ export function normalizeIsin(value: string): string | null {
   for (let i = 0; i < digits.length; i++) { let d = Number(digits[digits.length - 1 - i]); if (i % 2 === 1) { d *= 2; if (d > 9) d -= 9; } sum += d; }
   return sum % 10 === 0 ? isin : null;
 }
-/** Exchange spellings models use (MIC, Bloomberg/Google codes, city) → one comparable key. */
-const EXCHANGE_ALIASES: Record<string, string[]> = {
-  "euronext paris": ["epa", "xpar", "par", "pa", "paris", "euronext paris"],
-  "euronext amsterdam": ["ams", "xams", "as", "amsterdam", "euronext amsterdam"],
-  "nasdaq": ["nasdaq", "xnas", "nas", "nasdaq gs", "nasdaqgs", "nasdaq global select"],
-  "nyse": ["nyse", "xnys", "new york stock exchange", "n"],
-  "tokyo stock exchange": ["tse", "xtks", "tyo", "tokyo", "tokyo stock exchange"],
-  "six swiss exchange": ["six", "xswx", "swx", "sw", "zurich", "six swiss exchange"],
-  "london stock exchange": ["lse", "xlon", "lon", "london", "london stock exchange"],
-  "nasdaq stockholm": ["sto", "xsto", "st", "stockholm", "nasdaq stockholm"],
-};
-const exchangeKey = (value: string) => { const key = identityKey(value); return Object.keys(EXCHANGE_ALIASES).find(name => EXCHANGE_ALIASES[name].includes(key)) ?? key; };
 /** "Schneider (SU)", "Alphabet - GOOGL", "MU/NASDAQ" → the whole query and each part. */
 function queryVariants(query: string): string[] {
   const parts = [query, ...query.split(/[()[\]\/,|]|\s[-–]\s/)].map(part => part.trim()).filter(part => part.length > 0);
@@ -105,8 +94,12 @@ function exactStrength(item: CompanyIdentity, variant: string): number {
   const base = companyBase(variant);
   if (base.length > 0 && (companyBase(item.canonicalName) === base || item.aliases.some(alias => companyBase(alias) === base))) return 3;
   if (!item.ticker || !tickerMatches(item.ticker, variant)) return 0;
-  // A full ticker only outranks a base ticker when the query itself carries the exchange suffix.
-  return tickerBase(variant) !== tickerKey(variant) && tickerKey(item.ticker) === tickerKey(variant) ? 3 : 2;
+  if (tickerKey(item.ticker) === tickerKey(variant)) return tickerBase(variant) !== tickerKey(variant) ? 3 : 2;
+  // Same base, different full tickers: a contradicting exchange suffix or another share class is only a candidate (1).
+  const querySuffix = tickerKey(variant).match(/\.([A-Z]{1,4})$/)?.[1] ?? null;
+  if (querySuffix === null) return 2;
+  const storedSuffix = exchangeSuffixOf(item.ticker) ?? yahooSuffix(item.exchange);
+  return exchangeSuffixOf(variant) && storedSuffix === querySuffix ? 2 : 1;
 }
 /** Partial: every word of the query starts a word of the name (≥ 4 letters in total). Never resolves on its own. */
 function partialMatch(item: CompanyIdentity, variant: string): boolean {
@@ -176,15 +169,18 @@ export function matchCompanies(identities: CompanyIdentity[], query: string, mar
   };
   const scored = identities.map(item => ({ item, ...score(item) }));
   const top = (rows: typeof scored) => { const max = Math.max(...rows.map(r => r.hits * 10 + r.best)); return rows.filter(r => r.hits * 10 + r.best === max).map(r => r.item); };
-  const exactRows = scored.filter(r => r.best > 0);
+  // best 1 (contradicting suffix, other share class) never resolves: it is proposed for confirmation only.
+  const exactRows = scored.filter(r => r.best >= 2);
+  const weakRows = scored.filter(r => r.best === 1);
   const inMarketRows = exactRows.filter(r => inMarket(r.item));
-  const partial = exactRows.length ? [] : identities.filter(item => variants.some(variant => partialMatch(item, variant)));
+  const partial = exactRows.length || weakRows.length ? [] : identities.filter(item => variants.some(variant => partialMatch(item, variant)));
   // The market narrows before ranking; a wrong or unknown market never hides a company: it is proposed for confirmation.
   const inMarketTop = inMarketRows.length ? top(inMarketRows) : [];
   const [status, matches]: [CompanyResolution["status"], CompanyIdentity[]] =
     inMarketTop.length === 1 ? ["resolved", inMarketTop]
     : inMarketTop.length > 1 ? ["ambiguous", inMarketTop]
     : exactRows.length ? ["ambiguous", top(exactRows)]
+    : weakRows.length ? ["ambiguous", weakRows.map(r => r.item)]
     : partial.length ? ["ambiguous", partial]
     : ["not_found", []];
   const candidates = matches.map(candidateOf)

@@ -1,3 +1,4 @@
+import { quoteSymbolFor } from "../../core/services/market-identity.ts";
 export type Currency="EUR"|"USD"|"JPY"|"GBP"|"SEK"|"KRW"|"CHF";
 export type Instrument={id:string;name:string;yahooSymbol:string;googleSymbol?:string;expectedCurrency:Currency;exchangeTimezone:string;
   /** Not catalogued: any Yahoo symbol, currency taken from the provider. */
@@ -11,10 +12,10 @@ const yahooSymbolsByTicker:Record<string,string>={
   "PRX":"PRX.AS","SOI":"SOI.PA","MC":"MC.PA","RMS":"RMS.PA",
 };
 
-/** Quote asset for a Company ticker when no catalogued instrument matches: its Yahoo symbol, or null if not quotable. */
-export function quoteSymbolForTicker(ticker:string):string|null{
-  const symbol=yahooSymbolForTicker(ticker);
-  return /^[A-Z0-9^][A-Z0-9.\-=^]{0,19}$/.test(symbol)&&!symbol.includes("..")?symbol:null;
+/** Quote asset for a Company listing when no catalogued instrument matches: legacy symbol fixes first, then the exchange rule. */
+export function quoteSymbolForListing(ticker:string,exchange:string|null):string|null{
+  const legacy=yahooSymbolsByTicker[ticker.trim().toUpperCase()];
+  return legacy??quoteSymbolFor(ticker,exchange);
 }
 
 export function yahooSymbolForTicker(ticker:string){
