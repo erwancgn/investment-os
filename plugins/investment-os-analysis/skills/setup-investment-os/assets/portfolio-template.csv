@@ -1,0 +1,2 @@
+snapshot_date,base_currency,account,cash_balance,company,ticker,instrument_type,quantity,market_price,position_currency,average_cost,target_weight,max_weight
+YYYY-MM-DD,EUR,CTO,0,Example Company,EXM,stock,0,0,EUR,,,

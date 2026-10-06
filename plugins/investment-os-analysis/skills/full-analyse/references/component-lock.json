@@ -1,0 +1,20 @@
+{
+  "schema_version": 3,
+  "built_at": "2026-10-05",
+  "plugin_version": "1.3.10",
+  "files": {
+    "references/execution-contract.md": "d06a40b564daa4aa5f998227ce7631e2342ecb7436aa63355e99100fbb420e75",
+    "references/investment-os-mcp.md": "fd06c38512d7047a70e2ecb6dd911cbd9cc89d0362d21084dfd792705e482274",
+    "references/pipeline-contract.md": "45a958da0116944701e2a68943766cb2a932378f80dd5097606fbd29cad1cd3d",
+    "references/business-playbook.md": "571a3e6e881f6041e4b6fba0269bbec56e11fa4c52a56c546c0b47e73d9b0ed1",
+    "references/business-framework.md": "35a9233c2731cbc8a9659e70ccb6e6ec34466c8524db3947e13efa89294a3c35",
+    "references/fair-value-playbook.md": "b30440a9ebaae10ed74c22db8fd0487b65019da1334827492af1063a4abcc1b5",
+    "references/valuation-framework.md": "5024fa501a54b3268663f24512f382117ae77ac5ad7e6675e76b53baa591e15d",
+    "references/short-playbook.md": "732d814a96692a5c303ef1546d63e63b73eb841bfc8e35053432176b917fb919",
+    "references/short-framework.md": "691b535225428c12b93e319802ffc1126bb0be23ed188a26cb5316355bba08ea",
+    "references/portfolio-playbook.md": "47e54212531a6ebb38317bd69d0bb15d0329843c96f34b70f4d1bbfc8001fd43",
+    "references/portfolio-framework.md": "cf6fe110a6d996d710f7cca3344179a54714abf3c3707631f396c16bfe3e50b1",
+    "references/memo-playbook.md": "273e4ab9b0fe2c2b334168d4d7e56a5ddf0cd47240d74daedfaed81f8a086244",
+    "references/memo-framework.md": "0ff560bdf3b9c34a5c36555851ecf961814815502d2f07ba6804d63578685505"
+  }
+}

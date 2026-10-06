@@ -1,0 +1,17 @@
+interface:
+  display_name: "Investment Memo CIO"
+  short_description: "Synthèse CIO et décision d’investissement"
+  icon_small: "./assets/icon.svg"
+  icon_large: "./assets/icon.svg"
+  brand_color: "#F28C28"
+  default_prompt: "Utilise $investment-memo-cio pour consolider les analyses en décision d’investissement."
+policy:
+  allow_implicit_invocation: true
+
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "investment-os"
+      description: "Lire les données Investment OS et soumettre une analyse uniquement quand WRITE est autorisé"
+      transport: "streamable_http"
+      url: "https://investment-os.erwancognee94.chatgpt.site/mcp"

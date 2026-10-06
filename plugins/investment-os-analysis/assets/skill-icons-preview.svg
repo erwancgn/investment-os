@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="520" viewBox="0 0 1500 520" fill="none">
+  <defs>
+    <linearGradient id="page" x1="0" y1="0" x2="1500" y2="520" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F8FAFC"/><stop offset="1" stop-color="#EEF3F8"/>
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-30%" width="120%" height="170%">
+      <feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#16324F" flood-opacity="0.1"/>
+    </filter>
+  </defs>
+  <rect width="1500" height="520" rx="38" fill="url(#page)"/>
+  <text x="65" y="70" fill="#0B1F3A" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" font-size="34" font-weight="700">Investment OS — famille d’icônes des skills</text>
+  <text x="65" y="108" fill="#607087" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" font-size="18">Même langage visuel · fonction identifiable · cohérence avec Compass OS</text>
+
+  <g filter="url(#shadow)"><rect x="65" y="155" width="310" height="105" rx="52.5" fill="white" stroke="#DCE3EA"/></g>
+  <image href="business-analyst.svg" x="92" y="187" width="42" height="42"/>
+  <text x="153" y="216" fill="#111827" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" font-size="24" font-weight="600">Business Analyst</text>
+
+  <g filter="url(#shadow)"><rect x="415" y="155" width="285" height="105" rx="52.5" fill="white" stroke="#DCE3EA"/></g>
+  <image href="fair-value.svg" x="442" y="187" width="42" height="42"/>
+  <text x="503" y="216" fill="#111827" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" font-size="24" font-weight="600">Fair Value</text>
+
+  <g filter="url(#shadow)"><rect x="740" y="155" width="295" height="105" rx="52.5" fill="white" stroke="#DCE3EA"/></g>
+  <image href="short-seller.svg" x="767" y="187" width="42" height="42"/>
+  <text x="828" y="216" fill="#111827" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" font-size="24" font-weight="600">Short Seller</text>
+
+  <g filter="url(#shadow)"><rect x="1075" y="155" width="350" height="105" rx="52.5" fill="white" stroke="#DCE3EA"/></g>
+  <image href="portfolio-fit.svg" x="1102" y="187" width="42" height="42"/>
+  <text x="1163" y="216" fill="#111827" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" font-size="24" font-weight="600">Portfolio Fit</text>
+
+  <g filter="url(#shadow)"><rect x="65" y="315" width="375" height="105" rx="52.5" fill="white" stroke="#DCE3EA"/></g>
+  <image href="investment-memo-cio.svg" x="92" y="347" width="42" height="42"/>
+  <text x="153" y="376" fill="#111827" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" font-size="23" font-weight="600">Investment Memo CIO</text>
+
+  <g filter="url(#shadow)"><rect x="480" y="315" width="290" height="105" rx="52.5" fill="white" stroke="#DCE3EA"/></g>
+  <image href="full-value.svg" x="507" y="347" width="42" height="42"/>
+  <text x="568" y="376" fill="#111827" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" font-size="24" font-weight="600">Full Value</text>
+
+  <g filter="url(#shadow)"><rect x="810" y="315" width="305" height="105" rx="52.5" fill="white" stroke="#DCE3EA"/></g>
+  <image href="full-analyse.svg" x="837" y="347" width="42" height="42"/>
+  <text x="898" y="376" fill="#111827" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" font-size="24" font-weight="600">Full Analyse</text>
+
+  <g filter="url(#shadow)"><rect x="1155" y="315" width="270" height="105" rx="52.5" fill="white" stroke="#DCE3EA"/></g>
+  <image href="setup-investment-os.svg" x="1182" y="347" width="42" height="42"/>
+  <text x="1243" y="376" fill="#111827" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" font-size="24" font-weight="600">Setup</text>
+
+  <text x="65" y="476" fill="#607087" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" font-size="16">Les couleurs reprennent les cinq segments de Compass OS ; le pictogramme reste le signal principal.</text>
+</svg>

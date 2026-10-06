@@ -1,0 +1,17 @@
+interface:
+  display_name: "Earnings Review"
+  short_description: "Triage post-résultats et refresh analytique"
+  icon_small: "./assets/icon.svg"
+  icon_large: "./assets/icon.svg"
+  brand_color: "#2563EB"
+  default_prompt: "Utilise $earnings-review pour documenter les derniers résultats et identifier les analyses à actualiser."
+policy:
+  allow_implicit_invocation: true
+
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "investment-os"
+      description: "Lire les données Investment OS et soumettre une analyse uniquement quand WRITE est autorisé"
+      transport: "streamable_http"
+      url: "https://investment-os.erwancognee94.chatgpt.site/mcp"

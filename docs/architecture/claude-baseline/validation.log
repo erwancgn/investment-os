@@ -1,0 +1,3037 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> investment-os@0.1.0 test
+> npm run typecheck && npm run build && node --test tests/ai-prompt.test.mjs tests/demo-data.test.mjs tests/resource-cache-scope.test.mjs tests/rendered-html.test.mjs tests/analysis-reference-fixtures.test.mjs tests/analysis-inline-format.test.mjs tests/analysis-canonical-renderer.test.mjs tests/cio-summary-routing.test.mjs tests/presentation-projection.test.mjs tests/performance.test.mjs tests/notion-security.test.mjs tests/quotes-startup.test.mjs tests/theme-baskets.test.mjs tests/theme-basket-warmup.test.mjs tests/audit-css-governance.test.mjs tests/audit-css-ownership.test.mjs tests/storybook-coverage.test.mjs tests/domain-current-selection.test.mjs tests/domain-analysis-contracts.test.mjs tests/domain-investment-contracts.test.mjs tests/domain-portfolio.test.mjs tests/investment-core.test.mjs tests/investment-read-adapter.test.mjs tests/notion-adapter-write.test.mjs tests/lot13-notion-roundtrip.test.mjs tests/mcp-contract.test.mjs tests/mcp-server.test.mjs
+
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> investment-os@0.1.0 typecheck
+> tsc --noEmit --pretty false
+
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> investment-os@0.1.0 build
+> bash scripts/build-verified.sh
+
+/usr/bin/timeout
+Running bounded vinext build...
+
+  vinext build  (Vite 8.0.13)
+
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mProxy environment variables detected. We'll use your proxy for fetch requests.[0m
+
+
+[1/5] analyze client references...
+[2Ktransforming...✓ 147 modules transformed.
+rendering chunks...
+✓ built in 556ms
+[2/5] analyze server references...
+[2Ktransforming...✓ 140 modules transformed.
+rendering chunks...
+✓ built in 167ms
+[3/5] build rsc environment...
+[2Ktransforming...✓ 153 modules transformed.
+rendering chunks...
+computing gzip size...
+✓ built in 456ms
+[4/5] build client environment...
+[2Ktransforming...✓ 148 modules transformed.
+rendering chunks...
+computing gzip size...
+✓ built in 242ms
+[5/5] build ssr environment...
+[2Ktransforming...✓ 146 modules transformed.
+rendering chunks...
+computing gzip size...
+✓ built in 386ms
+[0m
+  Route (app)
+  ─ ? /
+
+  ? Unknown
+
+  ? Some routes could not be classified. vinext currently uses static analysis
+    and cannot detect dynamic API usage (headers(), cookies(), etc.) at build time.
+    Automatic classification will be improved in a future release.
+
+  Build complete. Run `vinext start` to start the production server.
+
+Validated Sites artifact: ESM Worker default.fetch and hosting manifest are present.
+✔ AI launcher exposes only the canonical investment workflows (1.313884ms)
+✔ AI prompt includes the company, ticker, profile, and French output instruction (0.154402ms)
+✔ demo AI prompt names a fictitious profile and excludes the personal Notion profile (0.269054ms)
+✔ demo AI selector uses only the local public company examples (0.277487ms)
+✔ plugin mention is the first text in every generated prompt (0.156795ms)
+✔ ChatGPT URL encodes the prompt and does not send it (0.256155ms)
+✖ a supported paragraph plus an unsupported Notion task both survive normalization (88.768385ms)
+✔ list and table residual markup is detected and cleaned without losing cell text (3.502925ms)
+✔ two-column HTML tables become canonical typed table blocks (4.720405ms)
+✖ nested Notion descendants, bookmarks and table descendants retain canonical content and source IDs (8.206595ms)
+✖ adjacent ordered Notion items keep one continuous list and all source IDs (0.73215ms)
+✔ legacy Advantest and partial scenario facts become numeric canonical metrics with source blocks (31.160574ms)
+✔ scenario punctuation variants share valuation-summary extraction and normalize to equal numbers (8.455198ms)
+✔ TL;DR tables remain visible in server-rendered analysis even when not summarized (23.053199ms)
+✔ scenario table with an extra hypothesis column stays visible and is not promoted (7.863108ms)
+✔ horizontal scenarios choose shareholder CAGR over EPS CAGR and retain dividend-inclusive values (0.82508ms)
+✔ invalid legacy dates are diagnosed while the normalized contract stays valid (2.984656ms)
+✔ unmapped runtime document categories retain their original family as unknown (0.879582ms)
+✖ company preview keeps the reader summary and removes canonical body from serialized payload (14.687595ms)
+✔ valid projection evidence hydrates canonical numeric metrics without copying evidenceIds into metric contracts (5.813678ms)
+✔ absent, invalid, null, malformed and family-mismatched projections fall back to report content (3.563075ms)
+✔ production reader renders the same business structure for distinct companies and keeps family compositions (66.66003ms)
+✖ CIO memo reasoning keeps canonical links after API serialization (3.404056ms)
+✖ CompanyAnalysisDocument accepts validated canonical API bodies and keeps stale content on refresh failure (4.011099ms)
+✔ CompanyAnalysisDocument rejects wrong-ID or invalid canonical bodies and still accepts legacy text (3.919291ms)
+✖ citation numbers and source list share the same sorted order (2.522171ms)
+✔ Notion rich text annotations render emphasis without visible Markdown markers (11.088817ms)
+✔ adjacent emphasis and malformed bold delimiters do not leak double asterisks (0.836247ms)
+✔ analysis reference registry covers the six canonical Notion templates (18.156108ms)
+✔ TSMC and Advantest display fixtures preserve the reviewed valuation examples (4.021925ms)
+✖ TSMC fixture values are extracted as scenarios and thresholds without changing their meaning (75.5491ms)
+✔ runtime routes and package identity have no isolated legacy template remnants (11.070829ms)
+✔ the unified renderer is the documented parser entry point (0.998921ms)
+✔ the semantic template registry covers every company section (1.018811ms)
+✖ valuation scenario extraction keeps terminal prices, CAGR and thresholds distinct (3.979241ms)
+✔ metadata discovery queues only missing or edited Notion pages (1.998464ms)
+✔ large Notion imports are durable, bounded and atomically published (11.813276ms)
+✔ browser Notion surfaces preserve read-only data access except the dedicated owner-private refresh (7.227111ms)
+✔ Notion webhook is authenticated, durable and coalesces on the latest page version (3.286524ms)
+✔ app, document and market refreshes keep separate responsibilities (3.449475ms)
+✔ portfolio keeps documentary freshness visible without redundant status cards (2.980359ms)
+✔ Notion status panel exposes source freshness without manual mutation controls (5.682832ms)
+✔ portfolio refresh uses structured properties without downloading page blocks (4.59107ms)
+✔ trajectory reads both targets from Notion and keeps active positions outside target visible (10.298514ms)
+✔ company ownership is projected from active positive Portfolio positions (8.308567ms)
+✔ company directory derives membership only from explicit Notion relations (1.22415ms)
+✔ browser history canonicalizes removed company tabs to Entreprises (0.659191ms)
+✔ CIO verdict requires the linked Current validated Investment Memo (3.149684ms)
+✔ Notion integrity audits explicit Watchlist relation cardinality and inverse status (1.37694ms)
+✔ company detail stays dynamic instead of using the legacy Nebius cockpit (0.821966ms)
+✔ earnings expose the five canonical refresh routes in the company design system (3.606821ms)
+✔ two-column earnings tables prioritize result readability on mobile (2.202811ms)
+✔ removed top-level analysis and search APIs have no worker routes (0.79822ms)
+✔ archive policy keeps one latest document per company and section (0.826121ms)
+✔ company fiches use primary ownership links while preserving secondary mentions (2.434769ms)
+✔ company fiches resolve current analyses from canonical Companies relations (0.869026ms)
+✔ company and analysis layouts preserve the Notion parser contract (4.935273ms)
+✔ all canonical analysis families share one summary presentation contract (24.059716ms)
+✔ analysis facts split only on explicit separators and preserve prose punctuation (30.420136ms)
+✔ each canonical analysis family promotes only its decision-useful facts (7.556352ms)
+✔ standard analyses and CIO memo reuse the shared hero and fact grid (10.410282ms)
+✔ standard analysis hero uses concise titles and formats scores without a duplicate metadata grid (1.025561ms)
+✔ analysis reader leads with editorial analysis and keeps sources after the report (2.428039ms)
+✔ Investment Memo CIO has a dedicated decision view without a numeric memo score (1.514616ms)
+✔ Notion tables use one adaptive reusable component (1.618663ms)
+✔ analysis disclosures use the company width while keeping prose readable (3.808003ms)
+✔ company summaries are segmented for a scannable mobile preview (0.712431ms)
+✔ research copy uses the shared readable text token (5.369139ms)
+✔ company directory keeps stable identities and accessible row actions (0.741655ms)
+✔ Apple Light theme stays isolated from data and parser contracts (3.779531ms)
+✔ Apple Light theme covers shared surfaces and aligns financial figures (7.269176ms)
+✔ portfolio hides internal calculation and method panels (2.472256ms)
+✔ shared UI primitives drive progress bars and segmented filters (10.125879ms)
+✔ the company directory uses production discovery and search primitives (1.29776ms)
+✔ UI-2 keeps the primitive manifest and unified company reference states (1.822509ms)
+✔ research actions and coverage use the shared mobile UI primitives (2.132165ms)
+✔ analysis and company details share the same liquid-glass primitives without table card nesting (7.528795ms)
+✔ analysis section headings stay contained without an extra surface (6.968774ms)
+✔ company list no longer includes Radar, analysis index or search page code (1.384962ms)
+✔ portfolio exposure keeps ETF look-through and exclusive primary themes (2.725647ms)
+✔ portfolio trajectories keep Notion targets and active positions isolated (1.061655ms)
+✔ Run Receipt is hidden as a complete presentation section without mutating source blocks (22.135569ms)
+✔ short analytical tables are not assigned horizontal scrolling solely by column count (1.998593ms)
+✔ valuation promotion keeps JPY scenario and hurdle values once with source indexes (3.418949ms)
+✔ promoted valuation tables hide only their duplicate data and empty headings (0.498259ms)
+✔ company analysis labels stay short and numeric scores state their denominator (2.608401ms)
+✖ valuation extraction recognizes explicit hurdle heading and reference market data (1.727576ms)
+✔ company analysis route keeps the company shell mounted and presents the selected document inside its panel (7.619332ms)
+✔ global surfaces use white content materials and shell has no blue radial canvas (5.283912ms)
+✔ embedded company analysis fetches its full document instead of rendering the stripped company preview (4.524259ms)
+✔ the company back button returns to the Companies list regardless of visited analyses (1.641758ms)
+✔ CSS governance matches the checked-in debt baseline (309.451115ms)
+✔ the audit keeps generated primitives and scoped state selectors out of orphan findings (234.948662ms)
+✔ production and Storybook import the same public CSS entry (16.133474ms)
+✔ responsive contexts are canonicalized before conflict classification (194.076667ms)
+✔ dead CSS audit uses the canonical dynamic registry and scans object column classes (3.217847ms)
+✔ CSS ownership audit exits successfully when contract metrics stay at zero (149.412421ms)
+✔ CSS ownership audit exits nonzero when a globals-to-UX collision is injected (170.644389ms)
+✔ CIO memo uses its human introduction instead of the technical handoff (22.060567ms)
+✔ CIO memo humanizes a historical handoff only as a last resort (0.774374ms)
+✔ other analysis families preserve their property-first fallback (0.790478ms)
+✔ analysis summaries split sentence runs while preserving French abbreviations and decimal values (0.337908ms)
+✔ demo company and research endpoints resolve only fictional demo ids (3.299519ms)
+✔ LumaGrid demo has a linked, chronological five-part educational case (1.33087ms)
+✔ demo portfolio relationships reconcile with demo companies and carry no live quotes (1.667707ms)
+✔ demo basket data follows requested dimension, period, and selection (1.801297ms)
+✔ public demo fixtures contain no personal Notion URLs (4.012261ms)
+✔ domain version and common dates, numbers, and safe-link policy are strict (14.766064ms)
+✔ AnalysisHeader and portable content preserve stable IDs and unsupported blocks (10.281744ms)
+✔ discriminated analysis families validate current fields and keep CIO free of scores (3.845229ms)
+✔ portable facts and scenarios retain provenance and only reference canonical block IDs (2.220408ms)
+✔ projection status is a discriminated union and delegates projection schema validation (2.084744ms)
+✔ preview and service results are versioned, strict, and cannot carry report bodies (6.516053ms)
+✔ Core selector has no app, transport, React, Notion or LLM imports (17.491961ms)
+✔ an explicit current ID wins over a newer legacy candidate and does not mutate input (21.567837ms)
+✔ multiple explicit IDs are invalid and never trigger fallback (1.254044ms)
+✔ duplicate copies of the same explicit ID count as one relation (0.39881ms)
+✔ missing, archived, wrong-owner and wrong-family explicit targets fail closed (0.336336ms)
+✔ a duplicate candidate identity for an explicit pointer is an invalid input (0.389575ms)
+✔ a CIO memo is distinct from a Notion decision and requires its exact validated agent (0.287542ms)
+✔ ordinary explicit Draft, Rejected and unmapped statuses remain selected with diagnostics (0.380431ms)
+✔ fallback ranks Current plus Validated, then Validated, then other non-archived candidates (1.133633ms)
+✔ fallback tie order is stable across candidate permutations and uses ascending ID (1.074134ms)
+✔ duplicate eligible fallback IDs are invalid independent of input order (0.230616ms)
+✔ fallback uses the latest normalized source date and edit date, and ignores malformed dates (0.449716ms)
+✔ company context supports multi-owner analyses without leaking into another company (0.360782ms)
+✔ no explicit pointer and no eligible candidate returns absent (0.201803ms)
+✔ company and preview contracts are versioned, typed, and body-free (25.237351ms)
+✔ portfolio preserves positions, PRU, targets, accounts, coverage and reconciliation without coercion (2.857745ms)
+✔ closed positions remain addressable while closed rows cannot enter holdings (1.251822ms)
+✔ quotes distinguish valid zero values from unknown null values and require valid provenance (0.746262ms)
+✔ service results reject bad versions, extra envelope keys and non-finite domain values (0.427823ms)
+✔ portfolio aggregation preserves cash exclusion, unrealized PnL, weights and sector exposures (21.414917ms)
+✔ empty portfolio aggregation returns a complete zero total slice (0.580653ms)
+✔ service Core imports only domain modules and no source, UI or transport runtime (27.127552ms)
+✔ core validates canonical reader results, preserves options, and classifies missing ports (39.157814ms)
+✔ company resolution respects exact ticker, name, aliases, market ambiguity and absence (21.140785ms)
+✔ analysis by ID enforces identity and canonical validation (1.510119ms)
+✔ Current selection rejects broken explicit pointers and validates hydrated document context (2.746538ms)
+✔ list results and read failures are validated and sanitized (1.014886ms)
+✔ save validates run identity, revision and company references and only reports adapter receipts (1.179343ms)
+✔ closed positions can be addressed separately and do not enter portfolio holdings (0.468464ms)
+✖ read adapter preserves legacy company/document/portfolio payloads while validating canonical projections (593.242903ms)
+✔ identity adapter resolves from company rows without reading analysis bodies (20.248354ms)
+✖ history lookup by UUID preserves the archived legacy document and source date (22.948272ms)
+✔ Current adapter separates Business, CIO Memo, Decision and Earnings pointers and loads only the selected body (66.582172ms)
+✔ Current selector reports wrong owner, wrong family, archived target and missing memo pointer distinctly (19.757185ms)
+✖ integrity listing retains historical body metadata and date/projection state (32.425867ms)
+✖ explicit Company relations own primary links; title fallback and secondary links remain intact (24.140783ms)
+✖ native Notion roundtrip retains the complete ordered body (0 additional blocks) (195.590767ms)
+✖ native Notion roundtrip retains the complete ordered body (15 additional blocks) (59.059662ms)
+✖ native Notion roundtrip retains the complete ordered body (40 additional blocks) (57.470242ms)
+✖ bare terminal prices are not assigned an invented currency (no declaration) (43.69283ms)
+✖ bare terminal prices are not assigned an invented currency (conflicting declarations) (21.777131ms)
+✖ metadata separation retains an unmapped historical source fact (21.98287ms)
+✔ checked-in schemas are deterministic and derived from current Core types (1184.633983ms)
+✔ contract has no executable domain, server or runtime imports (0.177426ms)
+✔ all inputs accept explicit personal/demo scopes and reject spoofed caller, secrets and versions (4.696649ms)
+✔ input schemas reject malformed options, ids, families and incomplete write intent (8.119604ms)
+✔ each exact manifest mapping reaches the existing Core method with untouched arguments (33.056314ms)
+✔ writer receipts remain observable and Core alone rejects contradictory receipts (2.852407ms)
+✔ null absence, archived document, closed position and stale/unavailable data retain Core semantics (2.897995ms)
+✔ every Core error code and safe diagnostics is accepted without raw error fields (3.644748ms)
+✔ transport errors distinguish not-started rejection and unknown write outcome (0.831139ms)
+✔ transport import boundary and canonical discovery schemas (56.253749ms)
+✔ unknown tools, invalid versions, invalid schemas, output schemas and scope (12.247157ms)
+✔ auth excludes payload identity, cookies, bypass credentials and browser writes (1.442648ms)
+✔ Sites WRITE is release-closed; even a fixture allowlist cannot bypass the campaign policy (4.379312ms)
+✔ Sites campaign dispatch is exact, Draft-only, new-only, and expires before Core (22.053715ms)
+✔ permissions, scope isolation, mutation confirmation and unauthorized never reach Core (3.784738ms)
+✔ all eight mappings execute existing Core with exact arguments and preserve diagnostics (20.536947ms)
+✔ Core errors are typed and raw dependency exceptions never escape (2.519917ms)
+✔ text-only hosted consumers receive typed Core errors without dependency secrets (1.605804ms)
+✔ fiscal labels in canonical asOf fail Core validation before the writer (2.879067ms)
+✔ 2 MiB streamed/declarative requests and 4 MiB output limits fail without truncation (23.627562ms)
+✔ READ and WRITE 30s deadlines preserve unknown outcome and fence pending WRITE (16.924097ms)
+✔ demo six reads use snapshot Core and never invoke personal service (80.045869ms)
+notion_request_rejected { status: 403, type: 'unknown', code: 'unknown', validation: [] }
+notion_request_rejected { status: 403, type: 'unknown', code: 'unknown', validation: [] }
+✔ local runtime: SDK client initialize/discover, real adapter WRITE receipts/replay/conflict (1781.724414ms)
+✔ completed transient READ retries at most twice; WRITE never retries a Core error (254.80073ms)
+✔ READ backoff cannot start a second Core call after its deadline (1.684652ms)
+✔ 2 MiB tool arguments are accepted independently of JSON-RPC framing (36.321773ms)
+✔ a new Draft beside an existing Current is historical in the UI but not canonically archived (215.038183ms)
+✔ callout semantic verification null -> 💡 (47.875126ms)
+✔ callout semantic verification 🔥 -> 🔥 (28.078061ms)
+✔ callout semantic verification 🔥 -> 💡 (7.177257ms)
+✖ exact AN-598 payload with provider callout icon reaches persisted journal, D1 and immediate readback (35.326135ms)
+✔ callout without icon omits icon entirely (11.506003ms)
+✔ callout with emoji preserves the Notion icon DTO (6.020218ms)
+✔ Notion rejection diagnostics retain structural validation paths without echoed payload or secrets (5.918205ms)
+✔ nominal save re-reads Notion and verifies the server-assigned identity through Core (11.108076ms)
+✔ creation accepts a canonical intent identity without requiring a physical Notion UUID (16.416894ms)
+✔ same run re-reads actual state without duplicate or repeat promotion (34.675538ms)
+✔ validated save indexes the promoted Current relation without rebuilding unrelated links (31.712204ms)
+✔ incompatible same run conflicts before another create (13.155863ms)
+✔ stale expectedRevision cannot mutate an existing analysis (10.878521ms)
+notion_request_rejected { status: 404, type: 'unknown', code: 'unknown', validation: [] }
+✔ Company absent fails before persistence (9.286988ms)
+✔ inconsistent input Company relation is rejected before mutation (9.584896ms)
+notion_request_rejected { status: 403, type: 'unknown', code: 'unknown', validation: [] }
+✔ persistence OK / promotion KO returns resumable pending and safely resumes (25.570793ms)
+✔ promotion OK / final verification KO never returns verified (9.638497ms)
+✔ ambiguous create timeout reconciles Run ID before any mutation retry (8.80204ms)
+✔ ambiguous promotion reconciles Company rather than blindly repeating PATCH (14.447425ms)
+notion_request_rejected { status: 429, type: 'unknown', code: 'unknown', validation: [] }
+✔ rate limited mutation is attempted once and does not certify persistence (8.231482ms)
+✔ wrong final Current returns partial, never verified (10.450938ms)
+✔ concurrent same-run writers share the D1 lease and create at most one page (18.952565ms)
+✔ metadata update checks source revision and preserves the existing report body (11.053383ms)
+✔ position reads source lifecycle: open, closed, absent, inconsistent and invalid (9.418496ms)
+✔ unresolved ambiguous create is fenced across replays, not blindly retried (6.090253ms)
+✔ Draft persistence is readable through MCP Core without promoting Current (6.770426ms)
+✔ Earnings Draft routes to the earnings source and reads back without Current promotion (10.72553ms)
+✔ real Earnings schema missing write identity fields fails before journal or provider mutation with safe diagnostics (9.530895ms)
+✖ migrated Earnings schema stores guidance prose as text, validates enums, persists Draft and replays once (17.642436ms)
+✔ unknown configured Earnings select option is rejected before journal or mutation without echoing value (8.984924ms)
+✔ known guidance enum writes only when the Earnings schema lists the option (8.652335ms)
+✔ known guidance enum absent from the configured option list fails in preflight (3.936887ms)
+✔ legacy Earnings rich-text Guidance property still stores prose directly (6.691447ms)
+✔ Draft save and replay update only their page indexes and avoid a second create (10.364718ms)
+✔ adapter canonicalizes dashed update identity before receipt validation (12.512005ms)
+✔ long report is written in bounded chunks and completely re-read before verified (43.41618ms)
+✔ long Draft certifies the final append with a complete read without a redundant full scan (26.454656ms)
+✔ long Draft cannot certify content changed during the final append read (23.135663ms)
+✔ ambiguous append reconciles the exact block prefix without duplicating content (23.764298ms)
+✔ lost D1 lease is detected before a Current mutation (5.789892ms)
+✔ production shared Run ID remains idempotent independently for Business and Valuation modules (16.604817ms)
+✔ physical Company must be a relation; schema mismatch cannot yield verified (3.821463ms)
+✖ production source without a Summary property preserves the canonical summary in the report body (6.669845ms)
+✔ Company archived during final verification cannot yield verified (5.304678ms)
+✔ revisioned update cannot retype a Business Current page as Valuation (5.43617ms)
+notion_request_rejected {
+  status: 400,
+  type: 'error',
+  code: 'validation_error',
+  validation: [ { path: 'body.children[6].callout.icon', expected: 'object' } ]
+}
+✔ provider diagnostic survives the adapter Core bridge without sensitive content (13.434347ms)
+✔ provider rich-text-array limit rejects before a mutation (4.195045ms)
+✔ provider table-children limit rejects before a mutation (3.59968ms)
+✔ provider link-url limit rejects before a mutation (3.567101ms)
+✔ provider utf8-size limit rejects before a mutation (13.012978ms)
+✔ supported block DTOs omit absent optional values while nullable properties remain valid (7.380243ms)
+✔ all Notion mutation routes reject anonymous browser requests (298.012207ms)
+✔ anonymous callers always use the demo scope, even with a forged personal cookie (7.840885ms)
+✔ owner identity comes only from the Sites authenticated email header plus server configuration (1.031861ms)
+✔ image optimizer cannot proxy API routes or arbitrary static paths (0.736987ms)
+✔ owner must explicitly select personal scope and the preference is an HttpOnly cookie (2.438454ms)
+✔ all Notion mutation routes reject an incorrect bearer token (1.322457ms)
+✔ mutation routes fail closed when the server authorization secret is not configured (1.345332ms)
+✔ a server bearer token passes the auth gate before route validation (0.627143ms)
+✔ webhook verification never exposes its stored token (1.65061ms)
+✔ signed Notion webhook payloads remain verifiable (23.114962ms)
+✔ browser Notion surfaces never expose server mutation secrets or internal sync routes (17.613433ms)
+✔ manual document refresh requires owner scope and remains same-origin only (1.404191ms)
+✔ refresh controls keep distinct responsibilities (3.993102ms)
+✔ simultaneous consumers and quick return reuse one request (6.26723ms)
+✔ failed refresh retains the previous data and retry clears the error (1.223079ms)
+✔ background basket refresh keeps the cached snapshot until refresh=1 fails or completes (4.559752ms)
+✔ basket manual refresh forces Yahoo without changing portfolio refresh URLs (6.567241ms)
+✔ Notion invalidation during a pending request discards the obsolete response (1.13772ms)
+✔ manual quote refresh queued during a normal read keeps refresh=1 (0.74529ms)
+✔ session expiration clears all resources and ignores late old-session responses (1.085422ms)
+✔ inactive views invalidate without eagerly refetching (0.494273ms)
+✔ browser Notion client only reads public status (36.739314ms)
+✔ missing Notion summary is safe (13.756436ms)
+✔ company preview retains the exact late TLDR while removing full report bodies (44.358441ms)
+✔ company previews remain lightweight while their analysis ids resolve to complete demo documents (54.603825ms)
+✔ service worker caches static assets only and never substitutes HTML for failed assets (18.176149ms)
+✔ accepts only a captured projection with resolved freshness checks and exact numeric support (19.982413ms)
+✔ rejects stale or malformed metadata and future timestamps deterministically (5.233581ms)
+✔ projection is absent without the exact marker and invalid on duplicates or bad JSON (6.759986ms)
+✔ machine payload is excluded from the human-facing Notion body (0.550457ms)
+✔ a recent IPO with complete daily data is accepted without demanding a year of quotes (2.053447ms)
+✔ expired cache renders converted values without external requests (1.246343ms)
+✔ missing cached FX never treats a dollar price as euros (0.333441ms)
+✔ empty cache returns unavailable without waiting on providers (0.282535ms)
+✔ currency request starts before the stock response resolves (4.874987ms)
+✔ failed live refresh preserves cached prices and marks them stale (4.913825ms)
+✔ renders development preview metadata (149.876369ms)
+✔ clearing the client cache aborts in-flight requests and removes scoped snapshots (15.134747ms)
+✔ all primitive manifest exports have executable Storybook coverage (16.741383ms)
+✔ reference screen stories render production components at mobile and desktop viewports (13.82921ms)
+✔ company Storybook demonstrates persistent analysis navigation with complete valuation data (2.722913ms)
+✔ company and reader stories cover every embedded analysis family and valuation reference (4.018129ms)
+✔ mobile navigation presents four equal destinations with a selected blue indicator (1.732955ms)
+✔ AI launcher stays a dedicated screen and composes the shared UI primitives (2.727359ms)
+✔ the design-system page keeps the visible reference order (3.020921ms)
+✔ production visual review mounts the unified company screen at 390px (2.28236ms)
+✔ mobile company states cover long names and all three overlapping views (1.425533ms)
+✔ basket warm-up is single-flight, waits for portfolio refresh and walks quote batches (42.636282ms)
+✔ provider mapping preserves standard tickers and maps non-US listings explicitly (2.009661ms)
+✔ Yahoo history reads adjusted closes, uses exchange-local dates and validates currencies (23.491834ms)
+✔ AMS OSRAM Swiss listing and CHF history are supported for EUR basket returns (1.107835ms)
+✔ Yahoo pence-denominated UK prices normalize to pounds before FX conversion (0.967805ms)
+✔ history cache persists an initial series and subsequent reads do not fetch (1.583901ms)
+✔ monthly max cache is repaired with daily five-year history on refresh (2.778266ms)
+✔ basket is equal-weighted in EUR and reports ownership and coverage (1.917572ms)
+✔ basket conversion uses historical EUR exchange rates (0.355214ms)
+✔ all requested windows calculate from available daily points (3.137495ms)
+✔ companies without usable history remain visible and lower basket coverage (0.427483ms)
+✔ an IPO after the requested one-year start is not assigned a pre-listing return (0.302624ms)
+✔ SpaceX is covered only in windows after its June 2026 listing and MAX keeps the shared earlier start (5.567027ms)
+✔ MAX chart projection bounds D1 storage while preserving exact endpoints and extrema (53.172763ms)
+✔ opening baskets reads cached history only and ignores untickered members (62.943354ms)
+✔ a saved snapshot serves every basket selection without quote-history reads (25.15654ms)
+✔ a Yahoo symbol failure keeps cached coverage and is recorded in the published complete attempt (22.086536ms)
+✔ stale FX is not silently applied to a current equity history (0.636847ms)
+✔ periods and API parameters are restricted to the supported selectors (0.322164ms)
+✔ theme basket chart supports touch and keyboard date scrubbing accessibly (2.472767ms)
+ℹ tests 300
+ℹ suites 0
+ℹ pass 277
+ℹ fail 23
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3623.305434
+
+✖ failing tests:
+
+test at tests/analysis-canonical-renderer.test.mjs:62:1
+✖ a supported paragraph plus an unsupported Notion task both survive normalization (88.768385ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    [
+      'paragraph',
+  -   'unsupported'
+    ]
+  
+      at TestContext.<anonymous> (file:///workspace/scratch/f4cff561abe0/investment-os/tests/analysis-canonical-renderer.test.mjs:70:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [ 'paragraph' ],
+    expected: [ 'paragraph', 'unsupported' ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests/analysis-canonical-renderer.test.mjs:98:1
+✖ nested Notion descendants, bookmarks and table descendants retain canonical content and source IDs (8.206595ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    [
+      'list',
+  -   'list',
+  -   'callout',
+      'paragraph',
+      'table',
+  -   'paragraph'
+    ]
+  
+      at TestContext.<anonymous> (file:///workspace/scratch/f4cff561abe0/investment-os/tests/analysis-canonical-renderer.test.mjs:115:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [ 'list', 'paragraph', 'table' ],
+    expected: [ 'list', 'list', 'callout', 'paragraph', 'table', 'paragraph' ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests/analysis-canonical-renderer.test.mjs:124:1
+✖ adjacent ordered Notion items keep one continuous list and all source IDs (0.73215ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    [
+  +   'ordered-report'
+  -   'first',
+  -   'second'
+    ]
+  
+      at TestContext.<anonymous> (file:///workspace/scratch/f4cff561abe0/investment-os/tests/analysis-canonical-renderer.test.mjs:129:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [ 'ordered-report' ],
+    expected: [ 'first', 'second' ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests/analysis-canonical-renderer.test.mjs:241:1
+✖ company preview keeps the reader summary and removes canonical body from serialized payload (14.687595ms)
+  TypeError: Cannot read properties of undefined (reading 'length')
+      at NotionTable (file:///workspace/scratch/f4cff561abe0/investment-os/.test-runtime/lot4-canonical-renderer.mjs:1390:13)
+      at Object.react_stack_bottom_frame (/workspace/scratch/90acd6d39abc/investment-os/node_modules/react-dom/cjs/react-dom-server-legacy.node.development.js:9808:18)
+      at renderWithHooks (/workspace/scratch/90acd6d39abc/investment-os/node_modules/react-dom/cjs/react-dom-server-legacy.node.development.js:5062:19)
+      at renderElement (/workspace/scratch/90acd6d39abc/investment-os/node_modules/react-dom/cjs/react-dom-server-legacy.node.development.js:5497:23)
+      at retryNode (/workspace/scratch/90acd6d39abc/investment-os/node_modules/react-dom/cjs/react-dom-server-legacy.node.development.js:6417:31)
+      at renderNodeDestructive (/workspace/scratch/90acd6d39abc/investment-os/node_modules/react-dom/cjs/react-dom-server-legacy.node.development.js:6367:11)
+      at renderElement (/workspace/scratch/90acd6d39abc/investment-os/node_modules/react-dom/cjs/react-dom-server-legacy.node.development.js:5672:13)
+      at retryNode (/workspace/scratch/90acd6d39abc/investment-os/node_modules/react-dom/cjs/react-dom-server-legacy.node.development.js:6417:31)
+      at renderNodeDestructive (/workspace/scratch/90acd6d39abc/investment-os/node_modules/react-dom/cjs/react-dom-server-legacy.node.development.js:6367:11)
+      at renderNode (/workspace/scratch/90acd6d39abc/investment-os/node_modules/react-dom/cjs/react-dom-server-legacy.node.development.js:6905:18)
+
+test at tests/analysis-canonical-renderer.test.mjs:323:1
+✖ CIO memo reasoning keeps canonical links after API serialization (3.404056ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /<a href="https:\/\/example\.com\/decision-source"[^>]*>Source déterminante<\/a>/. Input:
+  
+  ''
+  
+      at TestContext.<anonymous> (file:///workspace/scratch/f4cff561abe0/investment-os/tests/analysis-canonical-renderer.test.mjs:343:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '',
+    expected: /<a href="https:\/\/example\.com\/decision-source"[^>]*>Source déterminante<\/a>/,
+    operator: 'match',
+    diff: 'simple'
+  }
+
+test at tests/analysis-canonical-renderer.test.mjs:346:1
+✖ CompanyAnalysisDocument accepts validated canonical API bodies and keeps stale content on refresh failure (4.011099ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /Canonical body survives the API boundary/. Input:
+  
+  '<section class="ui-surface ui-surface--primary ui-async-state" data-surface="primary"><strong>Document indisponible</strong><span>Le contenu complet de cette analyse n’est pas disponible.</span><button type="button">Réessayer</button></section>'
+  
+      at TestContext.<anonymous> (file:///workspace/scratch/f4cff561abe0/investment-os/tests/analysis-canonical-renderer.test.mjs:354:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '<section class="ui-surface ui-surface--primary ui-async-state" data-surface="primary"><strong>Document indisponible</strong><span>Le contenu complet de cette analyse n’est pas disponible.</span><button type="button">Réessayer</button></section>',
+    expected: /Canonical body survives the API boundary/,
+    operator: 'match',
+    diff: 'simple'
+  }
+
+test at tests/analysis-canonical-renderer.test.mjs:385:1
+✖ citation numbers and source list share the same sorted order (2.522171ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /href="#analysis-projection-source-old">\[2\]<\/a>/. Input:
+  
+  '<div class="analysis-projection-summary" data-projection-contract="1.0.0"><section class="analysis-projection-lead" aria-labelledby="analysis-projection-summary-title"><p class="eyebrow">Mise à jour le 30 sept. 2026</p><h2 id="analysis-projection-summary-title">Synthèse</h2><p>Synthèse<span class="projection-citations"><a href="#analysis-projection-source-old">[1]</a></span></p><small>2 sources consultées jusqu’au 30 sept. 2026 · fraîcheur inconnue pour 2</small></section><details class="analysis-projection-sources"><summary>Sources <span>2</span></summary><ol><li id="analysis-projection-source-new"><a href="https://example.com/new" target="_blank" rel="noreferrer">[1] new ↗</a><span>Éditeur non précisé · Source de référence</span><small>Consultée le 30 sept. 2026 · Données au non datée · Fraîcheur inconnue</small></li><li id="analysis-projection-source-old"><a href="https://example.com/old" target="_blank" rel="noreferrer">[2] old ↗</a><span>Éditeur non précisé · Source de référence</span><small>Consultée le 1 sept. 2026 · Données au non datée · Fraîcheur inconnue</small></li></ol></details></div>'
+  
+      at TestContext.<anonymous> (file:///workspace/scratch/f4cff561abe0/investment-os/tests/analysis-canonical-renderer.test.mjs:395:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '<div class="analysis-projection-summary" data-projection-contract="1.0.0"><section class="analysis-projection-lead" aria-labelledby="analysis-projection-summary-title"><p class="eyebrow">Mise à jour le 30 sept. 2026</p><h2 id="analysis-projection-summary-title">Synthèse</h2><p>Synthèse<span class="projection-citations"><a href="#analysis-projection-source-old">[1]</a></span></p><small>2 sources consultées jusqu’au 30 sept. 2026 · fraîcheur inconnue pour 2</small></section><details class="analysis-projection-sources"><summary>Sources <span>2</span></summary><ol><li id="analysis-projection-source-new"><a href="https://example.com/new" target="_blank" rel="noreferrer">[1] new ↗</a><span>Éditeur non précisé · Source de référence</span><small>Consultée le 30 sept. 2026 · Données au non datée · Fraîcheur inconnue</small></li><li id="analysis-projection-source-old"><a href="https://example.com/old" target="_blank" rel="noreferrer">[2] old ↗</a><span>Éditeur non précisé · Source de référence</span><small>Consultée le 1 sept. 2026 · Données au non datée · Fraîcheur inconnue</small></li></ol></details></div>',
+    expected: /href="#analysis-projection-source-old">\[2\]<\/a>/,
+    operator: 'match',
+    diff: 'simple'
+  }
+
+test at tests/analysis-reference-fixtures.test.mjs:94:1
+✖ TSMC fixture values are extracted as scenarios and thresholds without changing their meaning (75.5491ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    [
+      {
+        price: '449,98 USD',
+        rate: '10 %',
+  +     sourceBlockIndexes: [
+  +       3
+  +     ]
+      },
+      {
+        price: '411,21 USD',
+        rate: '12 %',
+  +     sourceBlockIndexes: [
+  +       3
+  +     ]
+      },
+      {
+        price: '360,30 USD',
+        rate: '15 %',
+  +     sourceBlockIndexes: [
+  +       3
+  +     ]
+      }
+    ]
+  
+      at TestContext.<anonymous> (file:///workspace/scratch/f4cff561abe0/investment-os/tests/analysis-reference-fixtures.test.mjs:114:10)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [ { rate: '10 %', price: '449,98 USD', sourceBlockIndexes: [Array] }, { rate: '12 %', price: '411,21 USD', sourceBlockIndexes: [Array] }, { rate: '15 %', price: '360,30 USD', sourceBlockIndexes: [Array] } ],
+    expected: [ { rate: '10 %', price: '449,98 USD' }, { rate: '12 %', price: '411,21 USD' }, { rate: '15 %', price: '360,30 USD' } ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests/analysis-reference-fixtures.test.mjs:146:1
+✖ valuation scenario extraction keeps terminal prices, CAGR and thresholds distinct (3.979241ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    [
+      {
+        price: '449,98 USD',
+        rate: '10 %',
+  +     sourceBlockIndexes: [
+  +       3
+  +     ]
+      },
+      {
+        price: '411,21 USD',
+        rate: '12 %',
+  +     sourceBlockIndexes: [
+  +       3
+  +     ]
+      },
+      {
+        price: '360,30 USD',
+        rate: '15 %',
+  +     sourceBlockIndexes: [
+  +       3
+  +     ]
+      }
+    ]
+  
+      at TestContext.<anonymous> (file:///workspace/scratch/f4cff561abe0/investment-os/tests/analysis-reference-fixtures.test.mjs:163:10)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [ { rate: '10 %', price: '449,98 USD', sourceBlockIndexes: [Array] }, { rate: '12 %', price: '411,21 USD', sourceBlockIndexes: [Array] }, { rate: '15 %', price: '360,30 USD', sourceBlockIndexes: [Array] } ],
+    expected: [ { rate: '10 %', price: '449,98 USD' }, { rate: '12 %', price: '411,21 USD' }, { rate: '15 %', price: '360,30 USD' } ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests/analysis-reference-fixtures.test.mjs:942:1
+✖ valuation extraction recognizes explicit hurdle heading and reference market data (1.727576ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    [
+      {
+        price: '34 234 JPY',
+        rate: '10 %',
+  +     sourceBlockIndexes: [
+  +       4
+  +     ]
+      },
+      {
+        price: '31 285 JPY',
+        rate: '12 %',
+  +     sourceBlockIndexes: [
+  +       4
+  +     ]
+      },
+      {
+        price: '27 411 JPY',
+        rate: '15 %',
+  +     sourceBlockIndexes: [
+  +       4
+  +     ]
+      }
+    ]
+  
+      at TestContext.<anonymous> (file:///workspace/scratch/f4cff561abe0/investment-os/tests/analysis-reference-fixtures.test.mjs:961:10)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [ { rate: '10 %', price: '34 234 JPY', sourceBlockIndexes: [Array] }, { rate: '12 %', price: '31 285 JPY', sourceBlockIndexes: [Array] }, { rate: '15 %', price: '27 411 JPY', sourceBlockIndexes: [Array] } ],
+    expected: [ { rate: '10 %', price: '34 234 JPY' }, { rate: '12 %', price: '31 285 JPY' }, { rate: '15 %', price: '27 411 JPY' } ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests/investment-read-adapter.test.mjs:81:1
+✖ read adapter preserves legacy company/document/portfolio payloads while validating canonical projections (593.242903ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  ... Skipped lines
+  
+    {
+      analyses: [
+        {
+          agent: 'Business Analyst',
+          archived: false,
+  ...
+          lastEditedTime: '2026-09-30T10:00:00Z',
+  +       normalizedAnalysis: {
+  +         analysis: {
+  +           confidence: null,
+  +           content: {
+  +             blocks: [
+  +               {
+  +                 id: 'a1111111-a111-4111-8111-a11111111111:block:0',
+  +                 sourceIds: [
+  +                   'a1111111-a111-4111-8111-a11111111111'
+  +                 ],
+  +                 text: [
+  +                   {
+  +                     href: null,
+  +                     marks: [],
+  +                     text: 'Revenue grew steadily.'
+  +                   }
+  +                 ],
+  +                 type: 'paragraph'
+  +               }
+  +             ],
+  +             schemaVersion: '1.0.0'
+  +           },
+  +           diagnostics: [],
+  +           header: {
+  +             agent: 'Business Analyst',
+  +             archived: false,
+  +             companyIds: [],
+  +             date: '2026-09-29',
+  +             family: 'business',
+  +             id: 'a1111111-a111-4111-8111-a11111111111',
+  +             lastEditedTime: '2026-09-30T10:00:00Z',
+  +             originalFamily: null,
+  +             provenance: {
+  +               capturedAt: '2026-09-30T10:00:00Z',
+  +               kind: 'notion',
+  +               revision: '2026-09-30T10:00:00Z',
+  +               sourceId: 'a1111111-a111-4111-8111-a11111111111'
+  +             },
+  +             revision: '2026-09-30T10:00:00Z',
+  +             schemaVersion: '1.0.0',
+  +             sourceFreshness: 'unknown',
+  +             sourceKind: 'analysis',
+  +             sourceUrl: 'https://notion.so/a1111111-a111-4111-8111-a11111111111',
+  +             status: 'Validated',
+  +             title: 'Example Business Analysis'
+  +           },
+  +           kind: 'business',
+  +           presentation: {
+  +             facts: [],
+  +             scenarios: [],
+  +             thresholds: []
+  +           },
+  +           projection: {
+  +             status: 'absent'
+  +           },
+  +           schemaVersion: '1.0.0',
+  +           score: null,
+  +           summary: 'Growth remains steady.',
+  +           verdict: null
+  +         },
+  +         memo: {
+  +           decisionFacts: [],
+  +           hiddenIndexes: [],
+  +           modulesTable: null,
+  +           reasoning: []
+  +         },
+  +         valuation: null,
+  +         view: {
+  +           factGroups: [],
+  +           facts: [],
+  +           hiddenIndexes: [],
+  +           summaryItems: [
+  +             'Growth remains steady.'
+  +           ]
+  +         }
+  +       },
+          notionBlocks: undefined,
+          notionUrl: 'https://notion.so/a1111111-a111-4111-8111-a11111111111',
+          plainText: '',
+          presentationError: null,
+  +       presentationProjection: undefined,
+  -       presentationProjection: null,
+          presentationStatus: 'absent',
+          previewSummaryItems: [
+            'Growth remains steady.'
+          ],
+          relations: [],
+  ...
+          lastEditedTime: '2025-10-01T10:00:00Z',
+  +       normalizedAnalysis: {
+  +         analysis: {
+  +           confidence: null,
+  +           content: {
+  +             blocks: [
+  +               {
+  +                 id: 'b2222222-b222-4222-8222-b22222222222:block:0',
+  +                 sourceIds: [
+  +                   'b2222222-b222-4222-8222-b22222222222'
+  +                 ],
+  +                 text: [
+  +                   {
+  +                     href: null,
+  +                     marks: [],
+  +                     text: 'Revenue grew steadily.'
+  +                   }
+  +                 ],
+  +                 type: 'paragraph'
+  +               }
+  +             ],
+  +             schemaVersion: '1.0.0'
+  +           },
+  +           diagnostics: [],
+  +           header: {
+  +             agent: 'Business Analyst',
+  +             archived: true,
+  +             companyIds: [],
+  +             date: '2025-09-29',
+  +             family: 'business',
+  +             id: 'b2222222-b222-4222-8222-b22222222222',
+  +             lastEditedTime: '2025-10-01T10:00:00Z',
+  +             originalFamily: null,
+  +             provenance: {
+  +               capturedAt: '2025-10-01T10:00:00Z',
+  +               kind: 'notion',
+  +               revision: '2025-10-01T10:00:00Z',
+  +               sourceId: 'b2222222-b222-4222-8222-b22222222222'
+  +             },
+  +             revision: '2025-10-01T10:00:00Z',
+  +             schemaVersion: '1.0.0',
+  +             sourceFreshness: 'unknown',
+  +             sourceKind: 'analysis',
+  +             sourceUrl: 'https://notion.so/b2222222-b222-4222-8222-b22222222222',
+  +             status: 'Superseded',
+  +             title: 'Example Business Analysis Archived'
+  +           },
+  +           kind: 'business',
+  +           presentation: {
+  +             facts: [],
+  +             scenarios: [],
+  +             thresholds: []
+  +           },
+  +           projection: {
+  +             status: 'absent'
+  +           },
+  +           schemaVersion: '1.0.0',
+  +           score: null,
+  +           summary: null,
+  +           verdict: null
+  +         },
+  +         memo: {
+  +           decisionFacts: [],
+  +           hiddenIndexes: [],
+  +           modulesTable: null,
+  +           reasoning: []
+  +         },
+  +         valuation: null,
+  +         view: {
+  +           factGroups: [],
+  +           facts: [],
+  +           hiddenIndexes: [],
+  +           summaryItems: []
+  +         }
+  +       },
+          notionBlocks: undefined,
+          notionUrl: 'https://notion.so/b2222222-b222-4222-8222-b22222222222',
+          plainText: '',
+          presentationError: null,
+  +       presentationProjection: undefined,
+  -       presentationProjection: null,
+          presentationStatus: 'absent',
+          previewSummaryItems: [],
+          relations: [],
+          score: '',
+          sourceKey: 'analyses',
+  ...
+          lastEditedTime: '2026-09-30T10:00:00Z',
+  +       normalizedAnalysis: {
+  +         analysis: {
+  +           confidence: null,
+  +           content: {
+  +             blocks: [
+  +               {
+  +                 id: 'c3333333-c333-4333-8333-c33333333333:block:0',
+  +                 sourceIds: [
+  +                   'c3333333-c333-4333-8333-c33333333333'
+  +                 ],
+  +                 text: [
+  +                   {
+  +                     href: null,
+  +                     marks: [],
+  +                     text: 'Position: NVIDIA — PEA Status: Active Quantity: 2 PRU: 50 Account: PEA Target Weight: 0.1 Target Weight 10k: 0.2'
+  +                   }
+  +                 ],
+  +                 type: 'paragraph'
+  +               }
+  +             ],
+  +             schemaVersion: '1.0.0'
+  +           },
+  +           diagnostics: [],
+  +           header: {
+  +             agent: 'Portfolio Manager',
+  +             archived: false,
+  +             companyIds: [],
+  +             date: null,
+  +             family: 'portfolio',
+  +             id: 'c3333333-c333-4333-8333-c33333333333',
+  +             lastEditedTime: '2026-09-30T10:00:00Z',
+  +             originalFamily: null,
+  +             provenance: {
+  +               capturedAt: '2026-09-30T10:00:00Z',
+  +               kind: 'notion',
+  +               revision: '2026-09-30T10:00:00Z',
+  +               sourceId: 'c3333333-c333-4333-8333-c33333333333'
+  +             },
+  +             revision: '2026-09-30T10:00:00Z',
+  +             schemaVersion: '1.0.0',
+  +             sourceFreshness: 'unknown',
+  +             sourceKind: 'analysis',
+  +             sourceUrl: 'https://notion.so/c3333333-c333-4333-8333-c33333333333',
+  +             status: 'Active',
+  +             title: 'NVIDIA — PEA'
+  +           },
+  +           kind: 'portfolio',
+  +           presentation: {
+  +             facts: [],
+  +             scenarios: [],
+  +             thresholds: []
+  +           },
+  +           projection: {
+  +             status: 'absent'
+  +           },
+  +           schemaVersion: '1.0.0',
+  +           summary: 'Position: NVIDIA — PEA Status: Active Quantity: 2 PRU: 50 Account: PEA Target Weight: 0.1 Target Weight 10k: 0.2',
+  +           verdict: null
+  +         },
+  +         memo: {
+  +           decisionFacts: [],
+  +           hiddenIndexes: [],
+  +           modulesTable: null,
+  +           reasoning: []
+  +         },
+  +         valuation: null,
+  +         view: {
+  +           factGroups: [],
+  +           facts: [],
+  +           hiddenIndexes: [
+  +             0
+  +           ],
+  +           summaryItems: [
+  +             'Position: NVIDIA — PEA Status: Active Quantity: 2 PRU: 50 Account: PEA Target Weight: 0.1 Target Weight 10k: 0.2'
+  +           ]
+  +         }
+  +       },
+          notionBlocks: undefined,
+          notionUrl: 'https://notion.so/c3333333-c333-4333-8333-c33333333333',
+          plainText: '',
+          presentationError: null,
+  +       presentationProjection: undefined,
+  -       presentationProjection: null,
+          presentationStatus: 'absent',
+  +       previewSummaryItems: [],
+  -       previewSummaryItems: [
+  -         'Position: NVIDIA — PEA Status: Active Quantity: 2 PRU: 50 Account: PEA Target Weight: 0.1 Target Weight 10k: 0.2'
+  -       ],
+          relations: [],
+          score: '',
+          sourceKey: 'portfolio',
+          status: 'Active',
+          summary: null,
+  
+      at TestContext.<anonymous> (file:///workspace/scratch/f4cff561abe0/investment-os/tests/investment-read-adapter.test.mjs:90:10)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: { id: 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa', name: 'Example Systems', ticker: 'EXM', sector: '', industry: '', ownershipStatus: 'Owned', watchlistMembership: false, monitoringStatus: '', businessScore: null, businessVerdict: '', researchStage: '', researchPriority: '', lastAnalysis: null, themes: [], country: '', currency: 'USD', exchange: '', dataCompleteness: '', notionUrl: 'https://notion.so/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa', researchReferences: [ [Object] ], analyses: [ [Object] ], earnings: [], decisions: [], portfolioDocuments: [ [Object] ], archives: [ [Object] ] },
+    expected: { id: 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa', name: 'Example Systems', ticker: 'EXM', sector: '', industry: '', ownershipStatus: 'Owned', watchlistMembership: false, monitoringStatus: '', businessScore: null, businessVerdict: '', researchStage: '', researchPriority: '', lastAnalysis: null, themes: [], country: '', currency: 'USD', exchange: '', dataCompleteness: '', notionUrl: 'https://notion.so/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa', researchReferences: [ [Object] ], analyses: [ [Object] ], earnings: [], decisions: [], portfolioDocuments: [ [Object] ], archives: [ [Object] ] },
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests/investment-read-adapter.test.mjs:123:1
+✖ history lookup by UUID preserves the archived legacy document and source date (22.948272ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  ... Skipped lines
+  
+    {
+      agent: 'Business Analyst',
+      archived: true,
+      category: 'business',
+      companyName: 'Example Systems',
+  ...
+      lastEditedTime: '2025-10-01T10:00:00Z',
+  +   normalizedAnalysis: {
+  +     analysis: {
+  +       confidence: null,
+  +       content: {
+  +         blocks: [
+  -   notionBlocks: [
+  -     {
+  -       id: 'report-paragraph',
+  -       paragraph: {
+  -         rich_text: [
+              {
+  +             id: 'b2222222-b222-4222-8222-b22222222222:block:0',
+  +             sourceIds: [
+  +               'b2222222-b222-4222-8222-b22222222222'
+  +             ],
+  +             text: [
+  +               {
+  +                 href: null,
+  +                 marks: [],
+  +                 text: 'Revenue grew steadily.'
+  +               }
+  +             ],
+  +             type: 'paragraph'
+  -             plain_text: 'Revenue grew steadily.'
+              }
+            ],
+  +         schemaVersion: '1.0.0'
+          },
+  +       diagnostics: [],
+  +       header: {
+  +         agent: 'Business Analyst',
+  +         archived: true,
+  +         companyIds: [],
+  +         date: '2025-09-29',
+  +         family: 'business',
+  +         id: 'b2222222-b222-4222-8222-b22222222222',
+  +         lastEditedTime: '2025-10-01T10:00:00Z',
+  +         originalFamily: null,
+  +         provenance: {
+  +           capturedAt: '2025-10-01T10:00:00Z',
+  +           kind: 'notion',
+  +           revision: '2025-10-01T10:00:00Z',
+  +           sourceId: 'b2222222-b222-4222-8222-b22222222222'
+  +         },
+  +         revision: '2025-10-01T10:00:00Z',
+  +         schemaVersion: '1.0.0',
+  +         sourceFreshness: 'unknown',
+  +         sourceKind: 'analysis',
+  +         sourceUrl: 'https://notion.so/b2222222-b222-4222-8222-b22222222222',
+  +         status: 'Superseded',
+  +         title: 'Example Business Analysis Archived'
+  +       },
+  +       kind: 'business',
+  +       presentation: {
+  +         facts: [],
+  +         scenarios: [],
+  +         thresholds: []
+  +       },
+  +       projection: {
+  +         status: 'absent'
+  +       },
+  +       schemaVersion: '1.0.0',
+  +       score: null,
+  +       summary: null,
+  +       verdict: null
+  -       type: 'paragraph'
+        },
+  +     memo: {
+  +       decisionFacts: [],
+  +       hiddenIndexes: [],
+  +       modulesTable: null,
+  +       reasoning: []
+  +     },
+  +     valuation: null,
+  +     view: {
+  +       factGroups: [],
+  +       facts: [],
+  +       hiddenIndexes: [],
+  +       summaryItems: []
+  +     }
+  +   },
+  +   notionBlocks: undefined,
+  -   ],
+      notionUrl: 'https://notion.so/b2222222-b222-4222-8222-b22222222222',
+  +   plainText: '',
+  -   plainText: 'Example Business Analysis Archived\n' +
+  -     'Agent: Business Analyst\n' +
+  -     'Status: Superseded\n' +
+  -     'Date: 2025-09-29\n' +
+  -     'Revenue grew steadily.',
+      presentationError: null,
+  +   presentationProjection: undefined,
+  -   presentationProjection: null,
+      presentationStatus: 'absent',
+      relations: [],
+      score: '',
+      sourceKey: 'analyses',
+      status: 'Superseded',
+  
+      at TestContext.<anonymous> (file:///workspace/scratch/f4cff561abe0/investment-os/tests/investment-read-adapter.test.mjs:131:10)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: { id: 'b2222222-b222-4222-8222-b22222222222', title: 'Example Business Analysis Archived', sourceKey: 'analyses', category: 'business', agent: 'Business Analyst', notionUrl: 'https://notion.so/b2222222-b222-4222-8222-b22222222222', lastEditedTime: '2025-10-01T10:00:00Z', plainText: '', notionBlocks: undefined, presentationProjection: undefined, presentationStatus: 'absent', presentationError: null, summary: null, handoffSummary: null, status: 'Superseded', score: '', verdict: '', confidence: null, date: '2025-09-29', relations: [], archived: true, current: false, decision: null, earningsReview: null, normalizedAnalysis: { analysis: [Object], view: [Object], valuation: null, memo: [Object] }, companyName: 'Example Systems' },
+    expected: { id: 'b2222222-b222-4222-8222-b22222222222', title: 'Example Business Analysis Archived', sourceKey: 'analyses', category: 'business', agent: 'Business Analyst', notionUrl: 'https://notion.so/b2222222-b222-4222-8222-b22222222222', lastEditedTime: '2025-10-01T10:00:00Z', plainText: 'Example Business Analysis Archived\nAgent: Business Analyst\nStatus: Superseded\nDate: 2025-09-29\nRevenue grew steadily.', notionBlocks: [ [Object] ], presentationProjection: null, presentationStatus: 'absent', presentationError: null, summary: null, handoffSummary: null, status: 'Superseded', score: '', verdict: '', confidence: null, date: '2025-09-29', relations: [], archived: true, current: false, decision: null, earningsReview: null, companyName: 'Example Systems' },
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests/investment-read-adapter.test.mjs:256:1
+✖ integrity listing retains historical body metadata and date/projection state (32.425867ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  ... Skipped lines
+  
+    [
+      {
+        agent: 'Business Analyst',
+        archived: false,
+        category: 'business',
+  ...
+        lastEditedTime: '2026-09-30T10:00:00Z',
+  +     normalizedAnalysis: {
+  +       analysis: {
+  +         confidence: null,
+  +         content: {
+  +           blocks: [
+  -     notionBlocks: [
+  -       {
+  -         id: 'report-paragraph',
+  -         paragraph: {
+  -           rich_text: [
+                {
+  +               id: 'a1111111-a111-4111-8111-a11111111111:block:0',
+  +               sourceIds: [
+  +                 'a1111111-a111-4111-8111-a11111111111'
+  +               ],
+  +               text: [
+  +                 {
+  +                   href: null,
+  +                   marks: [],
+  +                   text: 'Revenue grew steadily.'
+  +                 }
+  +               ],
+  +               type: 'paragraph'
+  -               plain_text: 'Revenue grew steadily.'
+                }
+              ],
+  +           schemaVersion: '1.0.0'
+            },
+  +         diagnostics: [],
+  +         header: {
+  +           agent: 'Business Analyst',
+  +           archived: false,
+  +           companyIds: [],
+  +           date: '2026-09-29',
+  +           family: 'business',
+  +           id: 'a1111111-a111-4111-8111-a11111111111',
+  +           lastEditedTime: '2026-09-30T10:00:00Z',
+  +           originalFamily: null,
+  +           provenance: {
+  +             capturedAt: '2026-09-30T10:00:00Z',
+  +             kind: 'notion',
+  +             revision: '2026-09-30T10:00:00Z',
+  +             sourceId: 'a1111111-a111-4111-8111-a11111111111'
+  +           },
+  +           revision: '2026-09-30T10:00:00Z',
+  +           schemaVersion: '1.0.0',
+  +           sourceFreshness: 'unknown',
+  +           sourceKind: 'analysis',
+  +           sourceUrl: 'https://notion.so/a1111111-a111-4111-8111-a11111111111',
+  +           status: 'Validated',
+  +           title: 'Example Business Analysis'
+  +         },
+  +         kind: 'business',
+  +         presentation: {
+  +           facts: [],
+  +           scenarios: [],
+  +           thresholds: []
+  +         },
+  +         projection: {
+  +           status: 'absent'
+  +         },
+  +         schemaVersion: '1.0.0',
+  +         score: null,
+  +         summary: 'Growth remains steady.',
+  +         verdict: null
+  -         type: 'paragraph'
+          },
+  +       memo: {
+  +         decisionFacts: [],
+  +         hiddenIndexes: [],
+  +         modulesTable: null,
+  +         reasoning: []
+  +       },
+  +       valuation: null,
+  +       view: {
+  +         factGroups: [],
+  +         facts: [],
+  +         hiddenIndexes: [],
+  +         summaryItems: [
+  +           'Growth remains steady.'
+  +         ]
+  +       }
+  +     },
+  +     notionBlocks: undefined,
+  -     ],
+        notionUrl: 'https://notion.so/a1111111-a111-4111-8111-a11111111111',
+  +     plainText: '',
+  -     plainText: 'Example Business Analysis\n' +
+  -       'Agent: Business Analyst\n' +
+  -       'Status: Validated\n' +
+  -       'Date: 2026-09-29\n' +
+  -       'TL;DR: Growth remains steady.\n' +
+  -       'Revenue grew steadily.',
+        presentationError: null,
+  +     presentationProjection: undefined,
+  -     presentationProjection: null,
+        presentationStatus: 'absent',
+        relations: [],
+        score: '',
+        sourceKey: 'analyses',
+        status: 'Validated',
+  ...
+        lastEditedTime: '2026-09-30T10:00:00Z',
+  +     normalizedAnalysis: {
+  +       analysis: {
+  +         confidence: null,
+  +         content: {
+  +           blocks: [
+  +             {
+  +               id: 'c3333333-c333-4333-8333-c33333333333:block:0',
+  +               sourceIds: [
+  +                 'c3333333-c333-4333-8333-c33333333333'
+  +               ],
+  +               text: [
+  +                 {
+  +                   href: null,
+  +                   marks: [],
+  +                   text: 'Position: NVIDIA — PEA Status: Active Quantity: 2 PRU: 50 Account: PEA Target Weight: 0.1 Target Weight 10k: 0.2'
+  +                 }
+  +               ],
+  +               type: 'paragraph'
+  +             }
+  +           ],
+  +           schemaVersion: '1.0.0'
+  +         },
+  +         diagnostics: [],
+  +         header: {
+  +           agent: 'Portfolio Manager',
+  +           archived: false,
+  +           companyIds: [],
+  +           date: null,
+  +           family: 'portfolio',
+  +           id: 'c3333333-c333-4333-8333-c33333333333',
+  +           lastEditedTime: '2026-09-30T10:00:00Z',
+  +           originalFamily: null,
+  +           provenance: {
+  +             capturedAt: '2026-09-30T10:00:00Z',
+  +             kind: 'notion',
+  +             revision: '2026-09-30T10:00:00Z',
+  +             sourceId: 'c3333333-c333-4333-8333-c33333333333'
+  +           },
+  +           revision: '2026-09-30T10:00:00Z',
+  +           schemaVersion: '1.0.0',
+  +           sourceFreshness: 'unknown',
+  +           sourceKind: 'analysis',
+  +           sourceUrl: 'https://notion.so/c3333333-c333-4333-8333-c33333333333',
+  +           status: 'Active',
+  +           title: 'NVIDIA — PEA'
+  +         },
+  +         kind: 'portfolio',
+  +         presentation: {
+  +           facts: [],
+  +           scenarios: [],
+  +           thresholds: []
+  +         },
+  +         projection: {
+  +           status: 'absent'
+  +         },
+  +         schemaVersion: '1.0.0',
+  +         summary: 'Position: NVIDIA — PEA Status: Active Quantity: 2 PRU: 50 Account: PEA Target Weight: 0.1 Target Weight 10k: 0.2',
+  +         verdict: null
+  +       },
+  +       memo: {
+  +         decisionFacts: [],
+  +         hiddenIndexes: [],
+  +         modulesTable: null,
+  +         reasoning: []
+  +       },
+  +       valuation: null,
+  +       view: {
+  +         factGroups: [],
+  +         facts: [],
+  +         hiddenIndexes: [
+  +           0
+  +         ],
+  +         summaryItems: [
+  +           'Position: NVIDIA — PEA Status: Active Quantity: 2 PRU: 50 Account: PEA Target Weight: 0.1 Target Weight 10k: 0.2'
+  +         ]
+  +       }
+  +     },
+  +     notionBlocks: undefined,
+  -     notionBlocks: [],
+        notionUrl: 'https://notion.so/c3333333-c333-4333-8333-c33333333333',
+  +     plainText: '',
+  -     plainText: 'NVIDIA — PEA\n' +
+  -       'Position: NVIDIA — PEA\n' +
+  -       'Status: Active\n' +
+  -       'Quantity: 2\n' +
+  -       'PRU: 50\n' +
+  -       'Account: PEA\n' +
+  -       'Target Weight: 0.1\n' +
+  -       'Target Weight 10k: 0.2',
+        presentationError: null,
+  +     presentationProjection: undefined,
+  -     presentationProjection: null,
+        presentationStatus: 'absent',
+        relations: [],
+        score: '',
+        sourceKey: 'portfolio',
+        status: 'Active',
+  ...
+        lastEditedTime: '2026-09-30T10:00:00Z',
+  +     normalizedAnalysis: {
+  +       analysis: {
+  +         confidence: null,
+  +         content: {
+  +           blocks: [
+  +             {
+  +               id: 'd4444444-d444-4444-8444-d44444444444:block:0',
+  +               sourceIds: [
+  +                 'd4444444-d444-4444-8444-d44444444444'
+  +               ],
+  +               text: [
+  +                 {
+  +                   href: null,
+  +                   marks: [],
+  +                   text: 'Position: Old holding Status: Sold Quantity: 0 Target Weight: 0.4'
+  +                 }
+  +               ],
+  +               type: 'paragraph'
+  +             }
+  +           ],
+  +           schemaVersion: '1.0.0'
+  +         },
+  +         diagnostics: [],
+  +         header: {
+  +           agent: 'Portfolio Manager',
+  +           archived: false,
+  +           companyIds: [],
+  +           date: null,
+  +           family: 'portfolio',
+  +           id: 'd4444444-d444-4444-8444-d44444444444',
+  +           lastEditedTime: '2026-09-30T10:00:00Z',
+  +           originalFamily: null,
+  +           provenance: {
+  +             capturedAt: '2026-09-30T10:00:00Z',
+  +             kind: 'notion',
+  +             revision: '2026-09-30T10:00:00Z',
+  +             sourceId: 'd4444444-d444-4444-8444-d44444444444'
+  +           },
+  +           revision: '2026-09-30T10:00:00Z',
+  +           schemaVersion: '1.0.0',
+  +           sourceFreshness: 'unknown',
+  +           sourceKind: 'analysis',
+  +           sourceUrl: 'https://notion.so/d4444444-d444-4444-8444-d44444444444',
+  +           status: 'Sold',
+  +           title: 'Old holding'
+  +         },
+  +         kind: 'portfolio',
+  +         presentation: {
+  +           facts: [],
+  +           scenarios: [],
+  +           thresholds: []
+  +         },
+  +         projection: {
+  +           status: 'absent'
+  +         },
+  +         schemaVersion: '1.0.0',
+  +         summary: 'Position: Old holding Status: Sold Quantity: 0 Target Weight: 0.4',
+  +         verdict: null
+  +       },
+  +       memo: {
+  +         decisionFacts: [],
+  +         hiddenIndexes: [],
+  +         modulesTable: null,
+  +         reasoning: []
+  +       },
+  +       valuation: null,
+  +       view: {
+  +         factGroups: [],
+  +         facts: [],
+  +         hiddenIndexes: [
+  +           0
+  +         ],
+  +         summaryItems: [
+  +           'Position: Old holding Status: Sold Quantity: 0 Target Weight: 0.4'
+  +         ]
+  +       }
+  +     },
+  +     notionBlocks: undefined,
+  -     notionBlocks: [],
+        notionUrl: 'https://notion.so/d4444444-d444-4444-8444-d44444444444',
+  +     plainText: '',
+  -     plainText: 'Old holding\n' +
+  -       'Position: Old holding\n' +
+  -       'Status: Sold\n' +
+  -       'Quantity: 0\n' +
+  -       'Target Weight: 0.4',
+        presentationError: null,
+  +     presentationProjection: undefined,
+  -     presentationProjection: null,
+        presentationStatus: 'absent',
+        relations: [],
+        score: '',
+        sourceKey: 'portfolio',
+        status: 'Sold',
+  ...
+        lastEditedTime: '2025-10-01T10:00:00Z',
+  +     normalizedAnalysis: {
+  +       analysis: {
+  +         confidence: null,
+  +         content: {
+  +           blocks: [
+  -     notionBlocks: [
+  -       {
+  -         id: 'report-paragraph',
+  -         paragraph: {
+  -           rich_text: [
+                {
+  +               id: 'b2222222-b222-4222-8222-b22222222222:block:0',
+  +               sourceIds: [
+  +                 'b2222222-b222-4222-8222-b22222222222'
+  +               ],
+  +               text: [
+  +                 {
+  +                   href: null,
+  +                   marks: [],
+  +                   text: 'Revenue grew steadily.'
+  +                 }
+  +               ],
+  +               type: 'paragraph'
+  -               plain_text: 'Revenue grew steadily.'
+                }
+              ],
+  +           schemaVersion: '1.0.0'
+            },
+  +         diagnostics: [],
+  +         header: {
+  +           agent: 'Business Analyst',
+  +           archived: true,
+  +           companyIds: [],
+  +           date: '2025-09-29',
+  +           family: 'business',
+  +           id: 'b2222222-b222-4222-8222-b22222222222',
+  +           lastEditedTime: '2025-10-01T10:00:00Z',
+  +           originalFamily: null,
+  +           provenance: {
+  +             capturedAt: '2025-10-01T10:00:00Z',
+  +             kind: 'notion',
+  +             revision: '2025-10-01T10:00:00Z',
+  +             sourceId: 'b2222222-b222-4222-8222-b22222222222'
+  +           },
+  +           revision: '2025-10-01T10:00:00Z',
+  +           schemaVersion: '1.0.0',
+  +           sourceFreshness: 'unknown',
+  +           sourceKind: 'analysis',
+  +           sourceUrl: 'https://notion.so/b2222222-b222-4222-8222-b22222222222',
+  +           status: 'Superseded',
+  +           title: 'Example Business Analysis Archived'
+  +         },
+  +         kind: 'business',
+  +         presentation: {
+  +           facts: [],
+  +           scenarios: [],
+  +           thresholds: []
+  +         },
+  +         projection: {
+  +           status: 'absent'
+  +         },
+  +         schemaVersion: '1.0.0',
+  +         score: null,
+  +         summary: null,
+  +         verdict: null
+  -         type: 'paragraph'
+          },
+  +       memo: {
+  +         decisionFacts: [],
+  +         hiddenIndexes: [],
+  +         modulesTable: null,
+  +         reasoning: []
+  +       },
+  +       valuation: null,
+  +       view: {
+  +         factGroups: [],
+  +         facts: [],
+  +         hiddenIndexes: [],
+  +         summaryItems: []
+  +       }
+  +     },
+  +     notionBlocks: undefined,
+  -     ],
+        notionUrl: 'https://notion.so/b2222222-b222-4222-8222-b22222222222',
+  +     plainText: '',
+  -     plainText: 'Example Business Analysis Archived\n' +
+  -       'Agent: Business Analyst\n' +
+  -       'Status: Superseded\n' +
+  -       'Date: 2025-09-29\n' +
+  -       'Revenue grew steadily.',
+        presentationError: null,
+  +     presentationProjection: undefined,
+  -     presentationProjection: null,
+        presentationStatus: 'absent',
+        relations: [],
+        score: '',
+        sourceKey: 'analyses',
+        status: 'Superseded',
+  
+      at TestContext.<anonymous> (file:///workspace/scratch/f4cff561abe0/investment-os/tests/investment-read-adapter.test.mjs:264:10)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [ { id: 'a1111111-a111-4111-8111-a11111111111', title: 'Example Business Analysis', sourceKey: 'analyses', category: 'business', agent: 'Business Analyst', notionUrl: 'https://notion.so/a1111111-a111-4111-8111-a11111111111', lastEditedTime: '2026-09-30T10:00:00Z', plainText: '', notionBlocks: undefined, presentationProjection: undefined, presentationStatus: 'absent', presentationError: null, summary: 'Growth remains steady.', handoffSummary: null, status: 'Validated', score: '', verdict: '', confidence: null, date: '2026-09-29', relations: [], archived: false, current: true, decision: null, earningsReview: null, normalizedAnalysis: [Object], companyName: 'Example Systems' }, { id: 'c3333333-c333-4333-8333-c33333333333', title: 'NVIDIA — PEA', sourceKey: 'portfolio', category: 'portfolio', agent: 'Portfolio Manager', notionUrl: 'https://notion.so/c3333333-c333-4333-8333-c33333333333', lastEditedTime: '2026-09-30T10:00:00Z', plainText: '', notionBlocks: undefined, presentationProjection: undefined, presentationStatus: 'absent', presentationError: null, summary: null, handoffSummary: null, status: 'Active', score: '', verdict: '', confidence: null, date: null, relations: [], archived: false, current: false, decision: null, earningsReview: null, normalizedAnalysis: [Object], companyName: 'Example Systems' }, { id: 'd4444444-d444-4444-8444-d44444444444', title: 'Old holding', sourceKey: 'portfolio', category: 'portfolio', agent: 'Portfolio Manager', notionUrl: 'https://notion.so/d4444444-d444-4444-8444-d44444444444', lastEditedTime: '2026-09-30T10:00:00Z', plainText: '', notionBlocks: undefined, presentationProjection: undefined, presentationStatus: 'absent', presentationError: null, summary: null, handoffSummary: null, status: 'Sold', score: '', verdict: '', confidence: null, date: null, relations: [], archived: false, current: false, decision: null, earningsReview: null, normalizedAnalysis: [Object], companyName: 'Non relié' }, { id: 'b2222222-b222-4222-8222-b22222222222', title: 'Example Business Analysis Archived', sourceKey: 'analyses', category: 'business', agent: 'Business Analyst', notionUrl: 'https://notion.so/b2222222-b222-4222-8222-b22222222222', lastEditedTime: '2025-10-01T10:00:00Z', plainText: '', notionBlocks: undefined, presentationProjection: undefined, presentationStatus: 'absent', presentationError: null, summary: null, handoffSummary: null, status: 'Superseded', score: '', verdict: '', confidence: null, date: '2025-09-29', relations: [], archived: true, current: false, decision: null, earningsReview: null, normalizedAnalysis: [Object], companyName: 'Example Systems' } ],
+    expected: [ { id: 'a1111111-a111-4111-8111-a11111111111', title: 'Example Business Analysis', sourceKey: 'analyses', category: 'business', agent: 'Business Analyst', notionUrl: 'https://notion.so/a1111111-a111-4111-8111-a11111111111', lastEditedTime: '2026-09-30T10:00:00Z', plainText: 'Example Business Analysis\nAgent: Business Analyst\nStatus: Validated\nDate: 2026-09-29\nTL;DR: Growth remains steady.\nRevenue grew steadily.', notionBlocks: [Array], presentationProjection: null, presentationStatus: 'absent', presentationError: null, summary: 'Growth remains steady.', handoffSummary: null, status: 'Validated', score: '', verdict: '', confidence: null, date: '2026-09-29', relations: [], archived: false, current: true, decision: null, earningsReview: null, companyName: 'Example Systems' }, { id: 'c3333333-c333-4333-8333-c33333333333', title: 'NVIDIA — PEA', sourceKey: 'portfolio', category: 'portfolio', agent: 'Portfolio Manager', notionUrl: 'https://notion.so/c3333333-c333-4333-8333-c33333333333', lastEditedTime: '2026-09-30T10:00:00Z', plainText: 'NVIDIA — PEA\nPosition: NVIDIA — PEA\nStatus: Active\nQuantity: 2\nPRU: 50\nAccount: PEA\nTarget Weight: 0.1\nTarget Weight 10k: 0.2', notionBlocks: [], presentationProjection: null, presentationStatus: 'absent', presentationError: null, summary: null, handoffSummary: null, status: 'Active', score: '', verdict: '', confidence: null, date: null, relations: [], archived: false, current: false, decision: null, earningsReview: null, companyName: 'Example Systems' }, { id: 'd4444444-d444-4444-8444-d44444444444', title: 'Old holding', sourceKey: 'portfolio', category: 'portfolio', agent: 'Portfolio Manager', notionUrl: 'https://notion.so/d4444444-d444-4444-8444-d44444444444', lastEditedTime: '2026-09-30T10:00:00Z', plainText: 'Old holding\nPosition: Old holding\nStatus: Sold\nQuantity: 0\nTarget Weight: 0.4', notionBlocks: [], presentationProjection: null, presentationStatus: 'absent', presentationError: null, summary: null, handoffSummary: null, status: 'Sold', score: '', verdict: '', confidence: null, date: null, relations: [], archived: false, current: false, decision: null, earningsReview: null, companyName: 'Non relié' }, { id: 'b2222222-b222-4222-8222-b22222222222', title: 'Example Business Analysis Archived', sourceKey: 'analyses', category: 'business', agent: 'Business Analyst', notionUrl: 'https://notion.so/b2222222-b222-4222-8222-b22222222222', lastEditedTime: '2025-10-01T10:00:00Z', plainText: 'Example Business Analysis Archived\nAgent: Business Analyst\nStatus: Superseded\nDate: 2025-09-29\nRevenue grew steadily.', notionBlocks: [Array], presentationProjection: null, presentationStatus: 'absent', presentationError: null, summary: null, handoffSummary: null, status: 'Superseded', score: '', verdict: '', confidence: null, date: '2025-09-29', relations: [], archived: true, current: false, decision: null, earningsReview: null, companyName: 'Example Systems' } ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests/investment-read-adapter.test.mjs:276:1
+✖ explicit Company relations own primary links; title fallback and secondary links remain intact (24.140783ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    [
+      '18888888188848888888188888888888',
+  +   '29999999299949998999299999999999'
+    ]
+  
+      at TestContext.<anonymous> (file:///workspace/scratch/f4cff561abe0/investment-os/tests/investment-read-adapter.test.mjs:314:10)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [ '18888888188848888888188888888888', '29999999299949998999299999999999' ],
+    expected: [ '18888888188848888888188888888888' ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests/lot13-notion-roundtrip.test.mjs:26:41
+✖ native Notion roundtrip retains the complete ordered body (0 additional blocks) (195.590767ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  ... Skipped lines
+  
+    [
+      {
+        level: 2,
+        text: [
+          {
+  ...
+      {
+  -     header: true,
+  -     rows: [
+  -       [
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: 'Valuation Card'
+  -           }
+  -         ],
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: 'Résultat'
+  -           }
+  -         ]
+  -       ],
+  -       [
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: 'Prix de référence'
+  -           }
+  -         ],
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: '272.8 EUR'
+  -           }
+  -         ]
+  -       ],
+  -       [
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: 'Horizon'
+  -           }
+  -         ],
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: '5 ans'
+  -           }
+  -         ]
+  -       ]
+  -     ],
+  -     type: 'table'
+  -   },
+  -   {
+        level: 2,
+        text: [
+          {
+            href: null,
+            marks: [],
+  ...
+      },
+  -   {
+  -     header: true,
+  -     rows: [
+  -       [
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: 'Hypothèse'
+  -           }
+  -         ],
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: 'Bear'
+  -           }
+  -         ],
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: 'Base'
+  -           }
+  -         ],
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: 'Bull'
+  -           }
+  -         ]
+  -       ],
+  -       [
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: 'Prix terminal'
+  -           }
+  -         ],
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: '189.32'
+  -           }
+  -         ],
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: '329.07'
+  -           }
+  -         ],
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: '518.33'
+  -           }
+  -         ]
+  -       ],
+  -       [
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: 'CAGR hors distributions'
+  -           }
+  -         ],
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: '-7.05%'
+  -           }
+  -         ],
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: '3.82%'
+  -           }
+  -         ],
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: '13.70%'
+  -           }
+  -         ]
+  -       ]
+  -     ],
+  -     type: 'table'
+  -   }
+    ]
+  
+      at file:///workspace/scratch/f4cff561abe0/investment-os/tests/lot13-notion-roundtrip.test.mjs:32:9
+      at async withFixture (file:///workspace/scratch/f4cff561abe0/investment-os/tests/fixtures/notion-write-harness.mjs:64:70)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [ { type: 'heading', level: 2, text: [Array] }, { type: 'heading', level: 2, text: [Array] }, { type: 'heading', level: 2, text: [Array] } ],
+    expected: [ { type: 'heading', level: 2, text: [Array] }, { type: 'heading', level: 2, text: [Array] }, { type: 'table', header: true, rows: [Array] }, { type: 'heading', level: 2, text: [Array] }, { type: 'table', header: true, rows: [Array] } ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests/lot13-notion-roundtrip.test.mjs:26:41
+✖ native Notion roundtrip retains the complete ordered body (15 additional blocks) (59.059662ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  ... Skipped lines
+  
+    [
+      {
+        level: 2,
+        text: [
+          {
+  ...
+      {
+  -     header: true,
+  -     rows: [
+  -       [
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: 'Valuation Card'
+  -           }
+  -         ],
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: 'Résultat'
+  -           }
+  -         ]
+  -       ],
+  -       [
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: 'Prix de référence'
+  -           }
+  -         ],
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: '272.8 EUR'
+  -           }
+  -         ]
+  -       ],
+  -       [
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: 'Horizon'
+  -           }
+  -         ],
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: '5 ans'
+  -           }
+  -         ]
+  -       ]
+  -     ],
+  -     type: 'table'
+  -   },
+  -   {
+        level: 2,
+        text: [
+          {
+            href: null,
+            marks: [],
+  ...
+      {
+  -     header: true,
+  -     rows: [
+  -       [
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: 'Hypothèse'
+  -           }
+  -         ],
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: 'Bear'
+  -           }
+  -         ],
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: 'Base'
+  -           }
+  -         ],
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: 'Bull'
+  -           }
+  -         ]
+  -       ],
+  -       [
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: 'Prix terminal'
+  -           }
+  -         ],
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: '189.32'
+  -           }
+  -         ],
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: '329.07'
+  -           }
+  -         ],
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: '518.33'
+  -           }
+  -         ]
+  -       ],
+  -       [
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: 'CAGR hors distributions'
+  -           }
+  -         ],
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: '-7.05%'
+  -           }
+  -         ],
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: '3.82%'
+  -           }
+  -         ],
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: '13.70%'
+  -           }
+  -         ]
+  -       ]
+  -     ],
+  -     type: 'table'
+  -   },
+  -   {
+  -     header: true,
+  -     rows: [
+  -       [
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: 'Donnée'
+  -           }
+  -         ],
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: 'Valeur'
+  -           }
+  -         ]
+  -       ],
+  -       [
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: 'Observation 0'
+  -           }
+  -         ],
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: '0'
+  -           }
+  -         ]
+  -       ]
+  -     ],
+  -     type: 'table'
+  -   },
+  -   {
+        level: 2,
+        text: [
+          {
+            href: null,
+            marks: [],
+  ...
+      {
+  -     header: true,
+  -     rows: [
+  -       [
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: 'Donnée'
+  -           }
+  -         ],
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: 'Valeur'
+  -           }
+  -         ]
+  -       ],
+  -       [
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: 'Observation 3'
+  -           }
+  -         ],
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: '3'
+  -           }
+  -         ]
+  -       ]
+  -     ],
+  -     type: 'table'
+  -   },
+  -   {
+        level: 2,
+        text: [
+          {
+            href: null,
+            marks: [],
+  ...
+      {
+  -     header: true,
+  -     rows: [
+  -       [
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: 'Donnée'
+  -           }
+  -         ],
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: 'Valeur'
+  -           }
+  -         ]
+  -       ],
+  -       [
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: 'Observation 6'
+  -           }
+  -         ],
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: '6'
+  -           }
+  -         ]
+  -       ]
+  -     ],
+  -     type: 'table'
+  -   },
+  -   {
+        level: 2,
+        text: [
+          {
+            href: null,
+            marks: [],
+  ...
+      {
+  -     header: true,
+  -     rows: [
+  -       [
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: 'Donnée'
+  -           }
+  -         ],
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: 'Valeur'
+  -           }
+  -         ]
+  -       ],
+  -       [
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: 'Observation 9'
+  -           }
+  -         ],
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: '9'
+  -           }
+  -         ]
+  -       ]
+  -     ],
+  -     type: 'table'
+  -   },
+  -   {
+        level: 2,
+        text: [
+          {
+            href: null,
+            marks: [],
+  ...
+      {
+  -     header: true,
+  -     rows: [
+  -       [
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: 'Donnée'
+  -           }
+  -         ],
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: 'Valeur'
+  -           }
+  -         ]
+  -       ],
+  -       [
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: 'Observation 12'
+  -           }
+  -         ],
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: '12'
+  -           }
+  -         ]
+  -       ]
+  -     ],
+  -     type: 'table'
+  -   },
+  -   {
+        level: 2,
+        text: [
+          {
+            href: null,
+            marks: [],
+  
+      at file:///workspace/scratch/f4cff561abe0/investment-os/tests/lot13-notion-roundtrip.test.mjs:32:9
+      at async withFixture (file:///workspace/scratch/f4cff561abe0/investment-os/tests/fixtures/notion-write-harness.mjs:64:70)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [ { type: 'heading', level: 2, text: [Array] }, { type: 'heading', level: 2, text: [Array] }, { type: 'heading', level: 2, text: [Array] }, { type: 'heading', level: 2, text: [Array] }, { type: 'paragraph', text: [Array] }, { type: 'heading', level: 2, text: [Array] }, { type: 'paragraph', text: [Array] }, { type: 'heading', level: 2, text: [Array] }, { type: 'paragraph', text: [Array] }, { type: 'heading', level: 2, text: [Array] }, { type: 'paragraph', text: [Array] }, { type: 'heading', level: 2, text: [Array] }, { type: 'paragraph', text: [Array] } ],
+    expected: [ { type: 'heading', level: 2, text: [Array] }, { type: 'heading', level: 2, text: [Array] }, { type: 'table', header: true, rows: [Array] }, { type: 'heading', level: 2, text: [Array] }, { type: 'table', header: true, rows: [Array] }, { type: 'table', header: true, rows: [Array] }, { type: 'heading', level: 2, text: [Array] }, { type: 'paragraph', text: [Array] }, { type: 'table', header: true, rows: [Array] }, { type: 'heading', level: 2, text: [Array] }, { type: 'paragraph', text: [Array] }, { type: 'table', header: true, rows: [Array] }, { type: 'heading', level: 2, text: [Array] }, { type: 'paragraph', text: [Array] }, { type: 'table', header: true, rows: [Array] }, { type: 'heading', level: 2, text: [Array] }, { type: 'paragraph', text: [Array] }, { type: 'table', header: true, rows: [Array] }, { type: 'heading', level: 2, text: [Array] }, { type: 'paragraph', text: [Array] } ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests/lot13-notion-roundtrip.test.mjs:26:41
+✖ native Notion roundtrip retains the complete ordered body (40 additional blocks) (57.470242ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  ... Skipped lines
+  
+    [
+      {
+        level: 2,
+        text: [
+          {
+  ...
+      {
+  -     header: true,
+  -     rows: [
+  -       [
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: 'Valuation Card'
+  -           }
+  -         ],
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: 'Résultat'
+  -           }
+  -         ]
+  -       ],
+  -       [
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: 'Prix de référence'
+  -           }
+  -         ],
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: '272.8 EUR'
+  -           }
+  -         ]
+  -       ],
+  -       [
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: 'Horizon'
+  -           }
+  -         ],
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: '5 ans'
+  -           }
+  -         ]
+  -       ]
+  -     ],
+  -     type: 'table'
+  -   },
+  -   {
+        level: 2,
+        text: [
+          {
+            href: null,
+            marks: [],
+  ...
+      {
+  -     header: true,
+  -     rows: [
+  -       [
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: 'Hypothèse'
+  -           }
+  -         ],
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: 'Bear'
+  -           }
+  -         ],
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: 'Base'
+  -           }
+  -         ],
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: 'Bull'
+  -           }
+  -         ]
+  -       ],
+  -       [
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: 'Prix terminal'
+  -           }
+  -         ],
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: '189.32'
+  -           }
+  -         ],
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: '329.07'
+  -           }
+  -         ],
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: '518.33'
+  -           }
+  -         ]
+  -       ],
+  -       [
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: 'CAGR hors distributions'
+  -           }
+  -         ],
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: '-7.05%'
+  -           }
+  -         ],
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: '3.82%'
+  -           }
+  -         ],
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: '13.70%'
+  -           }
+  -         ]
+  -       ]
+  -     ],
+  -     type: 'table'
+  -   },
+  -   {
+  -     header: true,
+  -     rows: [
+  -       [
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: 'Donnée'
+  -           }
+  -         ],
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: 'Valeur'
+  -           }
+  -         ]
+  -       ],
+  -       [
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: 'Observation 0'
+  -           }
+  -         ],
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: '0'
+  -           }
+  -         ]
+  -       ]
+  -     ],
+  -     type: 'table'
+  -   },
+  -   {
+        level: 2,
+        text: [
+          {
+            href: null,
+            marks: [],
+  ...
+      {
+  -     header: true,
+  -     rows: [
+  -       [
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: 'Donnée'
+  -           }
+  -         ],
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: 'Valeur'
+  -           }
+  -         ]
+  -       ],
+  -       [
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: 'Observation 3'
+  -           }
+  -         ],
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: '3'
+  -           }
+  -         ]
+  -       ]
+  -     ],
+  -     type: 'table'
+  -   },
+  -   {
+        level: 2,
+        text: [
+          {
+            href: null,
+            marks: [],
+  ...
+      {
+  -     header: true,
+  -     rows: [
+  -       [
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: 'Donnée'
+  -           }
+  -         ],
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: 'Valeur'
+  -           }
+  -         ]
+  -       ],
+  -       [
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: 'Observation 6'
+  -           }
+  -         ],
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: '6'
+  -           }
+  -         ]
+  -       ]
+  -     ],
+  -     type: 'table'
+  -   },
+  -   {
+        level: 2,
+        text: [
+          {
+            href: null,
+            marks: [],
+  ...
+      {
+  -     header: true,
+  -     rows: [
+  -       [
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: 'Donnée'
+  -           }
+  -         ],
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: 'Valeur'
+  -           }
+  -         ]
+  -       ],
+  -       [
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: 'Observation 9'
+  -           }
+  -         ],
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: '9'
+  -           }
+  -         ]
+  -       ]
+  -     ],
+  -     type: 'table'
+  -   },
+  -   {
+        level: 2,
+        text: [
+          {
+            href: null,
+            marks: [],
+  ...
+      {
+  -     header: true,
+  -     rows: [
+  -       [
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: 'Donnée'
+  -           }
+  -         ],
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: 'Valeur'
+  -           }
+  -         ]
+  -       ],
+  -       [
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: 'Observation 12'
+  -           }
+  -         ],
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: '12'
+  -           }
+  -         ]
+  -       ]
+  -     ],
+  -     type: 'table'
+  -   },
+  -   {
+        level: 2,
+        text: [
+          {
+            href: null,
+            marks: [],
+  ...
+      {
+  -     header: true,
+  -     rows: [
+  -       [
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: 'Donnée'
+  -           }
+  -         ],
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: 'Valeur'
+  -           }
+  -         ]
+  -       ],
+  -       [
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: 'Observation 15'
+  -           }
+  -         ],
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: '15'
+  -           }
+  -         ]
+  -       ]
+  -     ],
+  -     type: 'table'
+  -   },
+  -   {
+        level: 2,
+        text: [
+          {
+            href: null,
+            marks: [],
+  ...
+      {
+  -     header: true,
+  -     rows: [
+  -       [
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: 'Donnée'
+  -           }
+  -         ],
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: 'Valeur'
+  -           }
+  -         ]
+  -       ],
+  -       [
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: 'Observation 18'
+  -           }
+  -         ],
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: '18'
+  -           }
+  -         ]
+  -       ]
+  -     ],
+  -     type: 'table'
+  -   },
+  -   {
+        level: 2,
+        text: [
+          {
+            href: null,
+            marks: [],
+  ...
+      {
+  -     header: true,
+  -     rows: [
+  -       [
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: 'Donnée'
+  -           }
+  -         ],
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: 'Valeur'
+  -           }
+  -         ]
+  -       ],
+  -       [
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: 'Observation 21'
+  -           }
+  -         ],
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: '21'
+  -           }
+  -         ]
+  -       ]
+  -     ],
+  -     type: 'table'
+  -   },
+  -   {
+        level: 2,
+        text: [
+          {
+            href: null,
+            marks: [],
+  ...
+      {
+  -     header: true,
+  -     rows: [
+  -       [
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: 'Donnée'
+  -           }
+  -         ],
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: 'Valeur'
+  -           }
+  -         ]
+  -       ],
+  -       [
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: 'Observation 24'
+  -           }
+  -         ],
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: '24'
+  -           }
+  -         ]
+  -       ]
+  -     ],
+  -     type: 'table'
+  -   },
+  -   {
+        level: 2,
+        text: [
+          {
+            href: null,
+            marks: [],
+  ...
+      {
+  -     header: true,
+  -     rows: [
+  -       [
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: 'Donnée'
+  -           }
+  -         ],
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: 'Valeur'
+  -           }
+  -         ]
+  -       ],
+  -       [
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: 'Observation 27'
+  -           }
+  -         ],
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: '27'
+  -           }
+  -         ]
+  -       ]
+  -     ],
+  -     type: 'table'
+  -   },
+  -   {
+        level: 2,
+        text: [
+          {
+            href: null,
+            marks: [],
+  ...
+      {
+  -     header: true,
+  -     rows: [
+  -       [
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: 'Donnée'
+  -           }
+  -         ],
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: 'Valeur'
+  -           }
+  -         ]
+  -       ],
+  -       [
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: 'Observation 30'
+  -           }
+  -         ],
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: '30'
+  -           }
+  -         ]
+  -       ]
+  -     ],
+  -     type: 'table'
+  -   },
+  -   {
+        level: 2,
+        text: [
+          {
+            href: null,
+            marks: [],
+  ...
+      {
+  -     header: true,
+  -     rows: [
+  -       [
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: 'Donnée'
+  -           }
+  -         ],
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: 'Valeur'
+  -           }
+  -         ]
+  -       ],
+  -       [
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: 'Observation 33'
+  -           }
+  -         ],
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: '33'
+  -           }
+  -         ]
+  -       ]
+  -     ],
+  -     type: 'table'
+  -   },
+  -   {
+        level: 2,
+        text: [
+          {
+            href: null,
+            marks: [],
+  ...
+      {
+  -     header: true,
+  -     rows: [
+  -       [
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: 'Donnée'
+  -           }
+  -         ],
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: 'Valeur'
+  -           }
+  -         ]
+  -       ],
+  -       [
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: 'Observation 36'
+  -           }
+  -         ],
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: '36'
+  -           }
+  -         ]
+  -       ]
+  -     ],
+  -     type: 'table'
+  -   },
+  -   {
+        level: 2,
+        text: [
+          {
+            href: null,
+            marks: [],
+  ...
+      },
+  -   {
+  -     header: true,
+  -     rows: [
+  -       [
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: 'Donnée'
+  -           }
+  -         ],
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: 'Valeur'
+  -           }
+  -         ]
+  -       ],
+  -       [
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: 'Observation 39'
+  -           }
+  -         ],
+  -         [
+  -           {
+  -             href: null,
+  -             marks: [],
+  -             text: '39'
+  -           }
+  -         ]
+  -       ]
+  -     ],
+  -     type: 'table'
+  -   }
+    ]
+  
+      at file:///workspace/scratch/f4cff561abe0/investment-os/tests/lot13-notion-roundtrip.test.mjs:32:9
+      at async withFixture (file:///workspace/scratch/f4cff561abe0/investment-os/tests/fixtures/notion-write-harness.mjs:64:70)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [ { type: 'heading', level: 2, text: [Array] }, { type: 'heading', level: 2, text: [Array] }, { type: 'heading', level: 2, text: [Array] }, { type: 'heading', level: 2, text: [Array] }, { type: 'paragraph', text: [Array] }, { type: 'heading', level: 2, text: [Array] }, { type: 'paragraph', text: [Array] }, { type: 'heading', level: 2, text: [Array] }, { type: 'paragraph', text: [Array] }, { type: 'heading', level: 2, text: [Array] }, { type: 'paragraph', text: [Array] }, { type: 'heading', level: 2, text: [Array] }, { type: 'paragraph', text: [Array] }, { type: 'heading', level: 2, text: [Array] }, { type: 'paragraph', text: [Array] }, { type: 'heading', level: 2, text: [Array] }, { type: 'paragraph', text: [Array] }, { type: 'heading', level: 2, text: [Array] }, { type: 'paragraph', text: [Array] }, { type: 'heading', level: 2, text: [Array] }, { type: 'paragraph', text: [Array] }, { type: 'heading', level: 2, text: [Array] }, { type: 'paragraph', text: [Array] }, { type: 'heading', level: 2, text: [Array] }, { type: 'paragraph', text: [Array] }, { type: 'heading', level: 2, text: [Array] }, { type: 'paragraph', text: [Array] }, { type: 'heading', level: 2, text: [Array] }, { type: 'paragraph', text: [Array] } ],
+    expected: [
+      { type: 'heading', level: 2, text: [Array] },   { type: 'heading', level: 2, text: [Array] },
+      { type: 'table', header: true, rows: [Array] }, { type: 'heading', level: 2, text: [Array] },
+      { type: 'table', header: true, rows: [Array] }, { type: 'table', header: true, rows: [Array] },
+      { type: 'heading', level: 2, text: [Array] },   { type: 'paragraph', text: [Array] },
+      { type: 'table', header: true, rows: [Array] }, { type: 'heading', level: 2, text: [Array] },
+      { type: 'paragraph', text: [Array] },           { type: 'table', header: true, rows: [Array] },
+      { type: 'heading', level: 2, text: [Array] },   { type: 'paragraph', text: [Array] },
+      { type: 'table', header: true, rows: [Array] }, { type: 'heading', level: 2, text: [Array] },
+      { type: 'paragraph', text: [Array] },           { type: 'table', header: true, rows: [Array] },
+      { type: 'heading', level: 2, text: [Array] },   { type: 'paragraph', text: [Array] },
+      { type: 'table', header: true, rows: [Array] }, { type: 'heading', level: 2, text: [Array] },
+      { type: 'paragraph', text: [Array] },           { type: 'table', header: true, rows: [Array] },
+      { type: 'heading', level: 2, text: [Array] },   { type: 'paragraph', text: [Array] },
+      { type: 'table', header: true, rows: [Array] }, { type: 'heading', level: 2, text: [Array] },
+      { type: 'paragraph', text: [Array] },           { type: 'table', header: true, rows: [Array] },
+      { type: 'heading', level: 2, text: [Array] },   { type: 'paragraph', text: [Array] },
+      { type: 'table', header: true, rows: [Array] }, { type: 'heading', level: 2, text: [Array] },
+      { type: 'paragraph', text: [Array] },           { type: 'table', header: true, rows: [Array] },
+      { type: 'heading', level: 2, text: [Array] },   { type: 'paragraph', text: [Array] },
+      { type: 'table', header: true, rows: [Array] }, { type: 'heading', level: 2, text: [Array] },
+      { type: 'paragraph', text: [Array] },           { type: 'table', header: true, rows: [Array] },
+      { type: 'heading', level: 2, text: [Array] },   { type: 'paragraph', text: [Array] },
+      { type: 'table', header: true, rows: [Array] }
+    ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests/lot13-notion-roundtrip.test.mjs:37:85
+✖ bare terminal prices are not assigned an invented currency (no declaration) (43.69283ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  0 !== 3
+  
+      at file:///workspace/scratch/f4cff561abe0/investment-os/tests/lot13-notion-roundtrip.test.mjs:38:132
+      at async withFixture (file:///workspace/scratch/f4cff561abe0/investment-os/tests/fixtures/notion-write-harness.mjs:64:70)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 3,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/lot13-notion-roundtrip.test.mjs:37:85
+✖ bare terminal prices are not assigned an invented currency (conflicting declarations) (21.777131ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  0 !== 3
+  
+      at file:///workspace/scratch/f4cff561abe0/investment-os/tests/lot13-notion-roundtrip.test.mjs:38:132
+      at async withFixture (file:///workspace/scratch/f4cff561abe0/investment-os/tests/fixtures/notion-write-harness.mjs:64:70)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 3,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/lot13-notion-roundtrip.test.mjs:40:1
+✖ metadata separation retains an unmapped historical source fact (21.98287ms)
+  AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+  
+    assert.ok(actual.content.blocks.some(b=>b.type==='unsupported'&&b.sourceType==='unrepresented_snapshot'&&b.text.includes('Historical evidence retained')))
+  
+      at file:///workspace/scratch/f4cff561abe0/investment-os/tests/lot13-notion-roundtrip.test.mjs:41:66
+      at async withFixture (file:///workspace/scratch/f4cff561abe0/investment-os/tests/fixtures/notion-write-harness.mjs:64:70)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/notion-adapter-write.test.mjs:36:1
+✖ exact AN-598 payload with provider callout icon reaches persisted journal, D1 and immediate readback (35.326135ms)
+  AssertionError [ERR_ASSERTION]: all AN-598/AN-599 native tables survive the writer snapshot
+  
+  0 !== 9
+  
+      at file:///workspace/scratch/f4cff561abe0/investment-os/tests/notion-adapter-write.test.mjs:50:9
+      at async withFixture (file:///workspace/scratch/f4cff561abe0/investment-os/tests/fixtures/notion-write-harness.mjs:64:70)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 9,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/notion-adapter-write.test.mjs:188:1
+✖ migrated Earnings schema stores guidance prose as text, validates enums, persists Draft and replays once (17.642436ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'Management described a multi-sentence guidance narrative for the upcoming reporting period.'
+  - 'Synthetic earnings summary for persistence verification.'
+  
+      at file:///workspace/scratch/f4cff561abe0/investment-os/tests/notion-adapter-write.test.mjs:204:125
+      at async withFixture (file:///workspace/scratch/f4cff561abe0/investment-os/tests/fixtures/notion-write-harness.mjs:64:70)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'Management described a multi-sentence guidance narrative for the upcoming reporting period.',
+    expected: 'Synthetic earnings summary for persistence verification.',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/notion-adapter-write.test.mjs:260:1
+✖ production source without a Summary property preserves the canonical summary in the report body (6.669845ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + null
+  - 'Business quality remains strong, with an explicit evidence gap.'
+  
+      at file:///workspace/scratch/f4cff561abe0/investment-os/tests/notion-adapter-write.test.mjs:270:86
+      at async withFixture (file:///workspace/scratch/f4cff561abe0/investment-os/tests/fixtures/notion-write-harness.mjs:64:70)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: null,
+    expected: 'Business quality remains strong, with an explicit evidence gap.',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

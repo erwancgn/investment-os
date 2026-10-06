@@ -1,0 +1,44 @@
+{
+  "author": {
+    "name": "Erwan Cognee"
+  },
+  "description": "Reliable public-equity underwriting with lean skill routing, evidence-backed handoffs and verified persistence.",
+  "keywords": [
+    "investment",
+    "valuation",
+    "equity-research",
+    "earnings",
+    "portfolio",
+    "cio",
+    "notion",
+    "supabase"
+  ],
+  "name": "investment-os-analysis",
+  "repository": "https://github.com/erwancgn/plugin-investment-os",
+  "version": "1.3.10",
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "extensions": {
+    "com.openai": {
+      "interface": {
+        "brandColor": "#0B1F3A",
+        "capabilities": [
+          "Read"
+        ],
+        "category": "Productivity",
+        "composerIcon": "./assets/icon.png",
+        "defaultPrompt": [
+          "Analyse une société cotée avec le pipeline complet jusqu’à la décision CIO.",
+          "Analyse les derniers résultats et identifie les modules à actualiser.",
+          "Teste si la thèse sectorielle peut être juste alors que l’action est mauvaise."
+        ],
+        "developerName": "Erwan Cognee",
+        "displayName": "Investment OS Perso",
+        "logo": "./assets/compass-os.svg",
+        "longDescription": "A professional public-equity research operating system for evidence-based underwriting and portfolio decisions. The nine skills preserve the financial method and resolve company names or tickers through the connected Investment OS MCP server. Reports remain exportable when production WRITE is disabled. Authorized persistence uses save_analysis, Core receipts and canonical readbacks; production WRITE remains closed.",
+        "shortDescription": "Equity research decisions",
+        "brandColorDark": "#C5D9F4"
+      },
+      "apps": "./.app.json"
+    }
+  }
+}

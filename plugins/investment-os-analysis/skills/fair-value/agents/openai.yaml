@@ -1,0 +1,17 @@
+interface:
+  display_name: "Fair Value"
+  short_description: "Valorisation complète et scénarios à cinq ans"
+  icon_small: "./assets/icon.svg"
+  icon_large: "./assets/icon.svg"
+  brand_color: "#F28C28"
+  default_prompt: "Utilise $fair-value pour valoriser une société cotée à son cours actuel."
+policy:
+  allow_implicit_invocation: true
+
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "investment-os"
+      description: "Lire les données Investment OS et soumettre une analyse uniquement quand WRITE est autorisé"
+      transport: "streamable_http"
+      url: "https://investment-os.erwancognee94.chatgpt.site/mcp"

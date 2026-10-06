@@ -1,0 +1,14 @@
+{
+  "schema_version": 3,
+  "built_at": "2026-10-05",
+  "plugin_version": "1.3.10",
+  "files": {
+    "references/execution-contract.md": "d06a40b564daa4aa5f998227ce7631e2342ecb7436aa63355e99100fbb420e75",
+    "references/investment-os-mcp.md": "fd06c38512d7047a70e2ecb6dd911cbd9cc89d0362d21084dfd792705e482274",
+    "references/pipeline-contract.md": "d0ae729908ef5ddb163d83d0c5cba5153de568b645a8d14f391ab9a55367e592",
+    "references/business-playbook.md": "49c492ea601b6fd9fe2b10e7af4af3fb5266d8ae35dce00dc62b747511b88486",
+    "references/business-framework.md": "35a9233c2731cbc8a9659e70ccb6e6ec34466c8524db3947e13efa89294a3c35",
+    "references/fair-value-playbook.md": "edb891dd957f703b6d8baf3af1f6bfd1e19738f3b9f40a919fb4cce2c841eae9",
+    "references/valuation-framework.md": "5024fa501a54b3268663f24512f382117ae77ac5ad7e6675e76b53baa591e15d"
+  }
+}

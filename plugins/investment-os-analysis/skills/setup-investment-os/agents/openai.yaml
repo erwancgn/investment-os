@@ -1,0 +1,17 @@
+interface:
+  display_name: "Investment OS Setup"
+  short_description: "Configure conversation, Notion ou base externe"
+  icon_small: "./assets/icon.svg"
+  icon_large: "./assets/icon.svg"
+  brand_color: "#0B1F3A"
+  default_prompt: "Utilise $setup-investment-os pour configurer la lecture et la persistance des analyses."
+policy:
+  allow_implicit_invocation: false
+
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "investment-os"
+      description: "Lire les données Investment OS et soumettre une analyse uniquement quand WRITE est autorisé"
+      transport: "streamable_http"
+      url: "https://investment-os.erwancognee94.chatgpt.site/mcp"
