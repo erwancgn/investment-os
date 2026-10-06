@@ -1,7 +1,7 @@
 import { isSafeHttpUrl } from "../../core/contracts/common.ts";
 import type { InlineMark, InlineSegment } from "../../core/contracts/analysis";
 
-const PART = /(<strong\b[^>]*>[\s\S]+?<\/strong\s*>|<b\b[^>]*>[\s\S]+?<\/b\s*>|<em\b[^>]*>[\s\S]+?<\/em\s*>|<i\b[^>]*>[\s\S]+?<\/i\s*>|\*\*\*[\s\S]+?\*\*\*|___[\s\S]+?___|\*\*[\s\S]+?\*\*|__[\s\S]+?__|~~[\s\S]+?~~|`[^`\n]+`|\*[^*\n]+\*|_[^_\n]+_|\[[^\]]+\]\([^)]+\))/gi;
+const PART = /(<strong\b[^>]*>[\s\S]+?<\/strong\s*>|<b\b[^>]*>[\s\S]+?<\/b\s*>|<em\b[^>]*>[\s\S]+?<\/em\s*>|<i\b[^>]*>[\s\S]+?<\/i\s*>|\*\*\*[\s\S]+?\*\*\*|___[\s\S]+?___|\*\*[\s\S]+?\*\*|__[\s\S]+?__|~~[\s\S]+?~~|`[^`\n]+`|\*[^*\n]+\*|(?<![\p{L}\p{N}_])_[^_\n]+_(?![\p{L}\p{N}_])|\[[^\]]+\]\([^)]+\))/giu;
 
 /** Interpret the existing inline syntax once, before React renders the content. */
 export function inlineSegments(value: string, marks: InlineMark[] = [], href: string | null = null): InlineSegment[] {
@@ -41,6 +41,6 @@ export function plainInlineText(value: string): string {
     .replace(/~~([\s\S]+?)~~/g, "$1")
     .replace(/`([^`\n]+)`/g, "$1")
     .replace(/(?<!\*)\*([^*\n]+)\*(?!\*)/g, "$1")
-    .replace(/(?<!_)_([^_\n]+)_(?!_)/g, "$1")
+    .replace(/(?<![\p{L}\p{N}_])_([^_\n]+)_(?![\p{L}\p{N}_])/gu, "$1")
     .replace(/<\/?\s*(?:strong|b|em|i)\b[^>]*>/gi, "");
 }

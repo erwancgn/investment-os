@@ -7,6 +7,12 @@ import { parseNotionBlocks } from "../app/lib/notion-block-parser.ts";
 
 const markup = text => renderToStaticMarkup(createElement(Fragment, null, ...renderInlineFormat(text)));
 
+test("literal evidence identifiers keep intraword underscores while historical italics still render", () => {
+  const value = "collected_this_run et _utile_";
+  assert.equal(markup(value), "collected_this_run et <em>utile</em>");
+  assert.equal(plainInlineText(value), "collected_this_run et utile");
+});
+
 test("Notion rich text annotations render emphasis without visible Markdown markers", () => {
   const blocks = parseNotionBlocks([{
     type: "paragraph",

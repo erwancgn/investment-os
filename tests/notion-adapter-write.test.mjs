@@ -10,6 +10,17 @@ function providerIconOptions(f,emoji){return {...f.options,fetch:async(url,optio
  }
  return response;
 }};}
+
+test('a new Draft beside an existing Current is historical in the UI but not canonically archived',()=>withFixture({},async f=>{
+ const current=await f.writer(input());
+ const draft=input({runId:'new-draft-beside-current'});draft.analysis.header.status='Draft';
+ const saved=await f.writer(draft);const service=f.api.createInvestmentService(f.db);
+ const read=await service.getAnalysisById(saved.analysisId);
+ assert.equal(read.status,'ok');assert.equal(read.data.header.status,'Draft');assert.equal(read.data.header.archived,false);
+ const company=await service.getCompany(compact(companyId));
+ assert.equal(company.status,'ok');assert.ok(company.data.archives.some(a=>a.id===saved.analysisId));
+ assert.equal(f.promotions,1);assert.equal((await service.getCurrentAnalysis(compact(companyId),'business')).data.header.id,current.analysisId);
+}));
 for(const [expected,observed,status] of [[null,'💡','Draft'],['🔥','🔥','Validated'],['🔥','💡','Draft']])test(`callout semantic verification ${expected} -> ${observed}`,()=>withFixture({},async f=>{
  const draft=input();draft.analysis.header.status=status;
  const callout={id:'icon-callout',sourceIds:['fixture-source'],type:'callout',text:[{text:'Canonical callout.',marks:[],href:null}],icon:expected};
