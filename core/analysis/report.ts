@@ -13,6 +13,9 @@ const EVIDENCE = /\[E:([A-Za-z0-9][A-Za-z0-9_.:-]{0,127})\]/g;
 
 export type ReportBuild = { ok: true; input: SaveAnalysisInput; issues: [] } | { ok: false; issues: string[] };
 
+/** Header id synthesized for a report; never a provider page id. */
+export const reportAnalysisId = (runId: string, kind: string) => `report:${runId}:${kind}`;
+
 export function isReportInput(value: unknown): value is SaveReportInput {
   return isRecord(value) && value.format === "report";
 }
@@ -37,7 +40,8 @@ function blockText(block: AnalysisBlock): string {
 function validate(input: SaveReportInput): string[] {
   const issues: string[] = [];
   const allowed = new Set(["format", "runId", "kind", "companyId", "title", "date", "status", "reportMarkdown", "summary", "verdict", "confidence", "score", "handoffSummary", "earnings"]);
-  for (const key of Object.keys(input)) if (!allowed.has(key)) issues.push(`${key} is not a report field`);
+  const unknown = Object.keys(input).filter(key => !allowed.has(key)).length;
+  if (unknown) issues.push(`${unknown} unknown report field${unknown > 1 ? "s" : ""}`);
   if (!text(input.runId, REPORT_LIMITS.runIdChars) || !input.runId.trim() || input.runId.trim() !== input.runId) issues.push("runId must be a non-empty trimmed string");
   if (!KINDS.includes(input.kind)) issues.push(`kind must be one of ${KINDS.join(", ")}`);
   if (!text(input.companyId, 512) || !input.companyId.trim() || input.companyId.trim() !== input.companyId) issues.push("companyId must be a non-empty trimmed string");
@@ -96,10 +100,11 @@ export function analysisFromReport(input: SaveReportInput, render: (markdown: st
     schemaVersion: SCHEMA_VERSION,
     kind,
     header: {
-      schemaVersion: SCHEMA_VERSION, id: `report:${input.runId}:${kind}`, title: input.title.trim(), sourceUrl: null,
+      schemaVersion: SCHEMA_VERSION, id: reportAnalysisId(input.runId, kind), title: input.title.trim(), sourceUrl: null,
       family: kind, originalFamily: null, sourceKind: "analysis" as const, agent: AGENTS[kind], status: input.status,
       date: input.date, lastEditedTime: `${input.date}T00:00:00.000Z`, companyIds: [input.companyId],
-      revision: `report:${input.runId}`, sourceFreshness: "fresh" as const, archived: false,
+      // Freshness is a property of the model's sources, which the server cannot verify.
+      revision: `report:${input.runId}`, sourceFreshness: "unknown" as const, archived: false,
       provenance: { kind: "derived" as const, sourceId: input.runId, revision: null, capturedAt: null },
     },
     content: { schemaVersion: SCHEMA_VERSION, blocks },

@@ -18,7 +18,7 @@ export type McpRuntime = {
   service: (scope: McpScope, caller: McpCaller) => Core;
   waitUntil?: (promise: Promise<unknown>) => void;
   /** Per-caller READ budget (MCP spec: servers MUST rate limit tool invocations). Isolate-local. */
-  readRateLimit?: { max: number; windowMs: number; now?: () => number };
+  readRateLimit?: { max: number; windowMs: number; now?: () => number; maxCallers?: number };
 };
 const provider = new CfWorkerJsonSchemaValidator({ draft: "7" });
 const schemaFor = (name: ToolName, field: "inputSchema" | "outputSchema") => {
@@ -101,14 +101,17 @@ function invoke(core: Core, name: ToolName, input: McpInputs[ToolName]) {
 export function createMcpHandler(runtime: McpRuntime) {
   // Only live transport concurrency, not an idempotency journal/cache. Writer owns durable replay.
   const activeWrites = new Set<string>();
-  const readLimit = { max: runtime.readRateLimit?.max ?? MCP_LIMITS.readsPerWindow, windowMs: runtime.readRateLimit?.windowMs ?? MCP_LIMITS.readWindowMs, now: runtime.readRateLimit?.now ?? Date.now };
+  const readLimit = { max: runtime.readRateLimit?.max ?? MCP_LIMITS.readsPerWindow, windowMs: runtime.readRateLimit?.windowMs ?? MCP_LIMITS.readWindowMs, now: runtime.readRateLimit?.now ?? Date.now, maxCallers: runtime.readRateLimit?.maxCallers ?? 1000 };
   const readWindows = new Map<string, { start: number; count: number }>();
   /** Fixed window per subject; WRITE keeps its own single-flight fence. */
   function allowRead(subject: string): boolean {
     const now = readLimit.now();
     const window = readWindows.get(subject);
     if (!window || now - window.start >= readLimit.windowMs) {
-      if (readWindows.size > 1000) for (const [key, value] of readWindows) if (now - value.start >= readLimit.windowMs) readWindows.delete(key);
+      readWindows.delete(subject);
+      for (const [key, value] of readWindows) if (now - value.start >= readLimit.windowMs) readWindows.delete(key);
+      // Hard cap: evict the oldest tracked caller (Map keeps insertion order).
+      while (readWindows.size >= readLimit.maxCallers) readWindows.delete(readWindows.keys().next().value!);
       readWindows.set(subject, { start: now, count: 1 });
       return true;
     }
@@ -159,7 +162,7 @@ export function createMcpHandler(runtime: McpRuntime) {
       })]);
     } finally { if (timer) clearTimeout(timer); }
   }
-  return async (request: Request, keepAlive = runtime.waitUntil): Promise<Response> => {
+  const handle = async (request: Request, keepAlive = runtime.waitUntil): Promise<Response> => {
     const headers = { "cache-control": "private, no-store" };
     if (request.headers.has("origin") || request.headers.get("sec-fetch-site") === "cross-site") return Response.json(rejected("forbidden"), { status: 403, headers });
     let caller: McpCaller | null;
@@ -205,4 +208,6 @@ export function createMcpHandler(runtime: McpRuntime) {
     } catch { return Response.json(rejected("invalid_input"), { status: 400, headers }); }
     finally { await server.close(); }
   };
+  /** Observability for tests: number of callers currently tracked by the READ limiter. */
+  return Object.assign(handle, { trackedReadCallers: () => readWindows.size });
 }

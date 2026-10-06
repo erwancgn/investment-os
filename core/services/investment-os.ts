@@ -187,8 +187,12 @@ export function createInvestmentCore(ports: InvestmentPorts) {
       try {
         const receipt = await ports.writeAnalysis(input);
         if (!validReceipt(receipt, input)) return serviceError("mapping") as ServiceResult<SaveAnalysisReceipt>;
-        const result = ok(receipt, receipt.diagnostics);
-        return { ...result, metadata: { revision: receipt.revision, freshness: "unknown", provenance: input.analysis.header.provenance, diagnostics: [...input.analysis.diagnostics, ...receipt.diagnostics] } };
+        // A report's header id is synthesized: it may only come back on a partial receipt, flagged.
+        const synthesized = isReportInput(request) && receipt.analysisId === input.analysis.header.id;
+        if (synthesized && receipt.status !== "partial") return serviceError("mapping") as ServiceResult<SaveAnalysisReceipt>;
+        const unresolved: Diagnostic[] = synthesized ? [{ code: "analysis_id_unresolved", message: "La page Notion n'est pas encore identifiée ; analysisId n'est pas un identifiant de page.", severity: "warning", path: "analysisId" }] : [];
+        const result = ok(receipt, [...receipt.diagnostics, ...unresolved]);
+        return { ...result, metadata: { revision: receipt.revision, freshness: "unknown", provenance: input.analysis.header.provenance, diagnostics: [...input.analysis.diagnostics, ...receipt.diagnostics, ...unresolved] } };
       } catch (error) { return serviceError(errorCode(error)) as ServiceResult<SaveAnalysisReceipt>; }
     },
     getQuote(assetId: string, options?: ReadOptions): Promise<ServiceResult<Quote>> {

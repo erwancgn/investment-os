@@ -387,3 +387,29 @@ test("MCP tools spec: servers MUST rate limit tool invocations — READ budget p
   now += 60_001;
   assert.equal((await as("alice")()).status, "completed", "window resets");
 });
+
+test("review fix: report form cannot bypass write approval, demo refusal or the campaign envelope", async () => {
+  let calls = 0;
+  const core = api.createInvestmentCore({ renderReportContent: () => ({ schemaVersion: "1.0.0", blocks: [] }), writeAnalysis: async () => { calls++; throw new Error("must not write"); } });
+  const report = { format: "report", runId: "FV-SU-20261006-LOT13-E2E", kind: "business", companyId: "3b337ea7af3581ca97c4f048f9d52b1c", title: "t", date: "2026-10-06", status: "Draft", reportMarkdown: "x", summary: null, verdict: null, confidence: null };
+  const cases = [
+    [{ ...caller, writeApproved: false }, base, report, "confirmation_required"],
+    [caller, { ...base, scope: "demo" }, report, "forbidden"],
+    [{ ...caller, allowedWriteRunIds: [report.runId] }, base, { ...report, kind: "short" }, "forbidden"],
+    [{ ...caller, allowedWriteRunIds: [report.runId] }, base, { ...report, status: "Validated" }, "forbidden"],
+  ];
+  for (const [identity, args, input, code] of cases) {
+    const result = await call(handler(core, identity), "save_analysis", { ...args, input });
+    assert.equal(result.status, "rejected"); assert.equal(result.error.code, code);
+  }
+  assert.equal(calls, 0);
+});
+
+test("review fix: the READ limiter memory is hard-capped", async () => {
+  let now = 0;
+  const core = api.createInvestmentCore({ readCompany: async () => null });
+  const h = api.createMcpHandler({ authenticate: r => ({ ...caller, subject: r.headers.get("x-test-subject") }), service: () => core, readRateLimit: { max: 5, windowMs: 60_000, now: () => now, maxCallers: 3 } });
+  for (const subject of ["a", "b", "c", "d"]) assert.equal((await output(await h(request("get_company", { ...base, id: "c" }, { headers: { "x-test-subject": subject } })))).status, "completed");
+  const tracked = h.trackedReadCallers?.();
+  assert.ok(tracked !== undefined && tracked <= 3, `tracked callers ${tracked}`);
+});

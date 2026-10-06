@@ -142,3 +142,31 @@ test("every report kind passes the writer preflight against the REAL Notion sche
     assert.deepEqual(f.api.preflightAnalysisWrite(built.input, await schema(kind === "earnings" ? "earnings" : "analyses")), [], kind);
   }
 }));
+
+test("review fix: unknown keys are refused without echoing the caller's key", async () => {
+  const m = await api();
+  const issues = m.analysisFromReport({ ...report(), "<script>x</script>": 1, extra: 2 }, m.reportContentRenderer).issues;
+  assert.deepEqual(issues, ["2 unknown report fields"]);
+});
+
+test("review fix: the server never claims freshness it cannot know", async () => {
+  const m = await api();
+  const header = m.analysisFromReport(report(), m.reportContentRenderer).input.analysis.header;
+  assert.equal(header.sourceFreshness, "unknown");
+});
+
+test("review fix: evidence markers survive inside tables and headings", async () => {
+  const m = await api();
+  const blocks = m.analysisFromReport(report({ reportMarkdown: "## Marge [E:mg-1]\n\n| KPI | Valeur |\n| --- | --- |\n| Marge | 18 % [E:mg-2] |" }), m.reportContentRenderer).input.analysis.content.blocks;
+  assert.deepEqual(blocks.map(b => b.sourceIds), [["mg-1"], ["mg-2"]]);
+});
+
+test("review fix: a receipt that still carries the synthesized id is never presented as a page id", async () => {
+  const m = await api();
+  const receipt = (status, analysisId, extra = {}) => async input => ({ schemaVersion: "1.0.0", status, analysisId: analysisId ?? input.analysis.header.id, runId: input.runId, revision: null, persisted: false, promoted: false, verified: false, diagnostics: [], ...extra });
+  const partial = await m.createInvestmentCore({ renderReportContent: m.reportContentRenderer, writeAnalysis: receipt("partial") }).saveAnalysis(report());
+  assert.equal(partial.status, "ok", "partial receipt is preserved");
+  assert.ok(partial.metadata.diagnostics.some(d => d.code === "analysis_id_unresolved" && d.severity === "warning"));
+  const lying = await m.createInvestmentCore({ renderReportContent: m.reportContentRenderer, writeAnalysis: receipt("persisted", undefined, { persisted: true }) }).saveAnalysis(report());
+  assert.equal(lying.status, "error"); assert.equal(lying.error.code, "mapping");
+});
