@@ -3,12 +3,12 @@ import { isReportInput } from "../../core/analysis/report";
 
 type SiteCampaign = { companyId: string; families: readonly string[] };
 
-/** Fixed, source-owned authorization for the bounded Lot 13 Sites campaign. */
-export const SITE_CAMPAIGN_EXPIRES_AT = "2026-10-06T14:00:00Z";
+/** Fixed, source-owned authorization for the bounded Lot 9 certification campaign (Draft-only, creation-only). */
+export const SITE_CAMPAIGN_EXPIRES_AT = "2026-10-06T21:00:00Z";
 export const SITE_WRITE_CAMPAIGNS: Readonly<Record<string, SiteCampaign>> = Object.freeze({
-  "FV-SU-20261006-LOT13-E2E": Object.freeze({ companyId: "3b337ea7af3581ca97c4f048f9d52b1c", families: Object.freeze(["business", "valuation"]) }),
-  "ER-MU-20261006-LOT13-E2E": Object.freeze({ companyId: "3b537ea7af3581bd9d9bd65dcfe03d97", families: Object.freeze(["earnings"]) }),
-  "FA-GOOGL-20261006-LOT13-E2E": Object.freeze({ companyId: "3b337ea7af35819e8bd8f12ea7fb5dc4", families: Object.freeze(["business", "valuation", "short", "portfolio", "cio_memo"]) }),
+  "FV-SU-20261006-LOT9-E2E": Object.freeze({ companyId: "3b337ea7af3581ca97c4f048f9d52b1c", families: Object.freeze(["business", "valuation"]) }),
+  "ER-MU-20261006-LOT9-E2E": Object.freeze({ companyId: "3b537ea7af3581bd9d9bd65dcfe03d97", families: Object.freeze(["earnings"]) }),
+  "FA-GOOGL-20261006-LOT9-E2E": Object.freeze({ companyId: "3b337ea7af35819e8bd8f12ea7fb5dc4", families: Object.freeze(["business", "valuation", "short", "portfolio", "cio_memo"]) }),
 });
 
 const compactId = (value: string) => value.trim().toLowerCase().replaceAll("-", "");

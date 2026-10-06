@@ -72,7 +72,7 @@ test("Sites WRITE is release-closed; even a fixture allowlist cannot bypass the 
   assert.deepEqual(identity.permissions, ["investment:read"]);
   assert.equal(identity.writeApproved, false);
   let closedCalls = 0;
-  const closedOwner = api.authenticateSitesMcp(identityRequest, { ...flags, MCP_WRITE_TEST_RUN_IDS: "FV-SU-20261006-LOT13-E2E" });
+  const closedOwner = api.authenticateSitesMcp(identityRequest, { ...flags, MCP_WRITE_TEST_RUN_IDS: "FV-SU-20261006-LOT9-E2E" });
   const closedOutput = await call(handler({ saveAnalysis: async () => { closedCalls++; throw new Error("closed write reached Core"); } }, closedOwner), "save_analysis", { ...base, input: writeInput() });
   assert.equal(closedOutput.error.code, "forbidden"); assert.equal(closedOutput.error.outcome, "not_started"); assert.equal(closedCalls, 0);
   const authorizedFixture = { ...identity, permissions: ["investment:read", "investment:write"], writeApproved: true };
@@ -85,8 +85,8 @@ test("Sites WRITE is release-closed; even a fixture allowlist cannot bypass the 
 });
 
 test("Sites campaign dispatch is exact, Draft-only, new-only, and expires before Core", async () => {
-  const runId = "FV-SU-20261006-LOT13-E2E";
-  const allowedWriteRunIds = [runId, "ER-MU-20261006-LOT13-E2E", "FA-GOOGL-20261006-LOT13-E2E"];
+  const runId = "FV-SU-20261006-LOT9-E2E";
+  const allowedWriteRunIds = [runId, "ER-MU-20261006-LOT9-E2E", "FA-GOOGL-20261006-LOT9-E2E"];
   const identity = { ...caller, allowedWriteRunIds };
   let calls = 0;
   const core = api.createInvestmentCore({ writeAnalysis: async intent => { calls++; return { schemaVersion: "1.0.0", status: "persisted", analysisId: "assigned-analysis", runId: intent.runId, revision: "2026-10-06T12:00:00Z", persisted: true, promoted: false, verified: false, diagnostics: [] }; } });
@@ -111,8 +111,8 @@ test("Sites campaign dispatch is exact, Draft-only, new-only, and expires before
     assert.equal(accepted.result?.status, "ok", JSON.stringify(accepted));
     assert.equal(calls, 1, "the exact authorized Draft reaches the fake Core");
     for (const [id, company, family] of [
-      ["ER-MU-20261006-LOT13-E2E", "3b537ea7af3581bd9d9bd65dcfe03d97", "earnings"],
-      ["FA-GOOGL-20261006-LOT13-E2E", "3b337ea7af35819e8bd8f12ea7fb5dc4", "cio_memo"],
+      ["ER-MU-20261006-LOT9-E2E", "3b537ea7af3581bd9d9bd65dcfe03d97", "earnings"],
+      ["FA-GOOGL-20261006-LOT9-E2E", "3b337ea7af35819e8bd8f12ea7fb5dc4", "cio_memo"],
     ]) assert.equal((await call(h, "save_analysis", { ...base, input: campaignInput(id, company, family) })).result.status, "ok");
     assert.equal(calls, 3, "each exact company/family campaign has a nominal path");
 
@@ -133,7 +133,7 @@ test("Sites campaign dispatch is exact, Draft-only, new-only, and expires before
     }
     assert.equal(calls, 3, "invalid campaign intents never reach Core");
 
-    Date.now = () => Date.parse("2026-10-06T14:00:00Z");
+    Date.now = () => Date.parse(api.SITE_CAMPAIGN_EXPIRES_AT);
     const expired = await call(h, "save_analysis", { ...base, input: campaignInput() });
     assert.equal(expired.error.code, "forbidden");
     assert.equal(calls, 3, "expired campaign never reaches Core");
@@ -363,7 +363,7 @@ test("report form: validated by the published schema, built by the Core, refused
 test("Sites campaign policy applies the same envelope to the report form", async () => {
   const { isAuthorizedSiteCampaignWrite, SITE_CAMPAIGN_EXPIRES_AT } = api;
   const before = Date.parse(SITE_CAMPAIGN_EXPIRES_AT) - 60_000;
-  const runId = "FV-SU-20261006-LOT13-E2E", allowed = [runId];
+  const runId = "FV-SU-20261006-LOT9-E2E", allowed = [runId];
   const report = { format: "report", runId, kind: "business", companyId: "3b337ea7-af35-81ca-97c4-f048f9d52b1c", title: "t", date: "2026-10-06", status: "Draft", reportMarkdown: "x", summary: null, verdict: null, confidence: null };
   assert.equal(isAuthorizedSiteCampaignWrite(report, allowed, before), true);
   assert.equal(isAuthorizedSiteCampaignWrite({ ...report, status: "Validated" }, allowed, before), false);
@@ -391,7 +391,7 @@ test("MCP tools spec: servers MUST rate limit tool invocations — READ budget p
 test("review fix: report form cannot bypass write approval, demo refusal or the campaign envelope", async () => {
   let calls = 0;
   const core = api.createInvestmentCore({ renderReportContent: () => ({ schemaVersion: "1.0.0", blocks: [] }), writeAnalysis: async () => { calls++; throw new Error("must not write"); } });
-  const report = { format: "report", runId: "FV-SU-20261006-LOT13-E2E", kind: "business", companyId: "3b337ea7af3581ca97c4f048f9d52b1c", title: "t", date: "2026-10-06", status: "Draft", reportMarkdown: "x", summary: null, verdict: null, confidence: null };
+  const report = { format: "report", runId: "FV-SU-20261006-LOT9-E2E", kind: "business", companyId: "3b337ea7af3581ca97c4f048f9d52b1c", title: "t", date: "2026-10-06", status: "Draft", reportMarkdown: "x", summary: null, verdict: null, confidence: null };
   const cases = [
     [{ ...caller, writeApproved: false }, base, report, "confirmation_required"],
     [caller, { ...base, scope: "demo" }, report, "forbidden"],
@@ -412,4 +412,13 @@ test("review fix: the READ limiter memory is hard-capped", async () => {
   for (const subject of ["a", "b", "c", "d"]) assert.equal((await output(await h(request("get_company", { ...base, id: "c" }, { headers: { "x-test-subject": subject } })))).status, "completed");
   const tracked = h.trackedReadCallers?.();
   assert.ok(tracked !== undefined && tracked <= 3, `tracked callers ${tracked}`);
+});
+
+test("Lot 9 campaign: exact run list, no Lot 13 replay, short bounded window", async () => {
+  const { isAuthorizedSiteCampaignWrite, SITE_WRITE_CAMPAIGNS, SITE_CAMPAIGN_EXPIRES_AT } = api;
+  assert.deepEqual(Object.keys(SITE_WRITE_CAMPAIGNS).sort(), ["ER-MU-20261006-LOT9-E2E", "FA-GOOGL-20261006-LOT9-E2E", "FV-SU-20261006-LOT9-E2E"]);
+  const old = { format: "report", runId: "ER-MU-20261006-LOT13-E2E", kind: "earnings", companyId: "3b537ea7af3581bd9d9bd65dcfe03d97", title: "t", date: "2026-10-06", status: "Draft", reportMarkdown: "x", summary: null, verdict: null, confidence: null };
+  assert.equal(isAuthorizedSiteCampaignWrite(old, [old.runId], Date.parse("2026-10-06T13:00:00Z")), false, "Lot 13 run ids are not replayable");
+  assert.ok(Date.parse(SITE_CAMPAIGN_EXPIRES_AT) > Date.parse("2026-10-06T13:30:00Z"));
+  assert.ok(Date.parse(SITE_CAMPAIGN_EXPIRES_AT) <= Date.parse("2026-10-06T22:00:00Z"), "window capped at the evening");
 });
