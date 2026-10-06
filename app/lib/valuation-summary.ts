@@ -36,7 +36,7 @@ function thresholdPriceTokens(text: string) {
   return [...text.matchAll(/([~≈≃]?\s*\d[\d .,'’]*(?:[,.]\d+)?\s*(?:USD|EUR|GBP|CHF|CAD|JPY|SEK|TWD|[$€£¥])?)(?![\d.,]|\s*%)/gi)]
     .map(match => match[1].trim()).filter(value => /\d/.test(value));
 }
-function explicitRows(block: Extract<RenderBlock,{type:"table"}>, index: number) {
+function explicitRows(block: Extract<RenderBlock,{type:"table"}>, index: number, referenceCurrency?: string) {
   const rows = block.rows.map(cleanCells).filter(r => r.some(Boolean) && !r.filter(Boolean).every(cell => /^:?-{3,}:?$/.test(cell)));
   if (!rows.length) return { scenarios: [], full: false };
   const found: ValuationPresentation["scenarios"] = [];
@@ -47,7 +47,7 @@ function explicitRows(block: Extract<RenderBlock,{type:"table"}>, index: number)
     const crow = rows.find(r => cagrLabel(r[0] ?? ""));
     const currencies = new Set([...(trow ?? []).flatMap(v => v.match(currencyPattern) ?? [])].map(normalized));
     for (let i=0;i<3;i++) {
-      const rowCurrency = trow?.find(cell => terminalLabel(cell))?.match(currencyPattern)?.[0];
+      const rowCurrency = trow?.find(cell => terminalLabel(cell))?.match(currencyPattern)?.[0] ?? (currencies.size===0?referenceCurrency:undefined);
       const terminal = trow && currencies.size <= 1 ? money(trow[scenarioCols[i]], rowCurrency) ?? undefined : undefined;
       const rate = crow ? cagr(crow[scenarioCols[i]] ?? "") ?? undefined : undefined;
       if (terminal || rate) found.push({name:names[i], ...(terminal?{terminal, terminalLabel: /dividendes|dividends/i.test(trow?.[0] ?? "") ? "Valeur à l’horizon, dividendes inclus" : "Prix terminal"}:{}), ...(rate?{cagr:rate}:{}), sourceBlockIndexes:[index]});
@@ -58,7 +58,7 @@ function explicitRows(block: Extract<RenderBlock,{type:"table"}>, index: number)
   const terminalCol = header.findIndex(terminalLabel);
   const cagrCol = header.findIndex(cagrLabel);
   if (scenarioCol >= 0 && (terminalCol >= 0 || cagrCol >= 0)) {
-    const declaredCurrency = terminalCol >= 0 ? header[terminalCol].match(currencyPattern)?.[0] : undefined;
+    const declaredCurrency = terminalCol >= 0 ? header[terminalCol].match(currencyPattern)?.[0] ?? referenceCurrency : undefined;
     const valueCurrencies = new Set(rows.slice(1).flatMap(row => terminalCol >= 0 ? (row[terminalCol]?.match(currencyPattern) ?? []) : []).map(normalized));
     const currencyConflict = valueCurrencies.size > 1 || (!!declaredCurrency && valueCurrencies.size > 0 && !valueCurrencies.has(normalized(declaredCurrency)));
     for (const row of rows.slice(1)) {
@@ -127,9 +127,13 @@ function thresholdExtraction(blocks: RenderBlock[]) {
 /** Versioned app-side view of explicit valuation facts. Source text remains authoritative. */
 export function extractValuationSummary(blocks: RenderBlock[]): ValuationPresentation | null {
   const scenarios: ValuationPresentation["scenarios"]=[]; const scenarioPromoted:number[]=[];
+  // Use only an explicit reference-price/currency declaration, never a ticker
+  // or locale. Conflicting declarations do not supply a fallback currency.
+  const referenceCurrencies = new Set(blocks.flatMap(block=>block.type==="table"?block.rows.filter(row=>row.length===2&&/^(?:prix|cours) (?:de )?r[eé]f[eé]rence$|^devise(?: de r[eé]f[eé]rence)?$|^currency$/i.test(plainInlineText(row[0]).trim())).flatMap(row=>[...plainInlineText(row[1]).matchAll(/\b(?:USD|EUR|GBP|CHF|CAD|JPY|SEK|TWD)\b|[$€£¥]/gi)].map(match=>match[0].toUpperCase())):[]));
+  const referenceCurrency = referenceCurrencies.size===1?[...referenceCurrencies][0]:undefined;
   for(let i=0;i<blocks.length;i++) {
     const b=blocks[i];
-    if(b.type==="table") { const got=explicitRows(b,i); scenarios.push(...got.scenarios); if(got.full) scenarioPromoted.push(i); continue; }
+    if(b.type==="table") { const got=explicitRows(b,i,referenceCurrency); scenarios.push(...got.scenarios); if(got.full) scenarioPromoted.push(i); continue; }
     if(b.type==="paragraph") {
       const rx=/\b(bear|base|bull|baissier|central|haussier)\b\s*[:：]?\s*([\s\S]*?)(?=\b(?:bear|base|bull|baissier|central|haussier)\b|$)/gi;
       for(const m of plainInlineText(b.text).matchAll(rx)) {

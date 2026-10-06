@@ -126,6 +126,115 @@ test('Earnings Draft routes to the earnings source and reads back without Curren
  const row=await f.db.prepare("SELECT source_key FROM notion_documents WHERE LOWER(REPLACE(page_id,'-',''))=?").bind(saved.analysisId).first();assert.equal(row.source_key,'earnings');
  const read=await f.api.createInvestmentService(f.db).getAnalysisById(saved.analysisId);assert.equal(read.status,'ok');assert.equal(read.data.kind,'earnings');assert.equal(read.data.header.status,'Draft');
 }));
+const earningsOptions={
+ 'Guidance':['Raised','Maintained','Lowered','New','Not Applicable'],
+ 'Guidance vs Consensus':['Above','Inline','Below','Not Available'],
+ 'Confidence':['High','Medium','Low'],
+ 'Business Refresh':['Not Needed','Monitor','Recommended','Required'],
+ 'Valuation Refresh':['Not Needed','Monitor','Recommended','Required'],
+ 'Short Refresh':['Not Needed','Monitor','Recommended','Required'],
+ 'Portfolio Refresh':['Not Needed','Monitor','Recommended','Required'],
+ 'Memo Refresh':['Not Needed','Monitor','Recommended','Required'],
+};
+const realEarningsSchema=(migrated=false)=>{
+ const properties={
+  Earnings:{type:'title'},Company:{type:'relation'},'Analysis Date':{type:'date'},'Earnings Date':{type:'date'},
+  'Fiscal Period':{type:'rich_text'},Guidance:{type:'select',select:{options:earningsOptions.Guidance.map(name=>({name}))}},
+  'Guidance Summary':{type:'rich_text'},'Guidance vs Consensus':{type:'select',select:{options:earningsOptions['Guidance vs Consensus'].map(name=>({name}))}},
+  Confidence:{type:'select',select:{options:earningsOptions.Confidence.map(name=>({name}))}},
+  'Business Refresh':{type:'select',select:{options:earningsOptions['Business Refresh'].map(name=>({name}))}},
+  'Valuation Refresh':{type:'select',select:{options:earningsOptions['Valuation Refresh'].map(name=>({name}))}},
+  'Short Refresh':{type:'select',select:{options:earningsOptions['Short Refresh'].map(name=>({name}))}},
+  'Portfolio Refresh':{type:'select',select:{options:earningsOptions['Portfolio Refresh'].map(name=>({name}))}},
+  'Memo Refresh':{type:'select',select:{options:earningsOptions['Memo Refresh'].map(name=>({name}))}},
+ };
+ if(migrated)Object.assign(properties,{
+  'Run ID':{type:'rich_text'},Agent:{type:'select',select:{options:[{name:'Earnings'}]}},
+  Status:{type:'select',select:{options:['Draft','Validated','Superseded','Archived'].map(name=>({name}))}},Verdict:{type:'rich_text'},
+ });
+ return {properties};
+};
+function earningsInput(){
+ const draft=input();draft.runId='fixture-earnings-schema-v1';draft.analysis.kind='earnings';draft.analysis.header.family='earnings';draft.analysis.header.agent='Earnings';draft.analysis.header.title='Fixture earnings draft';draft.analysis.header.status='Draft';
+ delete draft.analysis.score;draft.analysis.summary='Synthetic earnings summary for persistence verification.';draft.analysis.verdict='Refresh review requested';draft.analysis.confidence='Medium';
+ draft.analysis.earningsReview={fiscalPeriod:'Synthetic FY2026 Q2',guidance:'Management described a multi-sentence guidance narrative for the upcoming reporting period.',guidanceVsConsensus:null,confidence:'Medium',refreshes:[
+  {key:'business',label:'Business',status:'recommended',rawValue:'Recommended'},
+  {key:'valuation',label:'Valorisation',status:'required',rawValue:'required'},
+  {key:'short',label:'Short',status:'monitor',rawValue:'watch'},
+  {key:'portfolio',label:'Portfolio',status:'not-needed',rawValue:'No refresh needed'},
+  {key:'memo',label:'Mémo CIO',status:'recommended',rawValue:'Recommended'},
+ ]};
+ draft.analysis.content.blocks=[{id:'earnings-body',sourceIds:['fixture-source'],type:'paragraph',text:[{text:'Synthetic earnings body survives persistence.',marks:[],href:null}]}];
+ return draft;
+}
+function withEarningsSchema(f,schema,onDiagnostic){
+ const base=f.options.fetch;
+ const options={...f.options,onDiagnostic,fetch:async(url,init)=>{
+  const response=await base(url,init);
+  if(init.method==='GET'&&new URL(url).pathname===`/v1/data_sources/${f.sources.earnings}`)return Response.json(schema);
+  return response;
+ }};
+ return {options,writer:f.api.createNotionAnalysisWriter(f.db,options),service:f.api.createInvestmentService(f.db,options)};
+}
+test('real Earnings schema missing write identity fields fails before journal or provider mutation with safe diagnostics',()=>withFixture({},async f=>{
+ const diagnostics=[],{writer}=withEarningsSchema(f,realEarningsSchema(false),d=>diagnostics.push(d));
+ await assert.rejects(writer(earningsInput()),{code:'mapping'});
+ assert.equal(f.calls.filter(c=>c.method!=='GET').length,0);assert.equal(f.calls.some(c=>c.path==='/pages'),false);
+ assert.equal(f.sql.prepare('SELECT COUNT(*) AS n FROM notion_analysis_writes').get().n,0);
+ assert.equal(diagnostics.length,1);assert.equal(diagnostics[0].code,'notion_schema_mapping');assert.equal(diagnostics[0].severity,'error');
+ assert.match(diagnostics[0].message,/Run ID/);assert.match(diagnostics[0].message,/Agent/);assert.match(diagnostics[0].message,/Status/);assert.match(diagnostics[0].message,/Verdict/);
+ for(const secret of ['fixture-earnings-schema-v1','Synthetic FY2026 Q2','Management described'])assert.equal(diagnostics[0].message.includes(secret),false);
+}));
+test('migrated Earnings schema stores guidance prose as text, validates enums, persists Draft and replays once',()=>withFixture({},async f=>{
+ const diagnostics=[],{writer,service}=withEarningsSchema(f,realEarningsSchema(true),d=>diagnostics.push(d));
+ const draft=earningsInput(),saved=await writer(draft);
+ assert.equal(saved.status,'persisted');assert.equal(saved.persisted,true);assert.equal(saved.promoted,false);assert.equal(saved.verified,false);
+ const create=f.calls.find(call=>call.path==='/pages'&&call.method==='POST');assert.ok(create);
+ assert.equal(create.body.parent.data_source_id,f.sources.earnings);
+ assert.equal(create.body.properties['Run ID'].rich_text[0].text.content,draft.runId);
+ assert.equal(create.body.properties.Agent.select.name,'Earnings');assert.equal(create.body.properties.Status.select.name,'Draft');
+ assert.equal(create.body.properties.Verdict.rich_text[0].text.content,draft.analysis.verdict);
+ assert.equal(create.body.properties['Fiscal Period'].rich_text.map(x=>x.text.content).join(''),draft.analysis.earningsReview.fiscalPeriod);
+ assert.equal(create.body.properties['Guidance Summary'].rich_text.map(x=>x.text.content).join(''),draft.analysis.earningsReview.guidance);
+ assert.equal(Object.hasOwn(create.body.properties,'Guidance'),false,'free-form guidance never becomes a new select option');
+ for(const [name,value] of [['Business Refresh','Recommended'],['Valuation Refresh','Required'],['Short Refresh','Monitor'],['Portfolio Refresh','Not Needed'],['Memo Refresh','Recommended']])assert.equal(create.body.properties[name].select.name,value);
+ assert.equal(f.promotions,0);
+ const replay=await writer(draft);assert.equal(replay.analysisId,saved.analysisId);assert.equal(replay.status,'persisted');assert.equal(f.creates,1);
+ const read=await service.getAnalysisById(saved.analysisId);assert.equal(read.status,'ok');assert.equal(read.data.kind,'earnings');assert.equal(read.data.header.status,'Draft');
+ assert.equal(read.data.verdict,draft.analysis.verdict);assert.equal(read.data.confidence,draft.analysis.confidence);assert.equal(read.data.summary,draft.analysis.summary);
+ assert.equal(read.data.earningsReview.fiscalPeriod,draft.analysis.earningsReview.fiscalPeriod);
+ assert.equal(read.data.earningsReview.guidance,draft.analysis.earningsReview.guidance);
+ assert.deepEqual(read.data.earningsReview.refreshes.map(x=>x.status),draft.analysis.earningsReview.refreshes.map(x=>x.status));
+ assert.deepEqual(read.data.earningsReview.refreshes.map(x=>x.rawValue),['Recommended','Required','Monitor','Not Needed','Recommended']);
+ assert.ok(read.data.content.blocks.some(b=>b.type==='paragraph'&&b.text.some(s=>s.text==='Synthetic earnings body survives persistence.')));
+ assert.equal(diagnostics.length,0);
+}));
+test('unknown configured Earnings select option is rejected before journal or mutation without echoing value',()=>withFixture({},async f=>{
+ const diagnostics=[],schema=realEarningsSchema(true),draft=earningsInput();draft.analysis.earningsReview.refreshes[0].status='unknown';draft.analysis.earningsReview.refreshes[0].rawValue='Unconfigured private input';
+ const {writer}=withEarningsSchema(f,schema,d=>diagnostics.push(d));await assert.rejects(writer(draft),{code:'mapping'});
+ assert.equal(f.calls.filter(c=>c.method!=='GET').length,0);assert.equal(f.calls.some(c=>c.path==='/pages'),false);
+ assert.equal(diagnostics.length,1);assert.match(diagnostics[0].message,/Business Refresh/);assert.match(diagnostics[0].message,/unmappable earnings status/);assert.equal(diagnostics[0].message.includes('Unconfigured private input'),false);
+}));
+test('known guidance enum writes only when the Earnings schema lists the option',()=>withFixture({},async f=>{
+ const diagnostics=[],draft=earningsInput();draft.analysis.earningsReview.guidance='Raised';
+ const {writer}=withEarningsSchema(f,realEarningsSchema(true),d=>diagnostics.push(d)),saved=await writer(draft);
+ assert.equal(saved.status,'persisted');const create=f.calls.find(call=>call.path==='/pages'&&call.method==='POST');
+ assert.equal(create.body.properties.Guidance.select.name,'Raised');assert.equal(Object.hasOwn(create.body.properties,'Guidance Summary'),false);assert.equal(diagnostics.length,0);
+}));
+test('known guidance enum absent from the configured option list fails in preflight',()=>withFixture({},async f=>{
+ const diagnostics=[],schema=realEarningsSchema(true),draft=earningsInput();draft.analysis.earningsReview.guidance='Raised';
+ schema.properties.Guidance.select.options=schema.properties.Guidance.select.options.filter(option=>option.name!=='Raised');
+ const {writer}=withEarningsSchema(f,schema,d=>diagnostics.push(d));await assert.rejects(writer(draft),{code:'mapping'});
+ assert.equal(f.calls.filter(c=>c.method!=='GET').length,0);assert.equal(f.creates,0);assert.equal(diagnostics.length,1);
+ assert.match(diagnostics[0].message,/Guidance has an unsupported select option/);assert.equal(diagnostics[0].message.includes('Raised'),false);
+}));
+test('legacy Earnings rich-text Guidance property still stores prose directly',()=>withFixture({},async f=>{
+ const draft=earningsInput(),schema=realEarningsSchema(true);schema.properties.Guidance={type:'rich_text'};
+ const {writer}=withEarningsSchema(f,schema),saved=await writer(draft);assert.equal(saved.status,'persisted');
+ const create=f.calls.find(call=>call.path==='/pages'&&call.method==='POST');
+ assert.equal(create.body.properties.Guidance.rich_text.map(x=>x.text.content).join(''),draft.analysis.earningsReview.guidance);
+ assert.equal(Object.hasOwn(create.body.properties,'Guidance Summary'),false);
+}));
 test('Draft save and replay update only their page indexes and avoid a second create',()=>withFixture({},async f=>{const draft=input();draft.analysis.header.status='Draft';const childrenReads=()=>f.calls.filter(c=>c.method==='GET'&&c.path.startsWith('/blocks/')&&c.path.includes('/children')).length;const first=await f.writer(draft);assert.equal(first.status,'persisted');assert.equal(childrenReads(),1);const link=await f.db.prepare('SELECT company_page_id FROM notion_document_companies WHERE document_page_id=?').bind(f.pages.get(first.analysisId).id).first();assert.equal(compact(link.company_page_id),compact(companyId));const relation=await f.db.prepare("SELECT target_page_id FROM notion_relations WHERE source_page_id=? AND property_name='Company'").bind(f.pages.get(first.analysisId).id).first();assert.equal(compact(relation.target_page_id),compact(companyId));await f.db.prepare("INSERT INTO notion_document_companies VALUES ('unrelated','unrelated','notion-relation','now')").run();const replay=await f.writer(draft);assert.equal(replay.status,'persisted');assert.equal(replay.analysisId,first.analysisId);assert.equal(childrenReads(),3);assert.equal((await f.db.prepare("SELECT count(*) AS n FROM notion_document_companies WHERE document_page_id='unrelated'").first()).n,1);assert.equal(f.creates,1);assert.equal(f.promotions,0);}));
 test('adapter canonicalizes dashed update identity before receipt validation',()=>withFixture({},async f=>{const r=await f.writer(input());const existing=f.pages.get(r.analysisId),changed=input({runId:'dashed-update',expectedRevision:existing.last_edited_time});changed.analysis.header.id=existing.id;changed.companyIds=[companyId];changed.analysis.header.companyIds=[companyId];changed.analysis.header.title='Updated dashed';assert.equal((await f.adapter.saveAnalysis(changed)).data.status,'verified');}));
 

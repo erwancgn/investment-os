@@ -177,7 +177,12 @@ export function documentPresentation(blocks: RenderBlock[], propertySummary: str
   if (!summaryItems.length && fallbackBlock) summaryItems.push(...visibleSummaryItems(blockText(fallbackBlock)));
   if (!summaryItems.length && isCioMemo) summaryItems.push(...cioHandoffItems(options.handoffSummary || (technicalPropertySummary ? propertySummary : "")));
 
-  const factScope = summaryHeadingIndex >= 0 ? blocks.slice(0, summaryHeadingIndex) : blocks.slice(0, 10);
+  // The writer may prefix TL;DR / summary / Rapport complet. That summary is
+  // not the report's metadata boundary: inspect the beginning of the report.
+  const reportHeadingIndex = blocks.findIndex(block => block.type === "heading" && /^rapport complet$/i.test(compact(block.text)));
+  const reportStart = reportHeadingIndex >= 0 ? reportHeadingIndex + 1 : 0;
+  const reportSummaryOffset = blocks.slice(reportStart).findIndex(block => block.type === "heading" && isSummaryHeading(block.text));
+  const factScope = reportSummaryOffset >= 0 ? blocks.slice(reportStart, reportStart + reportSummaryOffset) : blocks.slice(reportStart, reportStart + 10);
   const facts = factScope.flatMap(block => block.type === "table" ? factsFromTable(block) : blockText(block).flatMap(factsFromText));
   const uniqueFacts = [...new Map(facts.map(fact => [fact.label.toLocaleLowerCase("fr-FR"), fact])).values()].slice(0, 6);
 

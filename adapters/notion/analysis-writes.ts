@@ -130,25 +130,44 @@ export function createNotionAnalysisWriter(db:D1Database,options:NotionWriteOpti
     });
   }
   function mappedProperties(input:SaveAnalysisInput,schema:RecordValue):RecordValue{
-    const defs=object(schema.properties),out:RecordValue={};
-    for(const [names,types] of [
+    const defs=object(schema.properties),out:RecordValue={},issues:string[]=[];
+    const reportMappingIssues=()=>{
+      if(!issues.length)return;
+      const unique=[...new Set(issues)];
+      options.onDiagnostic?.({code:"notion_schema_mapping",severity:"error",path:"properties",message:`Notion ${input.analysis.kind} schema mapping failed: ${unique.join("; ")}.`});
+      throw fault("mapping");
+    };
+    const aliases:[string[],string[]][]=[
       [["Run ID"],["rich_text"]],[["Company","Companies"],["relation"]],
       [["Agent"],["select","rich_text"]],[["Status"],["status","select"]],
       [["Analysis Date","Date","Decision Date","Earnings Date"],["date"]],
-    ]){const name=propertyName(defs,names);if(!name||!types.includes(String(object(defs[name]).type)))throw fault("mapping");}
-    function put(names:string[],value:unknown,required=false){
+    ];
+    for(const [names,types] of aliases){
+      const name=propertyName(defs,names),label=names.join("/");
+      if(!name){issues.push(`missing ${label} (expected ${types.join(" or ")})`);continue;}
+      const actual=String(object(defs[name]).type??"unknown");
+      if(!types.includes(actual))issues.push(`${name} has type ${actual} (expected ${types.join(" or ")})`);
+    }
+    function put(names:string[],value:unknown,required=false,requireConfiguredOption=false){
       const name=propertyName(defs,names);
-      if(!name){if(required)throw fault("mapping");return;}
+      if(!name){if(required&&!issues.some(issue=>issue.startsWith(`missing ${names.join("/")} (`)))issues.push(`missing ${names.join("/")} (required)`);return;}
       const type=String(object(defs[name]).type);
       if(type==="title"||type==="rich_text")out[name]={[type]:value===null?[]:text(String(value))};
-      else if(type==="select"||type==="status")out[name]={[type]:value===null?null:{name:String(value)}};
+      else if(type==="select"||type==="status"){
+        if(value!==null){
+          const typeSchema=object(object(defs[name])[type]),configured=typeSchema.options;
+          if(Array.isArray(configured)&&!configured.some(option=>String(object(option).name)===String(value)))issues.push(`${name} has an unsupported ${type} option (expected a configured option)`);
+          else if(requireConfiguredOption&&!Array.isArray(configured))issues.push(`${name} is missing its configured ${type} options`);
+        }
+        out[name]={[type]:value===null?null:{name:String(value)}};
+      }
       else if(type==="date")out[name]={date:value===null?null:{start:String(value)}};
       else if(type==="relation")out[name]={relation:(value as string[]).map(id=>({id}))};
       else if(type==="number"){if(value!==null&&!Number.isFinite(Number(value)))throw fault("mapping");out[name]={number:value===null?null:Number(value)};}
-      else throw fault("mapping");
+      else issues.push(`${name} has unsupported type ${type}`);
     }
-    const titleName=Object.keys(defs).find(name=>object(defs[name]).type==="title");if(!titleName)throw fault("mapping");
-    const a=input.analysis;put([titleName],a.header.title,true);put(["Run ID"],input.runId,true);put(["Company","Companies"],input.companyIds,true);
+    const titleName=Object.keys(defs).find(name=>object(defs[name]).type==="title");if(!titleName)issues.push("missing title property (expected title)");
+    const a=input.analysis;if(titleName)put([titleName],a.header.title,true);put(["Run ID"],input.runId,true);put(["Company","Companies"],input.companyIds,true);
     put(["Agent"],agents[a.kind]??a.header.agent,true);put(["Status"],a.header.status,true);put(["Analysis Date","Date","Decision Date","Earnings Date"],a.header.date,true);
     put(["Source Freshness"],a.header.sourceFreshness==="fresh"?"Current":a.header.sourceFreshness==="stale"?"Stale":"Unknown");
     // Some production sources keep the summary in the report body rather than a property.
@@ -161,9 +180,39 @@ export function createNotionAnalysisWriter(db:D1Database,options:NotionWriteOpti
       const name=key.replace(/([A-Z])/g," $1").replace(/^./,c=>c.toUpperCase());put([name],value,true);
     }
     if(a.kind==="earnings"){
-      const review=a.earningsReview;put(["Fiscal Period"],review.fiscalPeriod,review.fiscalPeriod!==null);put(["Guidance"],review.guidance,review.guidance!==null);put(["Guidance vs Consensus"],review.guidanceVsConsensus,review.guidanceVsConsensus!==null);
-      for(const refresh of review.refreshes)if(refresh.rawValue!==null)put([`${refresh.key==="memo"?"Memo":refresh.key[0].toUpperCase()+refresh.key.slice(1)} Refresh`],refresh.rawValue,true);
+      const review=a.earningsReview;
+      put(["Fiscal Period"],review.fiscalPeriod,review.fiscalPeriod!==null);
+      const guidanceName=propertyName(defs,["Guidance"]),guidanceType=guidanceName?String(object(defs[guidanceName]).type):"",guidanceSchema=guidanceName?object(object(defs[guidanceName]).select):{},guidanceOptions=guidanceSchema.options;
+      const guidanceValue=review.guidance;
+      const knownGuidance=new Set(["Raised","Maintained","Lowered","New","Not Applicable"]);
+      if(guidanceValue===null)put(["Guidance"],null);
+      else if(guidanceType==="rich_text")put(["Guidance"],guidanceValue,true);
+      else if(guidanceType==="select"&&knownGuidance.has(guidanceValue)){
+        if(Array.isArray(guidanceOptions)&&guidanceOptions.some(option=>String(object(option).name)===guidanceValue))put(["Guidance"],guidanceValue,true,true);
+        else issues.push("Guidance has an unsupported select option (expected a configured option)");
+      }else if(guidanceType==="select")put(["Guidance Summary"],guidanceValue,true);
+      else if(!guidanceName)put(["Guidance Summary"],guidanceValue,true);
+      else issues.push(`Guidance has unsupported type ${guidanceType||"unknown"}`);
+      put(["Guidance vs Consensus"],review.guidanceVsConsensus,review.guidanceVsConsensus!==null);
+      const refreshOptionByStatus:Record<string,string>={"not-needed":"Not Needed",monitor:"Monitor",recommended:"Recommended",required:"Required"};
+      const statusFromRawValue=(rawValue:string|null):string|undefined=>{
+        const normalized=(rawValue??"").trim().toLowerCase().replace(/\s+/g," ");
+        if(["not needed","no refresh needed","none","up to date"].includes(normalized))return "not-needed";
+        if(["monitor","watch"].includes(normalized))return "monitor";
+        if(["recommended","refresh recommended"].includes(normalized))return "recommended";
+        if(["required","refresh required"].includes(normalized))return "required";
+        return undefined;
+      };
+      for(const refresh of review.refreshes){
+        const property=`${refresh.key==="memo"?"Memo":refresh.key[0].toUpperCase()+refresh.key.slice(1)} Refresh`;
+        const semanticStatus=refresh.status==="unknown"?statusFromRawValue(refresh.rawValue):refresh.status;
+        if(!semanticStatus){if(refresh.rawValue!==null)issues.push(`${property} has an unmappable earnings status`);continue;}
+        const option=refreshOptionByStatus[semanticStatus];
+        if(!option){issues.push(`${property} has an unmappable earnings status`);continue;}
+        put([property],option,true,true);
+      }
     }
+    reportMappingIssues();
     return out;
   }
   function propertiesMatch(actual:Page,expected:RecordValue):boolean{
