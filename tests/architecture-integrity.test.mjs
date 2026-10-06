@@ -41,3 +41,11 @@ test("no runtime file is a known stale v204 snapshot", async () => {
   }
   assert.deepEqual(regressed, [], `stale v204 files exported: ${regressed.join(", ")}`);
 });
+
+test("every test file is run by npm test or npm run test:mcp (a forgotten file is never executed by Sol)", async () => {
+  const { readdir } = await import("node:fs/promises");
+  const scripts = JSON.parse(await read("package.json")).scripts;
+  const listed = `${scripts.test} ${scripts["test:mcp"]}`;
+  const files = (await readdir("tests")).filter(name => name.endsWith(".test.mjs"));
+  assert.deepEqual(files.filter(name => !listed.includes(`tests/${name}`)), []);
+});

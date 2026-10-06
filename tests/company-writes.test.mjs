@@ -104,3 +104,34 @@ test("a Draft receipt explains itself: persisted, read back, no promotion reques
   assert.deepEqual(receipt.diagnostics, [{ code: "promotion_not_required", message: "Brouillon enregistré et relu ; aucune promotion Current n'était demandée.", severity: "info" }]);
   data.sql.close();
 });
+
+test("review: a lost create response cannot lead to a second page, even before Notion's query index catches up", async () => {
+  const data = await fixture();
+  const notion = fakeNotion(data.sources.companies);
+  let lose = true, hideNew = true;
+  const fetch = async (url, init = {}) => {
+    const path = new URL(url).pathname;
+    if (path.endsWith("/query") && hideNew) return new Response(JSON.stringify({ results: [], has_more: false }), { status: 200 }); // index lag
+    const response = await notion.fetch(url, init);
+    if (path === "/v1/pages" && init.method === "POST" && lose) { lose = false; throw Object.assign(new Error("socket hang up"), { name: "TypeError" }); }
+    return response;
+  };
+  const create = data.api.createNotionCompanyWriter(data.db, { token: "fixture-only", fetch, sleep: async () => {} });
+  await assert.rejects(create(hermes), error => ["network", "timeout"].includes(error.code));
+  await assert.rejects(create(hermes), error => error.code === "rate_limit", "same ISIN in flight with unknown outcome: refuse, do not create");
+  assert.equal(notion.calls.filter(c => c.method === "POST" && c.path === "/pages").length, 1);
+  hideNew = false;
+  assert.equal((await create(hermes)).status, "existing", "once visible, the page is returned");
+  assert.equal(notion.calls.filter(c => c.method === "POST" && c.path === "/pages").length, 1);
+  data.sql.close();
+});
+
+test("review: live duplicates use the Core rule (same base ticker on another exchange is not a duplicate)", async () => {
+  const data = await fixture();
+  const source = data.sources.companies;
+  const notion = fakeNotion(source, [{ object: "page", id: "66666666-6666-4666-8666-666666666666", parent: { data_source_id: source }, archived: false, properties: { Company: { type: "title", title: rich("Schneider Electric") }, Ticker: { type: "rich_text", rich_text: rich("SU.PA") }, ISIN: { type: "rich_text", rich_text: rich("FR0000121972") }, Exchange: select("Euronext Paris") } }]);
+  const create = data.api.createNotionCompanyWriter(data.db, { token: "fixture-only", fetch: notion.fetch, sleep: async () => {} });
+  const result = await create({ name: "Suncor Energy", ticker: "SU", exchange: "NASDAQ", isin: "CA8672241079", currency: "USD", country: null });
+  assert.equal(result.status, "created");
+  data.sql.close();
+});
