@@ -38,13 +38,13 @@ export type McpOutputs = {
 
 /** The positional arguments below are an exact specification, not an executable dispatcher. */
 export const MCP_TOOLS = {
-  resolve_company: { description: "Résoudre un nom, ticker ou alias connu vers des identifiants Company canoniques sans choisir en cas d'ambiguïté.", operation: "resolveCompany", arguments: ["query", "market"], access: "READ" },
-  get_company: { description: "Lire l'identité, les aperçus et les archives d'une entreprise.", operation: "getCompany", arguments: ["id"], access: "READ" },
-  get_portfolio: { description: "Lire le portefeuille et ses agrégats calculés par le Core.", operation: "getPortfolio", arguments: ["options"], access: "READ" },
-  get_position: { description: "Lire une position ouverte ou fermée par son identifiant.", operation: "getPosition", arguments: ["id", "options"], access: "READ" },
-  get_current_analysis: { description: "Lire l'analyse Current sélectionnée par le Core pour une entreprise et une famille.", operation: "getCurrentAnalysis", arguments: ["companyId", "family"], access: "READ" },
-  get_analysis_by_id: { description: "Lire une analyse par ID, y compris une version historique ou archivée.", operation: "getAnalysisById", arguments: ["id"], access: "READ" },
-  save_analysis: { description: "Soumettre une analyse au Core et recevoir le receipt de persistance sans altération.", operation: "saveAnalysis", arguments: ["input"], access: "WRITE" },
-  get_quote: { description: "Lire une cotation et ses indications de fraîcheur, source et disponibilité.", operation: "getQuote", arguments: ["assetId", "options"], access: "READ" },
+  resolve_company: { title: "Résoudre une entreprise", description: "Résoudre un nom, ticker ou alias connu vers des identifiants Company canoniques sans choisir en cas d'ambiguïté.", operation: "resolveCompany", arguments: ["query", "market"], access: "READ" },
+  get_company: { title: "Lire une entreprise", description: "Lire l'identité, les aperçus et les archives d'une entreprise.", operation: "getCompany", arguments: ["id"], access: "READ" },
+  get_portfolio: { title: "Lire le portefeuille", description: "Lire le portefeuille et ses agrégats calculés par le Core.", operation: "getPortfolio", arguments: ["options"], access: "READ" },
+  get_position: { title: "Lire une position", description: "Lire une position ouverte ou fermée par son identifiant.", operation: "getPosition", arguments: ["id", "options"], access: "READ" },
+  get_current_analysis: { title: "Lire l'analyse Current", description: "Lire l'analyse Current sélectionnée par le Core pour une entreprise et une famille.", operation: "getCurrentAnalysis", arguments: ["companyId", "family"], access: "READ" },
+  get_analysis_by_id: { title: "Lire une analyse par ID", description: "Lire une analyse par ID, y compris une version historique ou archivée.", operation: "getAnalysisById", arguments: ["id"], access: "READ" },
+  save_analysis: { title: "Enregistrer une analyse", description: "Soumettre une analyse au Core et recevoir le receipt de persistance sans altération.", operation: "saveAnalysis", arguments: ["input"], access: "WRITE" },
+  get_quote: { title: "Lire une cotation", description: "Lire une cotation et ses indications de fraîcheur, source et disponibilité.", operation: "getQuote", arguments: ["assetId", "options"], access: "READ" },
 } as const;
 export const MCP_LIMITS = { requestBytes: 2_097_152, responseBytes: 4_194_304, readTimeoutMs: 30_000, writeTimeoutMs: 30_000, readAttempts: 2, writeAttempts: 1 } as const;

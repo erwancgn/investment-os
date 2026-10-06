@@ -56,11 +56,11 @@ function reachableDefinitions(root: unknown): Record<string, unknown> {
 }
 function publishedOutputSchema(name: ToolName) {
   const schema = schemaFor(name, "outputSchema");
-  return { ...schema, definitions: reachableDefinitions(schema) };
+  return { $schema: schemas.$schema, ...schema, definitions: reachableDefinitions(schema) };
 }
 export const mcpToolCatalog: Tool[] = Object.entries(MCP_TOOLS).map(([name, spec]) => ({
-  name, description: spec.description,
-  inputSchema: inlineInputSchema(schemaFor(name as ToolName, "inputSchema")) as Tool["inputSchema"],
+  name, title: spec.title, description: spec.description,
+  inputSchema: { $schema: schemas.$schema, ...(inlineInputSchema(schemaFor(name as ToolName, "inputSchema")) as object) } as unknown as Tool["inputSchema"],
   outputSchema: publishedOutputSchema(name as ToolName) as Tool["outputSchema"],
   annotations: { readOnlyHint: spec.access === "READ", destructiveHint: spec.access === "WRITE", idempotentHint: spec.access === "READ", openWorldHint: true },
 }));

@@ -324,6 +324,14 @@ test("catalog publishes only reachable output definitions and text mirrors compl
     assert.deepEqual(Object.keys(defs).sort(), [...refs].sort(), `${tool.name} publishes unreachable definitions`);
   }
   assert.ok(bytes(json.result.tools) < 400_000, `catalog ${bytes(json.result.tools)} bytes`);
+  // MCP 2025-11-25: schemas default to JSON Schema 2020-12 unless $schema says otherwise;
+  // ours are draft-07 (they use `definitions`), so every published schema declares it.
+  for (const tool of json.result.tools) {
+    assert.equal(tool.inputSchema.$schema, "http://json-schema.org/draft-07/schema#", `${tool.name} input dialect`);
+    assert.equal(tool.outputSchema.$schema, "http://json-schema.org/draft-07/schema#", `${tool.name} output dialect`);
+    assert.ok(typeof tool.title === "string" && tool.title.length > 0 && tool.title.length <= 64, `${tool.name} title`);
+  }
+  assert.equal(new Set(json.result.tools.map(tool => tool.title)).size, json.result.tools.length);
   const demo = api.createMcpHandler({ authenticate: () => caller, service: () => api.createDemoInvestmentService() });
   const response = await (await demo(request("get_portfolio", { ...base, scope: "demo" }))).json();
   assert.equal(response.result.structuredContent.status, "completed");
