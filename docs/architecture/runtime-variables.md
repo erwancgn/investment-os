@@ -13,3 +13,7 @@ Clés valides : companies, analyses, earnings, portfolio, etf_exposures, watchli
 ## Fraîcheur du cache D1
 
 Sites ne documente pas de déclencheur planifié. Un appel MCP authentifié réussi vérifie donc la fraîcheur du cache Notion (au plus une fois par minute et par isolate) et lance une synchronisation en arrière-plan sous verrou D1 si le cache est périmé. Les lectures MCP restent servies depuis le cache courant ; `create_company` interroge Notion en direct, donc une société créée à la main n'est jamais dupliquée même si le cache est en retard.
+
+## Champs Notion legacy
+
+`Research Stage` et `Research Priority` (base Companies) sont des champs manuels historiques. Ni l'app ni le MCP ne les calculent ni ne les écrivent : `create_company` ne pose que `Status = Watchlist`. L'étape de suivi affichée dans la fiche vient de `Monitoring Status` (base Watchlist) ; « Recherche en cours » est le badge affiché tant qu'aucun mémo CIO Current validé n'est relié.

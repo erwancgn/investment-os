@@ -73,7 +73,7 @@ test("create_company adapter: one create, mapped to configured options, verified
   assert.deepEqual(p.Currency, { select: { name: "Other" } }, "unconfigured currency falls back to Other");
   assert.deepEqual(p.Country, { select: { name: "Other" } });
   assert.deepEqual(p.Status, { select: { name: "Watchlist" } });
-  assert.deepEqual(p["Research Stage"], { select: { name: "Unscreened" } });
+  assert.equal(p["Research Stage"], undefined, "Research Stage is legacy and never written");
   const service = data.api.createInvestmentService(data.db);
   const resolved = await service.resolveCompany("FR0000052292");
   assert.equal(resolved.data.status, "resolved", "write-through: no sync needed");

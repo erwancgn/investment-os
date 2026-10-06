@@ -70,10 +70,9 @@ export function createNotionCompanyWriter(db: D1Database, options: NotionWriteOp
       const option = configured(schema[name], value) ?? configured(schema[name], "Other");
       if (option) properties[name] = { select: { name: option } };
     }
-    for (const [name, value] of [["Status", "Watchlist"], ["Research Stage", "Unscreened"]] as const) {
-      const option = configured(schema[name], value);
-      if (option) properties[name] = { select: { name: option } };
-    }
+    // Research Stage and Research Priority are legacy manual fields: neither the app nor the MCP derives or writes them.
+    const status = configured(schema.Status, "Watchlist");
+    if (status) properties.Status = { select: { name: status } };
     let created: RecordValue;
     try { created = object(await mutate("/pages", "POST", { parent: { type: "data_source_id", data_source_id: source }, properties })); }
     catch (error) {
