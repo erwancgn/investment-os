@@ -348,3 +348,17 @@ test("MCP service accepts Notion IDs as dashed UUID, upper case or page URL (no 
   }
   data.sqlite.close();
 });
+
+test("portfolio quotes: unmapped position takes the Yahoo symbol of its linked Company, mapped ones are unchanged", async () => {
+  const { positionQuoteId } = (await apis()).legacy;
+  const row = (name, companyIds = []) => ({ page_id: `row-${name}`, title: name, notion_url: "", properties_json: JSON.stringify({ Position: { type: "title", title: [{ plain_text: name }] }, Company: { type: "relation", relation: companyIds.map(id => ({ id })) } }) });
+  const companies = [
+    { id: "c-asml", name: "ASML Holding", ticker: "ASML", exchange: "Euronext Amsterdam" },
+    { id: "c-unknown", name: "Mystery Corp", ticker: "MYST", exchange: "" },
+  ];
+  assert.equal(positionQuoteId(row("NVIDIA"), companies, new Map()), "nvda", "legacy mapping kept");
+  assert.equal(positionQuoteId(row("ASML Holding NV", ["c-asml"]), companies, new Map()), "ASML.AS", "relation → ticker + exchange");
+  assert.equal(positionQuoteId(row("ASML Holding NV"), companies, new Map([["row-ASML Holding NV", ["c-asml"]]])), "ASML.AS", "indexed company link");
+  assert.equal(positionQuoteId(row("Mystery", ["c-unknown"]), companies, new Map()), undefined, "unknown exchange: no guessed quote");
+  assert.equal(positionQuoteId(row("Orphan line"), companies, new Map()), undefined, "no linked company: no quote (manual price still applies)");
+});

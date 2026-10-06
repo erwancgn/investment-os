@@ -1,5 +1,5 @@
 import { normalizeAnalysisDocument, type NormalizedAnalysisDocument } from "../../app/lib/document-presentation";
-import { getQuotes, type QuoteView } from "../../app/lib/quotes";
+import { getQuotes, quoteSymbolForListing, type QuoteView } from "../../app/lib/quotes";
 import { calculatePortfolioAggregates } from "../../core/portfolio";
 import type { CurrentAnalysisFamily, CurrentSelectionInput } from "../../core/analysis/current-selection";
 import type { AnalysisFamily } from "../../core/contracts/analysis";
@@ -636,6 +636,19 @@ function liveTargetLines(rows:StoredDocument[]):LiveTargetLine[] {
     .sort((a,b)=>Math.max(b.target10kWeight,b.target25kWeight)-Math.max(a.target10kWeight,a.target25kWeight));
 }
 
+/**
+ * Quote asset of a portfolio line: the legacy name mapping first (unchanged behaviour), otherwise the Yahoo symbol
+ * of the Company linked to the line (relation or indexed link). Never guessed from the line's name.
+ */
+export function positionQuoteId(row:StoredDocument, companies:Pick<CompanyListItem,"id"|"ticker"|"exchange">[], companyLinks:Map<string,string[]>):string|undefined{
+  const p=props(row);
+  const name=cleanPositionName(String(propertyValue(p,"Position") ?? row.title));
+  if(quoteByPosition[name])return quoteByPosition[name];
+  const linked=new Set([...(companyLinks.get(row.page_id)??[]),...relationIds(p,["Company","Companies","Company relation","Company Relation"])].map(normalizeNotionPageId));
+  const company=companies.find(item=>linked.has(normalizeNotionPageId(item.id))&&item.ticker);
+  return company?quoteSymbolForListing(company.ticker,company.exchange||null)??undefined:undefined;
+}
+
 function mapPortfolioPosition(row:StoredDocument, companies:CompanyListItem[], companyLinks:Map<string,string[]>, quotes:Map<string,QuoteView>, normalizedEtfExposures:Map<string,Map<"country"|"sector"|"theme",LivePositionExposure[]>>):LivePosition {
   const p=props(row);
     const name = cleanPositionName(String(propertyValue(p,"Position") ?? row.title));
@@ -649,8 +662,9 @@ function mapPortfolioPosition(row:StoredDocument, companies:CompanyListItem[], c
     const manualPrice = numeric(propertyValue(p,"Current Price"));
     const priceCurrency = String(propertyValue(p,"Price Currency") ?? "").toUpperCase();
     const manualFxToEur = numeric(propertyValue(p,"FX to EUR"));
-    const quoteId = quoteByPosition[name];
-    const targetId = targetAliases[name] ?? quoteId ?? normalizedName(name).replace(/ /g,"-");
+    const quoteId = positionQuoteId(row, companies, companyLinks);
+    // Target grouping keeps its historical ids; only the price uses the Company-derived symbol.
+    const targetId = targetAliases[name] ?? quoteByPosition[name] ?? normalizedName(name).replace(/ /g,"-");
     const quote: QuoteView|undefined = quoteId ? quotes.get(quoteId) : undefined;
     const isCash = isCashName(name,instrumentType);
     const manualPriceEur = manualPrice == null ? null : priceCurrency === "EUR" || !priceCurrency ? manualPrice : manualFxToEur == null ? null : manualPrice * manualFxToEur;
@@ -733,6 +747,9 @@ export async function getLivePortfolio(db: D1Database, force = false, cacheOnly 
     normalizedEtfExposures.set(positionId,normalizedByType);
   }
   const quotes = new Map(quoteList.map(q => [q.assetId,q]));
+  // Lines outside the legacy mapping are quoted through their linked Company, once companies are known.
+  const extraIds = [...new Set(source.map(({row}) => positionQuoteId(row, companies, companyLinks)).filter((id): id is string => !!id && !quotes.has(id)))];
+  if (extraIds.length) for (const quote of await getQuotes(extraIds, force, db, cacheOnly)) quotes.set(quote.assetId, quote);
   const preliminary = source.map(({row}) => mapPortfolioPosition(row,companies,companyLinks,quotes,normalizedEtfExposures));
   const { positions, sectors, slices, coverage } = calculatePortfolioAggregates(preliminary);
   const issues:ReconciliationIssue[]=[];
