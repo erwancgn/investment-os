@@ -1,4 +1,4 @@
-import type { Analysis, AnalysisFamily, AnalysisPreview } from "../contracts/analysis.ts";
+import type { Analysis, AnalysisContent, AnalysisFamily, AnalysisPreview } from "../contracts/analysis.ts";
 import type { CompanyPreview, Portfolio, Position, Quote } from "../contracts/investment.ts";
 import type { CurrentAnalysisFamily, CurrentSelectionInput } from "../analysis/current-selection.ts";
 
@@ -15,6 +15,33 @@ export type SaveAnalysisInput = {
   runId: string;
   expectedRevision: string | null;
   companyIds: string[];
+};
+
+/** Families a skill can persist through the report form (Decisions are not writable). */
+export type ReportKind = "business" | "valuation" | "short" | "portfolio" | "cio_memo" | "earnings";
+export type ReportRefreshStatus = "not-needed" | "monitor" | "recommended" | "required";
+export type ReportEarnings = {
+  fiscalPeriod: string | null;
+  guidance: string | null;
+  guidanceVsConsensus: string | null;
+  refreshes: { business: ReportRefreshStatus | null; valuation: ReportRefreshStatus | null; short: ReportRefreshStatus | null; portfolio: ReportRefreshStatus | null; memo: ReportRefreshStatus | null };
+};
+/** Contract 1.1 write form: the skill sends its report and handoff fields; the Core builds the Analysis. */
+export type SaveReportInput = {
+  format: "report";
+  runId: string;
+  kind: ReportKind;
+  companyId: string;
+  title: string;
+  date: string;
+  status: "Draft" | "Validated";
+  reportMarkdown: string;
+  summary: string | null;
+  verdict: string | null;
+  confidence: "High" | "Medium" | "Low" | null;
+  score?: number | null;
+  handoffSummary?: string | null;
+  earnings?: ReportEarnings;
 };
 
 export type SaveAnalysisReceipt = {
@@ -53,4 +80,6 @@ export type InvestmentPorts = {
   readCurrentContext?: (companyId: string, family: CurrentAnalysisFamily) => Promise<CurrentSelectionInput>;
   readQuote?: (assetId: string, options?: ReadOptions) => Promise<Quote>;
   writeAnalysis?: (input: SaveAnalysisInput) => Promise<SaveAnalysisReceipt>;
+  /** Pure Markdown → canonical blocks, supplied by the adapter's existing reader normalizer. */
+  renderReportContent?: (markdown: string) => AnalysisContent;
 };

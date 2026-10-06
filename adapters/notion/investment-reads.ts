@@ -1,6 +1,7 @@
 import { createNotionAnalysisWriter, type NotionWriteOptions } from "./analysis-writes";
-import type { CompanyIdentity, InvestmentPorts, SaveAnalysisInput } from "../../core/services/ports";
+import type { CompanyIdentity, InvestmentPorts, SaveAnalysisInput, SaveReportInput } from "../../core/services/ports";
 import { createInvestmentCore, type ReadOptions } from "../../core/services/investment-os";
+import { isReportInput } from "../../core/analysis/report";
 import { SCHEMA_VERSION, isIsoDateOrDateTime, type Provenance, type ServiceResult, type Diagnostic } from "../../core/contracts/common";
 import type { AnalysisPreview } from "../../core/contracts/analysis";
 import type { CurrentAnalysisFamily, CurrentSelectionInput } from "../../core/analysis/current-selection";
@@ -8,6 +9,7 @@ import type { CompanyPreview, Portfolio, Quote } from "../../core/contracts/inve
 import { getCompanyDetail, getLivePortfolio, getResearchDocument, listResearchDocuments, readCurrentAnalysisContext, propertyValue, type CompanyDetail, type CompanyDocument, type LivePortfolio, type ResearchDocument, readPosition } from "./investment-data";
 import { companyPreview } from "../../app/lib/company-preview";
 import { normalizeAnalysisDocument } from "../../app/lib/document-presentation";
+import { canonicalAnalysisContent, parseNotionText } from "../../app/lib/notion-renderer";
 import { normalizeNotionPageId } from "./sync";
 import { getQuotes, instruments, type QuoteView } from "../../app/lib/quotes";
 
@@ -74,6 +76,9 @@ function requireResult<T>(result: ServiceResult<T>): T {
 }
 
 /** Assemble the Core once at the storage boundary; IDs passed through Core stay canonical and opaque. */
+/** Report Markdown → canonical blocks with the same normalizer the app reader uses. */
+export const reportContentRenderer = (markdown: string) => canonicalAnalysisContent("report", parseNotionText(markdown));
+
 function notionPorts(db: D1Database, writes?: NotionWriteOptions): InvestmentPorts {
   const currentCandidates = new Map<string, CurrentSelectionInput["candidates"][number]>();
   return {
@@ -100,7 +105,7 @@ function notionPorts(db: D1Database, writes?: NotionWriteOptions): InvestmentPor
       });
     },
     readPosition: (id, options) => readPosition(db, id, options),
-    ...(writes ? { writeAnalysis: createNotionAnalysisWriter(db, writes) } : {}),
+    ...(writes ? { writeAnalysis: createNotionAnalysisWriter(db, writes), renderReportContent: reportContentRenderer } : {}),
     readCurrentContext: async (companyId, family) => {
       const context = await readCurrentAnalysisContext(db, companyId, family);
       for (const candidate of context.candidates) currentCandidates.set(candidate.id, candidate);
@@ -135,7 +140,7 @@ function notionPorts(db: D1Database, writes?: NotionWriteOptions): InvestmentPor
 export function createInvestmentService(db: D1Database, writes?: NotionWriteOptions) {
   const service=createInvestmentCore(notionPorts(db, writes));
   if(!writes)return service;
-  return {...service,async saveAnalysis(input:SaveAnalysisInput){
+  return {...service,async saveAnalysis(input:SaveAnalysisInput|SaveReportInput){
     const diagnostics:Diagnostic[]=[];
     const result=await createInvestmentCore(notionPorts(db,{...writes,onDiagnostic:diagnostic=>{diagnostics.push(diagnostic);writes.onDiagnostic?.(diagnostic);}})).saveAnalysis(input);
     return {...result,metadata:{...result.metadata,diagnostics:[...result.metadata.diagnostics,...diagnostics]}};
@@ -148,7 +153,11 @@ export function createInvestmentAdapter(db: D1Database, writes?:NotionWriteOptio
     getPosition(id:string,options?:ReadOptions){
       return createInvestmentService(db,writes).getPosition(typeof id==="string"?normalizeNotionPageId(id):id,options);
     },
-    saveAnalysis(input:SaveAnalysisInput){
+    saveAnalysis(request:SaveAnalysisInput|SaveReportInput){
+      if(isReportInput(request)){
+        return createInvestmentService(db,writes).saveAnalysis(typeof request.companyId==="string"?{...request,companyId:normalizeNotionPageId(request.companyId)}:request);
+      }
+      let input=request as SaveAnalysisInput;
       if(input?.analysis?.header && typeof input.analysis.header.id==="string" && Array.isArray(input.companyIds) && input.companyIds.every(id=>typeof id==="string") && Array.isArray(input.analysis.header.companyIds) && input.analysis.header.companyIds.every(id=>typeof id==="string")){
         const analysis={...input.analysis};
         analysis.header={...analysis.header,id:normalizeNotionPageId(analysis.header.id),companyIds:analysis.header.companyIds.map(normalizeNotionPageId)};

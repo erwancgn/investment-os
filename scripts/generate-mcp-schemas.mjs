@@ -4,6 +4,23 @@ import { readFileSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 const source = fileURLToPath(new URL("../contracts/mcp.ts", import.meta.url));
 const target = fileURLToPath(new URL("../contracts/mcp.v1.schema.json", import.meta.url));
+// Model-facing guidance for the 1.1 report form; rules are enforced by the Core, not by these texts.
+const REPORT_FIELDS = {
+  format: "Always \"report\".",
+  runId: "Stable run identifier shared by the modules of one run. Never reuse a run already submitted.",
+  kind: "Module that produced the report.",
+  companyId: "companyId returned by resolve_company. Never derived from a ticker.",
+  title: "Human title of the report page.",
+  date: "Analysis date, ISO calendar date YYYY-MM-DD. Not a fiscal label.",
+  status: "Draft, or Validated to publish and promote Current when the runtime allows it.",
+  reportMarkdown: "Complete human report in Markdown (headings #, ##, ### only; lists; pipe tables; links). Keep [E:id] evidence markers next to the claims they support: they become the block sources. Max 400000 characters.",
+  summary: "One-paragraph TL;DR, or null.",
+  verdict: "Module verdict as written in the handoff, or null.",
+  confidence: "High, Medium, Low, or null.",
+  score: "business and valuation only: integer 0-100 (e.g. 82 for 82/100). Omit for other kinds.",
+  handoffSummary: "cio_memo only: the final handoff text.",
+  earnings: "earnings only: fiscal period, guidance, guidance vs consensus and the five refresh statuses.",
+};
 export function generateMcpSchemas() {
   const program = ts.createProgram([source], { strict: true, target: ts.ScriptTarget.ESNext, moduleResolution: ts.ModuleResolutionKind.Bundler, module: ts.ModuleKind.ESNext, allowImportingTsExtensions: true, noEmit: true, skipLibCheck: true });
   const errors = ts.getPreEmitDiagnostics(program);
@@ -28,12 +45,14 @@ export function generateMcpSchemas() {
     const properties = {}, required = [];
     const indexType = checker.getIndexTypeOfType(type, ts.IndexKind.String);
     definitions[name] = { type: "object", properties, required, additionalProperties: indexType ? schema(indexType) : false };
+    const isReport = checker.getPropertiesOfType(type).some(prop => prop.name === "reportMarkdown");
     for (const prop of checker.getPropertiesOfType(type)) {
       const propType = checker.getTypeOfSymbolAtLocation(prop, prop.valueDeclaration ?? prop.declarations[0]);
       const optional = Boolean(prop.flags & ts.SymbolFlags.Optional);
       // Remove undefined only; null remains part of the wire contract.
       const parts = propType.isUnion() ? propType.types.filter(t => !(t.flags & ts.TypeFlags.Undefined)) : null;
       properties[prop.name] = parts ? (parts.length === 1 ? schema(parts[0]) : { anyOf: parts.map(schema) }) : schema(propType);
+      if (isReport && REPORT_FIELDS[prop.name]) properties[prop.name].description = REPORT_FIELDS[prop.name];
       if (prop.name === "asOf") properties[prop.name].description = "ISO calendar date (YYYY-MM-DD), timezone-qualified ISO date-time, or null. Fiscal labels such as FY2026/Q4 FY2026 are not dates; preserve them in labels/report content. Do not invent an exact date.";
       if (!optional) required.push(prop.name);
     }

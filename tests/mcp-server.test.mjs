@@ -12,7 +12,7 @@ import { fixture, input as writeInput } from "./fixtures/notion-write-harness.mj
 import * as f from "./fixtures/investment-contracts.mjs";
 
 await mkdir(".sites-runtime", { recursive: true });
-const bundle = await build({ stdin: { contents: 'export * from "./transports/mcp/server.ts"; export * from "./transports/mcp/sites-auth.ts"; export * from "./core/services/investment-os.ts"; export * from "./adapters/demo/investment-reads.ts";', resolveDir: process.cwd() }, bundle: true, write: false, platform: "node", format: "esm", packages: "external", metafile: true });
+const bundle = await build({ stdin: { contents: 'export * from "./transports/mcp/server.ts"; export * from "./transports/mcp/sites-auth.ts"; export * from "./core/services/investment-os.ts"; export * from "./adapters/demo/investment-reads.ts"; export * from "./transports/mcp/site-campaign.ts";', resolveDir: process.cwd() }, bundle: true, write: false, platform: "node", format: "esm", packages: "external", metafile: true });
 await writeFile(".sites-runtime/mcp-test.mjs", bundle.outputFiles[0].text);
 const api = await import(`../.sites-runtime/mcp-test.mjs?${Date.now()}`);
 const caller = { subject: "fixture-owner", scopes: ["personal", "demo"], permissions: ["investment:read", "investment:write"], writeApproved: true };
@@ -30,9 +30,14 @@ test("transport import boundary and canonical discovery schemas", async () => {
   const json = await result.json(); assert.equal(json.result.tools.length, 8);
   assert.equal(json.result.tools.some(t => t.name === "list_analyses"), false);
   for (const tool of json.result.tools) { assert.equal(ToolSchema.safeParse(tool).success,true); assert.equal(tool.outputSchema.type,"object"); assert.equal(tool.inputSchema.type, "object"); assert.equal(JSON.stringify(tool.inputSchema).includes('"$ref"'), false); assert.equal(tool.annotations.readOnlyHint, tool.name !== "save_analysis"); }
-  const input = json.result.tools.find(t => t.name === "save_analysis").inputSchema.properties.input;
-  assert.deepEqual(input.required, ["analysis", "runId", "expectedRevision", "companyIds"]);
-  assert.ok(input.properties.analysis.anyOf.every(schema => schema.properties.header.required.includes("companyIds")));
+  // Contract 1.1: save_analysis publishes only the report form (the 1.0 object form stays accepted, unpublished).
+  const save = json.result.tools.find(t => t.name === "save_analysis").inputSchema;
+  const input = save.properties.input;
+  assert.deepEqual(input.required.slice().sort(), ["companyId", "confidence", "date", "format", "kind", "reportMarkdown", "runId", "status", "summary", "title", "verdict"].sort());
+  assert.deepEqual(input.properties.format, { const: "report", description: input.properties.format.description });
+  assert.equal("analysis" in input.properties, false);
+  assert.ok(input.properties.reportMarkdown.description.includes("[E:id]"));
+  assert.ok(Buffer.byteLength(JSON.stringify(save)) < 20_000, `save_analysis input ${Buffer.byteLength(JSON.stringify(save))} bytes`);
 });
 
 test("unknown tools, invalid versions, invalid schemas, output schemas and scope", async () => {
@@ -338,4 +343,47 @@ test("catalog publishes only reachable output definitions and text mirrors compl
   assert.equal(response.result.structuredContent.result.status, "ok");
   // Text-only clients receive the same completed envelope, not only its status.
   assert.deepEqual(JSON.parse(response.result.content[0].text), response.result.structuredContent);
+});
+
+test("report form: validated by the published schema, built by the Core, refused with field-level diagnostics", async () => {
+  let seen;
+  const render = markdown => ({ schemaVersion: "1.0.0", blocks: markdown.split("\n\n").filter(Boolean).map((text, i) => ({ id: `r${i}`, sourceIds: ["r"], type: "paragraph", text: [{ text, marks: [], href: null }] })) });
+  const core = api.createInvestmentCore({ renderReportContent: render, writeAnalysis: async intent => { seen = intent; return { schemaVersion: "1.0.0", status: "persisted", analysisId: "page-1", runId: intent.runId, revision: "r1", persisted: true, promoted: false, verified: false, diagnostics: [] }; } });
+  const report = { format: "report", runId: "BC-X-1", kind: "business", companyId: "c1", title: "Business Check", date: "2026-10-06", status: "Draft", reportMarkdown: "Synthèse [E:s1].\n\nRisques.", summary: null, verdict: "Bonne", confidence: "Medium", score: 74 };
+  const ok = await call(handler(core), "save_analysis", { ...base, input: report });
+  assert.equal(ok.status, "completed"); assert.equal(ok.result.status, "ok");
+  assert.equal(seen.analysis.kind, "business"); assert.deepEqual(seen.analysis.content.blocks[0].sourceIds, ["s1"]);
+  const transportRejected = await call(handler(core), "save_analysis", { ...base, input: { ...report, kind: "decision" } });
+  assert.equal(transportRejected.status, "rejected"); assert.equal(transportRejected.error.code, "invalid_input");
+  const coreRejected = await call(handler(core), "save_analysis", { ...base, input: { ...report, score: 74.5 } });
+  assert.equal(coreRejected.result.error.code, "invalid_input");
+  assert.match(coreRejected.result.metadata.diagnostics[0].message, /score must be an integer/);
+});
+
+test("Sites campaign policy applies the same envelope to the report form", async () => {
+  const { isAuthorizedSiteCampaignWrite, SITE_CAMPAIGN_EXPIRES_AT } = api;
+  const before = Date.parse(SITE_CAMPAIGN_EXPIRES_AT) - 60_000;
+  const runId = "FV-SU-20261006-LOT13-E2E", allowed = [runId];
+  const report = { format: "report", runId, kind: "business", companyId: "3b337ea7-af35-81ca-97c4-f048f9d52b1c", title: "t", date: "2026-10-06", status: "Draft", reportMarkdown: "x", summary: null, verdict: null, confidence: null };
+  assert.equal(isAuthorizedSiteCampaignWrite(report, allowed, before), true);
+  assert.equal(isAuthorizedSiteCampaignWrite({ ...report, status: "Validated" }, allowed, before), false);
+  assert.equal(isAuthorizedSiteCampaignWrite({ ...report, kind: "short" }, allowed, before), false);
+  assert.equal(isAuthorizedSiteCampaignWrite({ ...report, companyId: "other" }, allowed, before), false);
+  assert.equal(isAuthorizedSiteCampaignWrite(report, [], before), false);
+  assert.equal(isAuthorizedSiteCampaignWrite({ ...report, runId: "constructor" }, ["constructor"], before), false, "no prototype lookup");
+  assert.equal(isAuthorizedSiteCampaignWrite(report, allowed, Date.parse(SITE_CAMPAIGN_EXPIRES_AT)), false, "expired");
+});
+
+test("MCP tools spec: servers MUST rate limit tool invocations — READ budget per caller, isolated and windowed", async () => {
+  let now = 1_000_000, calls = 0;
+  const core = api.createInvestmentCore({ readCompany: async () => { calls++; return null; } });
+  const h = api.createMcpHandler({ authenticate: request => ({ ...caller, subject: request.headers.get("x-test-subject") ?? caller.subject }), service: () => core, readRateLimit: { max: 3, windowMs: 60_000, now: () => now } });
+  const as = (subject) => async () => output(await h(request("get_company", { ...base, id: "c1" }, { headers: { "x-test-subject": subject } })));
+  for (let i = 0; i < 3; i++) assert.equal((await as("alice")()).status, "completed");
+  const limited = await as("alice")();
+  assert.equal(limited.status, "rejected"); assert.equal(limited.error.code, "rate_limit"); assert.equal(limited.error.outcome, "not_started");
+  assert.equal((await as("bob")()).status, "completed", "budgets are per caller");
+  assert.equal(calls, 4, "the limited call never reached the Core");
+  now += 60_001;
+  assert.equal((await as("alice")()).status, "completed", "window resets");
 });

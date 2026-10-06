@@ -1,4 +1,5 @@
-import type { SaveAnalysisInput } from "../../core/services/ports";
+import type { SaveAnalysisInput, SaveReportInput } from "../../core/services/ports";
+import { isReportInput } from "../../core/analysis/report";
 
 type SiteCampaign = { companyId: string; families: readonly string[] };
 
@@ -13,10 +14,13 @@ export const SITE_WRITE_CAMPAIGNS: Readonly<Record<string, SiteCampaign>> = Obje
 const compactId = (value: string) => value.trim().toLowerCase().replaceAll("-", "");
 
 /** Enforce the campaign envelope before any Core method can be invoked. */
-export function isAuthorizedSiteCampaignWrite(input: SaveAnalysisInput, allowedRunIds: readonly string[], now = Date.now()): boolean {
+export function isAuthorizedSiteCampaignWrite(request: SaveAnalysisInput | SaveReportInput, allowedRunIds: readonly string[], now = Date.now()): boolean {
   if (!Number.isFinite(Date.parse(SITE_CAMPAIGN_EXPIRES_AT)) || now >= Date.parse(SITE_CAMPAIGN_EXPIRES_AT)) return false;
-  const campaign = SITE_WRITE_CAMPAIGNS[input.runId];
-  if (!campaign || !allowedRunIds.includes(input.runId)) return false;
+  const campaign = typeof request?.runId === "string" && Object.hasOwn(SITE_WRITE_CAMPAIGNS, request.runId) ? SITE_WRITE_CAMPAIGNS[request.runId] : undefined;
+  if (!campaign || !allowedRunIds.includes(request.runId)) return false;
+  // Report form: same envelope (Draft only, creation only, one exact company, allowed family).
+  if (isReportInput(request)) return request.status === "Draft" && typeof request.companyId === "string" && compactId(request.companyId) === compactId(campaign.companyId) && campaign.families.includes(request.kind);
+  const input = request;
   if (!input.analysis || input.analysis.header.status !== "Draft" || input.expectedRevision !== null) return false;
   const companyId = compactId(campaign.companyId);
   const companyIds = input.companyIds.map(compactId);

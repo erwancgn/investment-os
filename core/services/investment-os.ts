@@ -2,8 +2,9 @@ import { SCHEMA_VERSION, isRecord, type Diagnostic, type ServiceErrorCode, type 
 import { isAnalysis, isAnalysisPreview, type Analysis, type AnalysisPreview } from "../contracts/analysis.ts";
 import { isCompanyPreview, isPosition, isQuote, validatePortfolio, type CompanyPreview, type Portfolio, type Position, type Quote } from "../contracts/investment.ts";
 import { selectCurrentAnalysis, type CurrentAnalysisFamily, type CurrentSelectionInput } from "../analysis/current-selection.ts";
-import type { CompanyIdentity, CompanyResolution, InvestmentPorts, ListAnalysesParams, ReadOptions, SaveAnalysisInput, SaveAnalysisReceipt } from "./ports.ts";
-export type { CompanyIdentity, CompanyResolution, InvestmentPorts, ListAnalysesParams, ReadOptions, SaveAnalysisInput, SaveAnalysisReceipt } from "./ports.ts";
+import type { CompanyIdentity, CompanyResolution, InvestmentPorts, ListAnalysesParams, ReadOptions, SaveAnalysisInput, SaveAnalysisReceipt, SaveReportInput } from "./ports.ts";
+import { analysisFromReport, isReportInput } from "../analysis/report.ts";
+export type { CompanyIdentity, CompanyResolution, InvestmentPorts, ListAnalysesParams, ReadOptions, SaveAnalysisInput, SaveAnalysisReceipt, SaveReportInput } from "./ports.ts";
 
 const emptyMetadata = (): ServiceMetadata => ({ revision: null, freshness: "unknown", provenance: null, diagnostics: [] });
 const messages: Record<ServiceErrorCode, string> = {
@@ -173,7 +174,14 @@ export function createInvestmentCore(ports: InvestmentPorts) {
         return ok(analysis, selection.diagnostics);
       } catch (error) { return serviceError(errorCode(error)) as ServiceResult<Analysis | null>; }
     },
-    async saveAnalysis(input: SaveAnalysisInput): Promise<ServiceResult<SaveAnalysisReceipt>> {
+    async saveAnalysis(request: SaveAnalysisInput | SaveReportInput): Promise<ServiceResult<SaveAnalysisReceipt>> {
+      let input = request as SaveAnalysisInput;
+      if (isReportInput(request)) {
+        if (!ports.renderReportContent || !ports.writeAnalysis) return serviceError("dependency") as ServiceResult<SaveAnalysisReceipt>;
+        const built = analysisFromReport(request, ports.renderReportContent);
+        if (!built.ok) return serviceError("invalid_input", [{ code: "report_input", message: built.issues.join("; "), severity: "error", path: "input" }]) as ServiceResult<SaveAnalysisReceipt>;
+        input = built.input;
+      }
       if (!saveInputValid(input)) return serviceError("invalid_input") as ServiceResult<SaveAnalysisReceipt>;
       if (!ports.writeAnalysis) return serviceError("dependency") as ServiceResult<SaveAnalysisReceipt>;
       try {

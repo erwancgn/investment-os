@@ -17,6 +17,8 @@ export type McpRuntime = {
   authenticate: (request: Request) => Promise<McpCaller | null> | McpCaller | null;
   service: (scope: McpScope, caller: McpCaller) => Core;
   waitUntil?: (promise: Promise<unknown>) => void;
+  /** Per-caller READ budget (MCP spec: servers MUST rate limit tool invocations). Isolate-local. */
+  readRateLimit?: { max: number; windowMs: number; now?: () => number };
 };
 const provider = new CfWorkerJsonSchemaValidator({ draft: "7" });
 const schemaFor = (name: ToolName, field: "inputSchema" | "outputSchema") => {
@@ -58,9 +60,20 @@ function publishedOutputSchema(name: ToolName) {
   const schema = schemaFor(name, "outputSchema");
   return { $schema: schemas.$schema, ...schema, definitions: reachableDefinitions(schema) };
 }
+/** save_analysis publishes only the 1.1 report form; the 1.0 object form stays accepted (full validators) for one release. */
+function publishedInputSchema(name: ToolName) {
+  const schema = inlineInputSchema(schemaFor(name, "inputSchema")) as { properties?: Record<string, { anyOf?: { properties?: Record<string, unknown> }[] }> };
+  const input = schema.properties?.input;
+  if (name === "save_analysis" && input?.anyOf) {
+    const report = input.anyOf.find(branch => branch.properties && "reportMarkdown" in branch.properties);
+    if (!report) throw new Error("save_analysis report form missing from the contract");
+    schema.properties!.input = report as typeof input;
+  }
+  return { $schema: schemas.$schema, ...schema };
+}
 export const mcpToolCatalog: Tool[] = Object.entries(MCP_TOOLS).map(([name, spec]) => ({
   name, title: spec.title, description: spec.description,
-  inputSchema: { $schema: schemas.$schema, ...(inlineInputSchema(schemaFor(name as ToolName, "inputSchema")) as object) } as unknown as Tool["inputSchema"],
+  inputSchema: publishedInputSchema(name as ToolName) as unknown as Tool["inputSchema"],
   outputSchema: publishedOutputSchema(name as ToolName) as Tool["outputSchema"],
   annotations: { readOnlyHint: spec.access === "READ", destructiveHint: spec.access === "WRITE", idempotentHint: spec.access === "READ", openWorldHint: true },
 }));
@@ -88,6 +101,21 @@ function invoke(core: Core, name: ToolName, input: McpInputs[ToolName]) {
 export function createMcpHandler(runtime: McpRuntime) {
   // Only live transport concurrency, not an idempotency journal/cache. Writer owns durable replay.
   const activeWrites = new Set<string>();
+  const readLimit = { max: runtime.readRateLimit?.max ?? MCP_LIMITS.readsPerWindow, windowMs: runtime.readRateLimit?.windowMs ?? MCP_LIMITS.readWindowMs, now: runtime.readRateLimit?.now ?? Date.now };
+  const readWindows = new Map<string, { start: number; count: number }>();
+  /** Fixed window per subject; WRITE keeps its own single-flight fence. */
+  function allowRead(subject: string): boolean {
+    const now = readLimit.now();
+    const window = readWindows.get(subject);
+    if (!window || now - window.start >= readLimit.windowMs) {
+      if (readWindows.size > 1000) for (const [key, value] of readWindows) if (now - value.start >= readLimit.windowMs) readWindows.delete(key);
+      readWindows.set(subject, { start: now, count: 1 });
+      return true;
+    }
+    if (window.count >= readLimit.max) return false;
+    window.count++;
+    return true;
+  }
   async function call(name: ToolName, raw: unknown, caller: McpCaller, keepAlive?: McpRuntime["waitUntil"]): Promise<McpOutput<unknown>> {
     const scope = isRecord(raw) && (raw.scope === "personal" || raw.scope === "demo") ? raw.scope : null;
     const write = MCP_TOOLS[name].access === "WRITE";
@@ -100,6 +128,7 @@ export function createMcpHandler(runtime: McpRuntime) {
     const input = raw as McpInputs[ToolName];
     if (write && caller.allowedWriteRunIds && !isAuthorizedSiteCampaignWrite((input as McpInputs["save_analysis"]).input, caller.allowedWriteRunIds)) return rejected("forbidden", scope);
     if (write && activeWrites.has(caller.subject)) return rejected("rate_limit", scope);
+    if (!write && !allowRead(caller.subject)) return rejected("rate_limit", scope);
     if (write) activeWrites.add(caller.subject);
     const deadline = write ? MCP_LIMITS.writeTimeoutMs : MCP_LIMITS.readTimeoutMs;
     let timer: ReturnType<typeof setTimeout> | undefined;
