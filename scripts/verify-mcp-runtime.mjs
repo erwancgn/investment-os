@@ -49,6 +49,6 @@ try {
   assert.equal(save.structuredContent.error.code, "forbidden");
   assert.equal(save.structuredContent.error.outcome, "not_started");
   assert.equal(data.creates, 0);
-  console.log("workerd: initialization/discovery, identity resolution, 6 demo READ, auth, release-closed WRITE, version, browser boundary PASS");
+  console.log("workerd: initialization/discovery, identity resolution, 6 demo READ, auth, production WRITE policy (legacy form refused), version, browser boundary PASS");
   console.log(`catalog JSON bytes: ${Buffer.byteLength(JSON.stringify(list))}`);
 } finally { await client.close(); await mf.dispose(); data.sql.close(); }

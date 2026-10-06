@@ -78,10 +78,11 @@ const sitesHandler = (core, extra = {}) => api.createMcpHandler({ authenticate: 
 
 test("Sites production WRITE policy: report form only, Draft or Validated, before the Core", async () => {
   let calls = 0;
-  const core = api.createInvestmentCore({ renderReportContent: () => ({ schemaVersion: "1.0.0", blocks: [{ id: "b", type: "paragraph", text: [{ text: "x" }], sourceIds: ["s"] }] }),
+  const core = api.createInvestmentCore({ renderReportContent: () => ({ schemaVersion: "1.0.0", blocks: [{ id: "b", type: "paragraph", text: [{ text: "x", marks: [], href: null }], sourceIds: ["s"] }] }),
     writeAnalysis: async intent => { calls++; return { schemaVersion: "1.0.0", status: "persisted", analysisId: "assigned", runId: intent.runId, revision: "2026-10-06T12:00:00Z", persisted: true, promoted: false, verified: false, diagnostics: [] }; } });
   const h = sitesHandler(core);
-  assert.equal((await call(h, "save_analysis", { ...base, input: reportInput() })).result?.status, "ok", "Draft report");
+  const firstDraft = await call(h, "save_analysis", { ...base, input: reportInput() });
+  assert.equal(firstDraft.result?.status, "ok", JSON.stringify(firstDraft).slice(0, 700));
   assert.equal((await call(h, "save_analysis", { ...base, input: reportInput({ runId: "BC-PROD-2", status: "Validated" }) })).result?.status, "ok", "Validated report");
   assert.equal(calls, 2);
   const legacy = await call(h, "save_analysis", { ...base, input: writeInput() });
@@ -95,7 +96,7 @@ test("Sites production WRITE policy: report form only, Draft or Validated, befor
 
 test("MCP spec rate limiting: WRITE has its own per-caller budget, checked before the Core", async () => {
   let now = 0, calls = 0;
-  const core = api.createInvestmentCore({ renderReportContent: () => ({ schemaVersion: "1.0.0", blocks: [{ id: "b", type: "paragraph", text: [{ text: "x" }], sourceIds: ["s"] }] }),
+  const core = api.createInvestmentCore({ renderReportContent: () => ({ schemaVersion: "1.0.0", blocks: [{ id: "b", type: "paragraph", text: [{ text: "x", marks: [], href: null }], sourceIds: ["s"] }] }),
     writeAnalysis: async intent => { calls++; return { schemaVersion: "1.0.0", status: "persisted", analysisId: "a", runId: intent.runId, revision: "r", persisted: true, promoted: false, verified: false, diagnostics: [] }; } });
   const h = sitesHandler(core, { writeRateLimit: { max: 2, windowMs: 86_400_000, now: () => now } });
   for (const n of [1, 2]) assert.equal((await call(h, "save_analysis", { ...base, input: reportInput({ runId: `R${n}` }) })).result?.status, "ok");

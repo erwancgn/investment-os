@@ -20,6 +20,9 @@ test("the Worker mounts the MCP endpoint with Sites authentication", async () =>
   assert.match(worker, /import \{ createMcpHandler \} from "\.\.\/transports\/mcp\/server"/);
   assert.match(worker, /import \{ authenticateSitesMcp \} from "\.\.\/transports\/mcp\/sites-auth"/);
   assert.match(worker, /url\.pathname === "\/mcp"\) return mcpHandler\(env\)/);
+  // Forgetting the hosting policy would let any schema-valid WRITE reach the Core.
+  assert.match(worker, /import \{ authorizeSitesWrite \} from "\.\.\/transports\/mcp\/site-write-policy"/);
+  assert.match(worker, /authorizeWrite: authorizeSitesWrite,/);
 });
 
 test("RenderBlock keeps unsupported blocks and source identities", async () => {
