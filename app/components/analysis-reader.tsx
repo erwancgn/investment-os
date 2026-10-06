@@ -3,24 +3,16 @@
 import React from "react";
 import type { CompanyDocument, DecisionFields, ResearchDocument } from "../lib/investment-data";
 import type { AnalysisPresentationProjection, ProjectionStatus } from "../lib/presentation-projection";
-import { documentPresentation, hidePromotedTableSections } from "../lib/document-presentation";
-import { parseNotionDocument } from "../lib/notion-renderer";
-import { NotionTable } from "./notion-table";
+import { normalizeAnalysisDocument } from "../lib/document-presentation";
 import { InvestmentMemoReader } from "./investment-memo-reader";
-import { AnalysisFactGrid, AnalysisProjectionSummary, AnalysisReportHero, ProjectionStatusNotice } from "./analysis-presentation";
+import { AnalysisBlockBody, AnalysisFactGrid, AnalysisProjectionSummary, AnalysisReportHero, ProjectionStatusNotice } from "./analysis-presentation";
 import { AnalysisSectionGroups, navigateToAnalysisSection } from "./analysis-section-groups";
 import { renderInlineFormat } from "../lib/inline-format";
 import { ScenarioComparison } from "./scenario-comparison";
-import { extractValuationSummary } from "../lib/valuation-summary";
 import { analysisTypeLabel, formatAnalysisScore } from "../lib/decision-label";
-import { BackButton, Badge, DisclosureSurface, MetadataGrid, SecondaryBlock } from "./ui-primitives";
+import { BackButton, Badge, DisclosureSurface, MetadataGrid } from "./ui-primitives";
 
 type AnalysisDoc = (CompanyDocument | ResearchDocument) & { presentationStatus?: ProjectionStatus; presentationProjection?: AnalysisPresentationProjection | null };
-
-function inline(text: string) {
-  text = text.replace(/\\~/g, "~");
-  return renderInlineFormat(text);
-}
 
 const shortDate = (value: string | null) =>
   value
@@ -119,22 +111,24 @@ function DecisionTemplate({ decision }: { decision: DecisionFields }) {
 }
 
 export function AnalysisReader({ document, companyName, onBack, embedded = false }: { document: AnalysisDoc; companyName: string; onBack?: () => void; embedded?: boolean }) {
-  if (document.sourceKey === "analyses" && (document.category === "synthese" || /investment memo|mémo cio/i.test(`${document.agent} ${document.title}`))) {
-    return <InvestmentMemoReader document={document} companyName={companyName} onBack={onBack} embedded={embedded} />;
+  const normalized = React.useMemo(() => document.normalizedAnalysis ?? normalizeAnalysisDocument(document), [document]);
+  if (normalized.analysis.kind === "cio_memo") {
+    return <InvestmentMemoReader document={document} normalized={normalized} companyName={companyName} onBack={onBack} embedded={embedded} />;
   }
-  return <StandardAnalysisReader document={document} companyName={companyName} onBack={onBack} embedded={embedded}/>;
+  return <StandardAnalysisReader document={document} normalized={normalized} companyName={companyName} onBack={onBack} embedded={embedded}/>;
 }
 
-function StandardAnalysisReader({ document, companyName, onBack, embedded }: { document: AnalysisDoc; companyName: string; onBack?: () => void; embedded: boolean }) {
+type NormalizedReader = ReturnType<typeof normalizeAnalysisDocument>;
+
+function StandardAnalysisReader({ document, normalized, companyName, onBack, embedded }: { document: AnalysisDoc; normalized: NormalizedReader; companyName: string; onBack?: () => void; embedded: boolean }) {
   const isDemo = document.id.startsWith("demo-");
-  const blocks = React.useMemo(() => parseNotionDocument(document.plainText, document.title, document.notionBlocks), [document]);
-  const projection = document.presentationStatus === "valid" ? document.presentationProjection ?? null : null;
-  const documentSummary = projection ? null : documentPresentation(blocks, document.summary ?? "", { category: document.category, handoffSummary: document.handoffSummary });
+  const blocks = normalized.analysis.content.blocks;
+  const projection = normalized.analysis.projection.status === "valid" ? normalized.analysis.projection.projection : null;
+  const documentSummary = projection ? null : normalized.view;
   const presentation = documentSummary;
-  const scenarioSummary = !projection && document.category === "valuation" ? extractValuationSummary(blocks) : null;
+  const scenarioSummary = !projection && normalized.analysis.kind === "valuation" ? normalized.valuation : null;
   const hidden = new Set(presentation?.hiddenIndexes ?? []);
-  if (scenarioSummary) hidePromotedTableSections(blocks, scenarioSummary.promotedBlockIndexes, hidden);
-  const headings = blocks.flatMap((block, index) => block.type === "heading" && block.level <= 2 && !hidden.has(index) ? [{ text: block.text, index, id: block.id ?? `analysis-heading-${index}` }] : []);
+  const headings = blocks.flatMap((block, index) => block.type === "heading" && block.level <= 2 && !hidden.has(index) ? [{ text: block.text.map(segment => segment.text).join(""), index, id: block.id ?? `analysis-heading-${index}` }] : []);
   const templateKind = document.category || (document.sourceKey === "decisions" ? "synthese" : "universal");
   const scored = templateKind === "business" || templateKind === "valuation";
   const formattedScore = scored ? formatAnalysisScore(document.score) : null;
@@ -144,7 +138,7 @@ function StandardAnalysisReader({ document, companyName, onBack, embedded }: { d
       ? { label: "Score", value: formattedScore }
       : null;
   return (
-    <section className="research-reader universal-analysis-reader" data-analysis-template={projection?.analysisType ?? templateKind} data-projection-status={document.presentationStatus ?? "unavailable"}>
+    <section className="research-reader universal-analysis-reader" data-analysis-template={projection?.analysisType ?? templateKind} data-projection-status={normalized.analysis.projection.status}>
       {!embedded && onBack && <div className="detail-navigation"><BackButton onBack={onBack} ariaLabel="Retour à la liste précédente" /></div>}
       <AnalysisReportHero
         badges={
@@ -157,10 +151,10 @@ function StandardAnalysisReader({ document, companyName, onBack, embedded }: { d
           </>
         }
         title={analysisTypeLabel(document)}
-        subtitle={<>{companyName} · {shortDate(document.date || document.lastEditedTime)}</>}
+        subtitle={<>{companyName} · {shortDate(normalized.analysis.header.date || normalized.analysis.header.provenance.capturedAt)}</>}
         outcome={outcome}
       />
-      {document.presentationStatus === "invalid" && <ProjectionStatusNotice status="invalid" />}
+      <ProjectionStatusNotice status={normalized.analysis.projection.status} diagnostics={normalized.analysis.diagnostics} />
       <div className="notion-layout universal-analysis-layout">
         <article className="notion-page universal-analysis-page">
           {projection && <AnalysisProjectionSummary projection={projection} />}
@@ -169,11 +163,11 @@ function StandardAnalysisReader({ document, companyName, onBack, embedded }: { d
               <section aria-labelledby="analysis-tldr">
                 <span id="analysis-tldr">TL;DR</span>
                 {presentation.summaryItems.length === 1 ? (
-                  <p>{inline(presentation.summaryItems[0])}</p>
+                  <p>{renderInlineFormat(presentation.summaryItems[0])}</p>
                 ) : (
                   <ul>
                     {presentation.summaryItems.map((item, index) => (
-                      <li key={index}>{inline(item)}</li>
+                      <li key={index}>{renderInlineFormat(item)}</li>
                     ))}
                   </ul>
                 )}
@@ -185,38 +179,12 @@ function StandardAnalysisReader({ document, companyName, onBack, embedded }: { d
               ariaLabel="Repères du document"
               category={templateKind}
               facts={presentation.facts}
-              renderValue={inline}
+              renderValue={renderInlineFormat}
             />
           )}
           {scenarioSummary && <ScenarioComparison summary={scenarioSummary} showThresholds />}
           {document.sourceKey === "decisions" && document.decision && <DecisionTemplate decision={document.decision} />}
-          <AnalysisSectionGroups blocks={blocks} hidden={hidden} idForHeading={index => `analysis-heading-${index}`} classForHeading={title => { const scenario = scenarioKind(title); return scenario ? `analysis-scenario analysis-scenario-${scenario}` : ""; }} renderBlock={({ block, index }) => {
-            if (block.type === "heading") {
-              const Tag = `h${Math.min(block.level + 1, 6)}` as keyof React.JSX.IntrinsicElements;
-              return <section className="analysis-section"><Tag>{inline(block.text)}</Tag></section>;
-            }
-            if (block.type === "paragraph") return <p key={index}>{inline(block.text)}</p>;
-            if (block.type === "quote") return <blockquote key={index}>{inline(block.text)}</blockquote>;
-            if (block.type === "callout")
-              return (
-                <SecondaryBlock className="notion-callout" key={index}>
-                  <span>◆</span>
-                  <p>{inline(block.text)}</p>
-                </SecondaryBlock>
-              );
-            if (block.type === "divider") return <hr key={index} />;
-            if (block.type === "list") {
-              const Tag = block.ordered ? "ol" : "ul";
-              return (
-                <Tag key={index}>
-                  {block.items.map((item, itemIndex) => (
-                    <li key={itemIndex}>{inline(item)}</li>
-                  ))}
-                </Tag>
-              );
-            }
-            return <NotionTable key={index} rows={block.rows} header={block.header ?? true} renderCell={inline} />;
-          }} />
+          <AnalysisSectionGroups blocks={blocks} hidden={hidden} factGroups={normalized.view.factGroups} idForHeading={index => `analysis-heading-${index}`} classForHeading={title => { const scenario = scenarioKind(title); return scenario ? `analysis-scenario analysis-scenario-${scenario}` : ""; }} renderBlock={({ block }) => <AnalysisBlockBody block={block} />} />
           <DisclosureSurface
             className="analysis-source-details"
             summary={
@@ -236,7 +204,7 @@ function StandardAnalysisReader({ document, companyName, onBack, embedded }: { d
                 {headings.length ? (
                   headings.map((heading) => (
                     <a href={`#${heading.id}`} onClick={event => { event.preventDefault(); navigateToAnalysisSection(heading.id); }} key={heading.index}>
-                      {heading.text}
+                      {renderInlineFormat(heading.text)}
                     </a>
                   ))
                 ) : (
