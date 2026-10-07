@@ -298,7 +298,9 @@ export function createInvestmentCore(ports: InvestmentPorts) {
       } catch (error) {
         const code = errorCode(error), detail = (error as { detail?: unknown } | null)?.detail;
         // A provider-side input refusal names its rule (field-level, never content) instead of a bare invalid_input.
-        const diagnostics: Diagnostic[] = code === "invalid_input" && typeof detail === "string" && detail ? [{ code: "write_input", message: detail, severity: "error", path: "input" }] : [];
+        const named = typeof detail === "string" && detail;
+        const diagnostics: Diagnostic[] = named && code === "invalid_input" ? [{ code: "write_input", message: detail, severity: "error", path: "input" }]
+          : named && code === "stale_request" ? [{ code: "write_stale", message: detail, severity: "error", path: "input" }] : [];
         return serviceError(code, diagnostics) as ServiceResult<SaveAnalysisReceipt>;
       }
     },

@@ -186,6 +186,7 @@ const receiptMessages:Record<string,string>={
   promotion_not_required:"Brouillon enregistré et relu ; aucune promotion Current n'était demandée.",
   current_changed_concurrently:"Analyse enregistrée ; le pointeur Current a changé entre-temps et n'a pas été promu.",
 };
+const CHILD_READ_CONCURRENCY=4;
 export function createNotionAnalysisWriter(db:D1Database,options:NotionWriteOptions){
   const sources={...notionSources,...options.sources};
   const {read,mutate}=createNotionClient(options);
@@ -193,7 +194,13 @@ export function createNotionAnalysisWriter(db:D1Database,options:NotionWriteOpti
   async function children(pageId:string):Promise<RecordValue[]>{
     let cursor:string|undefined;const result:RecordValue[]=[];
     do{const r=await read(`/blocks/${pageId}/children?page_size=100${cursor?`&start_cursor=${encodeURIComponent(cursor)}`:""}`);
-      for(const b of Array.isArray(r.results)?r.results:[]){const item=object(b);if(item.has_children===true){const type=String(item.type);item[type]={...object(item[type]),children:await children(String(item.id))};}result.push(item);}
+      const items=(Array.isArray(r.results)?r.results:[]).map(object);
+      // Tables and other nested blocks are read with bounded parallelism: a sequential read cost one round trip per table.
+      const nested=items.filter(item=>item.has_children===true);
+      for(let n=0;n<nested.length;n+=CHILD_READ_CONCURRENCY){
+        await Promise.all(nested.slice(n,n+CHILD_READ_CONCURRENCY).map(async item=>{const type=String(item.type);item[type]={...object(item[type]),children:await children(String(item.id))};}));
+      }
+      result.push(...items);
       cursor=r.has_more===true?String(r.next_cursor):undefined;
     }while(cursor);return result;
   }
@@ -277,33 +284,34 @@ export function createNotionAnalysisWriter(db:D1Database,options:NotionWriteOpti
     const owner=crypto.randomUUID();
     await db.prepare("INSERT INTO notion_analysis_writes(run_id,digest,phase) VALUES(?,?,'new') ON CONFLICT(run_id) DO NOTHING").bind(writeKey,digest).run();
     const journal=await db.prepare("SELECT * FROM notion_analysis_writes WHERE run_id=?").bind(writeKey).first<Journal>();
-    if(!journal||journal.digest!==digest)throw fault("stale_request");
+    if(!journal||journal.digest!==digest)throw fault("stale_request","digest: this run already exists with different content or properties; a replay must resend the identical report");
     const lease=await db.prepare("UPDATE notion_analysis_writes SET owner=?,lease_until=? WHERE run_id=? AND (owner IS NULL OR lease_until<?)").bind(owner,Date.now()+180000,writeKey,Date.now()).run();
-    if(Number(lease.meta?.changes??0)!==1)throw fault("stale_request");
+    if(Number(lease.meta?.changes??0)!==1)throw fault("stale_request","lease: another writer holds this run");
     let analysisId=journal.page_id??input.analysis.header.id,actualIdentityKnown=Boolean(journal.page_id),persisted=false,promoted=false,mutated=false,revision:string|null=null;
     const receipt=(status:SaveAnalysisReceipt["status"],code?:string):SaveAnalysisReceipt=>({schemaVersion:"1.0.0",status,analysisId:id(analysisId),runId:input.runId,revision,persisted,promoted,verified:status==="verified",diagnostics:code?[{code,message:receiptMessages[code]??"État relu ou reprise nécessaire; aucune transaction Notion atomique.",severity:code==="promotion_not_required"?"info":status==="verified"?"info":"warning"}]:[]});
     const saveJournal=async(phase:string)=>{
       const result=await db.prepare("UPDATE notion_analysis_writes SET page_id=?,phase=?,lease_until=? WHERE run_id=? AND owner=?").bind(actualIdentityKnown?analysisId:null,phase,Date.now()+180000,writeKey,owner).run();
-      if(Number(result.meta?.changes??0)!==1)throw fault("stale_request");
+      if(Number(result.meta?.changes??0)!==1)throw fault("stale_request","lease_lost: the write lease expired or moved during the save");
     };
     try{
       const matches=await lookup(source,input.runId,moduleAgent,runProperty);
-      if(matches.length>1)throw fault("stale_request");
+      if(matches.length>1)throw fault("stale_request","duplicate_run: several pages carry this runId");
       let existing=matches[0];
       let matchedBlocks:RecordValue[]|null=null;
-      if(existing&&journal.page_id&&id(existing.id)!==id(journal.page_id))throw fault("stale_request");
-      if(existing&&input.expectedRevision!==null&&id(existing.id)!==id(input.analysis.header.id))throw fault("stale_request");
+      if(existing&&journal.page_id&&id(existing.id)!==id(journal.page_id))throw fault("stale_request","journal_page: the journal knows another page for this run");
+      if(existing&&input.expectedRevision!==null&&id(existing.id)!==id(input.analysis.header.id))throw fault("stale_request","expected_page: expectedRevision targets another page than the one found for this run");
       if(existing){
         matchedBlocks=await children(existing.id);
         const actualBlocks=matchedBlocks,desired=desiredBlocks;
         const resumableDraft=journal.phase!=="new"&&propertyValue(existing.properties,"Status")==="Draft"&&actualBlocks.length<desired.length&&blocksMatch(actualBlocks,desired.slice(0,actualBlocks.length));
-        if(!(propertiesMatch(existing,expected)||(publishing&&propertiesMatch(existing,draftExpected)))||(!blocksMatch(actualBlocks,desired)&&!resumableDraft))throw fault("stale_request");
+        if(!(propertiesMatch(existing,expected)||(publishing&&propertiesMatch(existing,draftExpected))))throw fault("stale_request","properties_differ: the page found for this run has other properties than the request");
+        if(!blocksMatch(actualBlocks,desired)&&!resumableDraft)throw fault("stale_request","body_differs: the page found for this run has another body than the request");
       }
-      if(journal.page_id&&!existing)throw fault("stale_request");
+      if(journal.page_id&&!existing)throw fault("stale_request","page_missing: the journal knows a page that Notion no longer returns for this run");
       if(input.expectedRevision!==null){
         const target=existing??await page(input.analysis.header.id);
         const ownPersisted=existing&&journal.page_id&&id(existing.id)===id(journal.page_id)&&journal.phase!=="new";
-        if(target.last_edited_time!==input.expectedRevision&&!ownPersisted)throw fault("stale_request");
+        if(target.last_edited_time!==input.expectedRevision&&!ownPersisted)throw fault("stale_request","revision: expectedRevision does not match the page revision");
       }
       const companies=await Promise.all(input.companyIds.map(page));
       for(const company of companies){if(company.archived||company.in_trash||id(object(company.parent).data_source_id)!==id(sources.companies))throw fault("not_found");}
@@ -319,7 +327,7 @@ export function createNotionAnalysisWriter(db:D1Database,options:NotionWriteOpti
         if(journal.phase!=="new")return receipt("partial","unresolved_create");
         if(input.expectedRevision!==null){
           const target=await page(input.analysis.header.id);
-          if(propertyValue(target.properties,"Agent")!==moduleAgent||target.archived||target.in_trash||target.last_edited_time!==input.expectedRevision||id(object(target.parent).data_source_id)!==id(source)||!equal((propertyValue(target.properties,"Company") as string[]??[]).map(id).sort(),input.companyIds.map(id).sort()))throw fault("stale_request");
+          if(propertyValue(target.properties,"Agent")!==moduleAgent||target.archived||target.in_trash||target.last_edited_time!==input.expectedRevision||id(object(target.parent).data_source_id)!==id(source)||!equal((propertyValue(target.properties,"Company") as string[]??[]).map(id).sort(),input.companyIds.map(id).sort()))throw fault("stale_request","target_changed: the page to update changed (agent, company, location or revision)");
           // Updating an existing report is allowed only with an unchanged body; content revisions create a new run/page.
           if(!blocksMatch(await children(target.id),desiredBlocks))throw fault("invalid_input","a report already exists for this run with a different body; use a new runId for a content revision");
           analysisId=target.id;actualIdentityKnown=true;await saveJournal("updating");mutated=true;
@@ -334,7 +342,7 @@ export function createNotionAnalysisWriter(db:D1Database,options:NotionWriteOpti
               mutated=false;await db.prepare("UPDATE notion_analysis_writes SET phase='new' WHERE run_id=? AND owner=?").bind(writeKey,owner).run();throw error;
             }
             if(!transient(error))throw error;
-            const found=await lookup(source,input.runId,moduleAgent,runProperty);if(found.length>1)throw fault("stale_request");if(!found.length)return receipt("partial","create_unconfirmed");existing=found[0];
+            const found=await lookup(source,input.runId,moduleAgent,runProperty);if(found.length>1)throw fault("stale_request","duplicate_run: several pages carry this runId");if(!found.length)return receipt("partial","create_unconfirmed");existing=found[0];
           }
         }
       }
@@ -360,15 +368,14 @@ export function createNotionAnalysisWriter(db:D1Database,options:NotionWriteOpti
         if(observedBlocks.length!==expectedLength)return receipt("partial","append_unconfirmed");
         await saveJournal("persisting");
       }
-      // Persistence certification always uses a fresh GET and complete block re-read.
+      // Persistence is certified by a fresh page GET and one complete body read, taken in this invocation after the last mutation of the body.
       let stored:Page;
       let verifiedBlocks:RecordValue[]|null=null;
-      if(publishing)stored=await page(analysisId);
-      // The last append already obtained a fresh page and complete body read.
-      // Reuse that certification for Draft instead of fetching every table again.
-      else if(appendedPage){stored=appendedPage;verifiedBlocks=observedBlocks;}
+      // One complete body read certifies persistence. The last append already made one, so reuse it; otherwise read once now.
+      // Promotion only patches a property, so the body read before it is still the body after it.
+      if(appendedPage){stored=publishing?await page(analysisId):appendedPage;verifiedBlocks=observedBlocks;}
       else [stored,verifiedBlocks]=await Promise.all([page(analysisId),children(analysisId)]);
-      if(publishing&&propertiesMatch(stored,draftExpected)&&blocksMatch(await children(analysisId),desiredBlocks)){
+      if(publishing&&propertiesMatch(stored,draftExpected)&&blocksMatch(verifiedBlocks,desiredBlocks)){
         persisted=true;mutated=true;await saveJournal("validating");
         try{await mutate(`/pages/${analysisId}`,"PATCH",{properties:{[statusName]:expected[statusName]}});}
         catch(error){if(!transient(error))throw error;}

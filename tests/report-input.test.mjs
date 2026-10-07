@@ -269,3 +269,30 @@ test("reader: a GFM delimiter row with short dashes (|-|-:|) is the separator, n
   const table = m.parseNotionText(md).find(block => block.type === "table");
   assert.deepEqual(table.rows, [["Élément", "Résultat"], ["CAGR base", "+9,1 %"], ["Dividende", "-"]]);
 });
+
+test("hardening: a replay whose report differs by one character is refused with a diagnostic naming the digest rule, no second page", () => withFixture({}, async f => {
+  const service = f.api.createInvestmentService(f.db, f.options);
+  const minimal = report({ verdict: null, confidence: null, score: null });
+  const first = await service.saveAnalysis(minimal);
+  assert.equal(first.status, "ok");
+  const creates = f.creates;
+  const replay = await service.saveAnalysis({ ...minimal, reportMarkdown: minimal.reportMarkdown.replace("12,4 Md€", "12,5 Md€") });
+  assert.equal(replay.status, "error");
+  assert.equal(replay.error.code, "stale_request");
+  const diag = replay.metadata.diagnostics.find(d => d.code === "write_stale");
+  assert.ok(diag && /^digest:/.test(diag.message), JSON.stringify(replay.metadata.diagnostics));
+  assert.equal(JSON.stringify(replay).includes("Fixture SA"), false, "never echoes report text");
+  assert.equal(f.creates, creates, "no second page");
+}));
+
+test("latency: a Validated long report certifies its body with few full reads (each read costs one round trip per table on real Notion)", () => withFixture({}, async f => {
+  const service = f.api.createInvestmentService(f.db, f.options);
+  const table = n => ["| Donnée | Valeur |", "| --- | --- |", ...Array.from({ length: 6 }, (_, i) => `| L${n}.${i} | ${i} |`)].join("\n\n".slice(0, 1));
+  const parts = ["# Rapport", "Intro."];
+  for (let t = 0; t < 11; t++) { parts.push(`# S${t}`, table(t)); for (let p = 0; p < 12; p++) parts.push(`Paragraphe ${t}.${p} [E:V${p}].`); }
+  const saved = await service.saveAnalysis({ format: "report", runId: "LAT-FIX-20261006", kind: "business", companyId: compact(companyId), title: "Business Check — Fixture SA", date: "2026-10-06", status: "Validated", reportMarkdown: parts.join("\n\n"), summary: "R.", verdict: null, confidence: null, score: null });
+  assert.equal(saved.status, "ok", JSON.stringify(saved.metadata?.diagnostics));
+  assert.equal(saved.data.verified, true);
+  const reads = f.calls.filter(c => c.method === "GET" && /\/blocks\/[^/]+\/children/.test(c.path)).length;
+  assert.ok(reads <= 5, `expected at most 5 body page reads, got ${reads}`);
+}));
