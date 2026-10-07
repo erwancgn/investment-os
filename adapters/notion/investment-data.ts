@@ -141,6 +141,21 @@ function buildArchivePolicy(rows:StoredContentDocument[], companyRows:StoredDocu
     }
   }
   for(const candidates of groups.values()){
+    // An explicit Current relation on the company page is the owner's selection: it wins over
+    // Source Freshness/Status heuristics (a freshly saved report is "Unknown" and would otherwise lose
+    // to an older page still flagged Current). Several pinned pages: the most recent one wins.
+    const pinned=candidates.filter(row=>currentIds.has(normalizeNotionPageId(row.page_id)));
+    if(pinned.length){
+      const pinnedLatest=[...pinned].sort((a,b)=>{
+        const delta=analysisTimestamp(b)-analysisTimestamp(a);
+        if(Number.isFinite(delta)&&delta!==0)return delta;
+        return freshnessRank(b)-freshnessRank(a);
+      })[0];
+      const pinnedId=normalizeNotionPageId(pinnedLatest.page_id);
+      activeIds.add(pinnedId); archivedIds.delete(pinnedId);
+      for(const row of candidates) if(normalizeNotionPageId(row.page_id)!==pinnedId) archivedIds.add(normalizeNotionPageId(row.page_id));
+      continue;
+    }
     const freshValidated=candidates.filter(row=>freshnessRank(row)>=3);
     const validated=candidates.filter(row=>String(propertyValue(props(row),"Status")??"").trim().toLowerCase()==="validated");
     const preferred=freshValidated.length?freshValidated:(validated.length?validated:candidates);
