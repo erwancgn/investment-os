@@ -21,6 +21,7 @@ Prochaine revue | Après résultats | Revalider la valorisation
 
 ## Raisonnement décisif
 La qualité opérationnelle reste forte, mais le prix impose de conserver une marge de sécurité.
+Consulter [le rapport annuel](https://example.com/annual-report).
 
 ## État des modules
 Module | Statut | Note

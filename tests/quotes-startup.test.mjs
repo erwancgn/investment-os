@@ -29,3 +29,41 @@ test('failed live refresh preserves cached prices and marks them stale',async()=
  const previous=globalThis.fetch;globalThis.fetch=async()=>{throw Error('provider offline')};
  try{const [q]=await getQuotes(['nvda'],true,dbFor({nvda:cached('USD',120),'fx-usd':cached('USD',1.2)}));assert.equal(q.eurPrice,100);assert.equal(q.freshness,'stale');assert.equal(q.isFallback,true);assert.ok(q.warnings.length>0);}finally{globalThis.fetch=previous;}
 });
+
+const yahoo = prices => async url => {
+ const symbol = decodeURIComponent(String(url).match(/chart\/([^?]+)/)?.[1] ?? '');
+ const row = prices[symbol]; if (!row) return new Response('{}', { status: 404 });
+ return new Response(JSON.stringify({ chart: { result: [{ meta: { symbol, regularMarketPrice: row[0], currency: row[1], chartPreviousClose: row[0], regularMarketTime: Math.floor(Date.now() / 1000) - 60 } }] } }), { status: 200 });
+};
+test('any valid Yahoo symbol is quoted live, no hard-coded catalogue needed', async () => {
+ const previous = globalThis.fetch; const seen = []; const f = yahoo({ 'SU.PA': [230, 'EUR'], ZZTEST: [120, 'USD'], 'EURUSD=X': [1.2, 'USD'], 'BARC.L': [250, 'GBp'], 'EURGBP=X': [0.8, 'GBP'], '2330.TW': [1000, 'TWD'] });
+ globalThis.fetch = async (url, init) => { seen.push(String(url)); return f(url, init); };
+ try {
+  const [eur] = await getQuotes(['SU.PA'], true);
+  assert.equal(eur.assetId, 'SU.PA'); assert.equal(eur.nativePrice, 230); assert.equal(eur.eurPrice, 230); assert.equal(eur.source, 'yahoo-query2'); assert.equal(eur.freshness, 'fresh');
+  const [usd] = await getQuotes(['ZZTEST'], true);
+  assert.equal(usd.nativeCurrency, 'USD'); assert.equal(usd.eurPrice, 100, 'converted with the live EURUSD rate');
+  const [gbp] = await getQuotes(['BARC.L'], true);
+  assert.equal(gbp.nativeCurrency, 'GBP'); assert.equal(gbp.nativePrice, 2.5, 'pence normalized to pounds'); assert.equal(gbp.eurPrice, 3.125);
+  const [twd] = await getQuotes(['2330.TW'], true);
+  assert.equal(twd.nativePrice, 1000); assert.equal(twd.eurPrice, null, 'unsupported FX is reported, never guessed'); assert.ok(twd.warnings.includes('fx_TWD_unavailable'));
+  seen.length = 0;
+  const [bad] = await getQuotes(['../etc/passwd'], true);
+  assert.equal(bad.freshness, 'unavailable'); assert.ok(bad.warnings.includes('unknown_asset')); assert.equal(seen.length, 0, 'invalid symbols never reach the network');
+ } finally { globalThis.fetch = previous; }
+});
+
+test('legacy ticker fixes never override the exchange stored in Notion', async () => {
+ const { quoteSymbolForListing } = await import('../app/lib/quotes.ts');
+ assert.equal(quoteSymbolForListing('ASML', null), 'ASML.AS', 'no exchange: legacy fix applies');
+ assert.equal(quoteSymbolForListing('ASML', 'NASDAQ'), 'ASML', 'the US listing stored in Notion wins');
+ assert.equal(quoteSymbolForListing('ASML', 'Euronext Amsterdam'), 'ASML.AS');
+});
+
+test('currencies beyond the original seven (DKK, HKD, CAD) convert to EUR from cached FX',async()=>{
+ for(const [code,price,rate,expected] of [['DKK',745,7.45,100],['HKD',780,7.8,100],['CAD',150,1.5,100]]){
+  const symbol=`TEST-${code}.XX`;
+  const [q]=await getQuotes([symbol],false,dbFor({[symbol]:cached(code,price),[`fx-${code.toLowerCase()}`]:cached(code,rate)}),true);
+  assert.equal(q.nativeCurrency,code);assert.ok(Math.abs(q.eurPrice-expected)<1e-9,`${code}: ${q.eurPrice}`);
+ }
+});

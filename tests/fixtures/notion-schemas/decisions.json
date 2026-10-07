@@ -1,0 +1,285 @@
+{
+ "capturedAt": "2026-10-06",
+ "dataSource": "afa74a08-1d90-4e34-bf56-01a6cd859d88",
+ "properties": {
+  "Account": {
+   "select": {
+    "options": [
+     {
+      "name": "PEA"
+     },
+     {
+      "name": "CTO"
+     },
+     {
+      "name": "Crypto"
+     },
+     {
+      "name": "Cash"
+     },
+     {
+      "name": "Other"
+     }
+    ]
+   },
+   "type": "select"
+  },
+  "Action": {
+   "select": {
+    "options": [
+     {
+      "name": "Buy"
+     },
+     {
+      "name": "Add"
+     },
+     {
+      "name": "Hold"
+     },
+     {
+      "name": "Trim"
+     },
+     {
+      "name": "Sell"
+     },
+     {
+      "name": "Avoid"
+     },
+     {
+      "name": "Watch"
+     },
+     {
+      "name": "Hedge"
+     }
+    ]
+   },
+   "type": "select"
+  },
+  "Catalyst": {
+   "type": "rich_text"
+  },
+  "Company": {
+   "type": "relation"
+  },
+  "Company Business": {
+   "type": "rollup"
+  },
+  "Company Earnings": {
+   "type": "rollup"
+  },
+  "Company Valuation": {
+   "type": "rollup"
+  },
+  "Confidence": {
+   "select": {
+    "options": [
+     {
+      "name": "High"
+     },
+     {
+      "name": "Medium"
+     },
+     {
+      "name": "Low"
+     }
+    ]
+   },
+   "type": "select"
+  },
+  "Core Thesis": {
+   "type": "rich_text"
+  },
+  "Created": {
+   "type": "created_time"
+  },
+  "Currency": {
+   "select": {
+    "options": [
+     {
+      "name": "EUR"
+     },
+     {
+      "name": "USD"
+     },
+     {
+      "name": "JPY"
+     },
+     {
+      "name": "TWD"
+     },
+     {
+      "name": "GBP"
+     },
+     {
+      "name": "Other"
+     }
+    ]
+   },
+   "type": "select"
+  },
+  "Current Weight": {
+   "type": "number"
+  },
+  "Decision": {
+   "type": "title"
+  },
+  "Decision Date": {
+   "type": "date"
+  },
+  "Decision ID": {
+   "type": "unique_id"
+  },
+  "Entry Condition": {
+   "type": "rich_text"
+  },
+  "Entry Price": {
+   "type": "number"
+  },
+  "Execution Plan": {
+   "type": "rich_text"
+  },
+  "Funding Source": {
+   "type": "rich_text"
+  },
+  "Instrument Type": {
+   "select": {
+    "options": [
+     {
+      "name": "Stock"
+     },
+     {
+      "name": "ETF"
+     },
+     {
+      "name": "ADR"
+     },
+     {
+      "name": "Warrant"
+     },
+     {
+      "name": "Option"
+     },
+     {
+      "name": "Crypto"
+     },
+     {
+      "name": "Cash"
+     },
+     {
+      "name": "Other"
+     }
+    ]
+   },
+   "type": "select"
+  },
+  "Invalidation Criteria": {
+   "type": "rich_text"
+  },
+  "Key Risk": {
+   "type": "rich_text"
+  },
+  "Last Edited": {
+   "type": "last_edited_time"
+  },
+  "Maximum Entry Price": {
+   "type": "number"
+  },
+  "Maximum Weight": {
+   "type": "number"
+  },
+  "Next Review": {
+   "type": "date"
+  },
+  "Outcome": {
+   "select": {
+    "options": [
+     {
+      "name": "Open"
+     },
+     {
+      "name": "Positive"
+     },
+     {
+      "name": "Neutral"
+     },
+     {
+      "name": "Negative"
+     },
+     {
+      "name": "Not Applicable"
+     }
+    ]
+   },
+   "type": "select"
+  },
+  "Position Size EUR": {
+   "type": "number"
+  },
+  "Post Mortem": {
+   "type": "rich_text"
+  },
+  "Priority": {
+   "select": {
+    "options": [
+     {
+      "name": "Immediate"
+     },
+     {
+      "name": "High"
+     },
+     {
+      "name": "Normal"
+     },
+     {
+      "name": "Low"
+     }
+    ]
+   },
+   "type": "select"
+  },
+  "Reference Price": {
+   "type": "number"
+  },
+  "Related Analyses": {
+   "type": "relation"
+  },
+  "Related Position": {
+   "type": "relation"
+  },
+  "Review Trigger": {
+   "type": "rich_text"
+  },
+  "Status": {
+   "select": {
+    "options": [
+     {
+      "name": "Proposed"
+     },
+     {
+      "name": "Approved"
+     },
+     {
+      "name": "Executing"
+     },
+     {
+      "name": "Completed"
+     },
+     {
+      "name": "Rejected"
+     },
+     {
+      "name": "Superseded"
+     },
+     {
+      "name": "Monitoring"
+     }
+    ]
+   },
+   "type": "select"
+  },
+  "Target Weight": {
+   "type": "number"
+  }
+ },
+ "source": "Notion connector, read-only fetch; converted to the Notion API property shape (text -> rich_text, auto_increment_id -> unique_id)"
+}

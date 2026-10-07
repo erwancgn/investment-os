@@ -93,3 +93,14 @@ export const notionWebhookEvents = sqliteTable("notion_webhook_events", {
   index("notion_webhook_events_status_idx").on(table.status, table.nextAttemptAt),
   index("notion_webhook_events_entity_idx").on(table.entityId, table.eventTimestamp),
 ]);
+
+/** Durable mutation reconciliation; run_id is the internal [Run ID, module] key, with no body or credential. */
+export const notionAnalysisWrites = sqliteTable("notion_analysis_writes", {
+  runId: text("run_id").primaryKey(),
+  digest: text("digest").notNull(),
+  pageId: text("page_id"),
+  phase: text("phase").notNull(),
+  owner: text("owner"),
+  leaseUntil: integer("lease_until").notNull().default(0),
+  previousCurrent: text("previous_current"),
+});

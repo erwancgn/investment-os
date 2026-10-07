@@ -1,0 +1,345 @@
+{
+ "capturedAt": "2026-10-06",
+ "dataSource": "0accd120-da19-418c-af6f-e617c1b89f55",
+ "properties": {
+  "Action": {
+   "select": {
+    "options": [
+     {
+      "name": "Hold"
+     },
+     {
+      "name": "Wait"
+     },
+     {
+      "name": "Reinforce Zone"
+     },
+     {
+      "name": "Reduce"
+     },
+     {
+      "name": "Review Thesis"
+     }
+    ]
+   },
+   "type": "select"
+  },
+  "Agent": {
+   "select": {
+    "options": [
+     {
+      "name": "Earnings"
+     }
+    ]
+   },
+   "type": "select"
+  },
+  "Analysis Date": {
+   "type": "date"
+  },
+  "Business Refresh": {
+   "select": {
+    "options": [
+     {
+      "name": "Not Needed"
+     },
+     {
+      "name": "Monitor"
+     },
+     {
+      "name": "Recommended"
+     },
+     {
+      "name": "Required"
+     }
+    ]
+   },
+   "type": "select"
+  },
+  "Company": {
+   "type": "relation"
+  },
+  "Confidence": {
+   "select": {
+    "options": [
+     {
+      "name": "High"
+     },
+     {
+      "name": "Medium"
+     },
+     {
+      "name": "Low"
+     }
+    ]
+   },
+   "type": "select"
+  },
+  "Created": {
+   "type": "created_time"
+  },
+  "Current Business (live)": {
+   "type": "rollup"
+  },
+  "Current Valuation (live)": {
+   "type": "rollup"
+  },
+  "EPS": {
+   "type": "number"
+  },
+  "EPS Surprise %": {
+   "type": "number"
+  },
+  "Earnings": {
+   "type": "title"
+  },
+  "Earnings Date": {
+   "type": "date"
+  },
+  "Execution Score": {
+   "type": "number"
+  },
+  "Fiscal Period": {
+   "type": "rich_text"
+  },
+  "Gross Margin %": {
+   "type": "number"
+  },
+  "Guidance": {
+   "select": {
+    "options": [
+     {
+      "name": "Raised"
+     },
+     {
+      "name": "Maintained"
+     },
+     {
+      "name": "Lowered"
+     },
+     {
+      "name": "New"
+     },
+     {
+      "name": "Not Applicable"
+     }
+    ]
+   },
+   "type": "select"
+  },
+  "Guidance Summary": {
+   "type": "rich_text"
+  },
+  "Guidance vs Consensus": {
+   "select": {
+    "options": [
+     {
+      "name": "Above"
+     },
+     {
+      "name": "Inline"
+     },
+     {
+      "name": "Below"
+     },
+     {
+      "name": "Not Available"
+     }
+    ]
+   },
+   "type": "select"
+  },
+  "Key KPI Summary": {
+   "type": "rich_text"
+  },
+  "Last Edited": {
+   "type": "last_edited_time"
+  },
+  "Market Reaction %": {
+   "type": "number"
+  },
+  "Memo Refresh": {
+   "select": {
+    "options": [
+     {
+      "name": "Not Needed"
+     },
+     {
+      "name": "Monitor"
+     },
+     {
+      "name": "Recommended"
+     },
+     {
+      "name": "Required"
+     }
+    ]
+   },
+   "type": "select"
+  },
+  "Moat Impact": {
+   "select": {
+    "options": [
+     {
+      "name": "Strengthened"
+     },
+     {
+      "name": "Stable"
+     },
+     {
+      "name": "Weakened"
+     },
+     {
+      "name": "Unclear"
+     }
+    ]
+   },
+   "type": "select"
+  },
+  "Official Release": {
+   "type": "url"
+  },
+  "Portfolio Refresh": {
+   "select": {
+    "options": [
+     {
+      "name": "Not Needed"
+     },
+     {
+      "name": "Monitor"
+     },
+     {
+      "name": "Recommended"
+     },
+     {
+      "name": "Required"
+     }
+    ]
+   },
+   "type": "select"
+  },
+  "Related Analyses": {
+   "type": "relation"
+  },
+  "Revenue": {
+   "type": "number"
+  },
+  "Revenue Surprise %": {
+   "type": "number"
+  },
+  "Revenue YoY %": {
+   "type": "number"
+  },
+  "Run ID": {
+   "type": "rich_text"
+  },
+  "Short Refresh": {
+   "select": {
+    "options": [
+     {
+      "name": "Not Needed"
+     },
+     {
+      "name": "Monitor"
+     },
+     {
+      "name": "Recommended"
+     },
+     {
+      "name": "Required"
+     }
+    ]
+   },
+   "type": "select"
+  },
+  "Source Date": {
+   "type": "date"
+  },
+  "Status": {
+   "select": {
+    "options": [
+     {
+      "name": "Draft"
+     },
+     {
+      "name": "Validated"
+     },
+     {
+      "name": "Superseded"
+     },
+     {
+      "name": "Archived"
+     }
+    ]
+   },
+   "type": "select"
+  },
+  "Thesis Impact": {
+   "select": {
+    "options": [
+     {
+      "name": "Positive"
+     },
+     {
+      "name": "Neutral"
+     },
+     {
+      "name": "Watch"
+     },
+     {
+      "name": "Negative"
+     }
+    ]
+   },
+   "type": "select"
+  },
+  "Thesis Summary": {
+   "type": "rich_text"
+  },
+  "Transcript": {
+   "type": "url"
+  },
+  "Valuation Impact": {
+   "select": {
+    "options": [
+     {
+      "name": "More Attractive"
+     },
+     {
+      "name": "Neutral"
+     },
+     {
+      "name": "More Expensive"
+     },
+     {
+      "name": "Needs Revaluation"
+     }
+    ]
+   },
+   "type": "select"
+  },
+  "Valuation Refresh": {
+   "select": {
+    "options": [
+     {
+      "name": "Not Needed"
+     },
+     {
+      "name": "Monitor"
+     },
+     {
+      "name": "Recommended"
+     },
+     {
+      "name": "Required"
+     }
+    ]
+   },
+   "type": "select"
+  },
+  "Verdict": {
+   "type": "rich_text"
+  }
+ },
+ "source": "Notion connector, read-only fetch; converted to the Notion API property shape (text -> rich_text, auto_increment_id -> unique_id)"
+}

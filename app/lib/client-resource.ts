@@ -43,10 +43,6 @@ export async function refreshResource(url: string) {
   if (error) throw new Error(error);
 }
 export function resourceSnapshot<T>(url: string) { return cache.snapshot<T>(url); }
-export async function readNotionStatus() {
-  await cache.read("/api/notion/status");
-  return cache.snapshot<{ configured?: boolean }>("/api/notion/status").data;
-}
 export function useResourceLifecycle() {
   useEffect(() => {
     let scheduled: number | undefined;

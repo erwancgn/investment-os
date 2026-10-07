@@ -2,20 +2,22 @@
 
 import React from "react";
 import { shouldScrollNotionTable } from "../lib/table-presentation";
+import type { InlineSegment } from "../../core/contracts/analysis";
 
 function looksNumeric(value: string) {
   return /(?:^|\s)[+−-]?[\d\s.,≈]+\s*(?:%|€|\$|£|JPY|USD|EUR|x)?\s*$/i.test(value.trim());
 }
 
 /** A table is structural content; only dense tables receive an accessible scroll region. */
-export function NotionTable({ rows, header = true, renderCell }: { rows: string[][]; header?: boolean; renderCell: (value: string) => React.ReactNode }) {
+export function NotionTable<Cell extends string | InlineSegment[]>({ rows, header = true, renderCell }: { rows: Cell[][]; header?: boolean; renderCell: (value: Cell) => React.ReactNode }) {
   if (!rows.length) return null;
+  const textRows = rows.map(row => row.map(cell => typeof cell === "string" ? cell : cell.map(segment => segment.text).join("")));
   const columnCount = Math.max(...rows.map(row => row.length), 1);
-  const scrollable = shouldScrollNotionTable(rows);
+  const scrollable = shouldScrollNotionTable(textRows);
   const columnClass = columnCount === 2 ? " notion-table-two-column" : "";
-  const renderRow = (row: string[], rowIndex: number, headerRow = false) => <tr key={rowIndex}>{row.map((cell, cellIndex) => {
+  const renderRow = (row: Cell[], rowIndex: number, headerRow = false) => <tr key={rowIndex}>{row.map((cell, cellIndex) => {
     const HeaderOrCell = headerRow ? "th" : "td";
-    return <HeaderOrCell scope={headerRow ? "col" : undefined} className={looksNumeric(cell) ? "notion-table-numeric" : undefined} key={cellIndex}>{renderCell(cell)}</HeaderOrCell>;
+    return <HeaderOrCell scope={headerRow ? "col" : undefined} className={looksNumeric(textRows[rowIndex][cellIndex]) ? "notion-table-numeric" : undefined} key={cellIndex}>{renderCell(cell)}</HeaderOrCell>;
   })}</tr>;
   const bodyRows = header ? rows.slice(1) : rows;
   const table = <table className={`notion-table${scrollable ? " notion-table-wide" : " notion-table-compact"}${columnClass}`}>{header && <thead>{renderRow(rows[0], 0, true)}</thead>}<tbody>{bodyRows.map((row, rowIndex) => renderRow(row, header ? rowIndex + 1 : rowIndex))}</tbody></table>;

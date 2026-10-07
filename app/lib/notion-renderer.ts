@@ -1,5 +1,8 @@
 export type { RenderBlock } from "./notion-block-parser";
-import { parseNotionBlocks, type RenderBlock } from "./notion-block-parser";
+import { parseNotionBlocks, type RenderBlock } from "./notion-block-parser.ts";
+import { SCHEMA_VERSION } from "../../core/contracts/common.ts";
+import type { AnalysisBlock, AnalysisContent } from "../../core/contracts/analysis";
+import { inlineSegments } from "./inline-segments.ts";
 
 const metadataNames = new Set([
   "agent", "analysis", "analysis id", "account", "action", "catalyst", "company", "company business",
@@ -31,11 +34,14 @@ export function decodeHtmlEntities(value: string): string {
   return decoded;
 }
 
+/** An HTML/Notion tag starts with a letter or "/" and stays on one line: "<10 %" or "a < b ... c > d" is text, never markup. */
+const TAG = /<\/?[A-Za-z][^<>\n]*>/g;
+
 function textOnly(value: string): string {
   return decodeHtmlEntities(value
     .replace(/<mention-page[^>]*url="([^"]+)"[^>]*>(.*?)<\/mention-page>/gi, "[$2]($1)")
     .replace(/<mention-page[^>]*url="([^"]+)"[^>]*\s*\/>/gi, "[Page Notion]($1)")
-    .replace(/<[^>]+>/g, "")
+    .replace(TAG, "")
     .replace(/\\([>$~])/g, "$1")
   ).trim();
 }
@@ -44,7 +50,7 @@ function htmlTables(value: string): string {
   const rowsFrom = (body: string): string[] => [...body.matchAll(/<tr\b[^>]*>([\s\S]*?)<\/tr>/gi)].map(row =>
     [...row[1].matchAll(/<(?:td|th)\b[^>]*>([\s\S]*?)<\/(?:td|th)>/gi)]
       .map(cell => textOnly(cell[1]).replace(/\|/g, "/").replace(/\s*\n\s*/g, " "))
-  ).filter(row => row.length).map(row => row.join(" | "));
+  ).filter(row => row.length).map(row => `| ${row.join(" | ")} |`);
 
   let normalized = value.replace(/<table\b[^>]*>([\s\S]*?)<\/table>/gi, (_, body: string) => rowsFrom(body).join("\n"));
   // Notion exports occasionally contain only the inner table fragment (or
@@ -53,7 +59,7 @@ function htmlTables(value: string): string {
   const fragmentRows = rowsFrom(normalized);
   if (fragmentRows.length) normalized = normalized.replace(/<thead\b[^>]*>|<\/thead>|<tbody\b[^>]*>|<\/tbody>|<tfoot\b[^>]*>|<\/tfoot>/gi, "").replace(/<tr\b[^>]*>[\s\S]*?<\/tr>/gi, (row: string) => {
     const cells = [...row.matchAll(/<(?:td|th)\b[^>]*>([\s\S]*?)<\/(?:td|th)>/gi)].map(cell => textOnly(cell[1]).replace(/\|/g, "/").replace(/\s*\n\s*/g, " "));
-    return cells.length ? `${cells.join(" | ")}\n` : "";
+    return cells.length ? `| ${cells.join(" | ")} |\n` : "";
   });
   return normalized;
 }
@@ -72,7 +78,13 @@ function extractContent(raw: string): string {
 }
 
 export function hasResidualMarkup(blocks: RenderBlock[]): boolean {
-  return blocks.some(block => "text" in block && /(?:<|&lt;)\s*\/?\s*(?:table|thead|tbody|tr|td|th|h[1-6]|li|p|div|br|callout|mention-page)\b/i.test(block.text));
+  const residual = /(?:<|&lt;)\s*\/?\s*(?:table|thead|tbody|tr|td|th|h[1-6]|li|p|div|br|callout|mention-page)\b/i;
+  return blocks.some(block => {
+    if ("text" in block && residual.test(block.text)) return true;
+    if (block.type === "list") return block.items.some(item => residual.test(item));
+    if (block.type === "table") return block.rows.some(row => row.some(cell => residual.test(cell)));
+    return false;
+  });
 }
 
 export function normalizeNotionText(raw: string, title = ""): string {
@@ -84,7 +96,7 @@ export function normalizeNotionText(raw: string, title = ""): string {
     .replace(/<li\b[^>]*>([\s\S]*?)<\/li>/gi, (_, body) => `- ${textOnly(body)}\n`)
     .replace(/<br\s*\/?>(?:\n)?/gi, "\n")
     .replace(/<\/?(?:p|div|section|article|ul|ol|blockquote)\b[^>]*>/gi, "\n")
-    .replace(/<[^>]+>/g, "");
+    .replace(TAG, "");
   value = decodeHtmlEntities(value).replace(/\r/g, "").replace(/[ \t]+\n/g, "\n");
   let lines = value.split("\n").map(line => line.trim());
   if (title && lines[0]?.toLowerCase() === title.trim().toLowerCase()) lines = lines.slice(1);
@@ -131,7 +143,14 @@ export function parseNotionText(raw: string, title = ""): RenderBlock[] {
     }
     if (isTableLine(line)) {
       const rows: string[][] = [];
-      while (index < lines.length && isTableLine(lines[index].trim())) rows.push(lines[index++].split(/\s*\|\s*/).map(textOnly));
+      while (index < lines.length && isTableLine(lines[index].trim())) {
+        const source = lines[index++].trim();
+        const cells = source.replace(/^\|/, "").replace(/\|$/, "").split(/\s*\|\s*/).map(textOnly);
+        // GFM: the delimiter row is the second line and every cell is hyphens with optional colons (one hyphen suffices).
+        // Position matters: a lone "-" in a later row is data.
+        if (rows.length === 1 && cells.every(cell => /^:?-+:?$/.test(cell))) continue;
+        if (cells.some(cell => !/^:?-{3,}:?$/.test(cell))) rows.push(cells);
+      }
       blocks.push({ type: "table", rows, header: true }); continue;
     }
     const paragraph = [line]; index++;
@@ -148,5 +167,47 @@ export function parseNotionText(raw: string, title = ""): RenderBlock[] {
 
 export function parseNotionDocument(raw: string, title = "", notionBlocks?: unknown[]): RenderBlock[] {
   const structured = parseNotionBlocks(notionBlocks);
-  return structured.length && !hasResidualMarkup(structured) ? structured : parseNotionText(raw, title);
+  if (!structured.length) return parseNotionText(raw, title);
+  const fallback = parseNotionText(raw, title);
+  const fragments = (blocks: RenderBlock[]) => blocks.flatMap(block => block.type === "list" ? block.items : block.type === "table" ? block.rows.flat() : "text" in block ? [block.text] : [])
+    .map(text => textOnly(text).replace(/[*_`~]/g, "").replace(/\s+/g, " ").trim().toLowerCase()).filter(Boolean);
+  const represented = fragments(structured);
+  const historical = fragments(fallback);
+  // Compare ordered occurrences, rather than a set: repeated business claims must survive.
+  const covers = (whole: string[], parts: string[]) => {
+    const text = whole.join(" ");
+    let cursor = 0;
+    return parts.every(part => { const index = text.indexOf(part, cursor); if (index < 0) return false; cursor = index + part.length; return true; });
+  };
+  if ((!hasResidualMarkup(structured) && covers(represented, historical)) || !fallback.length) return structured;
+  if (covers(historical, represented)) {
+    // Retain unknown source types as diagnostics even when historic text covers their content.
+    const diagnostics = structured.filter(block => block.type === "unsupported").map(block => ({ ...block, text: "" }));
+    return [...fallback, ...diagnostics];
+  }
+  // Neither snapshot covers the other: retain structured IDs and surface unrepresented text.
+  const text = represented.join(" ");
+  const missing = fallback.filter(block => fragments([block]).some(fragment => !text.includes(fragment)));
+  return [...structured, ...missing.map(block => ({ type: "unsupported" as const, sourceType: "unrepresented_snapshot", text: block.type === "list" ? block.items.join("\n") : block.type === "table" ? block.rows.map(row => row.join(" | ")).join("\n") : "text" in block ? block.text : "" }))];
+}
+
+/** Convert the single existing parser's output into the versioned portable block contract. */
+export function canonicalAnalysisContent(documentId: string, blocks: RenderBlock[]): AnalysisContent {
+  const used = new Set<string>();
+  const segments = (text: string) => inlineSegments(decodeHtmlEntities(text.replace(/<\/?(?:table|thead|tbody|tr|td|th|h[1-6]|li|p|div|br|callout)\b[^>]*>/gi, "")));
+  const canonical: AnalysisBlock[] = blocks.map((block, index) => {
+    const sourceIds = block.sourceIds?.length ? [...new Set(block.sourceIds)] : [block.id || documentId];
+    let id = block.id || `${documentId}:block:${index}`;
+    while (used.has(id)) id = `${id}:duplicate:${index}`;
+    used.add(id);
+    const base = { id, sourceIds };
+    if (block.type === "heading") return { ...base, type: "heading", level: Math.max(1, Math.min(6, block.level)) as 1 | 2 | 3 | 4 | 5 | 6, text: segments(block.text) };
+    if (block.type === "paragraph" || block.type === "quote") return { ...base, type: block.type, text: segments(block.text) };
+    if (block.type === "callout") return { ...base, type: "callout", text: segments(block.text), icon: block.icon ?? null };
+    if (block.type === "list") return { ...base, type: "list", ordered: block.ordered, items: block.items.map(segments) };
+    if (block.type === "table") return { ...base, type: "table", rows: block.rows.map(row => row.map(segments)), header: block.header ?? true };
+    if (block.type === "unsupported") return { ...base, type: "unsupported", sourceType: block.sourceType, text: block.text || null, diagnostic: { code: "unsupported_block", message: `Bloc ${block.sourceType} non pris en charge par le lecteur.`, severity: "warning" } };
+    return { ...base, type: "divider" };
+  });
+  return { schemaVersion: SCHEMA_VERSION, blocks: canonical };
 }

@@ -1,0 +1,7199 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Investment OS MCP 1.0.0",
+  "contractVersion": "1.0.0",
+  "tools": {
+    "resolve_company": {
+      "inputSchema": {
+        "$ref": "#/definitions/T1"
+      },
+      "outputSchema": {
+        "anyOf": [
+          {
+            "$ref": "#/definitions/T63"
+          },
+          {
+            "$ref": "#/definitions/T65"
+          }
+        ]
+      }
+    },
+    "get_company": {
+      "inputSchema": {
+        "$ref": "#/definitions/T2"
+      },
+      "outputSchema": {
+        "anyOf": [
+          {
+            "$ref": "#/definitions/T63"
+          },
+          {
+            "$ref": "#/definitions/T72"
+          }
+        ]
+      }
+    },
+    "get_portfolio": {
+      "inputSchema": {
+        "$ref": "#/definitions/T3"
+      },
+      "outputSchema": {
+        "anyOf": [
+          {
+            "$ref": "#/definitions/T63"
+          },
+          {
+            "$ref": "#/definitions/T77"
+          }
+        ]
+      }
+    },
+    "get_position": {
+      "inputSchema": {
+        "$ref": "#/definitions/T5"
+      },
+      "outputSchema": {
+        "anyOf": [
+          {
+            "$ref": "#/definitions/T63"
+          },
+          {
+            "$ref": "#/definitions/T94"
+          }
+        ]
+      }
+    },
+    "get_current_analysis": {
+      "inputSchema": {
+        "$ref": "#/definitions/T6"
+      },
+      "outputSchema": {
+        "anyOf": [
+          {
+            "$ref": "#/definitions/T63"
+          },
+          {
+            "$ref": "#/definitions/T96"
+          }
+        ]
+      }
+    },
+    "get_analysis_by_id": {
+      "inputSchema": {
+        "$ref": "#/definitions/T7"
+      },
+      "outputSchema": {
+        "anyOf": [
+          {
+            "$ref": "#/definitions/T63"
+          },
+          {
+            "$ref": "#/definitions/T96"
+          }
+        ]
+      }
+    },
+    "save_analysis": {
+      "inputSchema": {
+        "$ref": "#/definitions/T8"
+      },
+      "outputSchema": {
+        "anyOf": [
+          {
+            "$ref": "#/definitions/T63"
+          },
+          {
+            "$ref": "#/definitions/T98"
+          }
+        ]
+      }
+    },
+    "get_quote": {
+      "inputSchema": {
+        "$ref": "#/definitions/T60"
+      },
+      "outputSchema": {
+        "anyOf": [
+          {
+            "$ref": "#/definitions/T63"
+          },
+          {
+            "$ref": "#/definitions/T102"
+          }
+        ]
+      }
+    },
+    "create_company": {
+      "inputSchema": {
+        "$ref": "#/definitions/T61"
+      },
+      "outputSchema": {
+        "anyOf": [
+          {
+            "$ref": "#/definitions/T63"
+          },
+          {
+            "$ref": "#/definitions/T105"
+          }
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "T1": {
+      "type": "object",
+      "properties": {
+        "contractVersion": {
+          "const": "1.0.0"
+        },
+        "scope": {
+          "anyOf": [
+            {
+              "const": "personal"
+            },
+            {
+              "const": "demo"
+            }
+          ]
+        },
+        "query": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 512,
+          "pattern": "^\\S(?:[\\s\\S]*\\S)?$"
+        },
+        "market": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^\\S(?:[\\s\\S]*\\S)?$"
+        }
+      },
+      "required": [
+        "contractVersion",
+        "scope",
+        "query"
+      ],
+      "additionalProperties": false
+    },
+    "T2": {
+      "type": "object",
+      "properties": {
+        "contractVersion": {
+          "const": "1.0.0"
+        },
+        "scope": {
+          "anyOf": [
+            {
+              "const": "personal"
+            },
+            {
+              "const": "demo"
+            }
+          ]
+        },
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 512,
+          "pattern": "^\\S(?:[\\s\\S]*\\S)?$"
+        }
+      },
+      "required": [
+        "contractVersion",
+        "scope",
+        "id"
+      ],
+      "additionalProperties": false
+    },
+    "T3": {
+      "type": "object",
+      "properties": {
+        "contractVersion": {
+          "const": "1.0.0"
+        },
+        "scope": {
+          "anyOf": [
+            {
+              "const": "personal"
+            },
+            {
+              "const": "demo"
+            }
+          ]
+        },
+        "options": {
+          "$ref": "#/definitions/T4"
+        }
+      },
+      "required": [
+        "contractVersion",
+        "scope"
+      ],
+      "additionalProperties": false
+    },
+    "T4": {
+      "type": "object",
+      "properties": {
+        "force": {
+          "anyOf": [
+            {
+              "const": false
+            },
+            {
+              "const": true
+            }
+          ]
+        },
+        "cacheOnly": {
+          "anyOf": [
+            {
+              "const": false
+            },
+            {
+              "const": true
+            }
+          ]
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    },
+    "T5": {
+      "type": "object",
+      "properties": {
+        "contractVersion": {
+          "const": "1.0.0"
+        },
+        "scope": {
+          "anyOf": [
+            {
+              "const": "personal"
+            },
+            {
+              "const": "demo"
+            }
+          ]
+        },
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 512,
+          "pattern": "^\\S(?:[\\s\\S]*\\S)?$"
+        },
+        "options": {
+          "$ref": "#/definitions/T4"
+        }
+      },
+      "required": [
+        "contractVersion",
+        "scope",
+        "id"
+      ],
+      "additionalProperties": false
+    },
+    "T6": {
+      "type": "object",
+      "properties": {
+        "contractVersion": {
+          "const": "1.0.0"
+        },
+        "scope": {
+          "anyOf": [
+            {
+              "const": "personal"
+            },
+            {
+              "const": "demo"
+            }
+          ]
+        },
+        "companyId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 512,
+          "pattern": "^\\S(?:[\\s\\S]*\\S)?$"
+        },
+        "family": {
+          "anyOf": [
+            {
+              "const": "business"
+            },
+            {
+              "const": "earnings"
+            },
+            {
+              "const": "valuation"
+            },
+            {
+              "const": "short"
+            },
+            {
+              "const": "portfolio"
+            },
+            {
+              "const": "cio_memo"
+            },
+            {
+              "const": "decision"
+            }
+          ]
+        }
+      },
+      "required": [
+        "contractVersion",
+        "scope",
+        "companyId",
+        "family"
+      ],
+      "additionalProperties": false
+    },
+    "T7": {
+      "type": "object",
+      "properties": {
+        "contractVersion": {
+          "const": "1.0.0"
+        },
+        "scope": {
+          "anyOf": [
+            {
+              "const": "personal"
+            },
+            {
+              "const": "demo"
+            }
+          ]
+        },
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 512,
+          "pattern": "^\\S(?:[\\s\\S]*\\S)?$"
+        }
+      },
+      "required": [
+        "contractVersion",
+        "scope",
+        "id"
+      ],
+      "additionalProperties": false
+    },
+    "T8": {
+      "type": "object",
+      "properties": {
+        "contractVersion": {
+          "const": "1.0.0"
+        },
+        "scope": {
+          "anyOf": [
+            {
+              "const": "personal"
+            },
+            {
+              "const": "demo"
+            }
+          ]
+        },
+        "input": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/T9"
+            },
+            {
+              "$ref": "#/definitions/T57"
+            }
+          ]
+        }
+      },
+      "required": [
+        "contractVersion",
+        "scope",
+        "input"
+      ],
+      "additionalProperties": false
+    },
+    "T9": {
+      "type": "object",
+      "properties": {
+        "analysis": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/T10"
+            },
+            {
+              "$ref": "#/definitions/T40"
+            },
+            {
+              "$ref": "#/definitions/T42"
+            },
+            {
+              "$ref": "#/definitions/T44"
+            },
+            {
+              "$ref": "#/definitions/T46"
+            },
+            {
+              "$ref": "#/definitions/T48"
+            },
+            {
+              "$ref": "#/definitions/T51"
+            },
+            {
+              "$ref": "#/definitions/T55"
+            }
+          ]
+        },
+        "runId": {
+          "type": "string"
+        },
+        "expectedRevision": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "companyIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "analysis",
+        "runId",
+        "expectedRevision",
+        "companyIds"
+      ],
+      "additionalProperties": false
+    },
+    "T10": {
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "const": "1.0.0"
+        },
+        "kind": {
+          "const": "business"
+        },
+        "header": {
+          "$ref": "#/definitions/T11"
+        },
+        "content": {
+          "$ref": "#/definitions/T13"
+        },
+        "summary": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "verdict": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "confidence": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "presentation": {
+          "$ref": "#/definitions/T23"
+        },
+        "projection": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/T27"
+            },
+            {
+              "$ref": "#/definitions/T28"
+            },
+            {
+              "$ref": "#/definitions/T29"
+            }
+          ]
+        },
+        "diagnostics": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/T22"
+          }
+        },
+        "score": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "kind",
+        "header",
+        "content",
+        "summary",
+        "verdict",
+        "confidence",
+        "presentation",
+        "projection",
+        "diagnostics",
+        "score"
+      ],
+      "additionalProperties": false
+    },
+    "T11": {
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "const": "1.0.0"
+        },
+        "id": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "sourceUrl": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "family": {
+          "const": "business"
+        },
+        "originalFamily": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "sourceKind": {
+          "anyOf": [
+            {
+              "const": "decision"
+            },
+            {
+              "const": "analysis"
+            }
+          ]
+        },
+        "agent": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "status": {
+          "type": "string"
+        },
+        "date": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "lastEditedTime": {
+          "type": "string"
+        },
+        "companyIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "revision": {
+          "type": "string"
+        },
+        "sourceFreshness": {
+          "anyOf": [
+            {
+              "const": "fresh"
+            },
+            {
+              "const": "stale"
+            },
+            {
+              "const": "unknown"
+            }
+          ]
+        },
+        "archived": {
+          "anyOf": [
+            {
+              "const": false
+            },
+            {
+              "const": true
+            }
+          ]
+        },
+        "provenance": {
+          "$ref": "#/definitions/T12"
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "id",
+        "title",
+        "sourceUrl",
+        "family",
+        "originalFamily",
+        "sourceKind",
+        "agent",
+        "status",
+        "date",
+        "lastEditedTime",
+        "companyIds",
+        "revision",
+        "sourceFreshness",
+        "archived",
+        "provenance"
+      ],
+      "additionalProperties": false
+    },
+    "T12": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "anyOf": [
+            {
+              "const": "notion"
+            },
+            {
+              "const": "legacy"
+            },
+            {
+              "const": "projection"
+            },
+            {
+              "const": "derived"
+            }
+          ]
+        },
+        "sourceId": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "revision": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "capturedAt": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "required": [
+        "kind",
+        "sourceId",
+        "revision",
+        "capturedAt"
+      ],
+      "additionalProperties": false
+    },
+    "T13": {
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "const": "1.0.0"
+        },
+        "blocks": {
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "#/definitions/T14"
+              },
+              {
+                "$ref": "#/definitions/T16"
+              },
+              {
+                "$ref": "#/definitions/T17"
+              },
+              {
+                "$ref": "#/definitions/T18"
+              },
+              {
+                "$ref": "#/definitions/T19"
+              },
+              {
+                "$ref": "#/definitions/T20"
+              },
+              {
+                "$ref": "#/definitions/T21"
+              }
+            ]
+          }
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "blocks"
+      ],
+      "additionalProperties": false
+    },
+    "T14": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "sourceIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "type": {
+          "const": "heading"
+        },
+        "level": {
+          "anyOf": [
+            {
+              "const": 2
+            },
+            {
+              "const": 1
+            },
+            {
+              "const": 3
+            },
+            {
+              "const": 4
+            },
+            {
+              "const": 5
+            },
+            {
+              "const": 6
+            }
+          ]
+        },
+        "text": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/T15"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "sourceIds",
+        "type",
+        "level",
+        "text"
+      ],
+      "additionalProperties": false
+    },
+    "T15": {
+      "type": "object",
+      "properties": {
+        "text": {
+          "type": "string"
+        },
+        "marks": {
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {
+                "const": "code"
+              },
+              {
+                "const": "bold"
+              },
+              {
+                "const": "italic"
+              },
+              {
+                "const": "strikethrough"
+              }
+            ]
+          }
+        },
+        "href": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "required": [
+        "text",
+        "marks",
+        "href"
+      ],
+      "additionalProperties": false
+    },
+    "T16": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "sourceIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "type": {
+          "anyOf": [
+            {
+              "const": "paragraph"
+            },
+            {
+              "const": "quote"
+            }
+          ]
+        },
+        "text": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/T15"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "sourceIds",
+        "type",
+        "text"
+      ],
+      "additionalProperties": false
+    },
+    "T17": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "sourceIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "type": {
+          "const": "callout"
+        },
+        "text": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/T15"
+          }
+        },
+        "icon": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "sourceIds",
+        "type",
+        "text",
+        "icon"
+      ],
+      "additionalProperties": false
+    },
+    "T18": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "sourceIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "type": {
+          "const": "list"
+        },
+        "ordered": {
+          "anyOf": [
+            {
+              "const": false
+            },
+            {
+              "const": true
+            }
+          ]
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/T15"
+            }
+          }
+        }
+      },
+      "required": [
+        "id",
+        "sourceIds",
+        "type",
+        "ordered",
+        "items"
+      ],
+      "additionalProperties": false
+    },
+    "T19": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "sourceIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "type": {
+          "const": "table"
+        },
+        "rows": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/T15"
+              }
+            }
+          }
+        },
+        "header": {
+          "anyOf": [
+            {
+              "const": false
+            },
+            {
+              "const": true
+            }
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "sourceIds",
+        "type",
+        "rows",
+        "header"
+      ],
+      "additionalProperties": false
+    },
+    "T20": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "sourceIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "type": {
+          "const": "divider"
+        }
+      },
+      "required": [
+        "id",
+        "sourceIds",
+        "type"
+      ],
+      "additionalProperties": false
+    },
+    "T21": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "sourceIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "type": {
+          "const": "unsupported"
+        },
+        "sourceType": {
+          "type": "string"
+        },
+        "text": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "diagnostic": {
+          "$ref": "#/definitions/T22"
+        }
+      },
+      "required": [
+        "id",
+        "sourceIds",
+        "type",
+        "sourceType",
+        "text",
+        "diagnostic"
+      ],
+      "additionalProperties": false
+    },
+    "T22": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        },
+        "severity": {
+          "anyOf": [
+            {
+              "const": "info"
+            },
+            {
+              "const": "warning"
+            },
+            {
+              "const": "error"
+            }
+          ]
+        },
+        "path": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "code",
+        "message",
+        "severity"
+      ],
+      "additionalProperties": false
+    },
+    "T23": {
+      "type": "object",
+      "properties": {
+        "facts": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/T24"
+          }
+        },
+        "scenarios": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/T25"
+          }
+        },
+        "thresholds": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/T26"
+          }
+        }
+      },
+      "required": [
+        "facts",
+        "scenarios",
+        "thresholds"
+      ],
+      "additionalProperties": false
+    },
+    "T24": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "label": {
+          "type": "string"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "number"
+            }
+          ]
+        },
+        "unit": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "status": {
+          "anyOf": [
+            {
+              "const": "unknown"
+            },
+            {
+              "const": "known"
+            }
+          ]
+        },
+        "asOf": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ],
+          "description": "ISO calendar date (YYYY-MM-DD), timezone-qualified ISO date-time, or null. Fiscal labels such as FY2026/Q4 FY2026 are not dates; preserve them in labels/report content. Do not invent an exact date."
+        },
+        "sourceBlockIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "provenance": {
+          "$ref": "#/definitions/T12"
+        }
+      },
+      "required": [
+        "id",
+        "label",
+        "value",
+        "unit",
+        "status",
+        "asOf",
+        "sourceBlockIds",
+        "provenance"
+      ],
+      "additionalProperties": false
+    },
+    "T25": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "label": {
+          "type": "string"
+        },
+        "condition": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "impact": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "status": {
+          "anyOf": [
+            {
+              "const": "unknown"
+            },
+            {
+              "const": "known"
+            }
+          ]
+        },
+        "asOf": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ],
+          "description": "ISO calendar date (YYYY-MM-DD), timezone-qualified ISO date-time, or null. Fiscal labels such as FY2026/Q4 FY2026 are not dates; preserve them in labels/report content. Do not invent an exact date."
+        },
+        "sourceBlockIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "provenance": {
+          "$ref": "#/definitions/T12"
+        },
+        "terminalValue": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/definitions/T26"
+            }
+          ]
+        },
+        "cagrPercent": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/definitions/T26"
+            }
+          ]
+        },
+        "horizon": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/definitions/T26"
+            }
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "label",
+        "condition",
+        "impact",
+        "status",
+        "asOf",
+        "sourceBlockIds",
+        "provenance",
+        "terminalValue",
+        "cagrPercent",
+        "horizon"
+      ],
+      "additionalProperties": false
+    },
+    "T26": {
+      "type": "object",
+      "properties": {
+        "provenance": {
+          "$ref": "#/definitions/T12"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "const": "unknown"
+            },
+            {
+              "const": "known"
+            }
+          ]
+        },
+        "id": {
+          "type": "string"
+        },
+        "label": {
+          "type": "string"
+        },
+        "unit": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "asOf": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ],
+          "description": "ISO calendar date (YYYY-MM-DD), timezone-qualified ISO date-time, or null. Fiscal labels such as FY2026/Q4 FY2026 are not dates; preserve them in labels/report content. Do not invent an exact date."
+        },
+        "sourceBlockIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "value": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "number"
+            }
+          ]
+        }
+      },
+      "required": [
+        "provenance",
+        "status",
+        "id",
+        "label",
+        "unit",
+        "asOf",
+        "sourceBlockIds",
+        "value"
+      ],
+      "additionalProperties": false
+    },
+    "T27": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "const": "absent"
+        }
+      },
+      "required": [
+        "status"
+      ],
+      "additionalProperties": false
+    },
+    "T28": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "const": "invalid"
+        },
+        "diagnostic": {
+          "$ref": "#/definitions/T22"
+        }
+      },
+      "required": [
+        "status",
+        "diagnostic"
+      ],
+      "additionalProperties": false
+    },
+    "T29": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "const": "valid"
+        },
+        "projection": {
+          "$ref": "#/definitions/T30"
+        }
+      },
+      "required": [
+        "status",
+        "projection"
+      ],
+      "additionalProperties": false
+    },
+    "T30": {
+      "type": "object",
+      "properties": {
+        "presentationContractVersion": {
+          "const": "1.0.0"
+        },
+        "analysisType": {
+          "anyOf": [
+            {
+              "const": "business"
+            },
+            {
+              "const": "earnings"
+            },
+            {
+              "const": "valuation"
+            },
+            {
+              "const": "short"
+            },
+            {
+              "const": "portfolio"
+            },
+            {
+              "const": "cio"
+            }
+          ]
+        },
+        "identity": {
+          "$ref": "#/definitions/T31"
+        },
+        "generatedAt": {
+          "type": "string"
+        },
+        "reportSha256": {
+          "type": "string"
+        },
+        "summary": {
+          "$ref": "#/definitions/T32"
+        },
+        "facts": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/T33"
+          }
+        },
+        "scenarios": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/T34"
+          }
+        },
+        "thresholds": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/T35"
+          }
+        },
+        "sources": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/T36"
+          }
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/T37"
+          }
+        },
+        "freshnessChecks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/T38"
+          }
+        },
+        "provenance": {
+          "$ref": "#/definitions/T39"
+        }
+      },
+      "required": [
+        "presentationContractVersion",
+        "analysisType",
+        "identity",
+        "generatedAt",
+        "reportSha256",
+        "summary",
+        "facts",
+        "scenarios",
+        "thresholds",
+        "sources",
+        "evidence",
+        "freshnessChecks",
+        "provenance"
+      ],
+      "additionalProperties": false
+    },
+    "T31": {
+      "type": "object",
+      "properties": {
+        "company": {
+          "type": "string"
+        },
+        "ticker": {
+          "type": "string"
+        },
+        "exchange": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "currency": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "evidenceIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "company",
+        "ticker",
+        "exchange",
+        "currency",
+        "evidenceIds"
+      ],
+      "additionalProperties": false
+    },
+    "T32": {
+      "type": "object",
+      "properties": {
+        "text": {
+          "type": "string"
+        },
+        "evidenceIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "text",
+        "evidenceIds"
+      ],
+      "additionalProperties": false
+    },
+    "T33": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "label": {
+          "type": "string"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "number"
+            }
+          ]
+        },
+        "unit": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "status": {
+          "anyOf": [
+            {
+              "const": "unknown"
+            },
+            {
+              "const": "known"
+            }
+          ]
+        },
+        "asOf": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ],
+          "description": "ISO calendar date (YYYY-MM-DD), timezone-qualified ISO date-time, or null. Fiscal labels such as FY2026/Q4 FY2026 are not dates; preserve them in labels/report content. Do not invent an exact date."
+        },
+        "evidenceIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "label",
+        "value",
+        "unit",
+        "status",
+        "asOf",
+        "evidenceIds"
+      ],
+      "additionalProperties": false
+    },
+    "T34": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "label": {
+          "type": "string"
+        },
+        "condition": {
+          "type": "string"
+        },
+        "impact": {
+          "type": "string"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "const": "unknown"
+            },
+            {
+              "const": "known"
+            }
+          ]
+        },
+        "asOf": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ],
+          "description": "ISO calendar date (YYYY-MM-DD), timezone-qualified ISO date-time, or null. Fiscal labels such as FY2026/Q4 FY2026 are not dates; preserve them in labels/report content. Do not invent an exact date."
+        },
+        "evidenceIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "terminalValue": {
+          "$ref": "#/definitions/T35"
+        },
+        "cagrPercent": {
+          "$ref": "#/definitions/T35"
+        },
+        "horizon": {
+          "$ref": "#/definitions/T35"
+        },
+        "currency": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "label",
+        "condition",
+        "impact",
+        "status",
+        "asOf",
+        "evidenceIds"
+      ],
+      "additionalProperties": false
+    },
+    "T35": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "label": {
+          "type": "string"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "number"
+            }
+          ]
+        },
+        "unit": {
+          "type": "string"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "const": "unknown"
+            },
+            {
+              "const": "known"
+            }
+          ]
+        },
+        "asOf": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ],
+          "description": "ISO calendar date (YYYY-MM-DD), timezone-qualified ISO date-time, or null. Fiscal labels such as FY2026/Q4 FY2026 are not dates; preserve them in labels/report content. Do not invent an exact date."
+        },
+        "evidenceIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "label",
+        "value",
+        "unit",
+        "status",
+        "asOf",
+        "evidenceIds"
+      ],
+      "additionalProperties": false
+    },
+    "T36": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
+        },
+        "publishedAt": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "retrievedAt": {
+          "type": "string"
+        },
+        "asOf": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ],
+          "description": "ISO calendar date (YYYY-MM-DD), timezone-qualified ISO date-time, or null. Fiscal labels such as FY2026/Q4 FY2026 are not dates; preserve them in labels/report content. Do not invent an exact date."
+        },
+        "dataCategory": {
+          "anyOf": [
+            {
+              "const": "market_price"
+            },
+            {
+              "const": "financial_results"
+            },
+            {
+              "const": "corporate_filing"
+            },
+            {
+              "const": "market_structure"
+            },
+            {
+              "const": "guidance"
+            },
+            {
+              "const": "other"
+            }
+          ]
+        },
+        "fiscalPeriod": {
+          "type": "string"
+        },
+        "freshness": {
+          "anyOf": [
+            {
+              "const": "unknown"
+            },
+            {
+              "const": "known"
+            }
+          ]
+        },
+        "provenance": {
+          "anyOf": [
+            {
+              "const": "collected_this_run"
+            },
+            {
+              "const": "baseline"
+            }
+          ]
+        },
+        "publisher": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "title",
+        "url",
+        "publishedAt",
+        "retrievedAt",
+        "asOf",
+        "dataCategory",
+        "freshness",
+        "provenance"
+      ],
+      "additionalProperties": false
+    },
+    "T37": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "sourceId": {
+          "type": "string"
+        },
+        "claim": {
+          "type": "string"
+        },
+        "locator": {
+          "type": "string"
+        },
+        "supportingData": {
+          "type": "string"
+        },
+        "supportingDataSha256": {
+          "type": "string"
+        },
+        "captureMethod": {
+          "const": "source_retrieval"
+        },
+        "capturedAt": {
+          "type": "string"
+        },
+        "asOf": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ],
+          "description": "ISO calendar date (YYYY-MM-DD), timezone-qualified ISO date-time, or null. Fiscal labels such as FY2026/Q4 FY2026 are not dates; preserve them in labels/report content. Do not invent an exact date."
+        },
+        "freshness": {
+          "anyOf": [
+            {
+              "const": "unknown"
+            },
+            {
+              "const": "known"
+            }
+          ]
+        },
+        "freshnessCheckId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "sourceId",
+        "claim",
+        "locator",
+        "supportingData",
+        "supportingDataSha256",
+        "captureMethod",
+        "capturedAt",
+        "asOf",
+        "freshness",
+        "freshnessCheckId"
+      ],
+      "additionalProperties": false
+    },
+    "T38": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "dataCategory": {
+          "anyOf": [
+            {
+              "const": "market_price"
+            },
+            {
+              "const": "financial_results"
+            },
+            {
+              "const": "corporate_filing"
+            },
+            {
+              "const": "market_structure"
+            },
+            {
+              "const": "guidance"
+            },
+            {
+              "const": "other"
+            }
+          ]
+        },
+        "method": {
+          "anyOf": [
+            {
+              "const": "market_calendar_and_latest_quote"
+            },
+            {
+              "const": "latest_results_or_filings_search"
+            },
+            {
+              "const": "latest_source_search"
+            }
+          ]
+        },
+        "result": {
+          "anyOf": [
+            {
+              "const": "unknown"
+            },
+            {
+              "const": "latest_verified"
+            },
+            {
+              "const": "newer_found"
+            }
+          ]
+        },
+        "checkedAt": {
+          "type": "string"
+        },
+        "checkedSourceIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "supportingData": {
+          "type": "string"
+        },
+        "supportingDataSha256": {
+          "type": "string"
+        },
+        "captureMethod": {
+          "const": "source_retrieval"
+        },
+        "capturedAt": {
+          "type": "string"
+        },
+        "locator": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "dataCategory",
+        "method",
+        "result",
+        "checkedAt",
+        "checkedSourceIds",
+        "supportingData",
+        "supportingDataSha256",
+        "captureMethod",
+        "capturedAt",
+        "locator"
+      ],
+      "additionalProperties": false
+    },
+    "T39": {
+      "type": "object",
+      "properties": {
+        "runId": {
+          "type": "string"
+        },
+        "pluginVersion": {
+          "type": "string"
+        },
+        "contractVersion": {
+          "const": "1.2.6"
+        }
+      },
+      "required": [
+        "runId",
+        "pluginVersion",
+        "contractVersion"
+      ],
+      "additionalProperties": false
+    },
+    "T40": {
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "const": "1.0.0"
+        },
+        "kind": {
+          "const": "valuation"
+        },
+        "header": {
+          "$ref": "#/definitions/T41"
+        },
+        "content": {
+          "$ref": "#/definitions/T13"
+        },
+        "summary": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "verdict": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "confidence": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "presentation": {
+          "$ref": "#/definitions/T23"
+        },
+        "projection": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/T27"
+            },
+            {
+              "$ref": "#/definitions/T28"
+            },
+            {
+              "$ref": "#/definitions/T29"
+            }
+          ]
+        },
+        "diagnostics": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/T22"
+          }
+        },
+        "score": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "kind",
+        "header",
+        "content",
+        "summary",
+        "verdict",
+        "confidence",
+        "presentation",
+        "projection",
+        "diagnostics",
+        "score"
+      ],
+      "additionalProperties": false
+    },
+    "T41": {
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "const": "1.0.0"
+        },
+        "id": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "sourceUrl": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "family": {
+          "const": "valuation"
+        },
+        "originalFamily": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "sourceKind": {
+          "anyOf": [
+            {
+              "const": "decision"
+            },
+            {
+              "const": "analysis"
+            }
+          ]
+        },
+        "agent": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "status": {
+          "type": "string"
+        },
+        "date": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "lastEditedTime": {
+          "type": "string"
+        },
+        "companyIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "revision": {
+          "type": "string"
+        },
+        "sourceFreshness": {
+          "anyOf": [
+            {
+              "const": "fresh"
+            },
+            {
+              "const": "stale"
+            },
+            {
+              "const": "unknown"
+            }
+          ]
+        },
+        "archived": {
+          "anyOf": [
+            {
+              "const": false
+            },
+            {
+              "const": true
+            }
+          ]
+        },
+        "provenance": {
+          "$ref": "#/definitions/T12"
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "id",
+        "title",
+        "sourceUrl",
+        "family",
+        "originalFamily",
+        "sourceKind",
+        "agent",
+        "status",
+        "date",
+        "lastEditedTime",
+        "companyIds",
+        "revision",
+        "sourceFreshness",
+        "archived",
+        "provenance"
+      ],
+      "additionalProperties": false
+    },
+    "T42": {
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "const": "1.0.0"
+        },
+        "kind": {
+          "const": "short"
+        },
+        "header": {
+          "$ref": "#/definitions/T43"
+        },
+        "content": {
+          "$ref": "#/definitions/T13"
+        },
+        "summary": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "verdict": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "confidence": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "presentation": {
+          "$ref": "#/definitions/T23"
+        },
+        "projection": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/T27"
+            },
+            {
+              "$ref": "#/definitions/T28"
+            },
+            {
+              "$ref": "#/definitions/T29"
+            }
+          ]
+        },
+        "diagnostics": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/T22"
+          }
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "kind",
+        "header",
+        "content",
+        "summary",
+        "verdict",
+        "confidence",
+        "presentation",
+        "projection",
+        "diagnostics"
+      ],
+      "additionalProperties": false
+    },
+    "T43": {
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "const": "1.0.0"
+        },
+        "id": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "sourceUrl": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "family": {
+          "const": "short"
+        },
+        "originalFamily": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "sourceKind": {
+          "anyOf": [
+            {
+              "const": "decision"
+            },
+            {
+              "const": "analysis"
+            }
+          ]
+        },
+        "agent": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "status": {
+          "type": "string"
+        },
+        "date": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "lastEditedTime": {
+          "type": "string"
+        },
+        "companyIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "revision": {
+          "type": "string"
+        },
+        "sourceFreshness": {
+          "anyOf": [
+            {
+              "const": "fresh"
+            },
+            {
+              "const": "stale"
+            },
+            {
+              "const": "unknown"
+            }
+          ]
+        },
+        "archived": {
+          "anyOf": [
+            {
+              "const": false
+            },
+            {
+              "const": true
+            }
+          ]
+        },
+        "provenance": {
+          "$ref": "#/definitions/T12"
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "id",
+        "title",
+        "sourceUrl",
+        "family",
+        "originalFamily",
+        "sourceKind",
+        "agent",
+        "status",
+        "date",
+        "lastEditedTime",
+        "companyIds",
+        "revision",
+        "sourceFreshness",
+        "archived",
+        "provenance"
+      ],
+      "additionalProperties": false
+    },
+    "T44": {
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "const": "1.0.0"
+        },
+        "kind": {
+          "const": "portfolio"
+        },
+        "header": {
+          "$ref": "#/definitions/T45"
+        },
+        "content": {
+          "$ref": "#/definitions/T13"
+        },
+        "summary": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "verdict": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "confidence": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "presentation": {
+          "$ref": "#/definitions/T23"
+        },
+        "projection": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/T27"
+            },
+            {
+              "$ref": "#/definitions/T28"
+            },
+            {
+              "$ref": "#/definitions/T29"
+            }
+          ]
+        },
+        "diagnostics": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/T22"
+          }
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "kind",
+        "header",
+        "content",
+        "summary",
+        "verdict",
+        "confidence",
+        "presentation",
+        "projection",
+        "diagnostics"
+      ],
+      "additionalProperties": false
+    },
+    "T45": {
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "const": "1.0.0"
+        },
+        "id": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "sourceUrl": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "family": {
+          "const": "portfolio"
+        },
+        "originalFamily": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "sourceKind": {
+          "anyOf": [
+            {
+              "const": "decision"
+            },
+            {
+              "const": "analysis"
+            }
+          ]
+        },
+        "agent": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "status": {
+          "type": "string"
+        },
+        "date": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "lastEditedTime": {
+          "type": "string"
+        },
+        "companyIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "revision": {
+          "type": "string"
+        },
+        "sourceFreshness": {
+          "anyOf": [
+            {
+              "const": "fresh"
+            },
+            {
+              "const": "stale"
+            },
+            {
+              "const": "unknown"
+            }
+          ]
+        },
+        "archived": {
+          "anyOf": [
+            {
+              "const": false
+            },
+            {
+              "const": true
+            }
+          ]
+        },
+        "provenance": {
+          "$ref": "#/definitions/T12"
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "id",
+        "title",
+        "sourceUrl",
+        "family",
+        "originalFamily",
+        "sourceKind",
+        "agent",
+        "status",
+        "date",
+        "lastEditedTime",
+        "companyIds",
+        "revision",
+        "sourceFreshness",
+        "archived",
+        "provenance"
+      ],
+      "additionalProperties": false
+    },
+    "T46": {
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "const": "1.0.0"
+        },
+        "kind": {
+          "const": "cio_memo"
+        },
+        "header": {
+          "$ref": "#/definitions/T47"
+        },
+        "content": {
+          "$ref": "#/definitions/T13"
+        },
+        "summary": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "verdict": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "confidence": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "presentation": {
+          "$ref": "#/definitions/T23"
+        },
+        "projection": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/T27"
+            },
+            {
+              "$ref": "#/definitions/T28"
+            },
+            {
+              "$ref": "#/definitions/T29"
+            }
+          ]
+        },
+        "diagnostics": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/T22"
+          }
+        },
+        "handoffSummary": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "kind",
+        "header",
+        "content",
+        "summary",
+        "verdict",
+        "confidence",
+        "presentation",
+        "projection",
+        "diagnostics",
+        "handoffSummary"
+      ],
+      "additionalProperties": false
+    },
+    "T47": {
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "const": "1.0.0"
+        },
+        "id": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "sourceUrl": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "family": {
+          "const": "cio_memo"
+        },
+        "originalFamily": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "sourceKind": {
+          "anyOf": [
+            {
+              "const": "decision"
+            },
+            {
+              "const": "analysis"
+            }
+          ]
+        },
+        "agent": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "status": {
+          "type": "string"
+        },
+        "date": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "lastEditedTime": {
+          "type": "string"
+        },
+        "companyIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "revision": {
+          "type": "string"
+        },
+        "sourceFreshness": {
+          "anyOf": [
+            {
+              "const": "fresh"
+            },
+            {
+              "const": "stale"
+            },
+            {
+              "const": "unknown"
+            }
+          ]
+        },
+        "archived": {
+          "anyOf": [
+            {
+              "const": false
+            },
+            {
+              "const": true
+            }
+          ]
+        },
+        "provenance": {
+          "$ref": "#/definitions/T12"
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "id",
+        "title",
+        "sourceUrl",
+        "family",
+        "originalFamily",
+        "sourceKind",
+        "agent",
+        "status",
+        "date",
+        "lastEditedTime",
+        "companyIds",
+        "revision",
+        "sourceFreshness",
+        "archived",
+        "provenance"
+      ],
+      "additionalProperties": false
+    },
+    "T48": {
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "const": "1.0.0"
+        },
+        "kind": {
+          "const": "decision"
+        },
+        "header": {
+          "$ref": "#/definitions/T49"
+        },
+        "content": {
+          "$ref": "#/definitions/T13"
+        },
+        "summary": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "verdict": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "confidence": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "presentation": {
+          "$ref": "#/definitions/T23"
+        },
+        "projection": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/T27"
+            },
+            {
+              "$ref": "#/definitions/T28"
+            },
+            {
+              "$ref": "#/definitions/T29"
+            }
+          ]
+        },
+        "diagnostics": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/T22"
+          }
+        },
+        "decision": {
+          "$ref": "#/definitions/T50"
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "kind",
+        "header",
+        "content",
+        "summary",
+        "verdict",
+        "confidence",
+        "presentation",
+        "projection",
+        "diagnostics",
+        "decision"
+      ],
+      "additionalProperties": false
+    },
+    "T49": {
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "const": "1.0.0"
+        },
+        "id": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "sourceUrl": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "family": {
+          "const": "decision"
+        },
+        "originalFamily": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "sourceKind": {
+          "anyOf": [
+            {
+              "const": "decision"
+            },
+            {
+              "const": "analysis"
+            }
+          ]
+        },
+        "agent": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "status": {
+          "type": "string"
+        },
+        "date": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "lastEditedTime": {
+          "type": "string"
+        },
+        "companyIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "revision": {
+          "type": "string"
+        },
+        "sourceFreshness": {
+          "anyOf": [
+            {
+              "const": "fresh"
+            },
+            {
+              "const": "stale"
+            },
+            {
+              "const": "unknown"
+            }
+          ]
+        },
+        "archived": {
+          "anyOf": [
+            {
+              "const": false
+            },
+            {
+              "const": true
+            }
+          ]
+        },
+        "provenance": {
+          "$ref": "#/definitions/T12"
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "id",
+        "title",
+        "sourceUrl",
+        "family",
+        "originalFamily",
+        "sourceKind",
+        "agent",
+        "status",
+        "date",
+        "lastEditedTime",
+        "companyIds",
+        "revision",
+        "sourceFreshness",
+        "archived",
+        "provenance"
+      ],
+      "additionalProperties": false
+    },
+    "T50": {
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "const": "1.0.0"
+        },
+        "action": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "outcome": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "account": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "instrumentType": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "currentWeight": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "maximumWeight": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "maximumEntryPrice": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "nextReview": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "confidence": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "coreThesis": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "entryCondition": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "executionPlan": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "fundingSource": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "catalyst": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "invalidationCriteria": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "keyRisk": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "reviewTrigger": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "action",
+        "outcome",
+        "account",
+        "instrumentType",
+        "currentWeight",
+        "maximumWeight",
+        "maximumEntryPrice",
+        "nextReview",
+        "confidence",
+        "coreThesis",
+        "entryCondition",
+        "executionPlan",
+        "fundingSource",
+        "catalyst",
+        "invalidationCriteria",
+        "keyRisk",
+        "reviewTrigger"
+      ],
+      "additionalProperties": false
+    },
+    "T51": {
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "const": "1.0.0"
+        },
+        "kind": {
+          "const": "earnings"
+        },
+        "header": {
+          "$ref": "#/definitions/T52"
+        },
+        "content": {
+          "$ref": "#/definitions/T13"
+        },
+        "summary": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "verdict": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "confidence": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "presentation": {
+          "$ref": "#/definitions/T23"
+        },
+        "projection": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/T27"
+            },
+            {
+              "$ref": "#/definitions/T28"
+            },
+            {
+              "$ref": "#/definitions/T29"
+            }
+          ]
+        },
+        "diagnostics": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/T22"
+          }
+        },
+        "earningsReview": {
+          "$ref": "#/definitions/T53"
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "kind",
+        "header",
+        "content",
+        "summary",
+        "verdict",
+        "confidence",
+        "presentation",
+        "projection",
+        "diagnostics",
+        "earningsReview"
+      ],
+      "additionalProperties": false
+    },
+    "T52": {
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "const": "1.0.0"
+        },
+        "id": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "sourceUrl": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "family": {
+          "const": "earnings"
+        },
+        "originalFamily": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "sourceKind": {
+          "anyOf": [
+            {
+              "const": "decision"
+            },
+            {
+              "const": "analysis"
+            }
+          ]
+        },
+        "agent": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "status": {
+          "type": "string"
+        },
+        "date": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "lastEditedTime": {
+          "type": "string"
+        },
+        "companyIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "revision": {
+          "type": "string"
+        },
+        "sourceFreshness": {
+          "anyOf": [
+            {
+              "const": "fresh"
+            },
+            {
+              "const": "stale"
+            },
+            {
+              "const": "unknown"
+            }
+          ]
+        },
+        "archived": {
+          "anyOf": [
+            {
+              "const": false
+            },
+            {
+              "const": true
+            }
+          ]
+        },
+        "provenance": {
+          "$ref": "#/definitions/T12"
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "id",
+        "title",
+        "sourceUrl",
+        "family",
+        "originalFamily",
+        "sourceKind",
+        "agent",
+        "status",
+        "date",
+        "lastEditedTime",
+        "companyIds",
+        "revision",
+        "sourceFreshness",
+        "archived",
+        "provenance"
+      ],
+      "additionalProperties": false
+    },
+    "T53": {
+      "type": "object",
+      "properties": {
+        "fiscalPeriod": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "guidance": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "guidanceVsConsensus": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "confidence": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "refreshes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/T54"
+          }
+        }
+      },
+      "required": [
+        "fiscalPeriod",
+        "guidance",
+        "guidanceVsConsensus",
+        "confidence",
+        "refreshes"
+      ],
+      "additionalProperties": false
+    },
+    "T54": {
+      "type": "object",
+      "properties": {
+        "key": {
+          "anyOf": [
+            {
+              "const": "business"
+            },
+            {
+              "const": "valuation"
+            },
+            {
+              "const": "short"
+            },
+            {
+              "const": "portfolio"
+            },
+            {
+              "const": "memo"
+            }
+          ]
+        },
+        "label": {
+          "type": "string"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "const": "unknown"
+            },
+            {
+              "const": "not-needed"
+            },
+            {
+              "const": "monitor"
+            },
+            {
+              "const": "recommended"
+            },
+            {
+              "const": "required"
+            }
+          ]
+        },
+        "rawValue": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "required": [
+        "key",
+        "label",
+        "status",
+        "rawValue"
+      ],
+      "additionalProperties": false
+    },
+    "T55": {
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "const": "1.0.0"
+        },
+        "kind": {
+          "anyOf": [
+            {
+              "const": "unknown"
+            },
+            {
+              "const": "generic"
+            }
+          ]
+        },
+        "header": {
+          "$ref": "#/definitions/T56"
+        },
+        "content": {
+          "$ref": "#/definitions/T13"
+        },
+        "summary": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "verdict": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "confidence": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "presentation": {
+          "$ref": "#/definitions/T23"
+        },
+        "projection": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/T27"
+            },
+            {
+              "$ref": "#/definitions/T28"
+            },
+            {
+              "$ref": "#/definitions/T29"
+            }
+          ]
+        },
+        "diagnostics": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/T22"
+          }
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "kind",
+        "header",
+        "content",
+        "summary",
+        "verdict",
+        "confidence",
+        "presentation",
+        "projection",
+        "diagnostics"
+      ],
+      "additionalProperties": false
+    },
+    "T56": {
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "const": "1.0.0"
+        },
+        "id": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "sourceUrl": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "family": {
+          "anyOf": [
+            {
+              "const": "unknown"
+            },
+            {
+              "const": "generic"
+            }
+          ]
+        },
+        "originalFamily": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "sourceKind": {
+          "anyOf": [
+            {
+              "const": "decision"
+            },
+            {
+              "const": "analysis"
+            }
+          ]
+        },
+        "agent": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "status": {
+          "type": "string"
+        },
+        "date": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "lastEditedTime": {
+          "type": "string"
+        },
+        "companyIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "revision": {
+          "type": "string"
+        },
+        "sourceFreshness": {
+          "anyOf": [
+            {
+              "const": "fresh"
+            },
+            {
+              "const": "stale"
+            },
+            {
+              "const": "unknown"
+            }
+          ]
+        },
+        "archived": {
+          "anyOf": [
+            {
+              "const": false
+            },
+            {
+              "const": true
+            }
+          ]
+        },
+        "provenance": {
+          "$ref": "#/definitions/T12"
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "id",
+        "title",
+        "sourceUrl",
+        "family",
+        "originalFamily",
+        "sourceKind",
+        "agent",
+        "status",
+        "date",
+        "lastEditedTime",
+        "companyIds",
+        "revision",
+        "sourceFreshness",
+        "archived",
+        "provenance"
+      ],
+      "additionalProperties": false
+    },
+    "T57": {
+      "type": "object",
+      "properties": {
+        "format": {
+          "const": "report",
+          "description": "Always \"report\"."
+        },
+        "runId": {
+          "type": "string",
+          "description": "Stable run identifier shared by the modules of one run. Never reuse a run already submitted."
+        },
+        "kind": {
+          "anyOf": [
+            {
+              "const": "business"
+            },
+            {
+              "const": "earnings"
+            },
+            {
+              "const": "valuation"
+            },
+            {
+              "const": "short"
+            },
+            {
+              "const": "portfolio"
+            },
+            {
+              "const": "cio_memo"
+            }
+          ],
+          "description": "Module that produced the report."
+        },
+        "companyId": {
+          "type": "string",
+          "description": "companyId returned by resolve_company. Never derived from a ticker."
+        },
+        "title": {
+          "type": "string",
+          "description": "Human title of the report page."
+        },
+        "date": {
+          "type": "string",
+          "description": "Analysis date, ISO calendar date YYYY-MM-DD. Not a fiscal label."
+        },
+        "status": {
+          "anyOf": [
+            {
+              "const": "Draft"
+            },
+            {
+              "const": "Validated"
+            }
+          ],
+          "description": "Draft, or Validated to publish and promote Current when the runtime allows it."
+        },
+        "reportMarkdown": {
+          "type": "string",
+          "description": "Complete human report in Markdown (headings #, ##, ### only; lists; pipe tables; links). Keep [E:id] evidence markers next to the claims they support: they become the block sources. Max 400000 characters."
+        },
+        "summary": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ],
+          "description": "One-paragraph TL;DR, or null."
+        },
+        "verdict": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ],
+          "description": "Module verdict as written in the handoff, or null."
+        },
+        "confidence": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "const": "High"
+            },
+            {
+              "const": "Medium"
+            },
+            {
+              "const": "Low"
+            }
+          ],
+          "description": "High, Medium, Low, or null."
+        },
+        "score": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "description": "business and valuation only: integer 0-100 (e.g. 82 for 82/100). Omit for other kinds."
+        },
+        "handoffSummary": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ],
+          "description": "cio_memo only: the final handoff text."
+        },
+        "earnings": {
+          "$ref": "#/definitions/T58",
+          "description": "earnings only: fiscal period, guidance, guidance vs consensus and the five refresh statuses."
+        }
+      },
+      "required": [
+        "format",
+        "runId",
+        "kind",
+        "companyId",
+        "title",
+        "date",
+        "status",
+        "reportMarkdown",
+        "summary",
+        "verdict",
+        "confidence"
+      ],
+      "additionalProperties": false
+    },
+    "T58": {
+      "type": "object",
+      "properties": {
+        "fiscalPeriod": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "guidance": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "guidanceVsConsensus": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "const": "Above"
+            },
+            {
+              "const": "Inline"
+            },
+            {
+              "const": "Below"
+            },
+            {
+              "const": "Not Available"
+            }
+          ]
+        },
+        "refreshes": {
+          "$ref": "#/definitions/T59"
+        }
+      },
+      "required": [
+        "fiscalPeriod",
+        "guidance",
+        "guidanceVsConsensus",
+        "refreshes"
+      ],
+      "additionalProperties": false
+    },
+    "T59": {
+      "type": "object",
+      "properties": {
+        "business": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "const": "not-needed"
+            },
+            {
+              "const": "monitor"
+            },
+            {
+              "const": "recommended"
+            },
+            {
+              "const": "required"
+            }
+          ]
+        },
+        "valuation": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "const": "not-needed"
+            },
+            {
+              "const": "monitor"
+            },
+            {
+              "const": "recommended"
+            },
+            {
+              "const": "required"
+            }
+          ]
+        },
+        "short": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "const": "not-needed"
+            },
+            {
+              "const": "monitor"
+            },
+            {
+              "const": "recommended"
+            },
+            {
+              "const": "required"
+            }
+          ]
+        },
+        "portfolio": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "const": "not-needed"
+            },
+            {
+              "const": "monitor"
+            },
+            {
+              "const": "recommended"
+            },
+            {
+              "const": "required"
+            }
+          ]
+        },
+        "memo": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "const": "not-needed"
+            },
+            {
+              "const": "monitor"
+            },
+            {
+              "const": "recommended"
+            },
+            {
+              "const": "required"
+            }
+          ]
+        }
+      },
+      "required": [
+        "business",
+        "valuation",
+        "short",
+        "portfolio",
+        "memo"
+      ],
+      "additionalProperties": false
+    },
+    "T60": {
+      "type": "object",
+      "properties": {
+        "contractVersion": {
+          "const": "1.0.0"
+        },
+        "scope": {
+          "anyOf": [
+            {
+              "const": "personal"
+            },
+            {
+              "const": "demo"
+            }
+          ]
+        },
+        "assetId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 512,
+          "pattern": "^\\S(?:[\\s\\S]*\\S)?$"
+        },
+        "options": {
+          "$ref": "#/definitions/T4"
+        }
+      },
+      "required": [
+        "contractVersion",
+        "scope",
+        "assetId"
+      ],
+      "additionalProperties": false
+    },
+    "T61": {
+      "type": "object",
+      "properties": {
+        "contractVersion": {
+          "const": "1.0.0"
+        },
+        "scope": {
+          "anyOf": [
+            {
+              "const": "personal"
+            },
+            {
+              "const": "demo"
+            }
+          ]
+        },
+        "input": {
+          "$ref": "#/definitions/T62"
+        }
+      },
+      "required": [
+        "contractVersion",
+        "scope",
+        "input"
+      ],
+      "additionalProperties": false
+    },
+    "T62": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "ticker": {
+          "type": "string"
+        },
+        "exchange": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "isin": {
+          "type": "string"
+        },
+        "currency": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "country": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "required": [
+        "name",
+        "ticker",
+        "exchange",
+        "isin",
+        "currency",
+        "country"
+      ],
+      "additionalProperties": false
+    },
+    "T63": {
+      "type": "object",
+      "properties": {
+        "contractVersion": {
+          "const": "1.0.0"
+        },
+        "scope": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "const": "personal"
+            },
+            {
+              "const": "demo"
+            }
+          ]
+        },
+        "status": {
+          "const": "rejected"
+        },
+        "error": {
+          "$ref": "#/definitions/T64"
+        },
+        "diagnostics": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/T22"
+          }
+        }
+      },
+      "required": [
+        "contractVersion",
+        "scope",
+        "status",
+        "error",
+        "diagnostics"
+      ],
+      "additionalProperties": false
+    },
+    "T64": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "anyOf": [
+            {
+              "const": "invalid_input"
+            },
+            {
+              "const": "unsupported_version"
+            },
+            {
+              "const": "unauthorized"
+            },
+            {
+              "const": "forbidden"
+            },
+            {
+              "const": "rate_limit"
+            },
+            {
+              "const": "timeout"
+            },
+            {
+              "const": "network"
+            },
+            {
+              "const": "confirmation_required"
+            },
+            {
+              "const": "limit_exceeded"
+            }
+          ]
+        },
+        "message": {
+          "type": "string"
+        },
+        "retryable": {
+          "anyOf": [
+            {
+              "const": false
+            },
+            {
+              "const": true
+            }
+          ]
+        },
+        "outcome": {
+          "anyOf": [
+            {
+              "const": "unknown"
+            },
+            {
+              "const": "not_started"
+            }
+          ]
+        }
+      },
+      "required": [
+        "code",
+        "message",
+        "retryable",
+        "outcome"
+      ],
+      "additionalProperties": false
+    },
+    "T65": {
+      "type": "object",
+      "properties": {
+        "contractVersion": {
+          "const": "1.0.0"
+        },
+        "scope": {
+          "anyOf": [
+            {
+              "const": "personal"
+            },
+            {
+              "const": "demo"
+            }
+          ]
+        },
+        "status": {
+          "const": "completed"
+        },
+        "result": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/T66"
+            },
+            {
+              "$ref": "#/definitions/T69"
+            }
+          ]
+        }
+      },
+      "required": [
+        "contractVersion",
+        "scope",
+        "status",
+        "result"
+      ],
+      "additionalProperties": false
+    },
+    "T66": {
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "const": "1.0.0"
+        },
+        "status": {
+          "const": "error"
+        },
+        "error": {
+          "$ref": "#/definitions/T67"
+        },
+        "metadata": {
+          "$ref": "#/definitions/T68"
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "status",
+        "error",
+        "metadata"
+      ],
+      "additionalProperties": false
+    },
+    "T67": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "anyOf": [
+            {
+              "const": "invalid_input"
+            },
+            {
+              "const": "unsupported_version"
+            },
+            {
+              "const": "not_found"
+            },
+            {
+              "const": "unauthorized"
+            },
+            {
+              "const": "forbidden"
+            },
+            {
+              "const": "mapping"
+            },
+            {
+              "const": "normalization"
+            },
+            {
+              "const": "storage"
+            },
+            {
+              "const": "dependency"
+            },
+            {
+              "const": "rate_limit"
+            },
+            {
+              "const": "timeout"
+            },
+            {
+              "const": "network"
+            },
+            {
+              "const": "cache"
+            },
+            {
+              "const": "stale_request"
+            }
+          ]
+        },
+        "message": {
+          "type": "string"
+        },
+        "retryable": {
+          "anyOf": [
+            {
+              "const": false
+            },
+            {
+              "const": true
+            }
+          ]
+        }
+      },
+      "required": [
+        "code",
+        "message",
+        "retryable"
+      ],
+      "additionalProperties": false
+    },
+    "T68": {
+      "type": "object",
+      "properties": {
+        "revision": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "freshness": {
+          "anyOf": [
+            {
+              "const": "fresh"
+            },
+            {
+              "const": "stale"
+            },
+            {
+              "const": "unknown"
+            }
+          ]
+        },
+        "provenance": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/definitions/T12"
+            }
+          ]
+        },
+        "diagnostics": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/T22"
+          }
+        }
+      },
+      "required": [
+        "revision",
+        "freshness",
+        "provenance",
+        "diagnostics"
+      ],
+      "additionalProperties": false
+    },
+    "T69": {
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "const": "1.0.0"
+        },
+        "status": {
+          "const": "ok"
+        },
+        "data": {
+          "$ref": "#/definitions/T70"
+        },
+        "metadata": {
+          "$ref": "#/definitions/T68"
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "status",
+        "data",
+        "metadata"
+      ],
+      "additionalProperties": false
+    },
+    "T70": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "anyOf": [
+            {
+              "const": "not_found"
+            },
+            {
+              "const": "resolved"
+            },
+            {
+              "const": "ambiguous"
+            }
+          ]
+        },
+        "candidates": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/T71"
+          }
+        }
+      },
+      "required": [
+        "status",
+        "candidates"
+      ],
+      "additionalProperties": false
+    },
+    "T71": {
+      "type": "object",
+      "properties": {
+        "companyId": {
+          "type": "string"
+        },
+        "canonicalName": {
+          "type": "string"
+        },
+        "ticker": {
+          "type": "string"
+        },
+        "exchange": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "assetId": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "isin": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "required": [
+        "companyId",
+        "canonicalName",
+        "ticker",
+        "exchange",
+        "assetId",
+        "isin"
+      ],
+      "additionalProperties": false
+    },
+    "T72": {
+      "type": "object",
+      "properties": {
+        "contractVersion": {
+          "const": "1.0.0"
+        },
+        "scope": {
+          "anyOf": [
+            {
+              "const": "personal"
+            },
+            {
+              "const": "demo"
+            }
+          ]
+        },
+        "status": {
+          "const": "completed"
+        },
+        "result": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/T66"
+            },
+            {
+              "$ref": "#/definitions/T73"
+            }
+          ]
+        }
+      },
+      "required": [
+        "contractVersion",
+        "scope",
+        "status",
+        "result"
+      ],
+      "additionalProperties": false
+    },
+    "T73": {
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "const": "1.0.0"
+        },
+        "status": {
+          "const": "ok"
+        },
+        "data": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/definitions/T74"
+            }
+          ]
+        },
+        "metadata": {
+          "$ref": "#/definitions/T68"
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "status",
+        "data",
+        "metadata"
+      ],
+      "additionalProperties": false
+    },
+    "T74": {
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "const": "1.0.0"
+        },
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "ticker": {
+          "type": "string"
+        },
+        "sector": {
+          "type": "string"
+        },
+        "industry": {
+          "type": "string"
+        },
+        "ownershipStatus": {
+          "anyOf": [
+            {
+              "const": "Owned"
+            },
+            {
+              "const": "Not owned"
+            }
+          ]
+        },
+        "watchlistMembership": {
+          "anyOf": [
+            {
+              "const": false
+            },
+            {
+              "const": true
+            }
+          ]
+        },
+        "monitoringStatus": {
+          "type": "string"
+        },
+        "businessScore": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "number"
+            }
+          ]
+        },
+        "businessVerdict": {
+          "type": "string"
+        },
+        "researchStage": {
+          "type": "string"
+        },
+        "researchPriority": {
+          "type": "string"
+        },
+        "lastAnalysis": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "themes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "country": {
+          "type": "string"
+        },
+        "currency": {
+          "type": "string"
+        },
+        "exchange": {
+          "type": "string"
+        },
+        "dataCompleteness": {
+          "type": "string"
+        },
+        "notionUrl": {
+          "type": "string"
+        },
+        "researchReferences": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/T75"
+          }
+        },
+        "provenance": {
+          "$ref": "#/definitions/T12"
+        },
+        "analyses": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/T76"
+          }
+        },
+        "earnings": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/T76"
+          }
+        },
+        "decisions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/T76"
+          }
+        },
+        "portfolioDocuments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/T76"
+          }
+        },
+        "archives": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/T76"
+          }
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "id",
+        "name",
+        "ticker",
+        "sector",
+        "industry",
+        "ownershipStatus",
+        "watchlistMembership",
+        "monitoringStatus",
+        "businessScore",
+        "businessVerdict",
+        "researchStage",
+        "researchPriority",
+        "lastAnalysis",
+        "themes",
+        "country",
+        "currency",
+        "exchange",
+        "dataCompleteness",
+        "notionUrl",
+        "researchReferences",
+        "provenance",
+        "analyses",
+        "earnings",
+        "decisions",
+        "portfolioDocuments",
+        "archives"
+      ],
+      "additionalProperties": false
+    },
+    "T75": {
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "const": "1.0.0"
+        },
+        "id": {
+          "type": "string"
+        },
+        "kind": {
+          "anyOf": [
+            {
+              "const": "business"
+            },
+            {
+              "const": "valuation"
+            },
+            {
+              "const": "short"
+            },
+            {
+              "const": "portfolio"
+            },
+            {
+              "const": "memo"
+            }
+          ]
+        },
+        "title": {
+          "type": "string"
+        },
+        "agent": {
+          "type": "string"
+        },
+        "score": {
+          "type": "string"
+        },
+        "verdict": {
+          "type": "string"
+        },
+        "confidence": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "status": {
+          "type": "string"
+        },
+        "date": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "lastEditedTime": {
+          "type": "string"
+        },
+        "notionUrl": {
+          "type": "string"
+        },
+        "provenance": {
+          "$ref": "#/definitions/T12"
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "id",
+        "kind",
+        "title",
+        "agent",
+        "score",
+        "verdict",
+        "confidence",
+        "status",
+        "date",
+        "lastEditedTime",
+        "notionUrl",
+        "provenance"
+      ],
+      "additionalProperties": false
+    },
+    "T76": {
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "const": "1.0.0"
+        },
+        "id": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "sourceUrl": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "family": {
+          "anyOf": [
+            {
+              "const": "unknown"
+            },
+            {
+              "const": "business"
+            },
+            {
+              "const": "earnings"
+            },
+            {
+              "const": "valuation"
+            },
+            {
+              "const": "short"
+            },
+            {
+              "const": "portfolio"
+            },
+            {
+              "const": "cio_memo"
+            },
+            {
+              "const": "decision"
+            },
+            {
+              "const": "generic"
+            }
+          ]
+        },
+        "originalFamily": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "sourceKind": {
+          "anyOf": [
+            {
+              "const": "decision"
+            },
+            {
+              "const": "analysis"
+            }
+          ]
+        },
+        "agent": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "status": {
+          "type": "string"
+        },
+        "date": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "lastEditedTime": {
+          "type": "string"
+        },
+        "companyIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "revision": {
+          "type": "string"
+        },
+        "sourceFreshness": {
+          "anyOf": [
+            {
+              "const": "fresh"
+            },
+            {
+              "const": "stale"
+            },
+            {
+              "const": "unknown"
+            }
+          ]
+        },
+        "archived": {
+          "anyOf": [
+            {
+              "const": false
+            },
+            {
+              "const": true
+            }
+          ]
+        },
+        "provenance": {
+          "$ref": "#/definitions/T12"
+        },
+        "summary": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "handoffSummary": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "previewSummaryItems": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "score": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "verdict": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "confidence": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "projectionStatus": {
+          "anyOf": [
+            {
+              "const": "valid"
+            },
+            {
+              "const": "absent"
+            },
+            {
+              "const": "invalid"
+            }
+          ]
+        },
+        "diagnostics": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/T22"
+          }
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "id",
+        "title",
+        "sourceUrl",
+        "family",
+        "originalFamily",
+        "sourceKind",
+        "agent",
+        "status",
+        "date",
+        "lastEditedTime",
+        "companyIds",
+        "revision",
+        "sourceFreshness",
+        "archived",
+        "provenance",
+        "summary",
+        "handoffSummary",
+        "previewSummaryItems",
+        "score",
+        "verdict",
+        "confidence",
+        "projectionStatus",
+        "diagnostics"
+      ],
+      "additionalProperties": false
+    },
+    "T77": {
+      "type": "object",
+      "properties": {
+        "contractVersion": {
+          "const": "1.0.0"
+        },
+        "scope": {
+          "anyOf": [
+            {
+              "const": "personal"
+            },
+            {
+              "const": "demo"
+            }
+          ]
+        },
+        "status": {
+          "const": "completed"
+        },
+        "result": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/T66"
+            },
+            {
+              "$ref": "#/definitions/T78"
+            }
+          ]
+        }
+      },
+      "required": [
+        "contractVersion",
+        "scope",
+        "status",
+        "result"
+      ],
+      "additionalProperties": false
+    },
+    "T78": {
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "const": "1.0.0"
+        },
+        "status": {
+          "const": "ok"
+        },
+        "data": {
+          "$ref": "#/definitions/T79"
+        },
+        "metadata": {
+          "$ref": "#/definitions/T68"
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "status",
+        "data",
+        "metadata"
+      ],
+      "additionalProperties": false
+    },
+    "T79": {
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "const": "1.0.0"
+        },
+        "generatedAt": {
+          "type": "string"
+        },
+        "quoteAsOf": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "oldestQuoteAsOf": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "targetSource": {
+          "type": "string"
+        },
+        "targetLines": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/T80"
+          }
+        },
+        "targetTotals": {
+          "$ref": "#/definitions/T81"
+        },
+        "totals": {
+          "$ref": "#/definitions/T82"
+        },
+        "slices": {
+          "$ref": "#/definitions/T83"
+        },
+        "positions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/T84"
+          }
+        },
+        "closedPositions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/T86"
+          }
+        },
+        "refreshPending": {
+          "anyOf": [
+            {
+              "const": false
+            },
+            {
+              "const": true
+            }
+          ]
+        },
+        "sectors": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/T87"
+          }
+        },
+        "coverage": {
+          "$ref": "#/definitions/T88"
+        },
+        "reconciliation": {
+          "$ref": "#/definitions/T89"
+        },
+        "calculation": {
+          "$ref": "#/definitions/T93"
+        },
+        "provenance": {
+          "$ref": "#/definitions/T12"
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "generatedAt",
+        "quoteAsOf",
+        "oldestQuoteAsOf",
+        "targetSource",
+        "targetLines",
+        "targetTotals",
+        "totals",
+        "slices",
+        "positions",
+        "sectors",
+        "coverage",
+        "reconciliation",
+        "calculation",
+        "provenance"
+      ],
+      "additionalProperties": false
+    },
+    "T80": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "target10kWeight": {
+          "type": "number"
+        },
+        "target10kEur": {
+          "type": "number"
+        },
+        "target25kWeight": {
+          "type": "number"
+        },
+        "target25kEur": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "target10kWeight",
+        "target10kEur",
+        "target25kWeight",
+        "target25kEur"
+      ],
+      "additionalProperties": false
+    },
+    "T81": {
+      "type": "object",
+      "properties": {
+        "target10kWeight": {
+          "type": "number"
+        },
+        "target25kWeight": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "target10kWeight",
+        "target25kWeight"
+      ],
+      "additionalProperties": false
+    },
+    "T82": {
+      "type": "object",
+      "properties": {
+        "marketValueEur": {
+          "type": "number"
+        },
+        "investedValueEur": {
+          "type": "number"
+        },
+        "cashValueEur": {
+          "type": "number"
+        },
+        "costBasisEur": {
+          "type": "number"
+        },
+        "pnlEur": {
+          "type": "number"
+        },
+        "pnlPercent": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "number"
+            }
+          ]
+        },
+        "brokerCostBasisEur": {
+          "type": "number"
+        },
+        "brokerPnlEur": {
+          "type": "number"
+        },
+        "brokerPnlPercent": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "number"
+            }
+          ]
+        },
+        "positions": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "marketValueEur",
+        "investedValueEur",
+        "cashValueEur",
+        "costBasisEur",
+        "pnlEur",
+        "pnlPercent",
+        "brokerCostBasisEur",
+        "brokerPnlEur",
+        "brokerPnlPercent",
+        "positions"
+      ],
+      "additionalProperties": false
+    },
+    "T83": {
+      "type": "object",
+      "properties": {},
+      "required": [],
+      "additionalProperties": {
+        "$ref": "#/definitions/T82"
+      }
+    },
+    "T84": {
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "const": "1.0.0"
+        },
+        "id": {
+          "type": "string"
+        },
+        "targetId": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "instrumentType": {
+          "type": "string"
+        },
+        "account": {
+          "type": "string"
+        },
+        "sector": {
+          "type": "string"
+        },
+        "industry": {
+          "type": "string"
+        },
+        "themes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "primaryTheme": {
+          "type": "string"
+        },
+        "country": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "countryExposures": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/T85"
+          }
+        },
+        "sectorExposures": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/T85"
+          }
+        },
+        "themeExposures": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/T85"
+          }
+        },
+        "quantity": {
+          "type": "number"
+        },
+        "pruEur": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "number"
+            }
+          ]
+        },
+        "brokerPruEur": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "number"
+            }
+          ]
+        },
+        "pruSource": {
+          "anyOf": [
+            {
+              "const": "notion-pru"
+            },
+            {
+              "const": "notion-broker-pru"
+            },
+            {
+              "const": "missing"
+            }
+          ]
+        },
+        "costBasisEur": {
+          "type": "number"
+        },
+        "brokerCostBasisEur": {
+          "type": "number"
+        },
+        "marketValueEur": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "number"
+            }
+          ]
+        },
+        "pnlEur": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "number"
+            }
+          ]
+        },
+        "pnlPercent": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "number"
+            }
+          ]
+        },
+        "brokerPnlEur": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "number"
+            }
+          ]
+        },
+        "brokerPnlPercent": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "number"
+            }
+          ]
+        },
+        "weight": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "number"
+            }
+          ]
+        },
+        "targetWeight": {
+          "type": "number"
+        },
+        "targetEur": {
+          "type": "number"
+        },
+        "target10kWeight": {
+          "type": "number"
+        },
+        "target10kEur": {
+          "type": "number"
+        },
+        "quoteSymbol": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "nativePrice": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "number"
+            }
+          ]
+        },
+        "nativeCurrency": {
+          "type": "string"
+        },
+        "eurPrice": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "number"
+            }
+          ]
+        },
+        "fxRate": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "number"
+            }
+          ]
+        },
+        "fxMarketTime": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "fetchedAt": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "quoteWarnings": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "changePercent": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "number"
+            }
+          ]
+        },
+        "quoteSource": {
+          "type": "string"
+        },
+        "quoteFreshness": {
+          "type": "string"
+        },
+        "marketTime": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "companyIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "notionUrl": {
+          "type": "string"
+        },
+        "warning": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "provenance": {
+          "$ref": "#/definitions/T12"
+        },
+        "lifecycle": {
+          "const": "open"
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "id",
+        "targetId",
+        "name",
+        "instrumentType",
+        "account",
+        "sector",
+        "industry",
+        "themes",
+        "primaryTheme",
+        "country",
+        "countryExposures",
+        "sectorExposures",
+        "themeExposures",
+        "quantity",
+        "pruEur",
+        "brokerPruEur",
+        "pruSource",
+        "costBasisEur",
+        "brokerCostBasisEur",
+        "marketValueEur",
+        "pnlEur",
+        "pnlPercent",
+        "brokerPnlEur",
+        "brokerPnlPercent",
+        "weight",
+        "targetWeight",
+        "targetEur",
+        "target10kWeight",
+        "target10kEur",
+        "quoteSymbol",
+        "nativePrice",
+        "nativeCurrency",
+        "eurPrice",
+        "fxRate",
+        "fxMarketTime",
+        "fetchedAt",
+        "quoteWarnings",
+        "changePercent",
+        "quoteSource",
+        "quoteFreshness",
+        "marketTime",
+        "companyIds",
+        "notionUrl",
+        "warning",
+        "provenance",
+        "lifecycle"
+      ],
+      "additionalProperties": false
+    },
+    "T85": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "weight": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "name",
+        "weight"
+      ],
+      "additionalProperties": false
+    },
+    "T86": {
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "const": "1.0.0"
+        },
+        "id": {
+          "type": "string"
+        },
+        "targetId": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "instrumentType": {
+          "type": "string"
+        },
+        "account": {
+          "type": "string"
+        },
+        "sector": {
+          "type": "string"
+        },
+        "industry": {
+          "type": "string"
+        },
+        "themes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "primaryTheme": {
+          "type": "string"
+        },
+        "country": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "countryExposures": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/T85"
+          }
+        },
+        "sectorExposures": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/T85"
+          }
+        },
+        "themeExposures": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/T85"
+          }
+        },
+        "quantity": {
+          "type": "number"
+        },
+        "pruEur": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "number"
+            }
+          ]
+        },
+        "brokerPruEur": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "number"
+            }
+          ]
+        },
+        "pruSource": {
+          "anyOf": [
+            {
+              "const": "notion-pru"
+            },
+            {
+              "const": "notion-broker-pru"
+            },
+            {
+              "const": "missing"
+            }
+          ]
+        },
+        "costBasisEur": {
+          "type": "number"
+        },
+        "brokerCostBasisEur": {
+          "type": "number"
+        },
+        "marketValueEur": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "number"
+            }
+          ]
+        },
+        "pnlEur": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "number"
+            }
+          ]
+        },
+        "pnlPercent": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "number"
+            }
+          ]
+        },
+        "brokerPnlEur": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "number"
+            }
+          ]
+        },
+        "brokerPnlPercent": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "number"
+            }
+          ]
+        },
+        "weight": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "number"
+            }
+          ]
+        },
+        "targetWeight": {
+          "type": "number"
+        },
+        "targetEur": {
+          "type": "number"
+        },
+        "target10kWeight": {
+          "type": "number"
+        },
+        "target10kEur": {
+          "type": "number"
+        },
+        "quoteSymbol": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "nativePrice": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "number"
+            }
+          ]
+        },
+        "nativeCurrency": {
+          "type": "string"
+        },
+        "eurPrice": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "number"
+            }
+          ]
+        },
+        "fxRate": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "number"
+            }
+          ]
+        },
+        "fxMarketTime": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "fetchedAt": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "quoteWarnings": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "changePercent": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "number"
+            }
+          ]
+        },
+        "quoteSource": {
+          "type": "string"
+        },
+        "quoteFreshness": {
+          "type": "string"
+        },
+        "marketTime": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "companyIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "notionUrl": {
+          "type": "string"
+        },
+        "warning": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "provenance": {
+          "$ref": "#/definitions/T12"
+        },
+        "lifecycle": {
+          "const": "closed"
+        },
+        "closedAt": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "id",
+        "targetId",
+        "name",
+        "instrumentType",
+        "account",
+        "sector",
+        "industry",
+        "themes",
+        "primaryTheme",
+        "country",
+        "countryExposures",
+        "sectorExposures",
+        "themeExposures",
+        "quantity",
+        "pruEur",
+        "brokerPruEur",
+        "pruSource",
+        "costBasisEur",
+        "brokerCostBasisEur",
+        "marketValueEur",
+        "pnlEur",
+        "pnlPercent",
+        "brokerPnlEur",
+        "brokerPnlPercent",
+        "weight",
+        "targetWeight",
+        "targetEur",
+        "target10kWeight",
+        "target10kEur",
+        "quoteSymbol",
+        "nativePrice",
+        "nativeCurrency",
+        "eurPrice",
+        "fxRate",
+        "fxMarketTime",
+        "fetchedAt",
+        "quoteWarnings",
+        "changePercent",
+        "quoteSource",
+        "quoteFreshness",
+        "marketTime",
+        "companyIds",
+        "notionUrl",
+        "warning",
+        "provenance",
+        "lifecycle"
+      ],
+      "additionalProperties": false
+    },
+    "T87": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "valueEur": {
+          "type": "number"
+        },
+        "weight": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "name",
+        "valueEur",
+        "weight"
+      ],
+      "additionalProperties": false
+    },
+    "T88": {
+      "type": "object",
+      "properties": {
+        "live": {
+          "type": "number"
+        },
+        "manual": {
+          "type": "number"
+        },
+        "stale": {
+          "type": "number"
+        },
+        "unavailable": {
+          "type": "number"
+        },
+        "cash": {
+          "type": "number"
+        },
+        "total": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "live",
+        "manual",
+        "stale",
+        "unavailable",
+        "cash",
+        "total"
+      ],
+      "additionalProperties": false
+    },
+    "T89": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "anyOf": [
+            {
+              "const": "warning"
+            },
+            {
+              "const": "error"
+            },
+            {
+              "const": "ok"
+            }
+          ]
+        },
+        "coherent": {
+          "type": "number"
+        },
+        "warnings": {
+          "type": "number"
+        },
+        "errors": {
+          "type": "number"
+        },
+        "issues": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/T90"
+          }
+        },
+        "accountChecks": {
+          "$ref": "#/definitions/T91"
+        }
+      },
+      "required": [
+        "status",
+        "coherent",
+        "warnings",
+        "errors",
+        "issues",
+        "accountChecks"
+      ],
+      "additionalProperties": false
+    },
+    "T90": {
+      "type": "object",
+      "properties": {
+        "positionId": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "positionName": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "severity": {
+          "anyOf": [
+            {
+              "const": "warning"
+            },
+            {
+              "const": "error"
+            }
+          ]
+        },
+        "code": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "positionId",
+        "positionName",
+        "severity",
+        "code",
+        "message"
+      ],
+      "additionalProperties": false
+    },
+    "T92": {
+      "type": "object",
+      "properties": {
+        "linesValueEur": {
+          "type": "number"
+        },
+        "sliceValueEur": {
+          "type": "number"
+        },
+        "deltaEur": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "linesValueEur",
+        "sliceValueEur",
+        "deltaEur"
+      ],
+      "additionalProperties": false
+    },
+    "T91": {
+      "type": "object",
+      "properties": {},
+      "required": [],
+      "additionalProperties": {
+        "$ref": "#/definitions/T92"
+      }
+    },
+    "T93": {
+      "type": "object",
+      "properties": {
+        "pnlScope": {
+          "const": "unrealized-open-positions"
+        },
+        "realizedPnlAvailable": {
+          "const": false
+        },
+        "feesIncluded": {
+          "const": false
+        },
+        "dividendsIncluded": {
+          "const": false
+        },
+        "source": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "pnlScope",
+        "realizedPnlAvailable",
+        "feesIncluded",
+        "dividendsIncluded",
+        "source"
+      ],
+      "additionalProperties": false
+    },
+    "T94": {
+      "type": "object",
+      "properties": {
+        "contractVersion": {
+          "const": "1.0.0"
+        },
+        "scope": {
+          "anyOf": [
+            {
+              "const": "personal"
+            },
+            {
+              "const": "demo"
+            }
+          ]
+        },
+        "status": {
+          "const": "completed"
+        },
+        "result": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/T66"
+            },
+            {
+              "$ref": "#/definitions/T95"
+            }
+          ]
+        }
+      },
+      "required": [
+        "contractVersion",
+        "scope",
+        "status",
+        "result"
+      ],
+      "additionalProperties": false
+    },
+    "T95": {
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "const": "1.0.0"
+        },
+        "status": {
+          "const": "ok"
+        },
+        "data": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/definitions/T84"
+            },
+            {
+              "$ref": "#/definitions/T86"
+            }
+          ]
+        },
+        "metadata": {
+          "$ref": "#/definitions/T68"
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "status",
+        "data",
+        "metadata"
+      ],
+      "additionalProperties": false
+    },
+    "T96": {
+      "type": "object",
+      "properties": {
+        "contractVersion": {
+          "const": "1.0.0"
+        },
+        "scope": {
+          "anyOf": [
+            {
+              "const": "personal"
+            },
+            {
+              "const": "demo"
+            }
+          ]
+        },
+        "status": {
+          "const": "completed"
+        },
+        "result": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/T66"
+            },
+            {
+              "$ref": "#/definitions/T97"
+            }
+          ]
+        }
+      },
+      "required": [
+        "contractVersion",
+        "scope",
+        "status",
+        "result"
+      ],
+      "additionalProperties": false
+    },
+    "T97": {
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "const": "1.0.0"
+        },
+        "status": {
+          "const": "ok"
+        },
+        "data": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/definitions/T10"
+            },
+            {
+              "$ref": "#/definitions/T40"
+            },
+            {
+              "$ref": "#/definitions/T42"
+            },
+            {
+              "$ref": "#/definitions/T44"
+            },
+            {
+              "$ref": "#/definitions/T46"
+            },
+            {
+              "$ref": "#/definitions/T48"
+            },
+            {
+              "$ref": "#/definitions/T51"
+            },
+            {
+              "$ref": "#/definitions/T55"
+            }
+          ]
+        },
+        "metadata": {
+          "$ref": "#/definitions/T68"
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "status",
+        "data",
+        "metadata"
+      ],
+      "additionalProperties": false
+    },
+    "T98": {
+      "type": "object",
+      "properties": {
+        "contractVersion": {
+          "const": "1.0.0"
+        },
+        "scope": {
+          "anyOf": [
+            {
+              "const": "personal"
+            },
+            {
+              "const": "demo"
+            }
+          ]
+        },
+        "status": {
+          "const": "completed"
+        },
+        "result": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/T66"
+            },
+            {
+              "$ref": "#/definitions/T99"
+            }
+          ]
+        }
+      },
+      "required": [
+        "contractVersion",
+        "scope",
+        "status",
+        "result"
+      ],
+      "additionalProperties": false
+    },
+    "T99": {
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "const": "1.0.0"
+        },
+        "status": {
+          "const": "ok"
+        },
+        "data": {
+          "$ref": "#/definitions/T100"
+        },
+        "metadata": {
+          "$ref": "#/definitions/T68"
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "status",
+        "data",
+        "metadata"
+      ],
+      "additionalProperties": false
+    },
+    "T100": {
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "const": "1.0.0"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "const": "persisted"
+            },
+            {
+              "const": "promotion_pending"
+            },
+            {
+              "const": "verified"
+            },
+            {
+              "const": "partial"
+            }
+          ]
+        },
+        "analysisId": {
+          "type": "string"
+        },
+        "runId": {
+          "type": "string"
+        },
+        "revision": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "persisted": {
+          "anyOf": [
+            {
+              "const": false
+            },
+            {
+              "const": true
+            }
+          ]
+        },
+        "promoted": {
+          "anyOf": [
+            {
+              "const": false
+            },
+            {
+              "const": true
+            }
+          ]
+        },
+        "verified": {
+          "anyOf": [
+            {
+              "const": false
+            },
+            {
+              "const": true
+            }
+          ]
+        },
+        "diagnostics": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/T101"
+          }
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "status",
+        "analysisId",
+        "runId",
+        "revision",
+        "persisted",
+        "promoted",
+        "verified",
+        "diagnostics"
+      ],
+      "additionalProperties": false
+    },
+    "T101": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        },
+        "severity": {
+          "anyOf": [
+            {
+              "const": "info"
+            },
+            {
+              "const": "warning"
+            },
+            {
+              "const": "error"
+            }
+          ]
+        }
+      },
+      "required": [
+        "code",
+        "message",
+        "severity"
+      ],
+      "additionalProperties": false
+    },
+    "T102": {
+      "type": "object",
+      "properties": {
+        "contractVersion": {
+          "const": "1.0.0"
+        },
+        "scope": {
+          "anyOf": [
+            {
+              "const": "personal"
+            },
+            {
+              "const": "demo"
+            }
+          ]
+        },
+        "status": {
+          "const": "completed"
+        },
+        "result": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/T66"
+            },
+            {
+              "$ref": "#/definitions/T103"
+            }
+          ]
+        }
+      },
+      "required": [
+        "contractVersion",
+        "scope",
+        "status",
+        "result"
+      ],
+      "additionalProperties": false
+    },
+    "T103": {
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "const": "1.0.0"
+        },
+        "status": {
+          "const": "ok"
+        },
+        "data": {
+          "$ref": "#/definitions/T104"
+        },
+        "metadata": {
+          "$ref": "#/definitions/T68"
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "status",
+        "data",
+        "metadata"
+      ],
+      "additionalProperties": false
+    },
+    "T104": {
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "const": "1.0.0"
+        },
+        "assetId": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "nativePrice": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "number"
+            }
+          ]
+        },
+        "nativeCurrency": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "eurPrice": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "number"
+            }
+          ]
+        },
+        "fxRate": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "number"
+            }
+          ]
+        },
+        "fxMarketTime": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "previousClose": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "number"
+            }
+          ]
+        },
+        "changePercent": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "number"
+            }
+          ]
+        },
+        "marketTime": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "fetchedAt": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "source": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "freshness": {
+          "anyOf": [
+            {
+              "const": "fresh"
+            },
+            {
+              "const": "stale"
+            },
+            {
+              "const": "closed"
+            },
+            {
+              "const": "unavailable"
+            }
+          ]
+        },
+        "isFallback": {
+          "anyOf": [
+            {
+              "const": false
+            },
+            {
+              "const": true
+            }
+          ]
+        },
+        "warnings": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "provenance": {
+          "$ref": "#/definitions/T12"
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "assetId",
+        "name",
+        "nativePrice",
+        "nativeCurrency",
+        "eurPrice",
+        "fxRate",
+        "fxMarketTime",
+        "previousClose",
+        "changePercent",
+        "marketTime",
+        "fetchedAt",
+        "source",
+        "freshness",
+        "isFallback",
+        "warnings",
+        "provenance"
+      ],
+      "additionalProperties": false
+    },
+    "T105": {
+      "type": "object",
+      "properties": {
+        "contractVersion": {
+          "const": "1.0.0"
+        },
+        "scope": {
+          "anyOf": [
+            {
+              "const": "personal"
+            },
+            {
+              "const": "demo"
+            }
+          ]
+        },
+        "status": {
+          "const": "completed"
+        },
+        "result": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/T66"
+            },
+            {
+              "$ref": "#/definitions/T106"
+            }
+          ]
+        }
+      },
+      "required": [
+        "contractVersion",
+        "scope",
+        "status",
+        "result"
+      ],
+      "additionalProperties": false
+    },
+    "T106": {
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "const": "1.0.0"
+        },
+        "status": {
+          "const": "ok"
+        },
+        "data": {
+          "$ref": "#/definitions/T107"
+        },
+        "metadata": {
+          "$ref": "#/definitions/T68"
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "status",
+        "data",
+        "metadata"
+      ],
+      "additionalProperties": false
+    },
+    "T107": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "anyOf": [
+            {
+              "const": "created"
+            },
+            {
+              "const": "existing"
+            }
+          ]
+        },
+        "candidates": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/T71"
+          }
+        }
+      },
+      "required": [
+        "status",
+        "candidates"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

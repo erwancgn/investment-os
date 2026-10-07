@@ -1,9 +1,15 @@
 /** Cloudflare Worker entry point for the vinext-starter template. */
 import { handleImageOptimization, DEFAULT_DEVICE_SIZES, DEFAULT_IMAGE_SIZES } from "vinext/server/image-optimization";
 import handler from "vinext/server/app-router-entry";
-import { getQuotes, instruments } from "../app/lib/quotes";
-import { acquireNotionSourceSyncLock, acquireNotionSyncLock, notionSources, notionStatus, syncNotionAllSources, syncNotionSource, rebuildDocumentCompanyLinks, rebuildNotionRelations, normalizeStoredDocumentText, documentCompanyLinks, finalizeNotionImports, processNextNotionImport, processNextNotionWebhookEvent, recordNotionWebhookEvent, configureNotionWebhook, notionWebhookVerificationToken, releaseNotionSourceSyncLock, releaseNotionSyncLock, type NotionSourceKey } from "../app/lib/notion-sync";
-import { auditCompanyWatchlistRelations, getCompanyDetail, getLivePortfolio, getResearchDocument, listCompanies, listResearchDocuments } from "../app/lib/investment-data";
+import { instruments } from "../app/lib/quotes";
+import { acquireNotionSourceSyncLock, acquireNotionSyncLock, notionSources, notionStatus, syncNotionAllSources, syncNotionSource, rebuildDocumentCompanyLinks, rebuildNotionRelations, configureNotionSources, normalizeStoredDocumentText, documentCompanyLinks, finalizeNotionImports, processNextNotionImport, processNextNotionWebhookEvent, recordNotionWebhookEvent, configureNotionWebhook, notionWebhookVerificationToken, releaseNotionSourceSyncLock, releaseNotionSyncLock, type NotionSourceKey } from "../app/lib/notion-sync";
+import { auditCompanyWatchlistRelations, listCompanies } from "../app/lib/investment-data";
+import { createInvestmentService, createInvestmentReadAdapter } from "../adapters/notion/investment-reads";
+
+import { createMcpHandler } from "../transports/mcp/server";
+import { authenticateSitesMcp } from "../transports/mcp/sites-auth";
+import { authorizeSitesWrite } from "../transports/mcp/site-write-policy";
+import { createDemoInvestmentService } from "../adapters/demo/investment-reads";
 
 import { companyPreview } from "../app/lib/company-preview";
 import { getThemeBaskets, parseBasketOptions } from "../app/lib/theme-baskets";
@@ -17,6 +23,9 @@ interface Env {
   NOTION_SYNC_AUTH_TOKEN?: string;
   /** Email address of the Site owner, set as a private runtime variable. */
   OWNER_EMAIL?: string;
+  MCP_WRITE_ENABLED?: string;
+  /** Optional JSON overriding Notion data-source IDs per key, e.g. {"companies":"<uuid>"}. */
+  NOTION_SOURCES?: string;
   IMAGES: {
     input(stream: ReadableStream): {
       transform(options: Record<string, unknown>): {
@@ -168,9 +177,42 @@ async function launchNotionRefresh(env:Env,ctx:ExecutionContext,{forceScan=false
 // dangerouslyAllowSVG: true in next.config.js and uncomment below:
 // const imageConfig: ImageConfig = { dangerouslyAllowSVG: true };
 
+const MCP_REFRESH_CHECK_MS = 60_000;
+let lastMcpRefreshCheck = 0;
+
+// One handler per Worker isolate: retain active WRITE fences beyond response deadlines.
+const mcpHandlers = new WeakMap<Env, ReturnType<typeof createMcpHandler>>();
+function mcpHandler(env: Env) {
+  let mcp = mcpHandlers.get(env);
+  if (!mcp) {
+    mcp = createMcpHandler({
+      authenticate: request => authenticateSitesMcp(request, env),
+      authorizeWrite: authorizeSitesWrite,
+      service: scope => scope === "demo" ? createDemoInvestmentService() : createInvestmentService(env.DB, env.NOTION_TOKEN ? { token: env.NOTION_TOKEN } : undefined),
+    });
+    mcpHandlers.set(env, mcp);
+  }
+  return mcp;
+}
+
 const worker = {
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
     const url = new URL(request.url);
+    try { configureNotionSources(env.NOTION_SOURCES); } catch (error) { return Response.json({ error: error instanceof Error ? error.message : "NOTION_SOURCES invalide." }, { status: 500 }); }
+    if (url.pathname === "/.well-known/openai-apps-challenge" && request.method === "GET") {
+      return new Response("mpJR0O_0nS7S-EeztZzEmb3vDetAaOaA2jyVm67yHCo", {
+        headers: { "content-type": "text/plain; charset=utf-8", "cache-control": "public, max-age=300" },
+      });
+    }
+    if (url.pathname === "/mcp") {
+      const response = await mcpHandler(env)(request, task => ctx.waitUntil(task));
+      // No cron on Sites: an authenticated MCP request refreshes a stale Notion cache in the background (locked, throttled per isolate).
+      if (response.ok && env.NOTION_TOKEN && Date.now() - lastMcpRefreshCheck > MCP_REFRESH_CHECK_MS) {
+        lastMcpRefreshCheck = Date.now();
+        ctx.waitUntil(launchNotionRefresh(env, ctx).then(() => undefined, error => console.error("MCP cache refresh failed", error)));
+      }
+      return response;
+    }
     const owner = hasOwnerIdentity(request, env);
     const scope = requestedScope(request, owner);
 
@@ -249,7 +291,7 @@ const worker = {
       const ids=[...new Set(raw)].filter(id=>id in instruments).slice(0,20);
       if(!ids.length)return Response.json({error:"Aucun actif valide"},{status:400});
       const force=url.searchParams.get("refresh")==="1";
-      const quotes=await getQuotes(ids,force,env.DB);
+      const quotes=await createInvestmentReadAdapter(env.DB).getQuotes(ids,{force});
       return Response.json({generatedAt:new Date().toISOString(),quotes:Object.fromEntries(quotes.map(q=>[q.assetId,q])),partial:quotes.some(q=>q.nativePrice===null)},{headers:{"cache-control":"private, no-store"}});
     }
 
@@ -292,13 +334,13 @@ const worker = {
         return company ? Response.json({ company: companyPreview(company.company) }, { headers: { "cache-control": "no-store" } }) : Response.json({ error: "Compagnie introuvable" }, { status: 404, headers: { "cache-control": "no-store" } });
       }
       if (!owner) return privateScopeDenied();
-      const company=await getCompanyDetail(env.DB,companyId);
-      return company?Response.json({company:companyPreview(company)},{headers:{"cache-control":"private, no-store"}}):Response.json({error:"Compagnie introuvable"},{status:404,headers:{"cache-control":"private, no-store"}});
+      const company=await createInvestmentReadAdapter(env.DB).getCompany(companyId);
+      return company?Response.json({company},{headers:{"cache-control":"private, no-store"}}):Response.json({error:"Compagnie introuvable"},{status:404,headers:{"cache-control":"private, no-store"}});
     }
 
     if (url.pathname === "/api/notion/integrity" && request.method === "GET") {
       if (!owner || scope !== "personal") return privateScopeDenied();
-      const [companies,documents,companyLinks,watchlistAudit]=await Promise.all([listCompanies(env.DB),listResearchDocuments(env.DB,true),documentCompanyLinks(env.DB),auditCompanyWatchlistRelations(env.DB)]);
+      const [companies,documents,companyLinks,watchlistAudit]=await Promise.all([listCompanies(env.DB),createInvestmentReadAdapter(env.DB).listAnalysesForIntegrity(),documentCompanyLinks(env.DB),auditCompanyWatchlistRelations(env.DB)]);
       const orphanDocuments=documents.filter(document=>document.companyName==="Non relié");
       const multiCompanyDocuments=documents.filter(document=>new Set(companyLinks.get(document.id)??[]).size>1);
       const missingCurrent=companies.filter(company=>company.researchReferences.length<5);
@@ -310,20 +352,39 @@ const worker = {
     }
 
     if (url.pathname.startsWith("/api/analyses/") && request.method === "GET") {
-      const pageId=decodeURIComponent(url.pathname.slice("/api/analyses/".length));
+      const started=performance.now();
+      const requestId=crypto.randomUUID();
+      const readHeaders=()=>({"cache-control":"private, no-store","x-request-id":requestId,"server-timing":`app;dur=${(performance.now()-started).toFixed(1)}`});
       if (scope === "demo") {
+        let pageId:string;
+        try{pageId=decodeURIComponent(url.pathname.slice("/api/analyses/".length));}
+        catch{return Response.json({error:"Analyse introuvable."},{status:404,headers:{"cache-control":"no-store"}});}
         const document = getDemoResearchDocument(pageId);
         return document ? Response.json(document, { headers: { "cache-control": "no-store" } }) : Response.json({ error: "Analyse introuvable" }, { status: 404, headers: { "cache-control": "no-store" } });
       }
       if (!owner) return privateScopeDenied();
-      const document=await getResearchDocument(env.DB,pageId);
-      return document?Response.json({document},{headers:{"cache-control":"private, no-store"}}):Response.json({error:"Analyse introuvable"},{status:404,headers:{"cache-control":"private, no-store"}});
+      let pageId:string;
+      try{pageId=decodeURIComponent(url.pathname.slice("/api/analyses/".length));}
+      catch{return Response.json({error:"Identifiant d’analyse invalide.",code:"invalid_input",stage:"input",requestId},{status:400,headers:readHeaders()});}
+      try{
+        const document=await createInvestmentReadAdapter(env.DB).getAnalysisById(pageId);
+        return document?Response.json({document},{headers:readHeaders()}):Response.json({error:"Analyse introuvable",code:"analysis_not_found",stage:"lookup",requestId},{status:404,headers:readHeaders()});
+      }catch(error){
+        const tagged=error&&typeof error==="object"?error as {code?:unknown;stage?:unknown}:{};
+        const causeName=error instanceof Error?error.name:"";
+        const timedOut=tagged.code==="timeout"||causeName==="TimeoutError"||causeName==="AbortError";
+        const code=tagged.code==="normalization"?"normalization":tagged.code==="mapping"?"mapping":timedOut?"timeout":"storage";
+        const stage=typeof tagged.stage==="string"?tagged.stage:code==="normalization"?"normalization":"read";
+        const durationMs=Number((performance.now()-started).toFixed(1));
+        console.error(JSON.stringify({event:"analysis-read-failed",id:requestId,code,stage,durationMs}));
+        return Response.json({error:"Lecture de l’analyse indisponible. Réessaie dans un instant.",code,stage,requestId},{status:500,headers:readHeaders()});
+      }
     }
 
     if (url.pathname === "/api/portfolio/live" && request.method === "GET") {
       if (scope === "demo") return Response.json(getDemoLivePortfolio(), { headers: { "cache-control": "no-store" } });
       if (!owner) return privateScopeDenied();
-      try{return Response.json(await getLivePortfolio(env.DB,url.searchParams.get("refresh")==="1",url.searchParams.get("refresh")!=="1"),{headers:{"cache-control":"private, no-store"}})}catch(error){return Response.json({error:error instanceof Error?error.message:"Calcul du portefeuille impossible"},{status:502,headers:{"cache-control":"private, no-store"}})}
+      try{return Response.json(await createInvestmentReadAdapter(env.DB).getPortfolio({force:url.searchParams.get("refresh")==="1",cacheOnly:url.searchParams.get("refresh")!=="1"}),{headers:{"cache-control":"private, no-store"}})}catch(error){return Response.json({error:error instanceof Error?error.message:"Calcul du portefeuille impossible"},{status:502,headers:{"cache-control":"private, no-store"}})}
     }
 
     if (url.pathname === "/api/notion/sync" && request.method === "POST") {
