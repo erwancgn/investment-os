@@ -147,6 +147,7 @@ Le dépôt GitHub [erwancgn/investment-os](https://github.com/erwancgn/investmen
 
 - [docs/architecture.md](docs/architecture.md) — architecture et séparation des responsabilités ;
 - [docs/architecture/openai-first-execution-plan.md](docs/architecture/openai-first-execution-plan.md) — vision OpenAI-first figée, état actuel et plan détaillé Lots 7.2–13, notamment MCP/plugin ;
+- [docs/architecture/mcp-closure-handoff.md](docs/architecture/mcp-closure-handoff.md) — état de clôture MCP, dette restante et opérations WRITE ([runtime-variables.md](docs/architecture/runtime-variables.md)) ;
 - [docs/analysis-rendering-contract.md](docs/analysis-rendering-contract.md) — contrat de rendu des analyses ;
 - [docs/data-quality.md](docs/data-quality.md) — règles d'intégrité et de qualité ;
 - [docs/reference-sources.md](docs/reference-sources.md) — hiérarchie des sources métier et références visuelles ;

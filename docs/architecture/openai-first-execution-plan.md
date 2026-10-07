@@ -28,6 +28,8 @@ Conséquence : le Core et les contrats ne doivent dépendre ni de ChatGPT, ni de
 
 ### 2.1 Production réellement déployée
 
+**État au 7 octobre 2026 (prime sur les états historiques ci-dessous) :** Sites v253, MCP contrat 1.0.0 (9 outils, rapport 1.1), WRITE fermé par défaut et ouvert seulement par session explicite, plugin Investment OS Analysis 1.4.2. Voir [mcp-closure-handoff.md](mcp-closure-handoff.md). Les paragraphes datés v210 à v221 sont conservés comme historique.
+
 La production est **Sites v210 READ-only**, restaurée exactement après la campagne temporaire v211 du Lot 11, depuis `e0e7add293e4f930b3805c8ce69ef64c5f3b1be0` ; v209 est le rollback MCP immédiat et v208 conserve le rollback produit sans MCP :
 
 - source de rollback v208 (Lot 6) : `9f98a7f7a20adef95c591a583fe60a70e04a8e38` ;
@@ -839,4 +841,4 @@ Le changement de vision produit n’ajoute pas un nouveau lot et ne réouvre pas
 - **Lot 11** : serveur MCP mince, Sites comme première cible d’hébergement, Site existant préféré si compatible ;
 - **Lot 12** : migration infrastructure du plugin vers MCP, sans changement de méthodologie.
 
-La priorité actuelle est **Lot 12, migration du transport du plugin vers MCP**, après clôture READ-only du Lot 11 sur v212 et borne synchrone 30 s. Voir [lot-12-handoff.md](lot-12-handoff.md) : la source des Skills 1.3.1 est migrée, mais la connexion du brouillon public au Site MCP reste non autorisée/non prouvée. Le Site v213 porte seulement la preuve de domaine. WRITE reste fermé et non délégué ; Lot 13 attend le gate Lot 12. Les Lots 7–10 ne sont pas rejoués.
+*Historique (5 octobre).* La priorité était **Lot 12, migration du transport du plugin vers MCP**, après clôture READ-only du Lot 11 sur v212 et borne synchrone 30 s. Voir [lot-12-handoff.md](lot-12-handoff.md) : la source des Skills 1.3.1 est migrée, mais la connexion du brouillon public au Site MCP reste non autorisée/non prouvée. Le Site v213 porte seulement la preuve de domaine. WRITE reste fermé et non délégué ; Lot 13 attend le gate Lot 12. Les Lots 7–10 ne sont pas rejoués.

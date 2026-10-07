@@ -75,7 +75,7 @@ La synchronisation GitHub est une opération séparée, effectuée à partir d�
 
 Chemin actuel des services Investment OS : `consumer → Core services → ports → adapter Notion → Notion/D1`. L'assemblage est `createInvestmentAdapter` dans `adapters/notion/investment-reads.ts` ; `createInvestmentReadAdapter` est son alias de compatibilité, pas une seconde implémentation. Le Worker HTTP et la PWA sont des consommateurs. Les projections techniques existantes restent dans leurs propriétaires ; ce chemin ne signifie pas que tous les endpoints historiques passent déjà par le Core.
 
-Cible future uniquement : `Skills → MCP → Core → ports/adapters`. MCP sera un transport mince, sans logique métier. Son contrat relève du Lot 10 et son serveur du Lot 11 ; ces instructions n'en constituent pas une implémentation.
+Chemin MCP en production : `Skills (plugin Investment OS Analysis) → MCP → Core → ports/adapters`. Le MCP est un transport mince, sans logique métier : `transports/mcp/server.ts` (outils et mapping du contrat 1.0.0, 9 outils dont 2 WRITE : `save_analysis`, `create_company`), `transports/mcp/sites-auth.ts` (seule politique d'identité Sites) et `transports/mcp/site-write-policy.ts` (WRITE propriétaire seul, interrupteur `MCP_WRITE_ENABLED`, budget par appelant). WRITE est fermé par défaut ; son ouverture est une opération explicite décrite dans `docs/architecture/runtime-variables.md`.
 
 | Nouvelle logique | Propriétaire à compléter ou réutiliser |
 | --- | --- |
@@ -83,6 +83,7 @@ Cible future uniquement : `Skills → MCP → Core → ports/adapters`. MCP sera
 | Politique de sélection Current | `core/analysis/current-selection.ts` |
 | Agrégats Portfolio | `core/portfolio.ts`, déjà appelé par l'adapter |
 | Orchestration métier, validation des entrées et receipts | `core/services/investment-os.ts` ; ports de domaine dans `core/services/ports.ts` |
+| Création de société (écriture Companies, clôture ISIN, requête de doublons en direct) | `adapters/notion/company-writes.ts` ; règle de doublon dans `core/services/market-identity.ts` |
 | Propriétés physiques Notion, relations, aliases, UUID, statuts, dates et lecture des pointeurs Current physiques | `adapters/notion/investment-data.ts` et `adapters/notion/sync.ts` selon l'implémentation existante |
 | Lecture/écriture et projection D1 | `adapters/notion/` ; assemblage dans `investment-reads.ts`, sources/snapshots/index/sync dans `sync.ts` |
 | Writer : promotion des pointeurs physiques, retries, reprise, idempotence et relectures de persistance | `adapters/notion/analysis-writes.ts`, en réutilisant mapping et index existants |
@@ -104,7 +105,8 @@ Interdits permanents :
 - aucune seconde implémentation d'un parser, mapping, index, policy ou autre logique déjà possédée par un propriétaire canonique ;
 - aucune modification de méthodologie financière sous prétexte de migration MCP ;
 - aucune dépendance du Core vers React, Notion physique, D1, Sites, MCP ou OpenAI : les détails techniques restent derrière les ports ;
-- aucune logique métier dans le futur transport MCP.
+- aucune logique métier dans le transport MCP ;
+- aucune création d'options de sélection Notion par le MCP : une option absente est ignorée ou remplacée par « Other », jamais créée.
 
 ## Secrets
 

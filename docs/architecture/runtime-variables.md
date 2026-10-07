@@ -17,3 +17,15 @@ Sites ne documente pas de déclencheur planifié. Un appel MCP authentifié réu
 ## Champs Notion legacy
 
 `Research Stage` et `Research Priority` (base Companies) sont des champs manuels historiques. Ni l'app ni le MCP ne les calculent ni ne les écrivent : `create_company` ne pose que `Status = Watchlist`. L'étape de suivi affichée dans la fiche vient de `Monitoring Status` (base Watchlist) ; « Recherche en cours » est le badge affiché tant qu'aucun mémo CIO Current validé n'est relié.
+
+## Exploitation du WRITE
+
+WRITE est fermé par défaut (`MCP_WRITE_ENABLED` absent). Une session de test ou d'analyse qui écrit suit toujours ces étapes, avec l'accord explicite du propriétaire :
+
+1. Vérifier en lecture seule l'état courant (déploiement, révision des variables, cache).
+2. Poser `MCP_WRITE_ENABLED=1`, redéployer la version enregistrée, relever la révision d'environnement.
+3. Exécuter uniquement les écritures prévues ; une sauvegarde ambiguë (timeout, 5xx, `write_in_progress`) n'est jamais rejouée sans reprise explicite du même `runId` après contrôle du receipt.
+4. Retirer `MCP_WRITE_ENABLED`, redéployer, relever la révision et confirmer que le MCP refuse les écritures.
+5. Consigner receipts, révisions et déploiements dans la passation.
+
+Limites en production : propriétaire seul (`OWNER_EMAIL`), 40 écritures par jour et par appelant, un seul WRITE en vol (`write_in_progress` sinon).
