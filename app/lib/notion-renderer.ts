@@ -146,6 +146,9 @@ export function parseNotionText(raw: string, title = ""): RenderBlock[] {
       while (index < lines.length && isTableLine(lines[index].trim())) {
         const source = lines[index++].trim();
         const cells = source.replace(/^\|/, "").replace(/\|$/, "").split(/\s*\|\s*/).map(textOnly);
+        // GFM: the delimiter row is the second line and every cell is hyphens with optional colons (one hyphen suffices).
+        // Position matters: a lone "-" in a later row is data.
+        if (rows.length === 1 && cells.every(cell => /^:?-+:?$/.test(cell))) continue;
         if (cells.some(cell => !/^:?-{3,}:?$/.test(cell))) rows.push(cells);
       }
       blocks.push({ type: "table", rows, header: true }); continue;

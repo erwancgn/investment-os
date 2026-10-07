@@ -262,3 +262,10 @@ test("regression: the exact Xiaomi Business report (13.8k chars) saves end to en
   const saved = await f.api.createInvestmentService(f.db, f.options).saveAnalysis(report({ reportMarkdown: markdown, verdict: null, confidence: null, score: null }));
   assert.equal(saved.status, "ok", JSON.stringify(saved));
 }));
+
+test("reader: a GFM delimiter row with short dashes (|-|-:|) is the separator, not a data row; a lone '-' cell below it is data", async () => {
+  const m = await api();
+  const md = ["| Élément | Résultat |", "|-|-:|", "| CAGR base | +9,1 % |", "| Dividende | - |"].join("\n");
+  const table = m.parseNotionText(md).find(block => block.type === "table");
+  assert.deepEqual(table.rows, [["Élément", "Résultat"], ["CAGR base", "+9,1 %"], ["Dividende", "-"]]);
+});
