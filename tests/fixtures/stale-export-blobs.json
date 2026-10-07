@@ -1,0 +1,20 @@
+{
+  "app/components/analysis-presentation.tsx": "0c2ff838715aa63be7d246352e2c75a2f7b991bc",
+  "app/components/analysis-reader.tsx": "bc9cb96e0b1bfbb7b4df1f5b91fee93f55bfde0e",
+  "app/components/analysis-section-groups.tsx": "dc4e82ca0b4d3cc96da3134344baea636af3a282",
+  "app/components/company-analysis-document.tsx": "757e257daa21061213d122373daf5b4463ebf253",
+  "app/components/investment-memo-reader.tsx": "f059a66b4ef9d45c6317386c3948cebc2957e044",
+  "app/components/latest-info-card.tsx": "cb624e8f73dc707ac0a2346e2d9f1b059aa0b7c7",
+  "app/components/notion-table.tsx": "d5cbcbfc38f102c1f4633c304fd6497e1c2ce874",
+  "app/components/scenario-comparison.tsx": "9a81ccfdad827103d4a92b020f5977d1f2ee4878",
+  "app/lib/client-resource.ts": "3678f3f74bfde7bef7712986340edea757e23e6b",
+  "app/lib/company-preview.ts": "fe38f1282a2239138d8d600b84d48727084ae429",
+  "app/lib/inline-format.ts": "c0f8ab03347920b4b02856818cb62a21e3a227eb",
+  "app/lib/investment-data.ts": "3e7cae16a8b9d03baec27e5583a10c5009ba920e",
+  "app/lib/notion-block-parser.ts": "b0f4466fc5f4b11bffc6f5724fed67164055f5f7",
+  "app/lib/notion-sync.ts": "0e61ebefff44f9a04b536a98a6851ee4e8b37d1f",
+  "app/lib/presentation-projection.ts": "164ea4187d961bbc05e262548c36b105c10b91b0",
+  "app/lib/resource-cache.ts": "bfc56373278f38984df7fe309e0e7370bd272619",
+  "db/schema.ts": "896789009cb32657be8c173c06588951dc84ac5c",
+  "worker/index.ts": "83ae266ae33943fe522d1fbe6cbe01f7208bf2c2"
+}

@@ -1,0 +1,237 @@
+{
+ "capturedAt": "2026-10-06",
+ "dataSource": "84b60cc9-5546-4a05-b37f-0982114f3777",
+ "properties": {
+  "Agent": {
+   "select": {
+    "options": [
+     {
+      "name": "Business Analyst"
+     },
+     {
+      "name": "Valuation Analyst"
+     },
+     {
+      "name": "Short Seller"
+     },
+     {
+      "name": "Portfolio Manager"
+     },
+     {
+      "name": "Investment Memo"
+     }
+    ]
+   },
+   "type": "select"
+  },
+  "Analysis": {
+   "type": "title"
+  },
+  "Analysis Date": {
+   "type": "date"
+  },
+  "Analysis ID": {
+   "type": "unique_id"
+  },
+  "Company": {
+   "type": "relation"
+  },
+  "Company Currency": {
+   "type": "rollup"
+  },
+  "Company Ticker": {
+   "type": "rollup"
+  },
+  "Confidence": {
+   "select": {
+    "options": [
+     {
+      "name": "High"
+     },
+     {
+      "name": "Medium"
+     },
+     {
+      "name": "Low"
+     }
+    ]
+   },
+   "type": "select"
+  },
+  "Created": {
+   "type": "created_time"
+  },
+  "Currency": {
+   "select": {
+    "options": [
+     {
+      "name": "USD"
+     },
+     {
+      "name": "EUR"
+     },
+     {
+      "name": "JPY"
+     },
+     {
+      "name": "TWD"
+     },
+     {
+      "name": "GBP"
+     },
+     {
+      "name": "Other"
+     }
+    ]
+   },
+   "type": "select"
+  },
+  "Data Cutoff": {
+   "type": "date"
+  },
+  "Earnings": {
+   "type": "relation"
+  },
+  "Evidence Coverage %": {
+   "type": "number"
+  },
+  "Evidence Gaps": {
+   "type": "rich_text"
+  },
+  "Financial Period": {
+   "type": "rich_text"
+  },
+  "Framework Version": {
+   "type": "rich_text"
+  },
+  "Handoff Summary": {
+   "type": "rich_text"
+  },
+  "Investment Decisions": {
+   "type": "relation"
+  },
+  "Last Edited": {
+   "type": "last_edited_time"
+  },
+  "Previous Version": {
+   "type": "relation"
+  },
+  "Reference Price": {
+   "type": "number"
+  },
+  "Refresh Trigger": {
+   "multi_select": {
+    "options": [
+     {
+      "name": "Earnings"
+     },
+     {
+      "name": "Guidance"
+     },
+     {
+      "name": "KPI"
+     },
+     {
+      "name": "Price"
+     },
+     {
+      "name": "Thesis Break"
+     },
+     {
+      "name": "Scheduled Review"
+     }
+    ]
+   },
+   "type": "multi_select"
+  },
+  "Report Depth": {
+   "select": {
+    "options": [
+     {
+      "name": "Brief"
+     },
+     {
+      "name": "Full"
+     }
+    ]
+   },
+   "type": "select"
+  },
+  "Run ID": {
+   "type": "rich_text"
+  },
+  "Score": {
+   "type": "number"
+  },
+  "Signal": {
+   "select": {
+    "options": [
+     {
+      "name": "Positive"
+     },
+     {
+      "name": "Neutral"
+     },
+     {
+      "name": "Negative"
+     },
+     {
+      "name": "Conditional"
+     }
+    ]
+   },
+   "type": "select"
+  },
+  "Source Count": {
+   "type": "number"
+  },
+  "Source Freshness": {
+   "select": {
+    "options": [
+     {
+      "name": "Current"
+     },
+     {
+      "name": "Needs Review"
+     },
+     {
+      "name": "Stale"
+     },
+     {
+      "name": "Unknown"
+     }
+    ]
+   },
+   "type": "select"
+  },
+  "Sources": {
+   "type": "relation"
+  },
+  "Status": {
+   "select": {
+    "options": [
+     {
+      "name": "Draft"
+     },
+     {
+      "name": "Validated"
+     },
+     {
+      "name": "Superseded"
+     },
+     {
+      "name": "Archived"
+     }
+    ]
+   },
+   "type": "select"
+  },
+  "Verdict": {
+   "type": "rich_text"
+  },
+  "Version": {
+   "type": "number"
+  }
+ },
+ "source": "Notion connector, read-only fetch; converted to the Notion API property shape (text -> rich_text, auto_increment_id -> unique_id)"
+}

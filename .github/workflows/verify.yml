@@ -1,0 +1,28 @@
+name: Verify
+
+# Every exported or proposed branch is verified before Sol applies it.
+on:
+  push:
+    branches: ["sites/**", "claude/**"]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: node scripts/check-lockfile.mjs
+      - run: npm ci --no-audit --no-fund
+      - run: chmod +x scripts/*.sh
+      - run: npm test
+      - run: npm run test:mcp
+      - run: npm run verify:mcp-runtime
+      - run: npm run validate:artifact

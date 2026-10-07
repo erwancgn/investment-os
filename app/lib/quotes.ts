@@ -1,5 +1,10 @@
-export type Currency="EUR"|"USD"|"JPY"|"GBP"|"SEK"|"KRW"|"CHF";
-export type Instrument={id:string;name:string;yahooSymbol:string;googleSymbol?:string;expectedCurrency:Currency;exchangeTimezone:string};
+import { quoteSymbolFor } from "../../core/services/market-identity.ts";
+/** Foreign currencies converted to EUR through Yahoo EUR<code>=X. One list drives the type, the symbols and the FX instruments. */
+export const FX_CURRENCY_CODES=["USD","JPY","GBP","SEK","KRW","CHF","CAD","AUD","HKD","DKK","NOK","SGD","TWD","CNY","PLN","INR","BRL","ILS","MXN","ZAR"] as const;
+export type Currency="EUR"|typeof FX_CURRENCY_CODES[number];
+export type Instrument={id:string;name:string;yahooSymbol:string;googleSymbol?:string;expectedCurrency:Currency;exchangeTimezone:string;
+  /** Not catalogued: any Yahoo symbol, currency taken from the provider. */
+  dynamic?:boolean};
 
 export type HistoricalPoint={date:string;close:number;adjustedClose:number};
 export type CachedHistory={providerSymbol:string;currency:Currency;points:HistoricalPoint[];fetchedAt:string};
@@ -9,18 +14,26 @@ const yahooSymbolsByTicker:Record<string,string>={
   "PRX":"PRX.AS","SOI":"SOI.PA","MC":"MC.PA","RMS":"RMS.PA",
 };
 
+/** Quote asset for a Company listing when no catalogued instrument matches: legacy symbol fixes first, then the exchange rule. */
+export function quoteSymbolForListing(ticker:string,exchange:string|null):string|null{
+  // Legacy fixes only fill a missing exchange; the listing stored in Notion always wins.
+  const legacy=exchange?undefined:yahooSymbolsByTicker[ticker.trim().toUpperCase()];
+  return legacy??quoteSymbolFor(ticker,exchange);
+}
+
 export function yahooSymbolForTicker(ticker:string){
   const canonical=ticker.trim().toUpperCase();
   return yahooSymbolsByTicker[canonical]??canonical;
 }
 
-const fxSymbols:Record<Exclude<Currency,"EUR">,string>={USD:"EURUSD=X",JPY:"EURJPY=X",GBP:"EURGBP=X",SEK:"EURSEK=X",KRW:"EURKRW=X",CHF:"EURCHF=X"};
+const fxSymbols=Object.fromEntries(FX_CURRENCY_CODES.map(code=>[code,`EUR${code}=X`])) as Record<Exclude<Currency,"EUR">,string>;
 
 export function historicalPriceInEur(price:number,currency:Currency,eurPerCurrencyUnit:number){
   if(!Number.isFinite(price)||price<=0||!Number.isFinite(eurPerCurrencyUnit)||eurPerCurrencyUnit<=0)return null;
   return currency==="EUR"?price:price/eurPerCurrencyUnit;
 }
 
+/** LEGACY: catalogue of the original PWA portfolio, kept only for its history/basket screens. Analyses and MCP quotes never need it: any Yahoo symbol is quoted live (instrumentFor). */
 export const instruments:Record<string,Instrument>={
   ese:{id:"ese",name:"BNP Easy S&P 500",yahooSymbol:"ESE.PA",googleSymbol:"ESE:EPA",expectedCurrency:"EUR",exchangeTimezone:"Europe/Paris"},
   nvda:{id:"nvda",name:"NVIDIA",yahooSymbol:"NVDA",googleSymbol:"NVDA:NASDAQ",expectedCurrency:"USD",exchangeTimezone:"America/New_York"},
@@ -42,15 +55,22 @@ export const instruments:Record<string,Instrument>={
   ,lite:{id:"lite",name:"Lumentum",yahooSymbol:"LITE",googleSymbol:"LITE:NASDAQ",expectedCurrency:"USD",exchangeTimezone:"America/New_York"}
 };
 
-const fxInstruments:Record<string,Instrument>={
-  "fx-usd":{id:"fx-usd",name:"EUR/USD",yahooSymbol:"EURUSD=X",expectedCurrency:"USD",exchangeTimezone:"UTC"},
-  "fx-jpy":{id:"fx-jpy",name:"EUR/JPY",yahooSymbol:"EURJPY=X",expectedCurrency:"JPY",exchangeTimezone:"UTC"},
-  "fx-gbp":{id:"fx-gbp",name:"EUR/GBP",yahooSymbol:"EURGBP=X",expectedCurrency:"GBP",exchangeTimezone:"UTC"},
-  "fx-chf":{id:"fx-chf",name:"EUR/CHF",yahooSymbol:"EURCHF=X",expectedCurrency:"CHF",exchangeTimezone:"UTC"},
-  "fx-sek":{id:"fx-sek",name:"EUR/SEK",yahooSymbol:"EURSEK=X",expectedCurrency:"SEK",exchangeTimezone:"UTC"},
-  "fx-krw":{id:"fx-krw",name:"EUR/KRW",yahooSymbol:"EURKRW=X",expectedCurrency:"KRW",exchangeTimezone:"UTC"}
-};
+const fxInstruments:Record<string,Instrument>=Object.fromEntries(FX_CURRENCY_CODES.map(code=>[`fx-${code.toLowerCase()}`,{id:`fx-${code.toLowerCase()}`,name:`EUR/${code}`,yahooSymbol:`EUR${code}=X`,expectedCurrency:code,exchangeTimezone:"UTC"} as Instrument]));
 const allInstruments={...instruments,...fxInstruments};
+/** Yahoo symbol syntax (upper case): SU.PA, MU, BRK-B, 2330.TW, ^FCHI. Anything else never reaches the network. */
+const YAHOO_SYMBOL=/^[A-Z0-9^][A-Z0-9.\-=^]{0,19}$/;
+/** Catalogued instrument first (PWA portfolio), else a live Yahoo symbol: no hard-coded universe for analyses. */
+function instrumentFor(id:string):Instrument|null{
+  const known=(allInstruments as Record<string,Instrument>)[id];
+  if(known)return known;
+  return YAHOO_SYMBOL.test(id)&&!id.includes("..")?{id,name:id,yahooSymbol:id,expectedCurrency:"EUR",exchangeTimezone:"UTC",dynamic:true}:null;
+}
+const FX_CURRENCIES=new Set<string>(["EUR",...FX_CURRENCY_CODES]);
+/** Yahoo quotes London listings in pence (GBp/GBX): normalize to pounds, as the history reader already does. */
+function normalizePence(q:ProviderQuote):ProviderQuote{
+  if(q.currency!=="GBp"&&q.currency!=="GBX")return q;
+  return {...q,price:q.price/100,previousClose:q.previousClose===null?null:q.previousClose/100,currency:"GBP"};
+}
 
 export type QuoteView={assetId:string;name:string;nativePrice:number|null;nativeCurrency:string;eurPrice:number|null;fxRate:number|null;fxMarketTime:string|null;previousClose:number|null;changePercent:number|null;marketTime:string|null;fetchedAt:string|null;source:string|null;freshness:"fresh"|"closed"|"stale"|"unavailable";isFallback:boolean;warnings:string[]};
 type ProviderQuote={symbol:string;price:number;currency:string;previousClose:number|null;marketTime:string;source:"yahoo-query2"|"yahoo-query1"|"google-finance"};
@@ -75,7 +95,7 @@ async function fromGoogle(inst:Instrument):Promise<ProviderQuote>{
   const price=Number(html.match(/data-last-price="([0-9.]+)"/)?.[1]);const currency=html.match(/data-currency-code="([A-Z]+)"/)?.[1]??"";const timestamp=Number(html.match(/data-last-normal-market-timestamp="([0-9]+)"/)?.[1]);
   if(!price||!currency||!timestamp)throw new Error("google_incomplete");return {symbol:inst.googleSymbol,price,currency,previousClose:null,marketTime:iso(timestamp),source:"google-finance"};
 }
-function validate(inst:Instrument,q:ProviderQuote){if(!Number.isFinite(q.price)||q.price<=0)throw new Error("invalid_price");if(q.currency!==inst.expectedCurrency)throw new Error(`currency_${q.currency}`);const timestamp=Date.parse(q.marketTime);if(!Number.isFinite(timestamp)||timestamp>Date.now()+120000)throw new Error("invalid_time");}
+function validate(inst:Instrument,q:ProviderQuote){if(!Number.isFinite(q.price)||q.price<=0)throw new Error("invalid_price");if(inst.dynamic?!/^[A-Z]{3}$/.test(q.currency):q.currency!==inst.expectedCurrency)throw new Error(`currency_${q.currency}`);const timestamp=Date.parse(q.marketTime);if(!Number.isFinite(timestamp)||timestamp>Date.now()+120000)throw new Error("invalid_time");}
 async function ensureTable(db?:D1Database){
   if(!db)return;
   const key=db as object;
@@ -199,13 +219,13 @@ async function saveCache(id:string,q:ProviderQuote,warnings:string[],db?:D1Datab
 function view(inst:Instrument,q:ProviderQuote,fetchedAt:string,warnings:string[]):QuoteView{const age=Date.now()-Date.parse(q.marketTime);const freshness=age<36*3600_000?"fresh":age<7*86400_000?"closed":"stale";const changePercent=q.previousClose?((q.price/q.previousClose)-1)*100:null;return {assetId:inst.id,name:inst.name,nativePrice:q.price,nativeCurrency:q.currency,eurPrice:q.currency==="EUR"?q.price:null,fxRate:q.currency==="EUR"?1:null,fxMarketTime:q.currency==="EUR"?q.marketTime:null,previousClose:q.previousClose,changePercent,marketTime:q.marketTime,fetchedAt,source:q.source,freshness,isFallback:q.source!=="yahoo-query2",warnings};}
 
 async function loadQuote(id:string,force=false,db?:D1Database,cacheOnly=false):Promise<QuoteView>{
-  const inst=allInstruments[id];if(!inst)return {assetId:id,name:id,nativePrice:null,nativeCurrency:"",eurPrice:null,fxRate:null,fxMarketTime:null,previousClose:null,changePercent:null,marketTime:null,fetchedAt:null,source:null,freshness:"unavailable",isFallback:false,warnings:["unknown_asset"]};
+  const inst=instrumentFor(id);if(!inst)return {assetId:id,name:id,nativePrice:null,nativeCurrency:"",eurPrice:null,fxRate:null,fxMarketTime:null,previousClose:null,changePercent:null,marketTime:null,fetchedAt:null,source:null,freshness:"unavailable",isFallback:false,warnings:["unknown_asset"]};
   const cached=await readCache(id,db);const cacheAge=cached?Date.now()-Date.parse(cached.fetched_at):Infinity;
   if(cached&&(cacheOnly||(!force&&cacheAge<5*60_000))){const q:ProviderQuote={symbol:cached.provider_symbol,price:cached.native_price,currency:cached.native_currency,previousClose:cached.previous_close,marketTime:cached.market_time,source:cached.provider};return {...view(inst,q,cached.fetched_at,JSON.parse(cached.validation_flags||"[]")),...(cacheOnly&&cacheAge>=5*60_000?{freshness:"stale" as const,warnings:["cache_refresh_needed"]}:{})};}
-  if(cacheOnly)return {assetId:id,name:inst.name,nativePrice:null,nativeCurrency:inst.expectedCurrency,eurPrice:null,fxRate:null,fxMarketTime:null,previousClose:null,changePercent:null,marketTime:null,fetchedAt:null,source:null,freshness:"unavailable",isFallback:false,warnings:["cache_refresh_needed"]};
-  const warnings:string[]=[];for(const provider of [()=>fromYahoo(inst,"query2"),()=>fromYahoo(inst,"query1"),()=>fromGoogle(inst)]){try{const q=await provider();validate(inst,q);await saveCache(id,q,warnings,db);return view(inst,q,new Date().toISOString(),warnings);}catch(error){warnings.push(error instanceof Error?error.message:"provider_error");}}
+  if(cacheOnly)return {assetId:id,name:inst.name,nativePrice:null,nativeCurrency:inst.dynamic?"":inst.expectedCurrency,eurPrice:null,fxRate:null,fxMarketTime:null,previousClose:null,changePercent:null,marketTime:null,fetchedAt:null,source:null,freshness:"unavailable",isFallback:false,warnings:["cache_refresh_needed"]};
+  const warnings:string[]=[];for(const provider of [()=>fromYahoo(inst,"query2"),()=>fromYahoo(inst,"query1"),()=>fromGoogle(inst)]){try{const q=normalizePence(await provider());validate(inst,q);await saveCache(id,q,warnings,db);return view(inst,q,new Date().toISOString(),warnings);}catch(error){warnings.push(error instanceof Error?error.message:"provider_error");}}
   if(cached){const q:ProviderQuote={symbol:cached.provider_symbol,price:cached.native_price,currency:cached.native_currency,previousClose:cached.previous_close,marketTime:cached.market_time,source:cached.provider};return {...view(inst,q,cached.fetched_at,warnings),freshness:"stale",isFallback:true};}
-  return {assetId:id,name:inst.name,nativePrice:null,nativeCurrency:inst.expectedCurrency,eurPrice:null,fxRate:null,fxMarketTime:null,previousClose:null,changePercent:null,marketTime:null,fetchedAt:null,source:null,freshness:"unavailable",isFallback:true,warnings};
+  return {assetId:id,name:inst.name,nativePrice:null,nativeCurrency:inst.dynamic?"":inst.expectedCurrency,eurPrice:null,fxRate:null,fxMarketTime:null,previousClose:null,changePercent:null,marketTime:null,fetchedAt:null,source:null,freshness:"unavailable",isFallback:true,warnings};
 }
 
 async function getQuote(id:string,force=false,db?:D1Database,cacheOnly=false):Promise<QuoteView>{
@@ -228,6 +248,9 @@ export async function getQuotes(ids:string[],force=false,db?:D1Database,cacheOnl
     Promise.all(ids.map(id=>getQuote(id,force,db,cacheOnly))),
     Promise.all(fxIds.map(id=>getQuote(id,force,db,cacheOnly))),
   ]);
-  const fxByCurrency=new Map(fxQuotes.map(q=>[q.nativeCurrency,q]));
+  // Dynamic symbols reveal their currency only once quoted: fetch the missing FX legs in a second pass.
+  const missing=[...new Set(quotes.map(q=>q.nativeCurrency).filter(c=>c&&c!=="EUR"&&FX_CURRENCIES.has(c)&&!fxIds.includes(`fx-${c.toLowerCase()}`)))].map(c=>`fx-${c.toLowerCase()}`).filter(id=>id in fxInstruments);
+  const extraFx=await Promise.all(missing.map(id=>getQuote(id,force,db,cacheOnly)));
+  const fxByCurrency=new Map([...fxQuotes,...extraFx].map(q=>[q.nativeCurrency,q]));
   return quotes.map(quote=>{if(quote.nativePrice===null||quote.nativeCurrency==="EUR")return quote;const fx=fxByCurrency.get(quote.nativeCurrency);if(!fx?.nativePrice)return {...quote,warnings:[...quote.warnings,`fx_${quote.nativeCurrency}_unavailable`,...(fx?.warnings??[])]};return {...quote,eurPrice:quote.nativePrice/fx.nativePrice,freshness:fx.freshness==="stale"?"stale":quote.freshness,fxRate:fx.nativePrice,fxMarketTime:fx.marketTime,warnings:[...quote.warnings,...fx.warnings.map(w=>`fx:${w}`)]};});
 }

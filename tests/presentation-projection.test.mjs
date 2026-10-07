@@ -89,3 +89,18 @@ test('machine payload is excluded from the human-facing Notion body', async () =
   assert.match(visible[0].paragraph.rich_text[0].plain_text, /Readable report text/);
   assert.doesNotMatch(JSON.stringify(visible), /INVESTMENT_OS_PRESENTATION_JSON|"presentationContractVersion"/);
 });
+
+test('provider children normalize once into the imported snapshot shape without changing other blocks', async () => {
+  const api = await moduleUnderTest();
+  const paragraph = { id: 'p', type: 'paragraph', paragraph: { rich_text: [{ plain_text: 'Text.' }] } };
+  const row = { id: 'row', type: 'table_row', table_row: { cells: [[{ plain_text: 'Evidence' }]] } };
+  const blocks = ['paragraph', 'heading_1', 'bulleted_list_item', 'callout', 'quote'].map(type => ({ id: type, type, [type]: { rich_text: [{ plain_text: type }], ...(type === 'callout' ? { icon: { type: 'emoji', emoji: '🔥' } } : {}) } }));
+  const provider = [...blocks, { id: 'table', type: 'table', table: { table_width: 1, has_column_header: true, children: [row] } }, { id: 'parent', type: 'paragraph', paragraph: { rich_text: [{ plain_text: 'Parent' }], children: [paragraph] } }];
+  const before = structuredClone(provider);
+  const imported = [...blocks, { id: 'table', type: 'table', table: { table_width: 1, has_column_header: true }, children: [row] }, { id: 'parent', type: 'paragraph', paragraph: { rich_text: [{ plain_text: 'Parent' }] }, children: [paragraph] }];
+  const visible = api.humanReadableNotionBlocks(provider);
+  assert.deepEqual(visible, imported);
+  assert.deepEqual(provider, before, 'raw provider snapshot remains unchanged');
+  assert.deepEqual(api.humanReadableNotionBlocks(visible), visible, 'normalization is idempotent');
+  assert.deepEqual(api.humanReadableNotionBlocks([{ ...provider.at(-1), children: [] }]).at(0).children, [], 'explicit snapshot children take precedence without duplication');
+});

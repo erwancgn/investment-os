@@ -1,0 +1,1496 @@
+{
+  "kind": "Lot 11 synthetic hosted OAuth observations; not business fixtures",
+  "date": "2026-10-03",
+  "contractVersion": "1.0.0 unchanged",
+  "probeSource": "08790f2dc03ef4fb61e390d34cf8df360cbe9bda",
+  "probeSiteVersion": 211,
+  "probeDeploymentId": "appgdep_6ac11a78661c8191939d3f1cb158f78d",
+  "codexVersion": "0.160.0",
+  "oauth": "existing managed Site plugin, no identity override",
+  "writeEnabled": false,
+  "notionMutations": 0,
+  "d1Migrations": 0,
+  "notes": [
+    "Worker received timestamp is not the unobservable upstream proxy receipt timestamp.",
+    "Request.signal did not expose an abort event in captured probe logs; Cloudflare canceled outcome is distinct.",
+    "Codex direct App Server RPC harness ceiling 185 s, so observed HTTP 504 is not that harness deadline.",
+    "ChatGPT client byte integrity/HTTP timing not available from its UI; observations in handoff cross-check Worker receipts.",
+    "Probe enforces 4 MiB on serialized output envelope; JSON-RPC framing measured separately.",
+    "Synthetic 413 has same HTTP status/error boundary but does not recreate an oversized private/write payload.",
+    "None of the long probes invoked a business WRITE.",
+    "HTTP status in preparedResponse describes serialization readiness, not delivery; workerFetch canceled and Codex HTTP 504 take precedence."
+  ],
+  "cases": [
+    {
+      "invocationId": "lot11-chatgpt-retry413",
+      "client": "ChatGPT",
+      "proxyReceivedTimestamp": null,
+      "attempts": [
+        {
+          "requestId": "3a42962f7c14c063b3ced6f70ac14252",
+          "timing": {
+            "coreStarted": false
+          },
+          "phases": [
+            {
+              "phase": "http413",
+              "timestamp": "2026-10-03T15:43:41.764Z"
+            },
+            {
+              "phase": "worker_received",
+              "timestamp": "2026-10-03T15:43:41.764Z"
+            }
+          ],
+          "attemptId": "e41aab58-0b20-40d3-ad54-9209b258c5b5",
+          "traceparent": "00-6ac1228600000000bce96b5878ea4874-bc648598efda9846-00",
+          "rpcId": 0,
+          "contentLength": "864",
+          "interceptedHttp413": true,
+          "coreEntered": false,
+          "sessionPresent": false,
+          "userAgentKind": "other_or_absent",
+          "workerFetch": {
+            "timestamp": 1791042221764,
+            "status": 413,
+            "wallMs": 1,
+            "outcome": "ok"
+          }
+        },
+        {
+          "requestId": "97ff4b9dd81d1244c345b9378faacc28",
+          "timing": {
+            "coreStarted": false
+          },
+          "phases": [
+            {
+              "phase": "http413",
+              "timestamp": "2026-10-03T15:43:41.925Z"
+            },
+            {
+              "phase": "worker_received",
+              "timestamp": "2026-10-03T15:43:41.925Z"
+            }
+          ],
+          "attemptId": "69d30cc1-eb81-4eae-b7c8-e43aefab1d8b",
+          "traceparent": "00-6ac1228600000000bce96b5878ea4874-7eba2cad979c77d1-00",
+          "rpcId": 1,
+          "contentLength": "864",
+          "interceptedHttp413": true,
+          "coreEntered": false,
+          "sessionPresent": false,
+          "userAgentKind": "other_or_absent",
+          "workerFetch": {
+            "timestamp": 1791042221925,
+            "status": 413,
+            "wallMs": 0,
+            "outcome": "ok"
+          }
+        }
+      ],
+      "clientObservation": {
+        "kind": "visible ChatGPT response, cross-checked with Worker logs",
+        "status": null,
+        "error": "INVALID_ARGUMENT / McpServerError",
+        "rawClientSerializedBytes": null,
+        "clientTimestamp": null,
+        "integrityOfFullStructuredContent": "not measurable from UI",
+        "diagnosticsVisible": false,
+        "httpErrorCode": 413,
+        "structuredStatusVisible": false
+      }
+    },
+    {
+      "invocationId": "lot11-chatgpt-size-exact",
+      "client": "ChatGPT",
+      "proxyReceivedTimestamp": null,
+      "attempts": [
+        {
+          "requestId": "2361a3033f77ef67f4f4719b532e599c",
+          "timing": {
+            "handlerEntered": 1791040610590,
+            "coreStarted": 1791040610590,
+            "coreFinished": 1791040610590,
+            "responseDeparted": 1791040610590
+          },
+          "phases": [
+            {
+              "phase": "http_response_ready",
+              "timestamp": "2026-10-03T15:16:50.590Z"
+            },
+            {
+              "phase": "response_departure",
+              "timestamp": "2026-10-03T15:16:50.590Z"
+            },
+            {
+              "phase": "core_end",
+              "timestamp": "2026-10-03T15:16:50.590Z"
+            },
+            {
+              "phase": "core_start",
+              "timestamp": "2026-10-03T15:16:50.590Z"
+            },
+            {
+              "phase": "handler_enter",
+              "timestamp": "2026-10-03T15:16:50.590Z"
+            },
+            {
+              "phase": "worker_received",
+              "timestamp": "2026-10-03T15:16:50.590Z"
+            }
+          ],
+          "preparedResponse": {
+            "timestamp": "2026-10-03T15:16:50.590Z",
+            "httpStatus": 200,
+            "wireBytes": 4194820,
+            "wireSha256": "ca87cda73b7d992dfad75f58e161ad4907ad8b37f227a32df8a49bd1e24cbb96"
+          },
+          "attemptId": "18a2bf54-1d69-493d-9317-65a742845328",
+          "traceparent": "00-6ac11c5900000000f8659cb5e2ea4a6d-7db98b6d6218c6e1-00",
+          "requestedBytes": 4194304,
+          "deadlineMs": 30000,
+          "mcpStatus": "completed",
+          "error": null,
+          "returnedEnvelopeBytes": 4194304,
+          "coreSerializedBytes": 4194304,
+          "delayMs": 0,
+          "rpcId": 0,
+          "sessionPresent": false,
+          "userAgentKind": "other_or_absent",
+          "contentLength": "865",
+          "workerFetch": {
+            "timestamp": 1791040610590,
+            "status": 200,
+            "wallMs": 95
+          }
+        }
+      ],
+      "clientObservation": {
+        "kind": "visible ChatGPT response, cross-checked with Worker logs",
+        "status": "completed",
+        "error": null,
+        "rawClientSerializedBytes": null,
+        "clientTimestamp": null,
+        "integrityOfFullStructuredContent": "not measurable from UI",
+        "diagnosticsVisible": null
+      }
+    },
+    {
+      "invocationId": "lot11-chatgpt-size-over",
+      "client": "ChatGPT",
+      "proxyReceivedTimestamp": null,
+      "attempts": [
+        {
+          "requestId": "3cf727b54322d4a65362eb1851c0deb7",
+          "timing": {
+            "handlerEntered": 1791040612598,
+            "coreStarted": 1791040612598,
+            "coreFinished": 1791040612598,
+            "responseDeparted": 1791040612598
+          },
+          "phases": [
+            {
+              "phase": "response_departure",
+              "timestamp": "2026-10-03T15:16:52.598Z"
+            },
+            {
+              "phase": "core_end",
+              "timestamp": "2026-10-03T15:16:52.598Z"
+            },
+            {
+              "phase": "core_start",
+              "timestamp": "2026-10-03T15:16:52.598Z"
+            },
+            {
+              "phase": "handler_enter",
+              "timestamp": "2026-10-03T15:16:52.598Z"
+            },
+            {
+              "phase": "worker_received",
+              "timestamp": "2026-10-03T15:16:52.598Z"
+            },
+            {
+              "phase": "http_response_ready",
+              "timestamp": "2026-10-03T15:16:52.599Z"
+            }
+          ],
+          "attemptId": "30b1b9c2-cefb-4357-9733-cec474ae9ebd",
+          "traceparent": "00-6ac11c5900000000f8659cb5e2ea4a6d-90cfc8aa3523f6c5-00",
+          "requestedBytes": 4194305,
+          "deadlineMs": 30000,
+          "mcpStatus": "rejected",
+          "error": {
+            "retryable": false,
+            "code": "limit_exceeded"
+          },
+          "returnedEnvelopeBytes": 162,
+          "coreSerializedBytes": 4194305,
+          "delayMs": 0,
+          "rpcId": 0,
+          "sessionPresent": false,
+          "userAgentKind": "other_or_absent",
+          "contentLength": "864",
+          "preparedResponse": {
+            "timestamp": "2026-10-03T15:16:52.599Z",
+            "httpStatus": 200,
+            "wireBytes": 716,
+            "wireSha256": "37f42b9e6abe62ae241b184e6e878ab7428544c6e8f976253c8eaaa06a2f1345"
+          },
+          "workerFetch": {
+            "timestamp": 1791040612599,
+            "status": 200,
+            "wallMs": 30
+          }
+        }
+      ],
+      "clientObservation": {
+        "kind": "visible ChatGPT response, cross-checked with Worker logs",
+        "status": "rejected",
+        "error": "limit_exceeded",
+        "rawClientSerializedBytes": null,
+        "clientTimestamp": null,
+        "integrityOfFullStructuredContent": "not measurable from UI",
+        "diagnosticsVisible": false
+      }
+    },
+    {
+      "invocationId": "lot11-chatgpt-size-small",
+      "client": "ChatGPT",
+      "proxyReceivedTimestamp": null,
+      "attempts": [
+        {
+          "requestId": "d2834bbf50c1d68acc197b488a37ff80",
+          "timing": {
+            "handlerEntered": 1791040570834,
+            "coreStarted": 1791040570834,
+            "coreFinished": 1791040570834,
+            "responseDeparted": 1791040570834
+          },
+          "phases": [
+            {
+              "phase": "response_departure",
+              "timestamp": "2026-10-03T15:16:10.834Z"
+            },
+            {
+              "phase": "core_end",
+              "timestamp": "2026-10-03T15:16:10.834Z"
+            },
+            {
+              "phase": "core_start",
+              "timestamp": "2026-10-03T15:16:10.834Z"
+            },
+            {
+              "phase": "handler_enter",
+              "timestamp": "2026-10-03T15:16:10.834Z"
+            },
+            {
+              "phase": "worker_received",
+              "timestamp": "2026-10-03T15:16:10.834Z"
+            },
+            {
+              "phase": "http_response_ready",
+              "timestamp": "2026-10-03T15:16:10.835Z"
+            }
+          ],
+          "attemptId": "e560707a-b155-4c4c-b6e1-ba7761f0e534",
+          "traceparent": "00-6ac11c3500000000e66465aa856da924-4d1dbdf0ccdf0e35-00",
+          "requestedBytes": 16384,
+          "deadlineMs": 30000,
+          "mcpStatus": "completed",
+          "error": null,
+          "returnedEnvelopeBytes": 16384,
+          "coreSerializedBytes": 16384,
+          "delayMs": 0,
+          "rpcId": 0,
+          "sessionPresent": false,
+          "userAgentKind": "other_or_absent",
+          "contentLength": "863",
+          "preparedResponse": {
+            "timestamp": "2026-10-03T15:16:10.835Z",
+            "httpStatus": 200,
+            "wireBytes": 16896,
+            "wireSha256": "d5f0fb7a3da9df4c2614cdd01a291bc0f7561b3b9b170a2ba28a36db3b7eac69"
+          },
+          "workerFetch": {
+            "timestamp": 1791040570835,
+            "status": 200,
+            "wallMs": 16
+          }
+        }
+      ],
+      "clientObservation": {
+        "kind": "visible ChatGPT response, cross-checked with Worker logs",
+        "status": "completed",
+        "error": null,
+        "rawClientSerializedBytes": null,
+        "clientTimestamp": null,
+        "integrityOfFullStructuredContent": "not measurable from UI",
+        "diagnosticsVisible": null
+      }
+    },
+    {
+      "invocationId": "lot11-chatgpt-time120-over",
+      "client": "ChatGPT",
+      "proxyReceivedTimestamp": null,
+      "attempts": [
+        {
+          "requestId": "e5b1c3610f5ecdc3597dbb48f7f768f5",
+          "timing": {
+            "handlerEntered": 1791041852506,
+            "coreStarted": 1791041852506
+          },
+          "phases": [
+            {
+              "phase": "core_start",
+              "timestamp": "2026-10-03T15:37:32.506Z"
+            },
+            {
+              "phase": "handler_enter",
+              "timestamp": "2026-10-03T15:37:32.506Z"
+            },
+            {
+              "phase": "worker_received",
+              "timestamp": "2026-10-03T15:37:32.506Z"
+            }
+          ],
+          "attemptId": "2da939c7-ec2c-4e88-a64f-a8f1092345a6",
+          "traceparent": "00-6ac1210e00000000c5d00efa07e894ae-a0fcee2559eff843-00",
+          "requestedBytes": 16384,
+          "delayMs": 121000,
+          "deadlineMs": 120000,
+          "rpcId": 0,
+          "sessionPresent": false,
+          "userAgentKind": "other_or_absent",
+          "contentLength": "871",
+          "workerFetch": {
+            "timestamp": 1791041942058,
+            "wallMs": 89551,
+            "outcome": "canceled"
+          }
+        },
+        {
+          "requestId": "ed4a6c785eb726e1846b2abeed3d04ed",
+          "timing": {},
+          "phases": [
+            {
+              "phase": "http_response_ready",
+              "timestamp": "2026-10-03T15:38:33.641Z"
+            },
+            {
+              "phase": "worker_received",
+              "timestamp": "2026-10-03T15:38:33.641Z"
+            }
+          ],
+          "preparedResponse": {
+            "timestamp": "2026-10-03T15:38:33.641Z",
+            "httpStatus": 200,
+            "wireBytes": 417,
+            "wireSha256": "7d534515845019fa55e8b89ece21cc0b270d6faf2dc54413d540ca7e9a11527d"
+          },
+          "attemptId": "acb9b4ba-2e0d-489a-b5e7-ccea534f7598",
+          "traceparent": "00-6ac1210e00000000c5d00efa07e894ae-306e785ca1ce0034-00",
+          "rpcId": 1,
+          "sessionPresent": false,
+          "userAgentKind": "other_or_absent",
+          "contentLength": "871",
+          "workerFetch": {
+            "timestamp": 1791041913641,
+            "status": 200,
+            "wallMs": 1,
+            "outcome": "ok"
+          }
+        }
+      ],
+      "clientObservation": {
+        "kind": "visible ChatGPT response, cross-checked with Worker logs",
+        "status": "rejected",
+        "error": "busy",
+        "rawClientSerializedBytes": null,
+        "clientTimestamp": null,
+        "integrityOfFullStructuredContent": "not measurable from UI",
+        "diagnosticsVisible": null
+      }
+    },
+    {
+      "invocationId": "lot11-chatgpt-time120-under",
+      "client": "ChatGPT",
+      "proxyReceivedTimestamp": null,
+      "attempts": [
+        {
+          "requestId": "fd01db7b7bc1506969d232a5b14499fc",
+          "timing": {
+            "handlerEntered": 1791041539096,
+            "coreStarted": 1791041539096,
+            "coreFinished": 1791041658096,
+            "responseDeparted": 1791041658096
+          },
+          "phases": [
+            {
+              "phase": "core_start",
+              "timestamp": "2026-10-03T15:32:19.096Z"
+            },
+            {
+              "phase": "handler_enter",
+              "timestamp": "2026-10-03T15:32:19.096Z"
+            },
+            {
+              "phase": "worker_received",
+              "timestamp": "2026-10-03T15:32:19.096Z"
+            },
+            {
+              "phase": "http_response_ready",
+              "timestamp": "2026-10-03T15:34:18.096Z"
+            },
+            {
+              "phase": "response_departure",
+              "timestamp": "2026-10-03T15:34:18.096Z"
+            },
+            {
+              "phase": "core_end",
+              "timestamp": "2026-10-03T15:34:18.096Z"
+            }
+          ],
+          "attemptId": "164b0569-ebc2-4fc4-b402-918894b956cc",
+          "traceparent": "00-6ac11ff900000000d6a35afb511e6951-ef01dea3156b3933-00",
+          "requestedBytes": 16384,
+          "delayMs": 119000,
+          "deadlineMs": 120000,
+          "rpcId": 0,
+          "sessionPresent": false,
+          "userAgentKind": "other_or_absent",
+          "contentLength": "872",
+          "preparedResponse": {
+            "timestamp": "2026-10-03T15:34:18.096Z",
+            "httpStatus": 200,
+            "wireBytes": 16900,
+            "wireSha256": "6adf5e396345c466a88c1ecf8b43de1949c376b83ddb26920057be4cafa2ca6c"
+          },
+          "mcpStatus": "completed",
+          "error": null,
+          "returnedEnvelopeBytes": 16384,
+          "coreSerializedBytes": 16384,
+          "workerFetch": {
+            "timestamp": 1791041658096,
+            "status": 200,
+            "wallMs": 119000,
+            "outcome": "ok"
+          }
+        }
+      ],
+      "clientObservation": {
+        "kind": "visible ChatGPT response, cross-checked with Worker logs",
+        "status": "completed",
+        "error": null,
+        "rawClientSerializedBytes": null,
+        "clientTimestamp": null,
+        "integrityOfFullStructuredContent": "not measurable from UI",
+        "diagnosticsVisible": null
+      }
+    },
+    {
+      "invocationId": "lot11-chatgpt-time30-over",
+      "client": "ChatGPT",
+      "proxyReceivedTimestamp": null,
+      "attempts": [
+        {
+          "requestId": "46b3b14f4c63455b19537d22aeb61807",
+          "timing": {
+            "handlerEntered": 1791041121483,
+            "coreStarted": 1791041121483,
+            "responseDeparted": 1791041151483,
+            "coreFinished": 1791041152483
+          },
+          "phases": [
+            {
+              "phase": "core_start",
+              "timestamp": "2026-10-03T15:25:21.483Z"
+            },
+            {
+              "phase": "handler_enter",
+              "timestamp": "2026-10-03T15:25:21.483Z"
+            },
+            {
+              "phase": "worker_received",
+              "timestamp": "2026-10-03T15:25:21.483Z"
+            },
+            {
+              "phase": "http_response_ready",
+              "timestamp": "2026-10-03T15:25:51.483Z"
+            },
+            {
+              "phase": "response_departure",
+              "timestamp": "2026-10-03T15:25:51.483Z"
+            },
+            {
+              "phase": "mcp_deadline",
+              "timestamp": "2026-10-03T15:25:51.483Z"
+            },
+            {
+              "phase": "core_end",
+              "timestamp": "2026-10-03T15:25:52.483Z"
+            }
+          ],
+          "attemptId": "50e6e6a0-633a-4f2f-8194-428746498aec",
+          "traceparent": "00-6ac11e360000000054e50aabecc56bff-bf6a66ef4ce7b5e3-00",
+          "requestedBytes": 16384,
+          "delayMs": 31000,
+          "deadlineMs": 30000,
+          "rpcId": 0,
+          "sessionPresent": false,
+          "userAgentKind": "other_or_absent",
+          "contentLength": "868",
+          "preparedResponse": {
+            "timestamp": "2026-10-03T15:25:51.483Z",
+            "httpStatus": 200,
+            "wireBytes": 686,
+            "wireSha256": "218dc6d19fa803fa39aac8a060dbf1cbd25de4183bad47d243489d5c396f1785"
+          },
+          "mcpStatus": "rejected",
+          "error": {
+            "retryable": false,
+            "code": "timeout"
+          },
+          "returnedEnvelopeBytes": 148,
+          "deadlineTriggered": true,
+          "coreSerializedBytes": 16384,
+          "workerFetch": {
+            "timestamp": 1791041152483,
+            "status": 200,
+            "wallMs": 31000,
+            "outcome": "ok"
+          }
+        }
+      ],
+      "clientObservation": {
+        "kind": "visible ChatGPT response, cross-checked with Worker logs",
+        "status": "rejected",
+        "error": "timeout",
+        "rawClientSerializedBytes": null,
+        "clientTimestamp": null,
+        "integrityOfFullStructuredContent": "not measurable from UI",
+        "diagnosticsVisible": false
+      }
+    },
+    {
+      "invocationId": "lot11-chatgpt-time30-under",
+      "client": "ChatGPT",
+      "proxyReceivedTimestamp": null,
+      "attempts": [
+        {
+          "requestId": "f6c0371abb228f7fb6c077bcc4f917ca",
+          "timing": {
+            "handlerEntered": 1791041089917,
+            "coreStarted": 1791041089917,
+            "coreFinished": 1791041118917,
+            "responseDeparted": 1791041118917
+          },
+          "phases": [
+            {
+              "phase": "core_start",
+              "timestamp": "2026-10-03T15:24:49.917Z"
+            },
+            {
+              "phase": "handler_enter",
+              "timestamp": "2026-10-03T15:24:49.917Z"
+            },
+            {
+              "phase": "worker_received",
+              "timestamp": "2026-10-03T15:24:49.917Z"
+            },
+            {
+              "phase": "http_response_ready",
+              "timestamp": "2026-10-03T15:25:18.917Z"
+            },
+            {
+              "phase": "response_departure",
+              "timestamp": "2026-10-03T15:25:18.917Z"
+            },
+            {
+              "phase": "core_end",
+              "timestamp": "2026-10-03T15:25:18.917Z"
+            }
+          ],
+          "attemptId": "edec8ff6-711d-4067-9eec-2879df9ff3ad",
+          "traceparent": "00-6ac11e360000000054e50aabecc56bff-f504ebaa183c96a4-00",
+          "requestedBytes": 16384,
+          "delayMs": 29000,
+          "deadlineMs": 30000,
+          "rpcId": 0,
+          "sessionPresent": false,
+          "userAgentKind": "other_or_absent",
+          "contentLength": "869",
+          "preparedResponse": {
+            "timestamp": "2026-10-03T15:25:18.917Z",
+            "httpStatus": 200,
+            "wireBytes": 16898,
+            "wireSha256": "9c77038d291aeef4871e3e485b754a515ec5b2fb50fdc4f75fbbb8895ef270cb"
+          },
+          "mcpStatus": "completed",
+          "error": null,
+          "returnedEnvelopeBytes": 16384,
+          "coreSerializedBytes": 16384,
+          "workerFetch": {
+            "timestamp": 1791041118917,
+            "status": 200,
+            "wallMs": 28987,
+            "outcome": "ok"
+          }
+        }
+      ],
+      "clientObservation": {
+        "kind": "visible ChatGPT response, cross-checked with Worker logs",
+        "status": "completed",
+        "error": null,
+        "rawClientSerializedBytes": null,
+        "clientTimestamp": null,
+        "integrityOfFullStructuredContent": "not measurable from UI",
+        "diagnosticsVisible": null
+      }
+    },
+    {
+      "invocationId": "lot11-codex-retry-16384-0",
+      "client": "Codex",
+      "proxyReceivedTimestamp": null,
+      "clientObservation": {
+        "invocationId": "lot11-codex-retry-16384-0",
+        "clientStart": "2026-10-03T15:32:42.777082+00:00",
+        "clientEnd": "2026-10-03T15:32:44.064838+00:00",
+        "elapsedMs": 1288,
+        "structuredBytes": 731,
+        "sha256": "23d0148e6113ffce1fb8d69a888b244f017db00c782d3e89df42bff5e50b47ff",
+        "status": null,
+        "isError": true,
+        "rpcError": null,
+        "error": "McpServerError: Client error '413 Payload Too Large' for url 'https://investment-os.erwancognee94.chatgpt.site/mcp'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/413",
+        "diagnostics": null,
+        "httpErrorData": {
+          "type": "http_error",
+          "code": 413,
+          "message": "Client error '413 Payload Too Large' for url 'https://investment-os.erwancognee94.chatgpt.site/mcp'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/413",
+          "payload": {
+            "validationOnly": true,
+            "status": "rejected",
+            "error": {
+              "code": "limit_exceeded",
+              "retryable": false
+            },
+            "diagnostics": [
+              {
+                "code": "lot11_limit_exceeded",
+                "severity": "error"
+              }
+            ]
+          },
+          "url": "https://investment-os.erwancognee94.chatgpt.site/mcp"
+        }
+      },
+      "attempts": [
+        {
+          "requestId": "699b679590b218b8242939561e66b691",
+          "timing": {
+            "coreStarted": false
+          },
+          "phases": [
+            {
+              "phase": "http413",
+              "timestamp": "2026-10-03T15:32:43.852Z"
+            },
+            {
+              "phase": "worker_received",
+              "timestamp": "2026-10-03T15:32:43.852Z"
+            }
+          ],
+          "attemptId": "30f22f2d-ec4b-4043-9a15-e1114a8b4963",
+          "traceparent": "00-6ac1201b000000002ba48edb83ad8f05-1dc60c70ca3d6144-00",
+          "rpcId": 0,
+          "contentLength": "625",
+          "interceptedHttp413": true,
+          "coreEntered": false,
+          "sessionPresent": false,
+          "userAgentKind": "other_or_absent",
+          "workerFetch": {
+            "timestamp": 1791041563852,
+            "status": 413,
+            "wallMs": 0,
+            "outcome": "ok"
+          }
+        },
+        {
+          "requestId": "f928804f73a76fa01cfdb75b78b4f2db",
+          "timing": {
+            "coreStarted": false
+          },
+          "phases": [
+            {
+              "phase": "http413",
+              "timestamp": "2026-10-03T15:32:44.055Z"
+            },
+            {
+              "phase": "worker_received",
+              "timestamp": "2026-10-03T15:32:44.055Z"
+            }
+          ],
+          "attemptId": "fa9aad02-efb9-416c-a06b-9d32251de250",
+          "traceparent": "00-6ac1201b000000002ba48edb83ad8f05-23defee08e53904e-00",
+          "rpcId": 1,
+          "contentLength": "625",
+          "interceptedHttp413": true,
+          "coreEntered": false,
+          "sessionPresent": false,
+          "userAgentKind": "other_or_absent",
+          "workerFetch": {
+            "timestamp": 1791041564055,
+            "status": 413,
+            "wallMs": 0,
+            "outcome": "ok"
+          }
+        }
+      ]
+    },
+    {
+      "invocationId": "lot11-codex-sizes-16384-0",
+      "client": "Codex",
+      "proxyReceivedTimestamp": null,
+      "clientObservation": {
+        "invocationId": "lot11-codex-sizes-16384-0",
+        "clientStart": "2026-10-03T15:14:05.909797+00:00",
+        "clientEnd": "2026-10-03T15:14:09.372763+00:00",
+        "elapsedMs": 3463,
+        "structuredBytes": 16384,
+        "sha256": "e557adad9a65103307c607d2e439e844ce1bf7a17ab272e4571ae62af11c727f",
+        "status": "completed",
+        "isError": false,
+        "rpcError": null,
+        "paddingCharacters": 8415,
+        "allSyntheticX": true,
+        "companyId": "lot11-synthetic-proxy"
+      },
+      "attempts": [
+        {
+          "requestId": "fd6cd6b2b2f1bfa74b9c68a61cc29442",
+          "timing": {
+            "handlerEntered": 1791040449399,
+            "coreStarted": 1791040449399,
+            "coreFinished": 1791040449399,
+            "responseDeparted": 1791040449399
+          },
+          "phases": [
+            {
+              "phase": "http_response_ready",
+              "timestamp": "2026-10-03T15:14:09.399Z"
+            },
+            {
+              "phase": "response_departure",
+              "timestamp": "2026-10-03T15:14:09.399Z"
+            },
+            {
+              "phase": "core_end",
+              "timestamp": "2026-10-03T15:14:09.399Z"
+            },
+            {
+              "phase": "core_start",
+              "timestamp": "2026-10-03T15:14:09.399Z"
+            },
+            {
+              "phase": "handler_enter",
+              "timestamp": "2026-10-03T15:14:09.399Z"
+            },
+            {
+              "phase": "worker_received",
+              "timestamp": "2026-10-03T15:14:09.399Z"
+            }
+          ],
+          "preparedResponse": {
+            "timestamp": "2026-10-03T15:14:09.399Z",
+            "httpStatus": 200,
+            "wireBytes": 16897,
+            "wireSha256": "91f8fe343ea5598f85fe3133718d89e34946c53db41afa594b50ae382704d46b"
+          },
+          "attemptId": "640300fd-b565-48a2-85fc-40809e478103",
+          "traceparent": "00-6ac11bbe0000000011e6600884db577a-73099c9670f3dd80-00",
+          "requestedBytes": 16384,
+          "deadlineMs": 30000,
+          "mcpStatus": "completed",
+          "error": null,
+          "returnedEnvelopeBytes": 16384,
+          "coreSerializedBytes": 16384,
+          "delayMs": 0,
+          "rpcId": 0,
+          "sessionPresent": false,
+          "userAgentKind": "other_or_absent",
+          "contentLength": "622",
+          "workerFetch": {
+            "timestamp": 1791040449399,
+            "status": 200,
+            "wallMs": 20
+          }
+        }
+      ]
+    },
+    {
+      "invocationId": "lot11-codex-sizes-4194304-0",
+      "client": "Codex",
+      "proxyReceivedTimestamp": null,
+      "clientObservation": {
+        "invocationId": "lot11-codex-sizes-4194304-0",
+        "clientStart": "2026-10-03T15:14:09.375426+00:00",
+        "clientEnd": "2026-10-03T15:14:10.121409+00:00",
+        "elapsedMs": 746,
+        "structuredBytes": 4194304,
+        "sha256": "a1ac391ad1ab7792054a8c4d08cb49e181fe38967173220f20b9a9198f6a5001",
+        "status": "completed",
+        "isError": false,
+        "rpcError": null,
+        "paddingCharacters": 4186335,
+        "allSyntheticX": true,
+        "companyId": "lot11-synthetic-proxy"
+      },
+      "attempts": [
+        {
+          "requestId": "b3ce639cc161b35ceaffc192481334d7",
+          "timing": {
+            "handlerEntered": 1791040449858,
+            "coreStarted": 1791040449858,
+            "coreFinished": 1791040449858,
+            "responseDeparted": 1791040449858
+          },
+          "phases": [
+            {
+              "phase": "http_response_ready",
+              "timestamp": "2026-10-03T15:14:09.858Z"
+            },
+            {
+              "phase": "response_departure",
+              "timestamp": "2026-10-03T15:14:09.858Z"
+            },
+            {
+              "phase": "core_end",
+              "timestamp": "2026-10-03T15:14:09.858Z"
+            },
+            {
+              "phase": "core_start",
+              "timestamp": "2026-10-03T15:14:09.858Z"
+            },
+            {
+              "phase": "handler_enter",
+              "timestamp": "2026-10-03T15:14:09.858Z"
+            },
+            {
+              "phase": "worker_received",
+              "timestamp": "2026-10-03T15:14:09.858Z"
+            }
+          ],
+          "preparedResponse": {
+            "timestamp": "2026-10-03T15:14:09.858Z",
+            "httpStatus": 200,
+            "wireBytes": 4194823,
+            "wireSha256": "6ad26859cc36ddae2517ea02a1675cfd38f6a110c5bc7977998fd8881f764e58"
+          },
+          "attemptId": "8015e063-58f7-477c-ac56-1d2477f7db91",
+          "traceparent": "00-6ac11bc100000000ee005a70307f29ce-99c416172663ad22-00",
+          "requestedBytes": 4194304,
+          "deadlineMs": 30000,
+          "mcpStatus": "completed",
+          "error": null,
+          "returnedEnvelopeBytes": 4194304,
+          "coreSerializedBytes": 4194304,
+          "delayMs": 0,
+          "rpcId": 0,
+          "sessionPresent": false,
+          "userAgentKind": "other_or_absent",
+          "contentLength": "626",
+          "workerFetch": {
+            "timestamp": 1791040449858,
+            "status": 200,
+            "wallMs": 93
+          }
+        }
+      ]
+    },
+    {
+      "invocationId": "lot11-codex-sizes-4194305-0",
+      "client": "Codex",
+      "proxyReceivedTimestamp": null,
+      "clientObservation": {
+        "invocationId": "lot11-codex-sizes-4194305-0",
+        "clientStart": "2026-10-03T15:14:10.156968+00:00",
+        "clientEnd": "2026-10-03T15:14:12.275756+00:00",
+        "elapsedMs": 2119,
+        "structuredBytes": 194,
+        "sha256": "b834655911da72b9616b95afb370b90b5727662d65a5f97cc9e17f00416667d8",
+        "status": "rejected",
+        "isError": true,
+        "rpcError": null,
+        "error": {
+          "code": "limit_exceeded",
+          "retryable": false
+        },
+        "diagnostics": [
+          {
+            "code": "lot11_limit_exceeded",
+            "severity": "error"
+          }
+        ]
+      },
+      "attempts": [
+        {
+          "requestId": "2494638188cf372fce77443c9e76f49b",
+          "timing": {
+            "handlerEntered": 1791040452294,
+            "coreStarted": 1791040452294,
+            "coreFinished": 1791040452294,
+            "responseDeparted": 1791040452294
+          },
+          "phases": [
+            {
+              "phase": "response_departure",
+              "timestamp": "2026-10-03T15:14:12.294Z"
+            },
+            {
+              "phase": "core_end",
+              "timestamp": "2026-10-03T15:14:12.294Z"
+            },
+            {
+              "phase": "core_start",
+              "timestamp": "2026-10-03T15:14:12.294Z"
+            },
+            {
+              "phase": "handler_enter",
+              "timestamp": "2026-10-03T15:14:12.294Z"
+            },
+            {
+              "phase": "worker_received",
+              "timestamp": "2026-10-03T15:14:12.294Z"
+            },
+            {
+              "phase": "http_response_ready",
+              "timestamp": "2026-10-03T15:14:12.295Z"
+            }
+          ],
+          "attemptId": "399d54ca-0e75-4ce1-9851-e1cdf3ef5c45",
+          "traceparent": "00-6ac11bc20000000010f405a9a5cdce0b-badd0ac88f7431d2-00",
+          "requestedBytes": 4194305,
+          "deadlineMs": 30000,
+          "mcpStatus": "rejected",
+          "error": {
+            "retryable": false,
+            "code": "limit_exceeded"
+          },
+          "returnedEnvelopeBytes": 162,
+          "coreSerializedBytes": 4194305,
+          "delayMs": 0,
+          "rpcId": 0,
+          "sessionPresent": false,
+          "userAgentKind": "other_or_absent",
+          "contentLength": "626",
+          "preparedResponse": {
+            "timestamp": "2026-10-03T15:14:12.295Z",
+            "httpStatus": 200,
+            "wireBytes": 720,
+            "wireSha256": "91ae041021862c85de425cd96706898a1c9871b6d44852b8a726e60da45247aa"
+          },
+          "workerFetch": {
+            "timestamp": 1791040452295,
+            "status": 200,
+            "wallMs": 48
+          }
+        }
+      ]
+    },
+    {
+      "invocationId": "lot11-codex-time120-16384-119000",
+      "client": "Codex",
+      "proxyReceivedTimestamp": null,
+      "clientObservation": {
+        "invocationId": "lot11-codex-time120-16384-119000",
+        "clientStart": "2026-10-03T15:20:03.474776+00:00",
+        "clientEnd": "2026-10-03T15:22:04.173572+00:00",
+        "elapsedMs": 120699,
+        "structuredBytes": 0,
+        "sha256": null,
+        "status": null,
+        "isError": null,
+        "rpcError": {
+          "code": -32603,
+          "message": "tool call failed for `codex_apps/investment_os.lot11_proxy_validation`: Transport send error: Transport [codex_rmcp_client::event_notification_transport::EventNotificationTransport<rmcp::transport::worker::WorkerTransport<rmcp::transport::streamable_http_client::StreamableHttpClientWorker<codex_rmcp_client::http_client_adapter::StreamableHttpClientAdapter>>>] error: unexpected server response: HTTP 504: error code: 504\n"
+        },
+        "textOnly": []
+      },
+      "attempts": [
+        {
+          "requestId": "deb61e99b7e9f63333ae7e7293f7eef5",
+          "timing": {
+            "handlerEntered": 1791040807267,
+            "coreStarted": 1791040807267,
+            "coreFinished": 1791040926267,
+            "responseDeparted": 1791040926267
+          },
+          "phases": [
+            {
+              "phase": "core_start",
+              "timestamp": "2026-10-03T15:20:07.267Z"
+            },
+            {
+              "phase": "handler_enter",
+              "timestamp": "2026-10-03T15:20:07.267Z"
+            },
+            {
+              "phase": "worker_received",
+              "timestamp": "2026-10-03T15:20:07.267Z"
+            },
+            {
+              "phase": "response_departure",
+              "timestamp": "2026-10-03T15:22:06.267Z"
+            },
+            {
+              "phase": "core_end",
+              "timestamp": "2026-10-03T15:22:06.267Z"
+            }
+          ],
+          "attemptId": "cbfbd122-5a51-4c78-bd80-64034cea7ce4",
+          "traceparent": "00-6ac11d240000000026ae5469cdd86dbb-030304b977d5cc7c-00",
+          "requestedBytes": 16384,
+          "delayMs": 119000,
+          "deadlineMs": 120000,
+          "rpcId": 0,
+          "sessionPresent": false,
+          "userAgentKind": "other_or_absent",
+          "contentLength": "635",
+          "mcpStatus": "completed",
+          "error": null,
+          "returnedEnvelopeBytes": 16384,
+          "coreSerializedBytes": 16384,
+          "workerFetch": {
+            "timestamp": 1791040926267,
+            "wallMs": 119000,
+            "outcome": "canceled"
+          }
+        }
+      ]
+    },
+    {
+      "invocationId": "lot11-codex-time120-16384-121000",
+      "client": "Codex",
+      "proxyReceivedTimestamp": null,
+      "clientObservation": {
+        "invocationId": "lot11-codex-time120-16384-121000",
+        "clientStart": "2026-10-03T15:22:04.174722+00:00",
+        "clientEnd": "2026-10-03T15:22:05.929419+00:00",
+        "elapsedMs": 1755,
+        "structuredBytes": 174,
+        "sha256": "27aeebed07ab57261865bd1e8f3c93ad215b1b98b2bae95bee8194c5c5f3a3c6",
+        "status": "rejected",
+        "isError": true,
+        "rpcError": null,
+        "error": {
+          "code": "busy",
+          "retryable": false
+        },
+        "diagnostics": [
+          {
+            "code": "lot11_busy",
+            "severity": "error"
+          }
+        ]
+      },
+      "attempts": [
+        {
+          "requestId": "12ddd85e4ebbcdb18a55cd2ca121966c",
+          "timing": {},
+          "phases": [
+            {
+              "phase": "http_response_ready",
+              "timestamp": "2026-10-03T15:22:06.008Z"
+            },
+            {
+              "phase": "worker_received",
+              "timestamp": "2026-10-03T15:22:06.008Z"
+            }
+          ],
+          "preparedResponse": {
+            "timestamp": "2026-10-03T15:22:06.008Z",
+            "httpStatus": 200,
+            "wireBytes": 417,
+            "wireSha256": "77ca87f921b3e1c1626fe524727ede2bd5712fbaf1b5dbb2577737c1d837763d"
+          },
+          "attemptId": "745b097b-b327-4969-9aa3-811d957c9652",
+          "traceparent": "00-6ac11d9c00000000d9cbcdae1df9bc70-2a329ef3300a45d3-00",
+          "rpcId": 0,
+          "sessionPresent": false,
+          "userAgentKind": "other_or_absent",
+          "contentLength": "635",
+          "workerFetch": {
+            "timestamp": 1791040926008,
+            "status": 200,
+            "wallMs": 2,
+            "outcome": "ok"
+          }
+        }
+      ]
+    },
+    {
+      "invocationId": "lot11-codex-time120safe-16384-115000",
+      "client": "Codex",
+      "proxyReceivedTimestamp": null,
+      "clientObservation": {
+        "invocationId": "lot11-codex-time120safe-16384-115000",
+        "clientStart": "2026-10-03T15:28:42.729381+00:00",
+        "clientEnd": "2026-10-03T15:30:40.373615+00:00",
+        "elapsedMs": 117641,
+        "structuredBytes": 16384,
+        "sha256": "e557adad9a65103307c607d2e439e844ce1bf7a17ab272e4571ae62af11c727f",
+        "status": "completed",
+        "isError": false,
+        "rpcError": null,
+        "paddingCharacters": 8415,
+        "allSyntheticX": true,
+        "companyId": "lot11-synthetic-proxy"
+      },
+      "attempts": [
+        {
+          "requestId": "c6b8570856b8d561650a7601f3ffe923",
+          "timing": {
+            "handlerEntered": 1791041325357,
+            "coreStarted": 1791041325357,
+            "coreFinished": 1791041440357,
+            "responseDeparted": 1791041440357
+          },
+          "phases": [
+            {
+              "phase": "core_start",
+              "timestamp": "2026-10-03T15:28:45.357Z"
+            },
+            {
+              "phase": "handler_enter",
+              "timestamp": "2026-10-03T15:28:45.357Z"
+            },
+            {
+              "phase": "worker_received",
+              "timestamp": "2026-10-03T15:28:45.357Z"
+            },
+            {
+              "phase": "http_response_ready",
+              "timestamp": "2026-10-03T15:30:40.357Z"
+            },
+            {
+              "phase": "response_departure",
+              "timestamp": "2026-10-03T15:30:40.357Z"
+            },
+            {
+              "phase": "core_end",
+              "timestamp": "2026-10-03T15:30:40.357Z"
+            }
+          ],
+          "attemptId": "181b64c3-e6a7-407b-826e-5818ad5a7117",
+          "traceparent": "00-6ac11f2b00000000cb88acde22ab0ea9-383aba9e33795396-00",
+          "requestedBytes": 16384,
+          "delayMs": 115000,
+          "deadlineMs": 120000,
+          "rpcId": 0,
+          "sessionPresent": false,
+          "userAgentKind": "other_or_absent",
+          "contentLength": "639",
+          "preparedResponse": {
+            "timestamp": "2026-10-03T15:30:40.357Z",
+            "httpStatus": 200,
+            "wireBytes": 16909,
+            "wireSha256": "43ff12ccea7966897d027a81a126e01e205d40c1863b3e5ec458a31a1b3cad91"
+          },
+          "mcpStatus": "completed",
+          "error": null,
+          "returnedEnvelopeBytes": 16384,
+          "coreSerializedBytes": 16384,
+          "workerFetch": {
+            "timestamp": 1791041440357,
+            "status": 200,
+            "wallMs": 115000,
+            "outcome": "ok"
+          }
+        }
+      ]
+    },
+    {
+      "invocationId": "lot11-codex-time120upper-16384-121000",
+      "client": "Codex",
+      "proxyReceivedTimestamp": null,
+      "clientObservation": {
+        "invocationId": "lot11-codex-time120upper-16384-121000",
+        "clientStart": "2026-10-03T15:26:13.366792+00:00",
+        "clientEnd": "2026-10-03T15:28:14.216046+00:00",
+        "elapsedMs": 120770,
+        "structuredBytes": 0,
+        "sha256": null,
+        "status": null,
+        "isError": null,
+        "rpcError": {
+          "code": -32603,
+          "message": "tool call failed for `codex_apps/investment_os.lot11_proxy_validation`: Transport send error: Transport [codex_rmcp_client::event_notification_transport::EventNotificationTransport<rmcp::transport::worker::WorkerTransport<rmcp::transport::streamable_http_client::StreamableHttpClientWorker<codex_rmcp_client::http_client_adapter::StreamableHttpClientAdapter>>>] error: unexpected server response: HTTP 504: error code: 504\n"
+        },
+        "textOnly": []
+      },
+      "attempts": [
+        {
+          "requestId": "311dbdcb1263f0b375d8deea170ba1a9",
+          "timing": {
+            "handlerEntered": 1791041175807,
+            "coreStarted": 1791041175807,
+            "responseDeparted": 1791041295807,
+            "coreFinished": 1791041296807
+          },
+          "phases": [
+            {
+              "phase": "core_start",
+              "timestamp": "2026-10-03T15:26:15.807Z"
+            },
+            {
+              "phase": "handler_enter",
+              "timestamp": "2026-10-03T15:26:15.807Z"
+            },
+            {
+              "phase": "worker_received",
+              "timestamp": "2026-10-03T15:26:15.807Z"
+            },
+            {
+              "phase": "http_response_ready",
+              "timestamp": "2026-10-03T15:28:15.807Z"
+            },
+            {
+              "phase": "response_departure",
+              "timestamp": "2026-10-03T15:28:15.807Z"
+            },
+            {
+              "phase": "mcp_deadline",
+              "timestamp": "2026-10-03T15:28:15.807Z"
+            },
+            {
+              "phase": "core_end",
+              "timestamp": "2026-10-03T15:28:16.807Z"
+            }
+          ],
+          "attemptId": "2ee80087-4649-4fe9-a280-9482a11d6795",
+          "traceparent": "00-6ac11e96000000005ddf276f7b900aa0-98d394aa24f60781-00",
+          "requestedBytes": 16384,
+          "delayMs": 121000,
+          "deadlineMs": 120000,
+          "rpcId": 0,
+          "sessionPresent": false,
+          "userAgentKind": "other_or_absent",
+          "contentLength": "640",
+          "preparedResponse": {
+            "timestamp": "2026-10-03T15:28:15.807Z",
+            "httpStatus": 200,
+            "wireBytes": 699,
+            "wireSha256": "5fb8ac2085c1314e635dcd13192763e5593610fde437c1968349cb53a0867ec0"
+          },
+          "mcpStatus": "rejected",
+          "error": {
+            "retryable": false,
+            "code": "timeout"
+          },
+          "returnedEnvelopeBytes": 148,
+          "deadlineTriggered": true,
+          "coreSerializedBytes": 16384,
+          "workerFetch": {
+            "timestamp": 1791041296807,
+            "wallMs": 121000,
+            "outcome": "canceled"
+          }
+        }
+      ]
+    },
+    {
+      "invocationId": "lot11-codex-time30-16384-29000",
+      "client": "Codex",
+      "proxyReceivedTimestamp": null,
+      "clientObservation": {
+        "invocationId": "lot11-codex-time30-16384-29000",
+        "clientStart": "2026-10-03T15:18:26.509758+00:00",
+        "clientEnd": "2026-10-03T15:18:58.323317+00:00",
+        "elapsedMs": 31814,
+        "structuredBytes": 16384,
+        "sha256": "e557adad9a65103307c607d2e439e844ce1bf7a17ab272e4571ae62af11c727f",
+        "status": "completed",
+        "isError": false,
+        "rpcError": null,
+        "paddingCharacters": 8415,
+        "allSyntheticX": true,
+        "companyId": "lot11-synthetic-proxy"
+      },
+      "attempts": [
+        {
+          "requestId": "8a4a387ba72e865c854c6024c1e06939",
+          "timing": {
+            "handlerEntered": 1791040709362,
+            "coreStarted": 1791040709362,
+            "coreFinished": 1791040738362,
+            "responseDeparted": 1791040738362
+          },
+          "phases": [
+            {
+              "phase": "core_start",
+              "timestamp": "2026-10-03T15:18:29.362Z"
+            },
+            {
+              "phase": "handler_enter",
+              "timestamp": "2026-10-03T15:18:29.362Z"
+            },
+            {
+              "phase": "worker_received",
+              "timestamp": "2026-10-03T15:18:29.362Z"
+            },
+            {
+              "phase": "http_response_ready",
+              "timestamp": "2026-10-03T15:18:58.362Z"
+            },
+            {
+              "phase": "response_departure",
+              "timestamp": "2026-10-03T15:18:58.362Z"
+            },
+            {
+              "phase": "core_end",
+              "timestamp": "2026-10-03T15:18:58.362Z"
+            }
+          ],
+          "attemptId": "7b0b3494-fb8a-4916-8ff5-69d95d51ae7a",
+          "traceparent": "00-6ac11cc300000000e968702771c48e6b-f9925d8e6191c7f7-00",
+          "requestedBytes": 16384,
+          "delayMs": 29000,
+          "deadlineMs": 30000,
+          "rpcId": 0,
+          "sessionPresent": false,
+          "userAgentKind": "other_or_absent",
+          "contentLength": "631",
+          "preparedResponse": {
+            "timestamp": "2026-10-03T15:18:58.362Z",
+            "httpStatus": 200,
+            "wireBytes": 16902,
+            "wireSha256": "76c1a1855ee77c3a8fd3d6e60affeeeb04c02bb939baab580e5a1068228eb462"
+          },
+          "mcpStatus": "completed",
+          "error": null,
+          "returnedEnvelopeBytes": 16384,
+          "coreSerializedBytes": 16384,
+          "workerFetch": {
+            "timestamp": 1791040738362,
+            "status": 200,
+            "wallMs": 29003
+          }
+        }
+      ]
+    },
+    {
+      "invocationId": "lot11-codex-time30-16384-31000",
+      "client": "Codex",
+      "proxyReceivedTimestamp": null,
+      "clientObservation": {
+        "invocationId": "lot11-codex-time30-16384-31000",
+        "clientStart": "2026-10-03T15:18:58.326465+00:00",
+        "clientEnd": "2026-10-03T15:19:30.387438+00:00",
+        "elapsedMs": 32061,
+        "structuredBytes": 180,
+        "sha256": "5569ffcae3dc55a8fd2a49529282c0d02dbf67b2448dc4a47803310434bb5fef",
+        "status": "rejected",
+        "isError": true,
+        "rpcError": null,
+        "error": {
+          "code": "timeout",
+          "retryable": false
+        },
+        "diagnostics": [
+          {
+            "code": "lot11_timeout",
+            "severity": "error"
+          }
+        ]
+      },
+      "attempts": [
+        {
+          "requestId": "36405b391cb8a80a80921b039907b3e4",
+          "timing": {
+            "handlerEntered": 1791040740460,
+            "coreStarted": 1791040740460,
+            "responseDeparted": 1791040770460,
+            "coreFinished": 1791040771460
+          },
+          "phases": [
+            {
+              "phase": "core_start",
+              "timestamp": "2026-10-03T15:19:00.460Z"
+            },
+            {
+              "phase": "handler_enter",
+              "timestamp": "2026-10-03T15:19:00.460Z"
+            },
+            {
+              "phase": "worker_received",
+              "timestamp": "2026-10-03T15:19:00.460Z"
+            },
+            {
+              "phase": "http_response_ready",
+              "timestamp": "2026-10-03T15:19:30.460Z"
+            },
+            {
+              "phase": "response_departure",
+              "timestamp": "2026-10-03T15:19:30.460Z"
+            },
+            {
+              "phase": "mcp_deadline",
+              "timestamp": "2026-10-03T15:19:30.460Z"
+            },
+            {
+              "phase": "core_end",
+              "timestamp": "2026-10-03T15:19:31.460Z"
+            }
+          ],
+          "attemptId": "a7201447-3909-4386-bfe0-9d7c7d4f7261",
+          "traceparent": "00-6ac11ce200000000093400c634e6781a-047ce797d5cd9a90-00",
+          "requestedBytes": 16384,
+          "delayMs": 31000,
+          "deadlineMs": 30000,
+          "rpcId": 0,
+          "sessionPresent": false,
+          "userAgentKind": "other_or_absent",
+          "contentLength": "631",
+          "preparedResponse": {
+            "timestamp": "2026-10-03T15:19:30.460Z",
+            "httpStatus": 200,
+            "wireBytes": 691,
+            "wireSha256": "861e479355287cd565e98e9a21fe694fb26b6725c200e0d6a9c7f86e7686b881"
+          },
+          "mcpStatus": "rejected",
+          "error": {
+            "retryable": false,
+            "code": "timeout"
+          },
+          "returnedEnvelopeBytes": 148,
+          "deadlineTriggered": true,
+          "coreSerializedBytes": 16384,
+          "workerFetch": {
+            "timestamp": 1791040771460,
+            "status": 200,
+            "wallMs": 31001,
+            "outcome": "ok"
+          }
+        }
+      ]
+    }
+  ],
+  "cleanup": {
+    "siteVersion": 210,
+    "sourceCommit": "e0e7add293e4f930b3805c8ce69ef64c5f3b1be0",
+    "deploymentId": "appgdep_6ac12348880481919bbe053739738cc8",
+    "status": "succeeded",
+    "confirmedAt": "2026-10-03T15:46:28.923720+00:00",
+    "environmentRevision": 4,
+    "probeRemovedFromSource": true,
+    "catalogToolNames": [
+      "get_company",
+      "get_portfolio",
+      "get_position",
+      "get_current_analysis",
+      "get_analysis_by_id",
+      "save_analysis",
+      "get_quote"
+    ],
+    "catalogConfirmedBy": "Codex App Server app/read after official plugin tool refresh; no business calls"
+  }
+}

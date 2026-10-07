@@ -29,6 +29,13 @@
       "when": 1790175045066,
       "tag": "0005_curious_risque",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "6",
+      "when": 1790927272768,
+      "tag": "0006_dazzling_maginty",
+      "breakpoints": true
     }
   ]
 }
