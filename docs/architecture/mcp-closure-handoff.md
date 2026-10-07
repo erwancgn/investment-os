@@ -1,6 +1,6 @@
 # Clôture MCP et refactorisation — passation
 
-7 octobre 2026. Production : Sites v255 (arbre `dfe1221aac3ed84643adfadde1091ca1ddc3aebe`), WRITE fermé (révision d'environnement 34, `MCP_WRITE_ENABLED` absent). Session de certification WRITE terminée.
+7 octobre 2026. Production : Sites v255 (arbre `dfe1221aac3ed84643adfadde1091ca1ddc3aebe`), certification WRITE terminée ; WRITE fermé à la révision 34, puis ouvert en exploitation normale (voir runtime-variables.md, « Exploitation du WRITE »).
 
 ## Acquis
 

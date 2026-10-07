@@ -46,7 +46,7 @@ test("contract has no executable domain, server or runtime imports", () => {
   assert.deepEqual(Object.keys(contractBuild.metafile.inputs), ["contracts/mcp.ts"]);
   assert.deepEqual(Object.entries(contract.MCP_TOOLS).filter(([, t]) => t.access === "WRITE").map(([name]) => name).sort(), ["create_company", "save_analysis"]);
   assert.equal(contract.MCP_TOOLS.save_analysis.access, "WRITE");
-  assert.deepEqual(contract.MCP_LIMITS, { requestBytes: 2097152, responseBytes: 4194304, readTimeoutMs: 30000, writeTimeoutMs: 30000, readAttempts: 2, writeAttempts: 1, readsPerWindow: 120, readWindowMs: 60000, writesPerWindow: 40, writeWindowMs: 86400000 });
+  assert.deepEqual(contract.MCP_LIMITS, { requestBytes: 2097152, responseBytes: 4194304, readTimeoutMs: 30000, writeTimeoutMs: 30000, readAttempts: 2, writeAttempts: 1, readsPerWindow: 120, readWindowMs: 60000, writesPerWindow: 100, writeWindowMs: 86400000 });
 });
 
 test("all inputs accept explicit personal/demo scopes and reject spoofed caller, secrets and versions", () => {
