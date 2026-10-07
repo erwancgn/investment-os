@@ -25,7 +25,7 @@ WRITE est fermé par défaut (`MCP_WRITE_ENABLED` absent). Une session de test o
 1. Vérifier en lecture seule l'état courant (déploiement, révision des variables, cache).
 2. Poser `MCP_WRITE_ENABLED=1`, redéployer la version enregistrée, relever la révision d'environnement.
 3. Exécuter uniquement les écritures prévues ; une sauvegarde ambiguë (timeout, 5xx, `write_in_progress`) n'est jamais rejouée sans reprise explicite du même `runId` après contrôle du receipt.
-4. Retirer `MCP_WRITE_ENABLED`, redéployer, relever la révision et confirmer que le MCP refuse les écritures.
+4. Retirer `MCP_WRITE_ENABLED`, redéployer, relever la révision. Attendre 5 minutes (la version précédente peut répondre quelques minutes après le déploiement), puis confirmer le refus par un appel `create_company` sur une société existante (Kering, ISIN FR0000121485) : `forbidden` attendu, jamais `existing`. Ne jamais tester le refus avec `save_analysis`, qui écrit si WRITE est encore ouvert. Si la réponse est `existing`, poser `MCP_WRITE_ENABLED=0` explicitement et recommencer.
 5. Consigner receipts, révisions et déploiements dans la passation.
 
 Limites en production : propriétaire seul (`OWNER_EMAIL`), 40 écritures par jour et par appelant, un seul WRITE en vol (`write_in_progress` sinon).
