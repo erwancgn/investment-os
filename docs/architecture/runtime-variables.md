@@ -20,12 +20,14 @@ Sites ne documente pas de déclencheur planifié. Un appel MCP authentifié réu
 
 ## Exploitation du WRITE
 
-WRITE est fermé par défaut (`MCP_WRITE_ENABLED` absent). Une session de test ou d'analyse qui écrit suit toujours ces étapes, avec l'accord explicite du propriétaire :
+Depuis le 7 octobre 2026, WRITE est ouvert en exploitation normale : `MCP_WRITE_ENABLED=1` est posé sur Sites. Sans cette variable le code reste fermé (valeur par défaut sûre). Les protections restent actives : propriétaire seul (`OWNER_EMAIL`, identité fournie par Sites), 100 écritures par fenêtre de 24 h et par appelant (`MCP_LIMITS.writesPerWindow`, compteur local à l'instance, chaque appel `save_analysis` ou `create_company` compte, même en échec), un seul WRITE en vol (`write_in_progress` sinon), délai MCP de 30 s.
 
-1. Vérifier en lecture seule l'état courant (déploiement, révision des variables, cache).
-2. Poser `MCP_WRITE_ENABLED=1`, redéployer la version enregistrée, relever la révision d'environnement.
-3. Exécuter uniquement les écritures prévues ; une sauvegarde ambiguë (timeout, 5xx, `write_in_progress`) n'est jamais rejouée sans reprise explicite du même `runId` après contrôle du receipt.
-4. Retirer `MCP_WRITE_ENABLED`, redéployer, relever la révision. Attendre 5 minutes (la version précédente peut répondre quelques minutes après le déploiement), puis confirmer le refus par un appel `create_company` sur une société existante (Kering, ISIN FR0000121485) : `forbidden` attendu, jamais `existing`. Ne jamais tester le refus avec `save_analysis`, qui écrit si WRITE est encore ouvert. Si la réponse est `existing`, poser `MCP_WRITE_ENABLED=0` explicitement et recommencer.
-5. Consigner receipts, révisions et déploiements dans la passation.
+Une sauvegarde ambiguë (timeout, 5xx, `write_in_progress`) n'est jamais rejouée à l'aveugle : lire `get_company` (titre, date, score, statut, pointeur Current) avant toute décision ; un replay doit conserver le même `runId` et un contenu identique.
 
-Limites en production : propriétaire seul (`OWNER_EMAIL`), 40 écritures par jour et par appelant, un seul WRITE en vol (`write_in_progress` sinon).
+Fermeture d'urgence (suspicion d'usage anormal, boucle d'écritures) :
+
+1. Retirer `MCP_WRITE_ENABLED`, redéployer la version enregistrée, relever la révision d'environnement.
+2. Attendre 5 minutes (la version précédente peut répondre quelques minutes après le déploiement), puis confirmer le refus par un appel `create_company` sur une société existante (Kering, ISIN FR0000121485) : `forbidden` attendu, jamais `existing`. Ne jamais tester le refus avec `save_analysis`, qui écrit si WRITE est encore ouvert. Si la réponse est `existing`, poser `MCP_WRITE_ENABLED=0` explicitement et recommencer.
+3. Consigner révisions et déploiements dans la passation.
+
+Réouverture : poser `MCP_WRITE_ENABLED=1`, redéployer, relever la révision d'environnement ; aucune écriture n'est exécutée par l'opérateur du déploiement.

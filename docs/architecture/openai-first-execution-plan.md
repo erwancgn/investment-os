@@ -28,7 +28,7 @@ Conséquence : le Core et les contrats ne doivent dépendre ni de ChatGPT, ni de
 
 ### 2.1 Production réellement déployée
 
-**État au 7 octobre 2026 (prime sur les états historiques ci-dessous) :** Sites v253, MCP contrat 1.0.0 (9 outils, rapport 1.1), WRITE fermé par défaut et ouvert seulement par session explicite, plugin Investment OS Analysis 1.4.2. Voir [mcp-closure-handoff.md](mcp-closure-handoff.md). Les paragraphes datés v210 à v221 sont conservés comme historique.
+**État au 7 octobre 2026 (prime sur les états historiques ci-dessous) :** Sites v253, MCP contrat 1.0.0 (9 outils, rapport 1.1), WRITE ouvert en exploitation pour le propriétaire (budget 100 écritures / 24 h), plugin Investment OS Analysis 1.4.2. Voir [mcp-closure-handoff.md](mcp-closure-handoff.md). Les paragraphes datés v210 à v221 sont conservés comme historique.
 
 La production est **Sites v210 READ-only**, restaurée exactement après la campagne temporaire v211 du Lot 11, depuis `e0e7add293e4f930b3805c8ce69ef64c5f3b1be0` ; v209 est le rollback MCP immédiat et v208 conserve le rollback produit sans MCP :
 
