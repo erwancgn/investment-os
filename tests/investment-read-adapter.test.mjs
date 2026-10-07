@@ -362,3 +362,29 @@ test("portfolio quotes: unmapped position takes the Yahoo symbol of its linked C
   assert.equal(positionQuoteId(row("Mystery", ["c-unknown"]), companies, new Map()), undefined, "unknown exchange: no guessed quote");
   assert.equal(positionQuoteId(row("Orphan line"), companies, new Map()), undefined, "no linked company: no quote (manual price still applies)");
 });
+
+test("an explicit Current pointer wins over an older page still flagged Source Freshness=Current (BESI regression)", async () => {
+  const [{ createInvestmentReadAdapter }, legacy] = await Promise.all([apis().then(result => result.adapter), apis().then(result => result.legacy)]);
+  const data = await fixture();
+  const rich = value => ({ type: "rich_text", rich_text: [{ plain_text: value }] });
+  const relation = (...ids) => ({ type: "relation", relation: ids.map(id => ({ id })) });
+  const oldId = "5bbbbbbb-5bbb-4bbb-8bbb-5bbbbbbbbbbb";
+  // Old page: Validated + Source Freshness=Current (rank 3), dated before the pointed page. The pointed page
+  // (ids.current, Validated, no Source Freshness) is what a freshly saved report looks like (rank 1).
+  data.sqlite.prepare("INSERT INTO notion_documents VALUES(?,?,?,?,?,?,?,?,?)").run(oldId, "analyses", "Example Business Analysis Previous Run", `https://notion.so/${oldId}`, "2026-09-15T10:00:00Z", JSON.stringify({
+    Company: relation(data.ids.company), Agent: rich("Business Analyst"), Status: rich("Validated"), "Source Freshness": rich("Current"), Date: { type: "date", date: { start: "2026-09-15" } },
+  }), "[]", "Previous operating evidence.", "2026-09-15T10:00:00Z");
+  data.sqlite.prepare("INSERT INTO notion_document_companies VALUES(?,?,?,?)").run(oldId, data.ids.company, "notion-relation", "2026-09-15T10:00:00Z");
+
+  const adapter = createInvestmentReadAdapter(data.db);
+  const compact = id => id.replaceAll("-", "");
+  for (const company of [await adapter.getCompany(data.ids.company), await legacy.getCompanyDetail(data.db, data.ids.company)]) {
+    const business = company.analyses.filter(item => item.id === compact(data.ids.current) || item.id === compact(oldId) || item.id === data.ids.current || item.id === oldId);
+    assert.equal(business.length, 1, "exactly one Business page is promoted");
+    assert.ok([compact(data.ids.current), data.ids.current].includes(business[0].id), "the pointed page is promoted");
+    assert.ok(company.archives.some(item => [compact(oldId), oldId].includes(item.id)), "the older page moves to archives");
+  }
+  const current = await adapter.getCurrentAnalysis(data.ids.company, "business");
+  assert.equal(current.data.header.id, compact(data.ids.current), "get_current_analysis and get_company agree");
+  data.sqlite.close();
+});
