@@ -105,7 +105,7 @@ test("MCP spec rate limiting: WRITE has its own per-caller budget, checked befor
   assert.equal((await call(h, "get_company", { ...base, id: "c" })).status, "completed", "READ budget is separate");
   now += 86_400_001;
   assert.equal((await call(h, "save_analysis", { ...base, input: reportInput({ runId: "R4" }) })).result?.status, "ok", "window resets");
-  assert.equal(api.MCP_LIMITS?.writesPerWindow ?? 40, 40);
+  assert.equal(api.MCP_LIMITS?.writesPerWindow ?? 100, 100);
 });
 
 test("permissions, scope isolation, mutation confirmation and unauthorized never reach Core", async () => {
